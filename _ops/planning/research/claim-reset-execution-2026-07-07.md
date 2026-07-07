@@ -147,6 +147,11 @@ Jami-owned `@jami-studio/*` cleanup:
   - `@jami-studio/cli`
   - `@jami-studio/governance-sdk`
   - `@jami-studio/harness`
+  - `@jami-studio/harness-cli` versions `0.1.0`, `0.1.1`, and `0.1.2` were individually removed;
+    version `0.1.3` remains deprecated.
+  - `@jami-studio/harness-config`
+  - `@jami-studio/harness-context`
+  - `@jami-studio/harness-contracts`
   - `@jami-studio/harness-identity`
   - `@jami-studio/harness-knowledge`
   - `@jami-studio/harness-protocol-a2a`
@@ -158,13 +163,10 @@ Jami-owned `@jami-studio/*` cleanup:
   - `@jami-studio/renderer`
   - `@jami-studio/tokens`
   - `@jami-studio/ui`
-- Deprecated all remaining live versions after npm returned `E422` for hard deletion:
+- Deprecated all remaining live versions after npm returned `E422` / `E405` for hard deletion:
   - `@jami-studio/harness-agent-native-runtime`
   - `@jami-studio/harness-artifacts`
   - `@jami-studio/harness-cli`
-  - `@jami-studio/harness-config`
-  - `@jami-studio/harness-context`
-  - `@jami-studio/harness-contracts`
   - `@jami-studio/harness-core`
   - `@jami-studio/harness-memory`
   - `@jami-studio/harness-observability`
@@ -174,6 +176,15 @@ Jami-owned `@jami-studio/*` cleanup:
   - `@jami-studio/harness-sdk`
   - `@jami-studio/harness-store-local`
   - `@jami-studio/harness-tools`
+- Additional owner-side deletion attempts performed:
+  - Tried removing stale `jamienavin` maintainer metadata; npm returned `E401` while package access
+    APIs show only `jamesnavinhill` as active collaborator.
+  - Tried single-version unpublish for every remaining live version. npm removed three old
+    `harness-cli` versions and reported `has dependent packages in the registry` for
+    `harness-core` and `harness-sdk`; other package roots remained blocked with `E422`.
+  - Tried converting survivors to private packages; npm returned `E402 Payment Required`.
+  - Tried removing `latest` dist-tags; npm returned `E400`. Added `deprecated-reset` tag to
+    `@jami-studio/harness-agent-native-runtime`, but `latest` still cannot be removed by owner token.
 
 ## Amplitude
 
