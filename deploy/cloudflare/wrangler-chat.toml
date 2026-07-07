@@ -7,4 +7,4 @@ pages_build_output_dir = "./templates/chat/dist"
 mode = "smart"
 
 [vars]
-GA_MEASUREMENT_ID = "G-ESF7FYXGN9"
+GA_MEASUREMENT_ID = ""

@@ -26,7 +26,7 @@ const globalPaths = [
   "package.json",
   "pnpm-lock.yaml",
   "pnpm-workspace.yaml",
-  "scripts/netlify-ignore-build.mjs",
+  "deploy/netlify/netlify-ignore-build.mjs",
 ];
 
 if (!targetName) {

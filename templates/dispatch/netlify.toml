@@ -1,11 +1,11 @@
 [build]
-ignore = "node ./scripts/netlify-ignore-build.mjs dispatch"
+ignore = "node ./deploy/netlify/netlify-ignore-build.mjs dispatch"
 command = "export DATABASE_URL=${NETLIFY_DATABASE_URL:-$DATABASE_URL} && pnpm install && NITRO_PRESET=netlify pnpm --filter dispatch build"
 publish = "templates/dispatch/dist"
 functions = "templates/dispatch/.netlify/functions-internal"
 
 [build.environment]
-GA_MEASUREMENT_ID = "G-ESF7FYXGN9"
+GA_MEASUREMENT_ID = ""
 NITRO_PRESET = "netlify"
 NPM_CONFIG_PRODUCTION = "false"
 

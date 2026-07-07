@@ -1,5 +1,5 @@
 [build]
-command = "pnpm install && pnpm exec tsx scripts/build-retired-netlify-site.ts videos"
+command = "pnpm install && pnpm exec tsx deploy/netlify/build-retired-netlify-site.ts videos"
 publish = "templates/videos/dist"
 
 [build.environment]

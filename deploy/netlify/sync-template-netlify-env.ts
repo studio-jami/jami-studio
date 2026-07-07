@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { TEMPLATES } from "../packages/core/src/cli/templates-meta.js";
+import { TEMPLATES } from "../../packages/core/src/cli/templates-meta.js";
 
 type TemplateSite = {
   name: string;
@@ -38,10 +38,14 @@ type TemplateEnvPlan = {
 const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
+  "..",
 );
 
 const NETLIFY_SITES = JSON.parse(
-  readFileSync(path.join(REPO_ROOT, "scripts/netlify-sites.json"), "utf8"),
+  readFileSync(
+    path.join(REPO_ROOT, "deploy/netlify/netlify-sites.json"),
+    "utf8",
+  ),
 ) as Record<string, string>;
 
 const TEMPLATE_SITES: TemplateSite[] = Object.entries(NETLIFY_SITES)
@@ -53,7 +57,7 @@ const DEFAULT_SOURCES = [".env", ".env.local"];
 const DEFAULT_SCOPES = ["builds", "functions", "runtime"];
 const DEFAULT_CONTEXT = "production";
 const DEFAULT_HOSTED_TEMPLATE_ENV = new Map([
-  ["GA_MEASUREMENT_ID", "G-ESF7FYXGN9"],
+  ["GA_MEASUREMENT_ID", ""],
   ["VITE_AGENT_NATIVE_SESSION_REPLAY_ENABLED", "true"],
   ["VITE_AGENT_NATIVE_SESSION_REPLAY_SAMPLE_RATE", "0.1"],
 ]);
@@ -135,8 +139,8 @@ const TEMPLATE_PROD_URL_BY_NAME = new Map(
 function usage(): string {
   const names = TEMPLATE_SITES.map((site) => site.name).join(", ");
   return `Usage:
-  pnpm exec tsx scripts/sync-template-netlify-env.ts --template clips
-  NETLIFY_AUTH_TOKEN=... NETLIFY_ACCOUNT_ID=... pnpm exec tsx scripts/sync-template-netlify-env.ts --template clips --write
+  pnpm exec tsx deploy/netlify/sync-template-netlify-env.ts --template clips
+  NETLIFY_AUTH_TOKEN=... NETLIFY_ACCOUNT_ID=... pnpm exec tsx deploy/netlify/sync-template-netlify-env.ts --template clips --write
 
 Options:
   --template <name>       Template to sync. Can be repeated.

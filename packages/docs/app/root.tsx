@@ -54,7 +54,7 @@ configureTracking({
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`;
 
-const GA_SCRIPT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ESF7FYXGN9');`;
+const GA_SCRIPT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','');`;
 
 const JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
@@ -373,7 +373,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=G-ESF7FYXGN9"
+          src="https://www.googletagmanager.com/gtag/js?id="
         />
         <script dangerouslySetInnerHTML={{ __html: GA_SCRIPT }} />
         <script

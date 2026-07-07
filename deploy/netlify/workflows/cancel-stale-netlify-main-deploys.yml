@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           sparse-checkout: |
-            scripts/netlify-sites.json
+            deploy/netlify/netlify-sites.json
             package.json
             packages/*/package.json
             templates/*/package.json
@@ -48,7 +48,7 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const SITES = Object.entries(
-              JSON.parse(fs.readFileSync('scripts/netlify-sites.json', 'utf8'))
+              JSON.parse(fs.readFileSync('deploy/netlify/netlify-sites.json', 'utf8'))
             );
             const repoRoot = process.cwd();
             const globalPaths = [
@@ -56,7 +56,7 @@ jobs:
               'package.json',
               'pnpm-lock.yaml',
               'pnpm-workspace.yaml',
-              'scripts/netlify-ignore-build.mjs',
+              'deploy/netlify/netlify-ignore-build.mjs',
             ];
 
             const token = process.env.NETLIFY_TOKEN;

@@ -1,6 +1,5 @@
 packages:
   - packages/*
-  - templates/.retired/*
   - templates/*
   - templates/*/desktop
   - templates/*/chrome-extension

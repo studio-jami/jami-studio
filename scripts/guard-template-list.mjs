@@ -37,7 +37,7 @@ const repoRoot = path.resolve(__dirname, "..");
 
 const SOURCE_OF_TRUTH = "packages/shared-app-config/templates.ts";
 const CLI_DUPLICATE = "packages/core/src/cli/templates-meta.ts";
-const HOSTED_GA_MEASUREMENT_ID = "G-ESF7FYXGN9";
+const HOSTED_GA_MEASUREMENT_ID = "";
 
 /**
  * Parse a TEMPLATES array out of a templates-meta-shaped file. Returns

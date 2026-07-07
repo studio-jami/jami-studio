@@ -1,5 +1,32 @@
 # Builder.io Coupling Audit — Jami Studio Fork
 
+> **Reset pass 1 — executed 2026-07-07** (git mv, nothing committed). Decisions applied:
+>
+> - **Netlify machinery → `deploy/netlify/`** — `netlify-sites.json`, `sync-template-netlify-env.ts`,
+>   `guard-netlify-private-env.ts`, `netlify-ignore-build.mjs`, `build-retired-netlify-site.ts`,
+>   `neon-netlify-integration.md → deploy/netlify/docs/`. The 4 Netlify workflows moved to
+>   `deploy/netlify/workflows/` (**this disables them** — they only run under `.github/workflows/`;
+>   intended "parked / ready" state). All references repointed (package.json, 14 template
+>   `netlify.toml` `ignore` paths, `videos` builder path, moved-script `repoRoot`/import paths,
+>   workflow sparse-checkout paths). Mechanism kept; only relocated.
+> - **Identifiers scrubbed (no new values added):** GA `G-ESF7FYXGN9 → ""` in all 10
+>   `deploy/cloudflare/wrangler-*.toml`, 14 template `netlify.toml`, `packages/docs/app/root.tsx`,
+>   `sync-template-netlify-env.ts`, and the `guard-template-list.mjs` constant (guard stays green —
+>   both sides now empty). 15 Netlify site IDs in `netlify-sites.json → ""`.
+> - **Layer E legacy → `_ops/legacy/`:** `templates/.retired/` → `_ops/legacy/retired/`,
+>   `scripts/fusion-analytics-migration/`, `scripts/ensure-builder-orgs.ts`. Removed the emptied
+>   `templates/.retired/*` glob from `pnpm-workspace.yaml`. **Kept** builder-starter sync + branding
+>   assets (to be replaced later, not removed).
+> - **Layer B / C / D:** untouched by request — no provider deletions, no `*.agent-native.com` URL
+>   changes yet (kept for route mapping; `jami.studio` repoint later), publishing flow preserved.
+> - **Layer F:** the skill/agent "mirrors" are **one-way generators** (canonical source →
+>   committed copies) validated by `--check` guards — **no loop**; nothing to fix. Whittling skills
+>   later = edit the source list + re-run `sync:*`.
+> - **Left in place, flagged:** `neon-preview-branches.yml` + `keep-neon-warm.yml` (Neon, not
+>   "netlify"-named); archived retired `package.json` build refs (won't build); a comment in
+>   `packages/core/src/cli/create.ts:1838`. Disabled workflows still carry `NETLIFY_*` secret names /
+>   account assumptions — reactivation needs our own account + secrets.
+
 **Date:** 2026-07-07
 **Scope:** Identify every Builder.io-specific / upstream-hosted surface that is a candidate for
 **assume**, **supplement**, **replace**, or **remove**, without touching anything that runs the apps.
