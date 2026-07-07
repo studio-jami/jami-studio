@@ -147,35 +147,35 @@ Jami-owned `@jami-studio/*` cleanup:
   - `@jami-studio/cli`
   - `@jami-studio/governance-sdk`
   - `@jami-studio/harness`
-  - `@jami-studio/harness-cli` versions `0.1.0`, `0.1.1`, and `0.1.2` were individually removed;
-    version `0.1.3` remains deprecated.
+  - `@jami-studio/harness-agent-native-runtime`
+  - `@jami-studio/harness-artifacts`
   - `@jami-studio/harness-config`
   - `@jami-studio/harness-context`
   - `@jami-studio/harness-contracts`
+  - `@jami-studio/harness-core`
   - `@jami-studio/harness-identity`
   - `@jami-studio/harness-knowledge`
+  - `@jami-studio/harness-memory`
+  - `@jami-studio/harness-observability`
+  - `@jami-studio/harness-policy`
   - `@jami-studio/harness-protocol-a2a`
   - `@jami-studio/harness-provider-hosted`
+  - `@jami-studio/harness-provider-local`
+  - `@jami-studio/harness-runtime`
+  - `@jami-studio/harness-sdk`
   - `@jami-studio/harness-store-hosted`
+  - `@jami-studio/harness-store-local`
+  - `@jami-studio/harness-tools`
   - `@jami-studio/orchestra`
   - `@jami-studio/registry`
   - `@jami-studio/registry-schema`
   - `@jami-studio/renderer`
   - `@jami-studio/tokens`
   - `@jami-studio/ui`
-- Deprecated all remaining live versions after npm returned `E422` / `E405` for hard deletion:
-  - `@jami-studio/harness-agent-native-runtime`
-  - `@jami-studio/harness-artifacts`
-  - `@jami-studio/harness-cli`
-  - `@jami-studio/harness-core`
-  - `@jami-studio/harness-memory`
-  - `@jami-studio/harness-observability`
-  - `@jami-studio/harness-policy`
-  - `@jami-studio/harness-provider-local`
-  - `@jami-studio/harness-runtime`
-  - `@jami-studio/harness-sdk`
-  - `@jami-studio/harness-store-local`
-  - `@jami-studio/harness-tools`
+- Remaining live package:
+  - `@jami-studio/harness-cli@0.1.4` remains live, dependency-free, and deprecated with the reset
+    message: `Jami Studio registry reset: this legacy placeholder is decommissioned and will not be
+    used for new Jami Studio publishing.`
 - Additional owner-side deletion attempts performed:
   - Tried removing stale `jamienavin` maintainer metadata; npm returned `E401` while package access
     APIs show only `jamesnavinhill` as active collaborator.
@@ -185,6 +185,22 @@ Jami-owned `@jami-studio/*` cleanup:
   - Tried converting survivors to private packages; npm returned `E402 Payment Required`.
   - Tried removing `latest` dist-tags; npm returned `E400`. Added `deprecated-reset` tag to
     `@jami-studio/harness-agent-native-runtime`, but `latest` still cannot be removed by owner token.
+  - Published dependency-free reset placeholder versions for the dependency graph, then deleted the
+    package roots from the top of the graph downward. This cleared every remaining package except
+    `@jami-studio/harness-cli`.
+  - Retried `npm unpublish @jami-studio/harness-cli --force`,
+    `npm unpublish @jami-studio/harness-cli@0.1.4 --force`, and a direct registry `DELETE` against the
+    current `_rev`; npm returned `E422 Unprocessable Entity`.
+
+Current npm blocker:
+
+- `@jami-studio/harness-cli` has one owner/maintainer (`jamesnavinhill`), one live version (`0.1.4`),
+  no dependencies, and no live internal dependents.
+- npm download API reports `391` downloads for the last published week (`2026-06-29` through
+  `2026-07-05`). npm's public unpublish policy requires packages older than 72 hours to have fewer
+  than 300 downloads over the last week, in addition to having no dependents and a single maintainer.
+- Next deletion retry should happen after the rolling weekly count drops below `300`, or via npm
+  support if the dashboard entry must be removed sooner.
 
 ## Amplitude
 
