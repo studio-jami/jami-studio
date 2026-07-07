@@ -230,7 +230,7 @@ isComplete: async () => {
 | ------------------ | ----------------------------------------------------- | ------------------------------------------------------ |
 | `link`             | `{ url, external? }`                                  | उपयोगकर्ता को OAuth प्रवाह या दस्तावेज़ पृष्ठ पर भेजें |
 | `form`             | `{ fields, writeScope? }`                             | एनवी संस्करण (कुंजियाँ, रहस्य, URLs) एकत्र करें        |
-| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                 |
+| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)             |
 | `agent-task`       | `{ prompt }`                                          | एजेंट चैट को संभालने के लिए एक संकेत भेजें             |
 
 `primary: true` ध्वज एक विधि को उसके चरण के लिए बड़े CTA के रूप में चिह्नित करता है।
@@ -241,7 +241,7 @@ isComplete: async () => {
 
 | आईडी       | आवश्यक | विवरण                                              |
 | ---------- | ------ | -------------------------------------------------- |
-| `llm`      | हां    | Jami Studio कनेक्शन या प्रदाता LLM कुंजी               |
+| `llm`      | हां    | Jami Studio कनेक्शन या प्रदाता LLM कुंजी           |
 | `database` | नहीं   | डिफ़ॉल्ट डेटाबेस या कोई SQL `DATABASE_URL`         |
 | `auth`     | नहीं   | अंतर्निहित खाते, वैकल्पिक OAuth या एक्सेस टोकन     |
 | `email`    | नहीं   | लेन-देन संबंधी ईमेल के लिए पुनः भेजें या सेंडग्रिड |

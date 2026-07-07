@@ -1277,7 +1277,7 @@ function SourcesListView({
         </div>
         <DatabaseSettingsRow
           icon={<BuilderLogoMark className="size-4" />}
-          label="Jami Studio"
+          label="Jami Studio" // i18n-ignore brand name
           value={
             isBuilderSource
               ? (builderSpaceLabel ?? "Connected")

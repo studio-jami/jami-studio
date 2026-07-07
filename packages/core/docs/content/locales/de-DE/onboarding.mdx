@@ -230,7 +230,7 @@ Eine vollständige Liste der Verbindungsanbieter-Katalogmethoden finden Sie in d
 | ------------------ | ----------------------------------------------------- | -------------------------------------------------------------------- |
 | `link`             | `{ url, external? }`                                  | Benutzer zu einem OAuth-Flow oder einer Dokumentenseite weiterleiten |
 | `form`             | `{ fields, writeScope? }`                             | Env-Variablen sammeln (Schlüssel, Geheimnisse, URLs)                 |
-| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                               |
+| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                           |
 | `agent-task`       | `{ prompt }`                                          | Senden Sie eine Aufforderung an den Agenten-Chat zur Bearbeitung     |
 
 Das `primary: true`-Flag markiert eine Methode als das große CTA für ihren Schritt.
@@ -241,7 +241,7 @@ bevor es verfügbar ist.
 
 | ID         | Erforderlich | Beschreibung                                             |
 | ---------- | ------------ | -------------------------------------------------------- |
-| `llm`      | Ja           | Jami Studio-Verbindung oder ein Provider-LLM-Schlüssel       |
+| `llm`      | Ja           | Jami Studio-Verbindung oder ein Provider-LLM-Schlüssel   |
 | `database` | nein         | Standarddatenbank oder eine beliebige SQL `DATABASE_URL` |
 | `auth`     | nein         | Eingebaute Konten, optional OAuth oder Zugriffstoken     |
 | `email`    | nein         | Erneut senden oder SendGrid für Transaktions-E-Mails     |

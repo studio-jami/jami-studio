@@ -230,7 +230,7 @@ Consulte a documentação do [Workspace Connections](/docs/workspace-connections
 | ------------------ | ----------------------------------------------------- | ------------------------------------------------------------ |
 | `link`             | `{ url, external? }`                                  | Enviar o usuário para um fluxo OAuth ou página de documentos |
 | `form`             | `{ fields, writeScope? }`                             | Colete variáveis de ambiente (chaves, segredos, URLs)        |
-| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                       |
+| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                   |
 | `agent-task`       | `{ prompt }`                                          | Envie uma solicitação ao chat do agente para tratar          |
 
 O sinalizador `primary: true` marca um método como o grande CTA para sua etapa.
@@ -241,7 +241,7 @@ antes de estar disponível.
 
 | ID         | Obrigatório | Descrição                                            |
 | ---------- | ----------- | ---------------------------------------------------- |
-| `llm`      | sim         | Conexão Jami Studio ou chave LLM do provedor             |
+| `llm`      | sim         | Conexão Jami Studio ou chave LLM do provedor         |
 | `database` | não         | Banco de dados padrão ou qualquer SQL `DATABASE_URL` |
 | `auth`     | não         | Contas integradas, OAuth opcional ou token de acesso |
 | `email`    | não         | Reenviar ou SendGrid para e-mail transacional        |

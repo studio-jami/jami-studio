@@ -229,7 +229,7 @@ isComplete: async () => {
 | ------------------ | ----------------------------------------------------- | --------------------------------------------- |
 | `link`             | `{ url, external? }`                                  | 사용자를 OAuth 흐름 또는 문서 페이지로 보내기 |
 | `form`             | `{ fields, writeScope? }`                             | 환경 변수(키, 비밀, URL) 수집                 |
-| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)        |
+| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)    |
 | `agent-task`       | `{ prompt }`                                          | 처리할 상담원 채팅에 메시지를 보냅니다.       |
 
 `primary: true` 플래그는 메서드를 해당 단계의 큰 CTA로 표시합니다.
@@ -240,7 +240,7 @@ isComplete: async () => {
 
 | 아이디     | 필수       | 설명                                      |
 | ---------- | ---------- | ----------------------------------------- |
-| `llm`      | 그렇습니다 | Jami Studio 연결 또는 공급자 LLM 키           |
+| `llm`      | 그렇습니다 | Jami Studio 연결 또는 공급자 LLM 키       |
 | `database` | 아니요     | 기본 데이터베이스 또는 SQL `DATABASE_URL` |
 | `auth`     | 아니요     | 내장 계정, 선택적 OAuth 또는 액세스 토큰  |
 | `email`    | 아니요     | 거래 이메일을 위한 재전송 또는 SendGrid   |

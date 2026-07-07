@@ -89,14 +89,14 @@ cat ~/.tauri/clips-updater.key.pub
 
 Then set these GitHub secrets on the repository:
 
-| Secret                                     | Source                                                  |
-| ------------------------------------------ | ------------------------------------------------------- |
-| `CLIPS_TAURI_SIGNING_PRIVATE_KEY`          | Contents of `~/.tauri/clips-updater.key` (full file)    |
-| `CLIPS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | The password you entered at `tauri signer generate`     |
-| `APPLE_CERTIFICATE`                        | Base64-encoded Developer ID .p12 (shared with Electron) |
-| `APPLE_CERTIFICATE_PASSWORD`               | .p12 password (shared with Electron)                    |
-| `APPLE_SIGNING_IDENTITY`                   | e.g. `Developer ID Application: Jami Studio (W3PMF2T3MW)`   |
-| `APPLE_ID`                                 | Apple ID for notarization (shared with Electron)        |
-| `APPLE_APP_SPECIFIC_PASSWORD`              | App-specific password for notarization                  |
+| Secret                                     | Source                                                    |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `CLIPS_TAURI_SIGNING_PRIVATE_KEY`          | Contents of `~/.tauri/clips-updater.key` (full file)      |
+| `CLIPS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | The password you entered at `tauri signer generate`       |
+| `APPLE_CERTIFICATE`                        | Base64-encoded Developer ID .p12 (shared with Electron)   |
+| `APPLE_CERTIFICATE_PASSWORD`               | .p12 password (shared with Electron)                      |
+| `APPLE_SIGNING_IDENTITY`                   | e.g. `Developer ID Application: Jami Studio (W3PMF2T3MW)` |
+| `APPLE_ID`                                 | Apple ID for notarization (shared with Electron)          |
+| `APPLE_APP_SPECIFIC_PASSWORD`              | App-specific password for notarization                    |
 
 Once the keys are in place and `tauri.conf.json` has the real `pubkey`, subsequent workflow runs produce bundles the updater will accept.

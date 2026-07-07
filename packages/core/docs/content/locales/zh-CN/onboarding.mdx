@@ -225,12 +225,12 @@ isComplete: async () => {
 
 ### 方法种类
 
-| 种类               | 有效负载                                              | 用于                                   |
-| ------------------ | ----------------------------------------------------- | -------------------------------------- |
-| `link`             | `{ url, external? }`                                  | 将用户发送到 OAuth 流程或文档页面      |
-| `form`             | `{ fields, writeScope? }`                             | 收集环境变量（密钥、秘密、URL）        |
+| 种类               | 有效负载                                              | 用于                                       |
+| ------------------ | ----------------------------------------------------- | ------------------------------------------ |
+| `link`             | `{ url, external? }`                                  | 将用户发送到 OAuth 流程或文档页面          |
+| `form`             | `{ fields, writeScope? }`                             | 收集环境变量（密钥、秘密、URL）            |
 | `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra) |
-| `agent-task`       | `{ prompt }`                                          | 向客服聊天发送提示进行处理             |
+| `agent-task`       | `{ prompt }`                                          | 向客服聊天发送提示进行处理                 |
 
 `primary: true` 标志将方法标记为其步骤的大 CTA。
 当设置路径应该可见时，使用 `badge: "soon"` 和 `disabled: true`
@@ -240,7 +240,7 @@ isComplete: async () => {
 
 | ID         | 必填 | 描述                                 |
 | ---------- | ---- | ------------------------------------ |
-| `llm`      | 是的 | Jami Studio 连接或提供商 LLM 密钥        |
+| `llm`      | 是的 | Jami Studio 连接或提供商 LLM 密钥    |
 | `database` | 没有 | 默认数据库或任何SQL `DATABASE_URL`   |
 | `auth`     | 没有 | 内置帐户，可选 OAuth 或访问令牌      |
 | `email`    | 不   | 重新发送或 SendGrid 用于交易电子邮件 |

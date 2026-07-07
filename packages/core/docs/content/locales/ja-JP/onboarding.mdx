@@ -230,7 +230,7 @@ isComplete: async () => {
 | ------------------ | ----------------------------------------------------- | ------------------------------------------------------------------- |
 | `link`             | `{ url, external? }`                                  | ユーザーを OAuth フロー ページまたはドキュメント ページに送信します |
 | `form`             | `{ fields, writeScope? }`                             | 環境変数 (キー、シークレット、URL) を収集する                       |
-| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                              |
+| `builder-cli-auth` | `{ scope: "llm" \| "browser" \| "image-generation" }` | Connect Jami Studio (unlocks shared infra)                          |
 | `agent-task`       | `{ prompt }`                                          | 対応するエージェント チャットにプロンプトを送信します               |
 
 `primary: true` フラグは、メソッドをそのステップの大きな CTA としてマークします。
@@ -241,7 +241,7 @@ isComplete: async () => {
 
 | ID         | 必須   | 説明                                                           |
 | ---------- | ------ | -------------------------------------------------------------- |
-| `llm`      | はい   | Jami Studio 接続またはプロバイダー LLM キー                        |
+| `llm`      | はい   | Jami Studio 接続またはプロバイダー LLM キー                    |
 | `database` | いいえ | デフォルトのデータベースまたは任意の SQL `DATABASE_URL`        |
 | `auth`     | いいえ | 組み込みアカウント、オプションの OAuth またはアクセス トークン |
 | `email`    | いいえ | トランザクション電子メールの再送信または SendGrid              |
