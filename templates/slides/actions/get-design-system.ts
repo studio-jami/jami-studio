@@ -34,7 +34,7 @@ export default defineAction({
             warning:
               error instanceof Error
                 ? error.message
-                : "Builder design-system docs could not be loaded.",
+                : "Jami Studio design-system docs could not be loaded.",
           }),
         )
       : null;

@@ -279,7 +279,7 @@ const messages = {
     },
     create: {
       advanced: "先進的",
-      agentMissing: "連線代理以執行 - 新增 API 金鑰或使用 Builder。",
+      agentMissing: "連線代理以執行 - 新增 API 金鑰或使用 Jami Studio。",
       assessment: {
         ui: "自動偵測 UI 狀態或流程；代理將制定線框優先計畫。",
         visual: "汽車將要求代理提供豐富的技術計畫，包括圖表和實施細節。",

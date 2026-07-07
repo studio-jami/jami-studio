@@ -210,7 +210,7 @@ npx @agent-native/core@latest skills add assets              # alias: image-gene
 說明：
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 原始 `skills` CLI 僅安裝 `SKILL.md` 檔案；本機 MCP 用戶端仍然
@@ -705,7 +705,7 @@ npx @agent-native/core@latest connect prod --apps mail,calendar,analytics --clie
 
 標準 OAuth 路徑永遠不會向 MCP 應用程式公開權杖：主機儲存 OAuth 存取/重新整理權杖並透過經過驗證的 MCP 連線調解工具呼叫和 `resources/read`。嵌入式 iframe 接收應用資料和工具結果，而不是承載秘密。
 
-完整應用程式嵌入還避免將 MCP 不記名權杖交給瀏覽器。 MCP 呼叫者在 SQL 中鑄造一張一次性嵌入票證； iframe 啟動路由會使用它並設定一個短暫的、iframe 安全的瀏覽器工作階段 cookie。登陸 URL 攜帶臨時 `__an_embed_token` 查詢參數，其長度足以讓用戶端捕獲它，將其從地址欄中刪除，並在第三方 cookie 被阻止時將其附加到同來源 `fetch` 呼叫。嵌入工作階段是路由範圍的；應用程式取得包括目前嵌入的目標，並且伺服器拒絕在鑄造路由之外重用權杖。應用程式頁面有意不發出 `X-Frame-Options` 或 CSP `frame-ancestors`，因此 Builder、Design 和 MCP 應用程式主機可以對它們進行 iframe。當需要跨來源隔離主機時，瀏覽器 iframe 導覽也會選取 COEP/CORP。
+完整應用程式嵌入還避免將 MCP 不記名權杖交給瀏覽器。 MCP 呼叫者在 SQL 中鑄造一張一次性嵌入票證； iframe 啟動路由會使用它並設定一個短暫的、iframe 安全的瀏覽器工作階段 cookie。登陸 URL 攜帶臨時 `__an_embed_token` 查詢參數，其長度足以讓用戶端捕獲它，將其從地址欄中刪除，並在第三方 cookie 被阻止時將其附加到同來源 `fetch` 呼叫。嵌入工作階段是路由範圍的；應用程式取得包括目前嵌入的目標，並且伺服器拒絕在鑄造路由之外重用權杖。應用程式頁面有意不發出 `X-Frame-Options` 或 CSP `frame-ancestors`，因此 Jami Studio、Design 和 MCP 應用程式主機可以對它們進行 iframe。當需要跨來源隔離主機時，瀏覽器 iframe 導覽也會選取 COEP/CORP。
 
 後備託管的 `connect` 流永遠不會複製部署的共用金鑰。相反：
 

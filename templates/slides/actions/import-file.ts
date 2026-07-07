@@ -25,8 +25,8 @@ export default defineAction({
     "For PPTX files, returns parsed slides with text and layout info ready for conversion. " +
     "For DOCX files, returns structured sections extracted from the document. " +
     "For PDF files, returns extracted text organized by page. " +
-    "For Figma .fig files, requires Builder.io and starts Builder design-system indexing; the returned Builder job/design-system ids are the source of truth. " +
-    "The agent can then use the extracted content to create a deck via create-deck or add-slide, or tell the user where Builder is indexing the design system.",
+    "For Figma .fig files, requires Jami Studio and starts Jami Studio design-system indexing; the returned Jami Studio job/design-system ids are the source of truth. " +
+    "The agent can then use the extracted content to create a deck via create-deck or add-slide, or tell the user where Jami Studio is indexing the design system.",
   schema: z.object({
     filePath: z
       .string()
@@ -83,7 +83,7 @@ export default defineAction({
     if (detectedFormat === "fig") {
       if (importIntoDeck) {
         throw new Error(
-          "Figma .fig imports start Builder design-system indexing, not slide replacements. Re-run without importIntoDeck.",
+          "Figma .fig imports start Jami Studio design-system indexing, not slide replacements. Re-run without importIntoDeck.",
         );
       }
       const title = titleFromPath(absPath);

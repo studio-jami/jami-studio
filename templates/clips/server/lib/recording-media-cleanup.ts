@@ -32,7 +32,7 @@ export function recordingMediaUrls(recording: RecordingMediaUrls): string[] {
 function builderAssetUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname !== "cdn.builder.io") return null;
+    if (parsed.hostname !== "cdn.jami.studio") return null;
     parsed.search = "";
     parsed.hash = "";
     return parsed.toString();
@@ -64,7 +64,7 @@ async function deleteBuilderAssetByUrl(url: string): Promise<boolean> {
 
   const text = await res.text().catch(() => "");
   throw new Error(
-    `Builder.io asset delete failed (${res.status}): ${text || res.statusText}`,
+    `Jami Studio asset delete failed (${res.status}): ${text || res.statusText}`,
   );
 }
 

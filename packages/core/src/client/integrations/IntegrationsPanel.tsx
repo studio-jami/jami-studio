@@ -124,15 +124,15 @@ const PLATFORMS: PlatformInfo[] = [
   },
   {
     id: "builder",
-    label: "Builder.io",
+    label: "Jami Studio",
     icon: IconBuildingSkyscraper,
     description:
       "One chat interface that orchestrates all your agents together.",
     envVars: [],
     isClient: true,
     setupSteps: [
-      "Connect your agent-native apps in your Builder.io workspace",
-      "Builder.io discovers each agent's skills via A2A",
+      "Connect your agent-native apps in your Jami Studio workspace",
+      "Jami Studio discovers each agent's skills via A2A",
       "Chat with one agent that can trigger actions across all your apps",
     ],
     docsUrl: "https://www.builder.io",

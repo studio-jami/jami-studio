@@ -9,7 +9,7 @@ patterns live in `.agents/skills/`.
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use the app actions for designs, files, versions, design systems, variants,
   export, and sharing. Do not write design rows directly with SQL.
 - Treat repository import actions as shortcuts, not capability limits. When the
@@ -62,7 +62,7 @@ patterns live in `.agents/skills/`.
   `FIGMA_ACCESS_TOKEN` secret; never ask the user to paste that token into chat
   or pass it as an action parameter. Figma styles and variables are design-system
   inputs, not draggable media assets; route full file/design-system extraction
-  through Builder-backed indexing.
+  through Jami Studio-backed indexing.
 - Use Alpine.js and Tailwind CDN for interactive prototypes. Prefer Alpine
   directives over raw inline event handlers.
 - Navigate between prototype screens with Alpine state (`x-show`), a
@@ -94,11 +94,11 @@ patterns live in `.agents/skills/`.
 - Follow linked design-system tokens and `customInstructions` whenever present;
   explicit user instructions in the current turn still win.
 - For reusable design-system setup from Figma, connected code/GitHub, local
-  code/design files, or optional `design.md`, use Builder-backed DSI indexing
+  code/design files, or optional `design.md`, use Jami Studio-backed DSI indexing
   through `index-design-system-with-builder` or `import-file --format fig`.
   Pass readable `design.md` content as `designMd`, use the returned local design
   system id in Design flows, and call `get-design-system` before generation to
-  hydrate Builder docs/tokens when available. Do not create a duplicate local
+  hydrate Jami Studio docs/tokens when available. Do not create a duplicate local
   design system from raw Figma/code sources.
 - When a user wants one-off tokens from design.md, CSS, theme/tokens JSON,
   Tailwind config, local files, or the current design, call
@@ -164,7 +164,7 @@ patterns live in `.agents/skills/`.
   `npx @agent-native/core@latest design connect` and are persisted with
   `connect-localhost`; list them with `list-localhost-connections` before
   creating or resolving local-code artboards. Fusion designs are full-app
-  designs backed by a running Builder Fusion container, created via
+  designs backed by a running Jami Studio Fusion container, created via
   `create-fusion-app` when `FULL_APP_BUILDING_ENABLED` is on; preserve the
   design's `fusionApp` linkage data whenever present and never invent it.
 - Localhost route manifests are scaffolding for URL-backed Flow Canvas
@@ -279,9 +279,9 @@ patterns live in `.agents/skills/`.
 ## Full App Building
 
 Flag-gated (`FULL_APP_BUILDING_ENABLED` in `shared/full-app.ts`, default off)
-and requires Builder connected. See `full-app-build` skill for the full flow.
+and requires Jami Studio connected. See `full-app-build` skill for the full flow.
 
-- `create-fusion-app`: creates the app branch via the Builder cloud agent; one
+- `create-fusion-app`: creates the app branch via the Jami Studio cloud agent; one
   branch per design; returns existing linkage if already created.
 - `sync-fusion-app`: boots/attaches the container; poll while building; on
   ready, updates `previewUrl` and upserts URL-backed screens.
@@ -309,7 +309,7 @@ and requires Builder connected. See `full-app-build` skill for the full flow.
   full Design bundle. It installs the exported Design instructions and registers
   the hosted Design MCP connector together.
 - The open Skills CLI path
-  `npx skills@latest add BuilderIO/agent-native --skill visual-edit` installs
+  `npx skills@latest add Jami Studio/agent-native --skill visual-edit` installs
   exported instructions only.
 - For local-code visual editing, `/visual-edit` should run the target app dev
   server, run

@@ -33,14 +33,14 @@ export default async (nitroApp: any): Promise<void> => {
     required: true,
     title: "Connect storage",
     description:
-      "Store recorded videos with Builder.io or S3-compatible storage.",
+      "Store recorded videos with Jami Studio or S3-compatible storage.",
     methods: [
       {
         id: "builder",
         kind: "builder-cli-auth",
-        label: "Connect Builder.io",
+        label: "Connect Jami Studio",
         description:
-          "Builder.io's free tier includes video storage and AI credits.",
+          "Jami Studio's free tier includes video storage and AI credits.",
         primary: true,
         badge: "free",
         payload: { scope: "browser" },

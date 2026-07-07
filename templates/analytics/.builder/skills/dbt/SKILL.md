@@ -220,7 +220,7 @@ LEFT JOIN {{ ref("product_signups") }} ps
 
 **Key columns in product_signups**:
 
-- `user_id` - Builder user ID
+- `user_id` - Jami Studio user ID
 - `email` - User email
 - `user_create_d` (TIMESTAMP) - Signup/user creation date
 

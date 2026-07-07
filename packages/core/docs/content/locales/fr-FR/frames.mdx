@@ -14,7 +14,7 @@ discutez, exécutez et (en développement) modifiez le code. Il existe trois fra
 - **Cadre de développement local** : un wrapper léger qui charge votre application en cours d'exécution dans une iframe
   et ajoute le même panneau d'agent plus un terminal CLI intégré à côté. Utilisé
   pour le développement local de modèles dans ce dépôt.
-- **Cadre cloud Builder.io** : un cadre géré et hébergé avec collaboration,
+- **Cadre cloud Jami Studio** : un cadre géré et hébergé avec collaboration,
   édition visuelle et exécutions d'agents parallèles.
 
 Le code de votre application est identique quel que soit le cadre qui l'héberge. L'agent parle
@@ -35,7 +35,7 @@ Le code de votre application est identique quel que soit le cadre qui l'héberge
     >
   </div>
   <div class="diagram-card" data-rough>
-    <span class="diagram-pill">Frame cloud Builder.io</span
+    <span class="diagram-pill">Frame cloud Jami Studio</span
     ><small class="diagram-muted"
       >hébergé : collaboration · édition visuelle · exécutions parallèles</small
     >
@@ -95,13 +95,13 @@ Le panneau s'exécute dans l'un des deux modes d'outil :
   et accès à la base de données en plus des outils de l'application, afin que l'agent puisse modifier l'application
   propre source. Les demandes de code sont fermées : lorsqu'un message nécessite du code
   (`type: "code"`) et aucun cadre compatible avec le code n'est connecté, le panneau affiche un
-  boîte de dialogue expliquant que les modifications de code nécessitent Agent Native Desktop ou Builder ;
+  boîte de dialogue expliquant que les modifications de code nécessitent Agent Native Desktop ou Jami Studio ;
   Lorsqu'une trame est connectée, la requête est acheminée vers elle et un agent de code
   l'indicateur s'affiche pendant qu'il fonctionne (`useSendToAgentChat`). Pour le canonique
   liste des outils de codage et contrats UI partagés, voir
   [Agent-Native Code UI](/docs/code-agents-ui).
 
-<Diagram id="doc-block-xwnfo4" title={"Contrôle de demande de code"} summary={"Un message codé nécessite une trame compatible avec le code. Avec un connecté, la requête y est acheminée ; sans cela, le panneau explique que les modifications de code nécessitent Desktop ou Builder."}>
+<Diagram id="doc-block-xwnfo4" title={"Contrôle de demande de code"} summary={"Un message codé nécessite une trame compatible avec le code. Avec un connecté, la requête y est acheminée ; sans cela, le panneau explique que les modifications de code nécessitent Desktop ou Jami Studio."}>
 
 ```html
 <div class="diagram-gate">
@@ -117,7 +117,7 @@ Le panneau s'exécute dans l'un des deux modes d'outil :
       yes &rarr; route to frame, show code-agent indicator
     </div>
     <div class="diagram-pill warn">
-      no &rarr; dialog: needs Desktop or Builder
+      no &rarr; dialog: needs Desktop or Jami Studio
     </div>
   </div>
 </div>
@@ -169,7 +169,7 @@ liste blanche pour empêcher l'injection :
 | CLI         | Commande   | Installer le package        |
 | ----------- | ---------- | --------------------------- |
 | Code Claude | `claude`   | `@anthropic-ai/claude-code` |
-| Builder.io  | `builder`  | (intégré)                   |
+| Jami Studio  | `builder`  | (intégré)                   |
 | Codex       | `codex`    | `@openai/codex`             |
 | Gémeaux CLI | `gemini`   | `@google/gemini-cli`        |
 | OpenCode    | `opencode` | `opencode-ai`               |
@@ -179,9 +179,9 @@ via `npx --yes <install-package>@latest` (là où un package d’installation ex
 la commande par défaut est `claude`. Basculez les CLI à partir des paramètres du panneau d'agent à tout moment
 heure.
 
-## Cadre nuage Builder.io {#cloud-frame}
+## Cadre nuage Jami Studio {#cloud-frame}
 
-[Builder.io](https://www.builder.io) fournit un cadre géré qui héberge le
+[Jami Studio](https://www.builder.io) fournit un cadre géré qui héberge le
 même application et même panneau d'agent, dans le cloud :
 
 - Collaboration en temps réel : plusieurs utilisateurs peuvent regarder et interagir en même temps.
@@ -189,7 +189,7 @@ même application et même panneau d'agent, dans le cloud :
 - Exécution d'agent en parallèle pour une itération plus rapide.
 - Idéal pour une utilisation en équipe, où tout le monde partage un environnement hébergé.
 
-Demandes de code depuis l'itinéraire du panneau intégré vers le cadre Builder de la même manière
+Demandes de code depuis l'itinéraire du panneau intégré vers le cadre Jami Studio de la même manière
 ils sont acheminés vers le cadre de développement local, donc le comportement dev-vs-prod ci-dessus est
 cohérent dans les deux cas.
 

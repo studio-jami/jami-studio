@@ -13,7 +13,7 @@
  *   - Meetings finalize (task='summary' → summary + bullets + action items)
  *
  * Provider routing:
- *   1. Builder.io Connect credentials → Builder engine with model
+ *   1. Jami Studio Connect credentials → Jami Studio engine with model
  *      `gemini-3-1-flash-lite` (matches existing convention in
  *      `transcribe-voice.ts`).
  *   2. Fallback: user GEMINI_API_KEY direct to Google's generativelanguage
@@ -44,10 +44,10 @@ import {
   noteBuilderCreditsExhausted,
 } from "./lib/builder-credits-state.js";
 
-// Builder gateway maps this to Gemini 3.1 Flash-Lite (see transcribe-voice.ts:52).
+// Jami Studio gateway maps this to Gemini 3.1 Flash-Lite (see transcribe-voice.ts:52).
 const BUILDER_MODEL = "gemini-3-1-flash-lite";
 
-// BYOK direct-Google fallback — keep on a stable public model id; Builder's
+// BYOK direct-Google fallback — keep on a stable public model id; Jami Studio's
 // managed provider handles the 3.1 preview.
 const GEMINI_BYOK_MODEL = "gemini-2.0-flash-lite";
 const GEMINI_BYOK_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_BYOK_MODEL}:generateContent`;
@@ -118,7 +118,7 @@ export default defineAction({
     });
     const wantJson = args.task === "summary";
 
-    // 1) Builder gateway (preferred — uses Builder.io Connect credentials).
+    // 1) Jami Studio gateway (preferred — uses Jami Studio Connect credentials).
     const builderCreds = await resolveBuilderCredentials();
     const builderConfigured = Boolean(
       builderCreds.privateKey && builderCreds.publicKey,
@@ -140,7 +140,9 @@ export default defineAction({
           return shapeResult(args.task, text, "builder", contextPack);
         }
         builderReturnedEmpty = true;
-        console.warn("[cleanup-transcript] Builder path returned empty text");
+        console.warn(
+          "[cleanup-transcript] Jami Studio path returned empty text",
+        );
       } catch (err) {
         const message = (err as Error)?.message ?? String(err);
         builderFailureMessage = message;
@@ -155,10 +157,13 @@ export default defineAction({
             message,
           });
           console.warn(
-            "[cleanup-transcript] Builder credits exhausted; trying BYOK fallback",
+            "[cleanup-transcript] Jami Studio credits exhausted; trying BYOK fallback",
           );
         } else {
-          console.warn("[cleanup-transcript] Builder path failed:", message);
+          console.warn(
+            "[cleanup-transcript] Jami Studio path failed:",
+            message,
+          );
         }
       }
     }
@@ -229,8 +234,8 @@ async function callBuilderGateway({
         terminalError =
           event.error ??
           (event.errorCode
-            ? `Builder gateway returned ${event.errorCode}`
-            : "Builder gateway returned an error");
+            ? `Jami Studio gateway returned ${event.errorCode}`
+            : "Jami Studio gateway returned an error");
       }
     }
   } finally {
@@ -253,20 +258,20 @@ function buildCleanupConfigurationError({
   builderFailureMessage: string | null;
 }): FeatureNotConfiguredError {
   let message =
-    "Transcript cleanup needs Builder.io Connect or a fallback AI key.";
+    "Transcript cleanup needs Jami Studio Connect or a fallback AI key.";
 
   if (builderConfigured && builderReturnedEmpty) {
     message =
-      "Builder.io is connected, but the cleanup/title service returned no text. Native transcript was kept; retry or add a fallback AI key.";
+      "Jami Studio is connected, but the cleanup/title service returned no text. Native transcript was kept; retry or add a fallback AI key.";
   } else if (builderConfigured && builderFailureMessage) {
     const detail =
       builderFailureMessage.length > 240
         ? `${builderFailureMessage.slice(0, 240)}...`
         : builderFailureMessage;
-    message = `Builder.io is connected, but the cleanup/title service failed: ${detail}`;
+    message = `Jami Studio is connected, but the cleanup/title service failed: ${detail}`;
   } else if (builderPartiallyConfigured) {
     message =
-      "Builder.io Connect is incomplete. Reconnect Builder.io in Settings or add a fallback AI key.";
+      "Jami Studio Connect is incomplete. Reconnect Jami Studio in Settings or add a fallback AI key.";
   }
 
   return new FeatureNotConfiguredError({

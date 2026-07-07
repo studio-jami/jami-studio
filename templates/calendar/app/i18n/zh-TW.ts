@@ -351,7 +351,7 @@ const messages = {
     uploading: "上傳中",
     maxAttachments: "Google Calendar 每個事件最多支援 {{count}} 個附件。",
     uploadProviderPermissionError:
-      "目前上傳提供者憑證無法進行檔案上傳。檢查Settings 中的 Builder.io 權限，或貼上Drive 或 HTTPS URL。",
+      "目前上傳提供者憑證無法進行檔案上傳。檢查Settings 中的 Jami Studio 權限，或貼上Drive 或 HTTPS URL。",
     setEventColorTo: "將事件顏色設定為 {{color}}",
   },
   googleConnect: {

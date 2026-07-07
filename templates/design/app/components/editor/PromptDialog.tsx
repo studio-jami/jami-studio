@@ -312,7 +312,7 @@ interface PromptPopoverProps {
   onDesignSystemChange?: (id: string | null) => void;
   onCreateDesignSystem?: () => void;
   /**
-   * "Design" (inline prototype, default) vs "Full app" (Builder Fusion cloud
+   * "Design" (inline prototype, default) vs "Full app" (Jami Studio Fusion cloud
    * container). Omit both this and `onCreationModeChange` to hide the mode
    * selector entirely — used when full-app building is flag-disabled, so the
    * popover renders pixel-identical to the design-only version.

@@ -9,7 +9,7 @@ import { z } from "zod";
 
 export default defineAction({
   description:
-    "Request a production code change through configured Builder branch creation. Use this in production when the user asks to modify UI, add features, change styles, fix bugs, or update source code.",
+    "Request a production code change through configured Jami Studio branch creation. Use this in production when the user asks to modify UI, add features, change styles, fix bugs, or update source code.",
   schema: z.object({
     description: z
       .string()
@@ -46,7 +46,7 @@ export default defineAction({
         description,
         ...(files ? { files: files.split(",").map((f) => f.trim()) } : {}),
         message:
-          "Builder branch creation is not available for this organization yet.",
+          "Jami Studio branch creation is not available for this organization yet.",
       };
     }
 
@@ -58,7 +58,7 @@ export default defineAction({
         description,
         ...(files ? { files: files.split(",").map((f) => f.trim()) } : {}),
         message:
-          "Builder branch creation is not available for this organization yet.",
+          "Jami Studio branch creation is not available for this organization yet.",
       };
     }
 
@@ -71,7 +71,7 @@ export default defineAction({
         description,
         ...(files ? { files: files.split(",").map((f) => f.trim()) } : {}),
         message:
-          "A signed-in user or Builder user ID is required to start a production code branch.",
+          "A signed-in user or Jami Studio user ID is required to start a production code branch.",
       };
     }
 
@@ -96,7 +96,7 @@ export default defineAction({
       url: result.url,
       description,
       ...(files ? { files: files.split(",").map((f) => f.trim()) } : {}),
-      message: `Builder branch creation is running. Track the change at: ${result.url}`,
+      message: `Jami Studio branch creation is running. Track the change at: ${result.url}`,
     };
   },
 });

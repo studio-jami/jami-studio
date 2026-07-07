@@ -276,7 +276,7 @@ const messages = {
         "Failed to schedule email - draft kept open",
       pleaseAddRecipient: "Please add at least one recipient",
       aiEngineRequired:
-        "Connect Builder or another AI engine before using Generate.",
+        "Connect Jami Studio or another AI engine before using Generate.",
       couldNotUnsubscribe: "Could not unsubscribe",
       unsubscribeSent: "Unsubscribe request sent",
       draftQueued: "Draft queued.",

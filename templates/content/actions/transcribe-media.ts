@@ -352,11 +352,11 @@ async function transcribeMedia(media: AudioOnlyTranscriptionMedia) {
     const groqError = err instanceof Error ? err.message : String(err);
     if (builderError) {
       throw new Error(
-        `Builder transcription failed: ${builderError}. Groq fallback failed: ${groqError}`,
+        `Jami Studio transcription failed: ${builderError}. Groq fallback failed: ${groqError}`,
       );
     }
     throw new Error(
-      `No media transcription provider is available. Connect Builder.io in Settings -> File uploads or configure GROQ_API_KEY. ${groqError}`,
+      `No media transcription provider is available. Connect Jami Studio in Settings -> File uploads or configure GROQ_API_KEY. ${groqError}`,
     );
   }
 }

@@ -89,7 +89,7 @@ function realBatchDeps(
 function errorMessage(error: unknown) {
   return error instanceof Error && error.message
     ? error.message
-    : "Unknown Builder batch error.";
+    : "Unknown Jami Studio batch error.";
 }
 
 function isMissingGateMessage(message: string) {
@@ -143,14 +143,14 @@ function explicitBatchBlocker(
 ) {
   if (!changeSet) return "Source change-set not found.";
   if (changeSet.direction !== "outbound") {
-    return "Only outbound Builder change sets can be executed.";
+    return "Only outbound Jami Studio change sets can be executed.";
   }
   if (
     changeSet.state !== "pending_push" &&
     changeSet.state !== "staged_revision" &&
     changeSet.state !== "approved"
   ) {
-    return "Approve the Builder change set before executing it.";
+    return "Approve the Jami Studio change set before executing it.";
   }
   return null;
 }
@@ -194,7 +194,7 @@ export async function executeBuilderSourceBatchWithDeps(
 
   const source = await deps.getSourceSnapshot(database);
   if (!source || source.sourceType !== "builder-cms") {
-    throw new Error("Attach a Builder CMS source before executing writes.");
+    throw new Error("Attach a Jami Studio CMS source before executing writes.");
   }
 
   const ids = uniqueIds(args.changeSetIds ?? defaultBatchChangeSetIds(source));
@@ -211,7 +211,7 @@ export async function executeBuilderSourceBatchWithDeps(
         return {
           changeSetId,
           status: "succeeded",
-          message: "Builder execution already succeeded; skipped.",
+          message: "Jami Studio execution already succeeded; skipped.",
         };
       }
 
@@ -246,7 +246,7 @@ const transitionSchema = z.object({
 
 export default defineAction({
   description:
-    "Execute a bounded batch of approved outbound Builder CMS change-sets. Each item uses the existing prepare and execute gates, continues on item errors, and does not publish or unpublish unless an explicit per-change-set transition is provided.",
+    "Execute a bounded batch of approved outbound Jami Studio CMS change-sets. Each item uses the existing prepare and execute gates, continues on item errors, and does not publish or unpublish unless an explicit per-change-set transition is provided.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -258,7 +258,7 @@ export default defineAction({
       .array(z.string())
       .optional()
       .describe(
-        "Approved source change-set IDs. Defaults to all approved outbound Builder change-sets.",
+        "Approved source change-set IDs. Defaults to all approved outbound Jami Studio change-sets.",
       ),
     maxConcurrency: z
       .number()
@@ -266,7 +266,7 @@ export default defineAction({
       .min(1)
       .max(MAX_BUILDER_SOURCE_BATCH_CONCURRENCY)
       .optional()
-      .describe("Maximum Builder change-sets to execute at once."),
+      .describe("Maximum Jami Studio change-sets to execute at once."),
     transitions: z
       .record(z.string(), transitionSchema)
       .optional()

@@ -33,13 +33,13 @@ export function BrowserSection() {
     <SettingsSection
       icon={<IconBrowser size={14} />}
       title="Browser Automation"
-      subtitle="Let agents control a real browser for web tasks. Requires Builder connection."
+      subtitle="Let agents control a real browser for web tasks. Requires Jami Studio connection."
       connected={connected}
     >
       {loading ? (
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
           <IconLoader2 size={10} className="animate-spin" />
-          Checking Builder connection...
+          Checking Jami Studio connection...
         </div>
       ) : connected ? (
         <div className="space-y-2">
@@ -80,8 +80,8 @@ export function BrowserSection() {
       ) : (
         <div className="space-y-2">
           <p className="text-[10px] text-muted-foreground">
-            Connect Builder to provision browser sessions without wiring browser
-            setup into every app.
+            Connect Jami Studio to provision browser sessions without wiring
+            browser setup into every app.
           </p>
           {builderConnectHref && (
             <a
@@ -99,7 +99,7 @@ export function BrowserSection() {
               }}
               className="inline-flex items-center gap-1 rounded bg-accent px-2 py-1 text-[10px] font-medium text-foreground hover:bg-accent/80"
             >
-              Connect Builder
+              Connect Jami Studio
               <IconExternalLink size={10} />
             </a>
           )}

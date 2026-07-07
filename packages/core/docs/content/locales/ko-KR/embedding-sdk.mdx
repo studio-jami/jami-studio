@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -463,7 +463,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -665,6 +665,6 @@ iframe 내에서 사용 가능한 전역 변수:
 
 ## 권장 제품 형태
 
-iframe 우선을 시작합니다. 이는 릴리스 주기 또는 CSS/런타임 가정을 결합하지 않고도 Builder.io, 고객 SaaS 앱 및 내부 관리 도구에서 작동합니다.
+iframe 우선을 시작합니다. 이는 릴리스 주기 또는 CSS/런타임 가정을 결합하지 않고도 Jami Studio, 고객 SaaS 앱 및 내부 관리 도구에서 작동합니다.
 
 사이드카 자체는 여전히 Agent-Native 앱/템플릿이어야 합니다. actions는 백엔드 API 표면이고, SQL 지원 앱 상태는 에이전트의 메모리이며, Slack 또는 Telegram과 같은 통합은 동일한 내구성 있는 채팅으로 라우팅될 수 있습니다. 임베딩 SDK는 해당 사이드카와 현재 호스트 페이지 사이에 라이브 멤브레인을 제공합니다.

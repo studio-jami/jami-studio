@@ -37,14 +37,14 @@ export default async (nitroApp: any): Promise<void> => {
     required: false,
     title: "Session replay storage",
     description:
-      "Store session replay recordings with Builder.io or S3-compatible storage.",
+      "Store session replay recordings with Jami Studio or S3-compatible storage.",
     methods: [
       {
         id: "builder",
         kind: "builder-cli-auth",
-        label: "Connect Builder.io",
+        label: "Connect Jami Studio",
         description:
-          "Builder.io's free tier includes object storage for replay chunks.",
+          "Jami Studio's free tier includes object storage for replay chunks.",
         primary: true,
         badge: "free",
         payload: { scope: "browser" },

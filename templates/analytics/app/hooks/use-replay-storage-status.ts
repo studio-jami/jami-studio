@@ -20,7 +20,7 @@ export async function fetchReplayStorageStatus(): Promise<ReplayStorageStatus> {
     uploadStatus = r.ok ? ((await r.json()) as ReplayStorageStatus) : null;
     if (uploadStatus?.configured) return uploadStatus;
   } catch {
-    // Fall through to the Builder status check.
+    // Fall through to the Jami Studio status check.
   }
 
   try {
@@ -31,7 +31,7 @@ export async function fetchReplayStorageStatus(): Promise<ReplayStorageStatus> {
     if (builderStatus?.configured) {
       return {
         configured: true,
-        activeProvider: { id: "builder", name: "Builder.io" },
+        activeProvider: { id: "builder", name: "Jami Studio" },
         builderConfigured: true,
       };
     }

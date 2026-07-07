@@ -100,7 +100,7 @@ function normalizeSourceWriteMode(
 /**
  * Single source of truth for the push mode that gates an execution. Prepare and
  * execute MUST resolve this identically, or their idempotency keys diverge and
- * the gate lookup fails ("Prepare the Builder execution gate before executing
+ * the gate lookup fails ("Prepare the Jami Studio execution gate before executing
  * it"). The write tier wins when set, so a change-set's own `pushMode` (e.g. a
  * local create hardcoded to "autosave") cannot drift from the tier.
  */
@@ -118,7 +118,7 @@ export function resolveBuilderCmsExecutionPushMode(args: {
 }
 
 /**
- * Resolve the Builder entry this change-set targets. A synthetic-fixture row
+ * Resolve the Jami Studio entry this change-set targets. A synthetic-fixture row
  * (sourceRowId `builder-<documentId>`, never matched to a real entry) resolves
  * to a null entry id, which is what makes the effect a create.
  */
@@ -228,17 +228,17 @@ function builderBodyPatch(changeSet: ContentDatabaseSourceChangeSet) {
   }
   if (!bodyChange.proposedBlocksJson) {
     blockers.push(
-      "Builder body diff could not be converted to Builder blocks.",
+      "Jami Studio body diff could not be converted to Jami Studio blocks.",
     );
     return { patch: {}, checks, blockers, hasBodyOperation: false };
   }
   try {
     const blocks = JSON.parse(bodyChange.proposedBlocksJson) as unknown;
     if (!Array.isArray(blocks)) {
-      blockers.push("Builder body diff did not produce a blocks array.");
+      blockers.push("Jami Studio body diff did not produce a blocks array.");
       return { patch: {}, checks, blockers, hasBodyOperation: false };
     }
-    checks.push("Includes converted Builder body blocks.");
+    checks.push("Includes converted Jami Studio body blocks.");
     for (const warning of bodyChange.warnings ?? []) {
       checks.push(`Body conversion warning: ${warning}`);
     }
@@ -253,7 +253,9 @@ function builderBodyPatch(changeSet: ContentDatabaseSourceChangeSet) {
       hasBodyOperation: true,
     };
   } catch {
-    blockers.push("Builder body diff contains invalid converted blocks JSON.");
+    blockers.push(
+      "Jami Studio body diff contains invalid converted blocks JSON.",
+    );
     return { patch: {}, checks, blockers, hasBodyOperation: false };
   }
 }
@@ -348,7 +350,7 @@ function builderSafetyChecks(args: {
   const blockers: string[] = [...args.bodyBlockers];
 
   if (args.operations.length === 0 && !args.hasBodyOperation) {
-    blockers.push("No Builder operations are available for this change.");
+    blockers.push("No Jami Studio operations are available for this change.");
   }
   if (args.effect === "autosave" || args.effect === "update_in_place") {
     const label = args.effect === "autosave" ? "Autosave" : "Update in place";
@@ -357,23 +359,23 @@ function builderSafetyChecks(args: {
     );
     if (args.syntheticFixtureTarget) {
       blockers.push(
-        "This row is not matched to a Builder entry yet. Refresh or match a Builder row before pushing.",
+        "This row is not matched to a Jami Studio entry yet. Refresh or match a Jami Studio row before pushing.",
       );
     } else if (!args.entryId) {
-      blockers.push(`${label} requires an existing Builder entry ID.`);
+      blockers.push(`${label} requires an existing Jami Studio entry ID.`);
     }
   }
   if (args.effect === "create_draft") {
     checks.push(
-      "Create draft writes a new Builder entry with published state set to draft.",
+      "Create draft writes a new Jami Studio entry with published state set to draft.",
     );
-    // A create_draft target has no Builder entry by definition — that is the
+    // A create_draft target has no Jami Studio entry by definition — that is the
     // whole point of a create. The unmatched-row blocker only applies to
     // effects that write to an existing entry (autosave / update_in_place).
   }
   if (args.effect === "publish") {
     checks.push(
-      "Publish transition sets Builder published state to published.",
+      "Publish transition sets Jami Studio published state to published.",
     );
     if (args.publicationTransition !== "publish") {
       blockers.push("Publish requires an explicit publication transition.");
@@ -383,7 +385,9 @@ function builderSafetyChecks(args: {
     }
   }
   if (args.effect === "unpublish") {
-    checks.push("Unpublish transition sets Builder published state to draft.");
+    checks.push(
+      "Unpublish transition sets Jami Studio published state to draft.",
+    );
     if (args.source.metadata.allowPublicationTransitions !== true) {
       blockers.push("Publication transitions are not enabled for this source.");
     }
@@ -401,18 +405,18 @@ function builderSafetyChecks(args: {
     args.source.sourceTable !== SAFE_WRITE_MODEL
   ) {
     blockers.push(
-      `Live Builder writes are only allowed for ${SAFE_WRITE_MODEL}.`,
+      `Live Jami Studio writes are only allowed for ${SAFE_WRITE_MODEL}.`,
     );
   }
   if (args.source.capabilities.liveWritesEnabled !== true) {
-    checks.push("Does not run while live Builder writes are disabled.");
+    checks.push("Does not run while live Jami Studio writes are disabled.");
     if (
       args.effect === "update_in_place" ||
       args.effect === "publish" ||
       args.effect === "unpublish"
     ) {
       blockers.push(
-        `${args.effect} requires live Builder writes to be enabled.`,
+        `${args.effect} requires live Jami Studio writes to be enabled.`,
       );
     }
   }
@@ -428,14 +432,16 @@ export function buildBuilderCmsExecutionPlan(args: {
   confirmUnpublish?: boolean;
 }): BuilderCmsExecutionPlan {
   if (args.source.sourceType !== "builder-cms") {
-    throw new Error("Builder execution plans require a Builder CMS source.");
+    throw new Error(
+      "Jami Studio execution plans require a Jami Studio CMS source.",
+    );
   }
   if (args.changeSet.direction !== "outbound") {
-    throw new Error("Only outbound Builder change sets can be prepared.");
+    throw new Error("Only outbound Jami Studio change sets can be prepared.");
   }
   if (args.changeSet.state !== "approved") {
     throw new Error(
-      "Approve the Builder change set before preparing execution.",
+      "Approve the Jami Studio change set before preparing execution.",
     );
   }
 
@@ -450,7 +456,7 @@ export function buildBuilderCmsExecutionPlan(args: {
   if (pushMode === "none") {
     if (args.source.capabilities.liveWritesEnabled === true) {
       throw new Error(
-        "Builder execution requires Autosave, Draft, or Publish push mode.",
+        "Jami Studio execution requires Autosave, Draft, or Publish push mode.",
       );
     }
   }
@@ -488,7 +494,7 @@ export function buildBuilderCmsExecutionPlan(args: {
     nestedBuilderPatch(operations),
     bodyDiffPatch.patch,
   );
-  // State-preserving effects must not include `published` in the body. Builder
+  // State-preserving effects must not include `published` in the body. Jami Studio
   // PATCH preserves omitted publication state, so only transition/create effects
   // are allowed to set it.
   const request = builderRequestForEffect({
@@ -532,16 +538,16 @@ export function buildBuilderCmsExecutionPlan(args: {
   const summaryMode = pushMode === "none" ? "read-only" : pushMode;
   const summary =
     state === "ready"
-      ? `Prepared Builder ${summaryMode} execution. Ready to send to Builder.`
+      ? `Prepared Jami Studio ${summaryMode} execution. Ready to send to Jami Studio.`
       : state === "blocked"
-        ? `Prepared Builder ${summaryMode} execution, but it is blocked: ${safety.blockers.join(" ")}`
-        : `Prepared Builder ${summaryMode} execution, but live writes are disabled.`;
+        ? `Prepared Jami Studio ${summaryMode} execution, but it is blocked: ${safety.blockers.join(" ")}`
+        : `Prepared Jami Studio ${summaryMode} execution, but live writes are disabled.`;
   const lastError =
     state === "ready"
       ? null
       : state === "blocked"
         ? safety.blockers.join(" ")
-        : "Live Builder writes are disabled for this source.";
+        : "Live Jami Studio writes are disabled for this source.";
 
   return {
     adapter: "builder-cms",
@@ -614,7 +620,7 @@ export function validateBuilderCmsExecutionDryRun(args: {
     stableJson(storedComparable.request) !== stableJson(planComparable.request)
   ) {
     mismatches.push(
-      "Stored Builder request no longer matches the approved change.",
+      "Stored Jami Studio request no longer matches the approved change.",
     );
   }
   if (
@@ -622,19 +628,19 @@ export function validateBuilderCmsExecutionDryRun(args: {
     stableJson(planComparable.operations)
   ) {
     mismatches.push(
-      "Stored Builder operations no longer match the approved change.",
+      "Stored Jami Studio operations no longer match the approved change.",
     );
   }
   if (storedComparable.effect !== planComparable.effect) {
     mismatches.push(
-      "Stored Builder effect no longer matches the approved write mode.",
+      "Stored Jami Studio effect no longer matches the approved write mode.",
     );
   }
   if (
     stableJson(storedComparable.target) !== stableJson(planComparable.target)
   ) {
     mismatches.push(
-      "Stored Builder target no longer matches the current row identity.",
+      "Stored Jami Studio target no longer matches the current row identity.",
     );
   }
 
@@ -656,7 +662,7 @@ export function validateBuilderCmsExecutionDryRun(args: {
       checks: [
         "Rebuilt execution plan from current source state.",
         "Compared request, operations, effect, and target against stored gate.",
-        "No Builder API call was made.",
+        "No Jami Studio API call was made.",
       ],
       mismatches,
     },

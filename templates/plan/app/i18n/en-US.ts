@@ -578,7 +578,8 @@ const messages = {
           "Auto will ask the agent for a rich technical plan with diagrams and implementation detail.",
       },
       autoWithLabel: "Auto: {{label}}",
-      agentMissing: "Connect the agent to run - add an API key or use Builder.",
+      agentMissing:
+        "Connect the agent to run - add an API key or use Jami Studio.",
       describeFirst: "Describe the plan first.",
       sent: "Sent to the Plan agent",
       title: "Ask agent to create plan",

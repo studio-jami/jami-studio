@@ -7,7 +7,7 @@ agents like Claude Code, Codex, and GitHub Copilot can create and open those
 surfaces directly.
 
 Plans come from two skills — `/visual-plan` and `/visual-recap` — in the
-open-source [BuilderIO/skills](https://github.com/BuilderIO/skills) repo.
+open-source [Jami Studio/skills](https://github.com/BuilderIO/skills) repo.
 
 ## `/visual-plan`
 
@@ -69,7 +69,7 @@ Install
 from the Visual Studio Marketplace, or run:
 
 ```bash
-code --install-extension Builder.agent-native
+code --install-extension Jami Studio.agent-native
 ```
 
 To add the `/visual-plan`, `/visual-recap`, and `/visual-edit` skills to your

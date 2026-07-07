@@ -210,7 +210,7 @@ La ruta Vercel/open Skills CLI también está disponible cuando solo quieres por
 instrucciones:
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 El archivo `skills` CLI sin formato instala únicamente archivos `SKILL.md`; Clientes locales MCP todavía
@@ -705,7 +705,7 @@ Si `connect dev` no puede inferir su identidad de propietario local a partir de 
 
 La ruta estándar OAuth nunca expone tokens a las aplicaciones MCP: el host almacena tokens de acceso/actualización OAuth y media las llamadas a herramientas y `resources/read` a través de la conexión MCP autenticada. Los iframes integrados reciben datos de aplicaciones y resultados de herramientas, no secretos del portador.
 
-Las inserciones de aplicaciones completas también evitan entregar el token de portador MCP al navegador. La persona que llama MCP genera un ticket de inserción único en SQL; la ruta de inicio del iframe lo consume y establece una cookie de sesión de navegador de corta duración y segura para el iframe. El aterrizaje URL lleva un parámetro de consulta temporal `__an_embed_token` solo el tiempo suficiente para que el cliente lo capture, lo elimine de la barra de direcciones y lo adjunte a llamadas `fetch` del mismo origen cuando se bloquean las cookies de terceros. Las sesiones de inserción tienen un alcance de ruta; Las recuperaciones de la aplicación incluyen el objetivo incrustado actual y el servidor rechaza la reutilización del token fuera de la ruta acuñada. Las páginas de aplicaciones no emiten intencionalmente `X-Frame-Options` o CSP `frame-ancestors`, por lo que los hosts de aplicaciones Builder, Design y MCP pueden incluirlas en marcos iframe. Las navegaciones de iframe del navegador también optan por COEP/CORP cuando sea necesario para hosts aislados de origen cruzado.
+Las inserciones de aplicaciones completas también evitan entregar el token de portador MCP al navegador. La persona que llama MCP genera un ticket de inserción único en SQL; la ruta de inicio del iframe lo consume y establece una cookie de sesión de navegador de corta duración y segura para el iframe. El aterrizaje URL lleva un parámetro de consulta temporal `__an_embed_token` solo el tiempo suficiente para que el cliente lo capture, lo elimine de la barra de direcciones y lo adjunte a llamadas `fetch` del mismo origen cuando se bloquean las cookies de terceros. Las sesiones de inserción tienen un alcance de ruta; Las recuperaciones de la aplicación incluyen el objetivo incrustado actual y el servidor rechaza la reutilización del token fuera de la ruta acuñada. Las páginas de aplicaciones no emiten intencionalmente `X-Frame-Options` o CSP `frame-ancestors`, por lo que los hosts de aplicaciones Jami Studio, Design y MCP pueden incluirlas en marcos iframe. Las navegaciones de iframe del navegador también optan por COEP/CORP cuando sea necesario para hosts aislados de origen cruzado.
 
 El flujo `connect` alojado de reserva nunca copia el secreto compartido de la implementación. En lugar de ello:
 

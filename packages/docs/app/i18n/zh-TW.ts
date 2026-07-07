@@ -1208,11 +1208,11 @@ const messages = {
       eyebrow: "隱私政策",
       title: "Agent-Native 託管應用程式",
       intro:
-        "本政策解釋了 Builder.io 在執行 Agent-Native 託管應用程式、託管範本、示範和官方瀏覽器擴充功能時如何收集、使用、共用和保留資料。",
+        "本政策解釋了 Jami Studio 在執行 Agent-Native 託管應用程式、託管範本、示範和官方瀏覽器擴充功能時如何收集、使用、共用和保留資料。",
       scopeCards: {
         hosted: {
           title: "託管應用程式",
-          body: "當 Builder.io 為您運營 Agent-Native 服務或託管範本時涵蓋。",
+          body: "當 Jami Studio 為您運營 Agent-Native 服務或託管範本時涵蓋。",
         },
         openSource: {
           title: "開放原始碼",
@@ -1236,8 +1236,8 @@ const messages = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是開放原始碼的，來源程式碼可在 MIT 授權證下獲得。本政策僅適用於 Builder.io 為 Agent-Native 使用者運營的託管應用程式和服務。它不適用於其他人對程式碼的使用，包括分叉、自訂範本、私人部署或自託管版本。如果您操作自己的部署，則您應對自己的資料實踐和隱私政策負責。",
-        scope2Prefix: "本政策旨在補充 Builder.io 更廣泛的政策",
+          "Agent-Native 是開放原始碼的，來源程式碼可在 MIT 授權證下獲得。本政策僅適用於 Jami Studio 為 Agent-Native 使用者運營的託管應用程式和服務。它不適用於其他人對程式碼的使用，包括分叉、自訂範本、私人部署或自託管版本。如果您操作自己的部署，則您應對自己的資料實踐和隱私政策負責。",
+        scope2Prefix: "本政策旨在補充 Jami Studio 更廣泛的政策",
         scope2Suffix: "對於 Agent-Native 託管應用程式行為。",
         clips1:
           "Agent-Native Clips Chrome extension 可幫助您開始基於瀏覽器的錄製，並在啟用後將瀏覽器診斷附加到剪輯。它可能會收集所選的捕獲來源、您選取包含的攝影機和麥克風媒體、活動分頁標題和 URL，以及將擴充功能連線到託管 Clips 所需的驗證狀態。",
@@ -1260,7 +1260,7 @@ const messages = {
         changes1:
           "隨著 Agent-Native 託管應用程式的變化，我們可能會更新此政策。頁面頂部的更新日期顯示該政策上次修訂的時間。",
         changes2Prefix:
-          "對於隱私請求或疑問，請透過以下列出的支援和隱私管道聯絡 Builder.io",
+          "對於隱私請求或疑問，請透過以下列出的支援和隱私管道聯絡 Jami Studio",
       },
       dataCategories: {
         account: {
@@ -1291,18 +1291,18 @@ const messages = {
       },
       links: {
         builderPrivacy: "隱私政策",
-        builderPrivacyFull: "Builder.io 隱私政策",
+        builderPrivacyFull: "Jami Studio 隱私政策",
       },
     },
     terms: {
       eyebrow: "服務條款",
       title: "Agent-Native 託管應用程式",
       intro:
-        "當 Builder.io 為您運營 Agent-Native 託管應用程式、託管範本、示範和官方託管服務時，這些條款適用。",
+        "當 Jami Studio 為您運營 Agent-Native 託管應用程式、託管範本、示範和官方託管服務時，這些條款適用。",
       scopeCards: {
         hosted: {
           title: "託管應用程式",
-          body: "當您使用由 Builder.io 操作的 Agent-Native 應用程式或範本時，將受到保護。",
+          body: "當您使用由 Jami Studio 操作的 Agent-Native 應用程式或範本時，將受到保護。",
         },
         openSource: {
           title: "開放原始碼",
@@ -1310,7 +1310,7 @@ const messages = {
         },
         selfHosted: {
           title: "自託管",
-          body: "由您或其他人操作的單獨部署不是 Builder.io 託管服務。",
+          body: "由您或其他人操作的單獨部署不是 Jami Studio 託管服務。",
         },
       },
       sections: {
@@ -1327,19 +1327,19 @@ const messages = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是開放原始碼的，其來源程式碼可在 MIT 授權證下獲得。這些條款僅適用於 Builder.io 為 Agent-Native 使用者運營的託管應用程式和服務。它們不管理在 Builder.io 之外執行的分叉、自訂範本、私人部署或自託管版本。",
-        scope2Prefix: "這些術語補充了 Builder.io 的更廣泛範圍",
+          "Agent-Native 是開放原始碼的，其來源程式碼可在 MIT 授權證下獲得。這些條款僅適用於 Jami Studio 為 Agent-Native 使用者運營的託管應用程式和服務。它們不管理在 Jami Studio 之外執行的分叉、自訂範本、私人部署或自託管版本。",
+        scope2Prefix: "這些術語補充了 Jami Studio 的更廣泛範圍",
         scope2Middle: "和 Agent-Native",
         scope2Suffix:
           "如果您代表公司或組織使用託管 Agent-Native 應用程式，則表示您有權接受該組織的這些條款。",
         hostedService:
-          "Builder.io 可以提供託管的 Agent-Native 應用程式、範本、示範、共用工作區、瀏覽器擴充功能和相關代理工作流程。隨著產品的發展，託管服務可能會更新、限制、暫停或終止。",
+          "Jami Studio 可以提供託管的 Agent-Native 應用程式、範本、示範、共用工作區、瀏覽器擴充功能和相關代理工作流程。隨著產品的發展，託管服務可能會更新、限制、暫停或終止。",
         accounts1:
           "您對帳戶資訊的準確性、帳戶下的活動以及保證憑證的安全負責。託管 Agent-Native 應用程式可能包括組織功能、邀請、共用資源、連線整合和特定於應用程式的存取控制。僅邀請使用者並連線您有權使用的服務。",
         accounts2:
-          "如果您認為帳戶、工作區、整合或共用資源已被外洩或濫用，請立即聯絡 Builder.io 支援人員。",
+          "如果您認為帳戶、工作區、整合或共用資源已被外洩或濫用，請立即聯絡 Jami Studio 支援人員。",
         content1:
-          "您保留對您建立、上傳、紀錄、匯入或連線到託管 Agent-Native 應用程式的內容的所有權。您授予 Builder.io 託管、處理、傳輸、顯示、轉換、分析和儲存該內容所需的有限權限，以便託管應用程式及其代理工作流程可以執行。",
+          "您保留對您建立、上傳、紀錄、匯入或連線到託管 Agent-Native 應用程式的內容的所有權。您授予 Jami Studio 託管、處理、傳輸、顯示、轉換、分析和儲存該內容所需的有限權限，以便託管應用程式及其代理工作流程可以執行。",
         content2:
           "您有責任擁有您向服務提供的內容、錄音、提示、檔案、憑證和連線的整合資料所需的權利和權限。",
         agents1:
@@ -1349,16 +1349,16 @@ const messages = {
         openSource:
           "這些條款不會更改 Agent-Native 程式碼的開放原始碼授權。如果您下載、分叉、修改或自託管 Agent-Native，則 MIT 授權證和您為自己的部署設定的條款將管轄該使用。您負責您所操作的部署的安全性、隱私性、合規性、操作和使用者支援。",
         suspensionPrefix:
-          "當需要保護使用者、遵守法律、防止濫用、解決安全風險或運營服務時，Builder.io 可以暫停或限制對託管 Agent-Native 服務的存取。您可以隨時停止使用託管服務。某些資料可能會在備份、記錄或審核紀錄中保留一段有限的時間，如",
+          "當需要保護使用者、遵守法律、防止濫用、解決安全風險或運營服務時，Jami Studio 可以暫停或限制對託管 Agent-Native 服務的存取。您可以隨時停止使用託管服務。某些資料可能會在備份、記錄或審核紀錄中保留一段有限的時間，如",
         disclaimers1:
-          "託管 Agent-Native 服務按原樣和可用狀態提供，並遵守適用法律以及您與 Builder.io 簽訂的任何單獨書面協議。 Builder.io 不保證託管應用程式、整合、自動化或 AI 輸出不會中斷、無錯誤或滿足所有要求。",
+          "託管 Agent-Native 服務按原樣和可用狀態提供，並遵守適用法律以及您與 Jami Studio 簽訂的任何單獨書面協議。 Jami Studio 不保證託管應用程式、整合、自動化或 AI 輸出不會中斷、無錯誤或滿足所有要求。",
         disclaimers2Prefix:
-          "在法律允許的最大範圍內，Builder.io 對託管 Agent-Native 服務的責任受到 Builder.io 更廣泛的條款中所述的限制。",
+          "在法律允許的最大範圍內，Jami Studio 對託管 Agent-Native 服務的責任受到 Jami Studio 更廣泛的條款中所述的限制。",
         disclaimers2Suffix: "或適用於您的使用的其他書面協議。",
         changes1:
           "隨著 Agent-Native 託管應用程式的變化，我們可能會更新這些條款。頁面頂部的更新日期顯示了條款的最新修訂時間。",
         changes2Prefix:
-          "如果對這些條款有疑問，請透過 Builder.io 中列出的支援管道聯絡 Builder.io",
+          "如果對這些條款有疑問，請透過 Jami Studio 中列出的支援管道聯絡 Jami Studio",
       },
       hostedServicePoints: {
         create: "建立和操作託管 Agent-Native 工作區和範本應用程式。",

@@ -27,7 +27,7 @@ export async function noteBuilderCreditsExhausted({
     await writeAppState("refresh-signal", { ts: Date.now() });
   } catch (err) {
     console.warn(
-      "[clips] failed to record Builder credit state:",
+      "[clips] failed to record Jami Studio credit state:",
       (err as Error)?.message ?? String(err),
     );
   }
@@ -39,7 +39,7 @@ export async function clearBuilderCreditsExhausted(): Promise<void> {
     if (removed) await writeAppState("refresh-signal", { ts: Date.now() });
   } catch (err) {
     console.warn(
-      "[clips] failed to clear Builder credit state:",
+      "[clips] failed to clear Jami Studio credit state:",
       (err as Error)?.message ?? String(err),
     );
   }

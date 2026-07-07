@@ -2,19 +2,19 @@
  * Browser-side video compression for clips that would exceed the upload
  * provider's per-file limit.
  *
- * The motivating bug: Builder.io's `/api/v1/upload` looks like it caps files
+ * The motivating bug: Jami Studio's `/api/v1/upload` looks like it caps files
  * at 100 MB (`fileUpload({ limits: { fileSize: 100 * 1024 * 1024 } })` plus a
  * `express.raw({ limit: '200mb' })` body limit), but the REAL ceiling is far
  * lower: the upload endpoint runs as a Gen-2 Cloud Function (Cloud Run), whose
  * inbound HTTP request body is hard-capped at ~32 MB by the Google Front End —
  * a platform limit the app config can't raise. Bodies above ~32 MB are dropped
  * at the edge or OOM the 256 MB function while it buffers the whole body in
- * memory, and the client sees an opaque `Builder.io upload failed (500)`. So a
+ * memory, and the client sees an opaque `Jami Studio upload failed (500)`. So a
  * blob only has to clear ~32 MB — not 100 MB — to fail. Saee hit this on her
  * second clip. We therefore compress to a target well under 32 MB and hard-stop
- * client-side with a clear message instead of letting Builder 500.
+ * client-side with a clear message instead of letting Jami Studio 500.
  *
- * (Builder has no resumable / signed-URL upload endpoint today, so true
+ * (Jami Studio has no resumable / signed-URL upload endpoint today, so true
  * 100 MB–2 GB videos need either an S3-compatible provider or a new
  * builder-internal direct-to-GCS flow — tracked as separate work.)
  *
@@ -28,15 +28,15 @@
  * we retry progressively smaller compact profiles.
  *
  * Out-of-scope here:
- *  - Raising Builder.io's per-file limit (server-side, separate work).
- *  - Uploading via multipart instead of one POST (requires Builder.io API
+ *  - Raising Jami Studio's per-file limit (server-side, separate work).
+ *  - Uploading via multipart instead of one POST (requires Jami Studio API
  *    changes + server-side reassembly).
  *  - Returning 413 instead of 500 from upload (server-side, separate work).
  *
  * Threshold: skip compression under 24 MB so the small-clip happy path pays no
- * extra cost. The binding constraint is Builder's ~32 MB Cloud Run edge cap
+ * extra cost. The binding constraint is Jami Studio's ~32 MB Cloud Run edge cap
  * (see above), so we target ~18 MB and hard-stop at 30 MB — a blob that clears
- * the client check is then comfortably under both Builder's ~32 MB edge and the
+ * the client check is then comfortably under both Jami Studio's ~32 MB edge and the
  * server's SQL-staging cap.
  */
 
@@ -49,7 +49,7 @@ import {
 /**
  * Master switch for browser-side compression.
  *
- * Builder's upload provider now handles large files directly (>30 MB go
+ * Jami Studio's upload provider now handles large files directly (>30 MB go
  * through the GCS signed-URL flow in `packages/core/src/file-upload/builder.ts`),
  * so we no longer need to shrink recordings client-side. ffmpeg.wasm transcode
  * is slow, so it stays off.
@@ -60,7 +60,7 @@ import {
  */
 export const COMPRESSION_ENABLED = false;
 
-/** Start compressing at 24 MB. Below this, the upload clears Builder's ~32 MB
+/** Start compressing at 24 MB. Below this, the upload clears Jami Studio's ~32 MB
  * Cloud Run edge cap and we don't pay for ffmpeg.wasm load + transcode. */
 export const COMPRESS_THRESHOLD_BYTES = 24 * 1024 * 1024;
 export const AUDIO_LOUDNESS_FILTER = "loudnorm=I=-16:TP=-1.5:LRA=11";
@@ -345,7 +345,7 @@ function pickEncodeArgs(
  *
  * Errors during compression are NOT thrown — we return a result with
  * `compressed: false` and the original blob, so the caller can still attempt
- * to upload (and let Builder.io's 500 / our hard-cap check surface to Sentry
+ * to upload (and let Jami Studio's 500 / our hard-cap check surface to Sentry
  * with the original-bytes context). The optional `onError` callback receives
  * a structured failure record for Sentry tagging.
  */

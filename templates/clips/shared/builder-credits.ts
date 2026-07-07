@@ -46,7 +46,7 @@ export function isBuilderCreditsExhaustedMessage(
     normalized.includes("credits limit") ||
     normalized.includes("monthly ai credits") ||
     normalized.includes("daily ai credits") ||
-    normalized.includes("builder.io plan") ||
+    normalized.includes("jami.studio plan") ||
     (normalized.includes("builder") && normalized.includes("credits"))
   );
 }
@@ -99,7 +99,7 @@ export function normalizeBuilderCreditsStatus(
   const message =
     typeof raw.message === "string" && raw.message.trim()
       ? raw.message
-      : "Builder.io credits are paused.";
+      : "Jami Studio credits are paused.";
 
   const updatedAt =
     typeof raw.updatedAt === "string" && raw.updatedAt.trim()

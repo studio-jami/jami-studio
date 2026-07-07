@@ -210,7 +210,7 @@ Le chemin Vercel/open Skills CLI est également disponible lorsque vous souhaite
 instructions :
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 Le `skills` brut CLI installe uniquement les fichiers `SKILL.md` ; les clients locaux MCP sont toujours
@@ -705,7 +705,7 @@ Si `connect dev` ne peut pas déduire votre identité de propriétaire local à 
 
 Le chemin OAuth standard n'expose jamais les jetons aux applications MCP : l'hôte stocke les jetons d'accès/actualisation OAuth et assure la médiation des appels d'outils et `resources/read` via la connexion authentifiée MCP. Les iframes intégrées reçoivent les données de l'application et les résultats des outils, pas les secrets du porteur.
 
-Les intégrations d'applications complètes évitent également de transmettre le jeton du porteur MCP au navigateur. L'appelant MCP génère un ticket d'intégration unique dans SQL ; la route de lancement de l'iframe le consomme et définit un cookie de session de navigateur de courte durée et sécurisé par l'iframe. L'atterrissage URL contient un paramètre de requête `__an_embed_token` temporaire juste assez longtemps pour que le client puisse le capturer, le supprimer de la barre d'adresse et l'attacher aux appels `fetch` de même origine lorsque les cookies tiers sont bloqués. Les sessions d'intégration sont limitées à l'itinéraire ; les récupérations d'application incluent la cible intégrée actuelle et le serveur rejette la réutilisation du jeton en dehors de la route créée. Les pages d'application n'émettent intentionnellement pas `X-Frame-Options` ou CSP `frame-ancestors`, de sorte que les hôtes d'application Builder, Design et MCP peuvent les iframer. Les navigations iframe du navigateur optent également pour COEP/CORP lorsque cela est nécessaire pour les hôtes isolés d'origines croisées.
+Les intégrations d'applications complètes évitent également de transmettre le jeton du porteur MCP au navigateur. L'appelant MCP génère un ticket d'intégration unique dans SQL ; la route de lancement de l'iframe le consomme et définit un cookie de session de navigateur de courte durée et sécurisé par l'iframe. L'atterrissage URL contient un paramètre de requête `__an_embed_token` temporaire juste assez longtemps pour que le client puisse le capturer, le supprimer de la barre d'adresse et l'attacher aux appels `fetch` de même origine lorsque les cookies tiers sont bloqués. Les sessions d'intégration sont limitées à l'itinéraire ; les récupérations d'application incluent la cible intégrée actuelle et le serveur rejette la réutilisation du jeton en dehors de la route créée. Les pages d'application n'émettent intentionnellement pas `X-Frame-Options` ou CSP `frame-ancestors`, de sorte que les hôtes d'application Jami Studio, Design et MCP peuvent les iframer. Les navigations iframe du navigateur optent également pour COEP/CORP lorsque cela est nécessaire pour les hôtes isolés d'origines croisées.
 
 Le flux `connect` hébergé de secours ne copie jamais le secret partagé du déploiement. Au lieu de cela :
 

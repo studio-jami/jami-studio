@@ -1,15 +1,15 @@
 /**
- * create-design-branch — start/link a Builder-hosted branch for a fusion-backed
+ * create-design-branch — start/link a Jami Studio-hosted branch for a fusion-backed
  * design (§6.6 of DESIGN-STUDIO-PLAN.md).
  *
  * Behaviour:
  * - **Capability gate (server-side):** re-checks `branch` capability from the
  *   design's source.  When `unavailable` (inline/localhost), returns a CTA
  *   explaining what the user needs to do — never fakes a branch call.
- * - **Builder gate:** if `resolveIsBuilderBranchingEnabled()` returns false,
- *   returns a `connectRequired` CTA pointing at the Builder connect flow.
+ * - **Jami Studio gate:** if `resolveIsBuilderBranchingEnabled()` returns false,
+ *   returns a `connectRequired` CTA pointing at the Jami Studio connect flow.
  * - **Branch creation:** calls `runBuilderAgent()` with a scoped prompt that
- *   asks the agent to create/link a branch for the design.  The Builder cloud
+ *   asks the agent to create/link a branch for the design.  The Jami Studio cloud
  *   agent runs in a sandbox and returns `{ branchName, projectId, url, status }`.
  * - **Persistence:** stores the returned branch metadata into the design's `data`
  *   JSON blob under a `branches` key, keyed by `branchName`.  This is additive —
@@ -64,7 +64,7 @@ function parseDesignData(raw: unknown): Record<string, unknown> {
 }
 
 /**
- * Build a concise branch-creation prompt for the Builder cloud agent.
+ * Build a concise branch-creation prompt for the Jami Studio cloud agent.
  * The prompt identifies the design by title and requests a branch.
  */
 function buildBranchPrompt(
@@ -79,7 +79,7 @@ function buildBranchPrompt(
     `Create a new branch for the design "${designTitle}" (id: ${designId}).`,
     purposeLine,
     "The branch should reflect the current design state and be ready for",
-    "iterative edits via the Builder Visual Editor.",
+    "iterative edits via the Jami Studio Visual Editor.",
   ].join("\n");
 }
 
@@ -87,10 +87,10 @@ function buildBranchPrompt(
 
 export default defineAction({
   description:
-    "Start or link a Builder-hosted branch for a fusion-backed design. " +
+    "Start or link a Jami Studio-hosted branch for a fusion-backed design. " +
     "Requires the design's source to advertise the 'branch' capability (fusion tier) " +
-    "AND Builder.io to be connected. " +
-    "For inline/localhost designs without Builder, returns a ctaRequired response " +
+    "AND Jami Studio to be connected. " +
+    "For inline/localhost designs without Jami Studio, returns a ctaRequired response " +
     "with a 'Make it real' upgrade message — never fakes a branch call. " +
     "On success, persists branch metadata (branchName, url, status, projectId) " +
     "into the design's data blob and creates a design_versions snapshot so the " +
@@ -101,15 +101,15 @@ export default defineAction({
       .string()
       .optional()
       .describe(
-        "Desired branch name. Builder may normalise or suffix it to ensure " +
-          "uniqueness. Omit to let Builder auto-generate a name.",
+        "Desired branch name. Jami Studio may normalise or suffix it to ensure " +
+          "uniqueness. Omit to let Jami Studio auto-generate a name.",
       ),
     purpose: z
       .string()
       .optional()
       .describe(
         "Optional short description of what this branch is for (fed to the " +
-          "Builder cloud agent as context).",
+          "Jami Studio cloud agent as context).",
       ),
   }),
   run: async ({ designId, branchName, purpose }) => {
@@ -130,9 +130,9 @@ export default defineAction({
     const sourceType =
       normalizeDesignSourceType(designData["sourceType"]) ?? "inline";
 
-    // For fusion sources, resolve the Builder connection status first so that
+    // For fusion sources, resolve the Jami Studio connection status first so that
     // resolveFusionCapabilities returns the CONNECTED map (with branch/deploy
-    // available) when Builder is actually wired up.  For inline/localhost the
+    // available) when Jami Studio is actually wired up.  For inline/localhost the
     // generic resolver is sufficient — those sources never have branch.
     const builderEnabled =
       sourceType === "fusion"
@@ -155,16 +155,16 @@ export default defineAction({
           ? ("connect-builder" as const)
           : ("make-it-real" as const),
         ctaMessage: isFusion
-          ? "Builder is not yet connected. Connect Builder.io to create branches for this design."
-          : "Branching requires a Builder-hosted app. Use 'Make it real' to upgrade this inline design to a real-app source, then create branches.",
+          ? "Jami Studio is not yet connected. Connect Jami Studio to create branches for this design."
+          : "Branching requires a Jami Studio-hosted app. Use 'Make it real' to upgrade this inline design to a real-app source, then create branches.",
         branch: null,
         versionId: null,
       };
     }
 
     // At this point sourceType === "fusion" and builderEnabled === true,
-    // so no separate Builder gate is needed — the capability check above
-    // already required a connected Builder to set branch=available.
+    // so no separate Jami Studio gate is needed — the capability check above
+    // already required a connected Jami Studio to set branch=available.
 
     // ── Snapshot the current design state before branching ──────────────────
     // Fetch all files so the snapshot captures the full pre-branch state.
@@ -201,7 +201,7 @@ export default defineAction({
       createdAt: now,
     });
 
-    // ── Run the Builder cloud agent to create the branch ────────────────────
+    // ── Run the Jami Studio cloud agent to create the branch ────────────────────
     const projectId = await resolveBuilderBranchProjectId();
     const userEmail = getRequestUserEmail();
     if (!userEmail) throw new Error("No authenticated user");
@@ -236,7 +236,7 @@ export default defineAction({
     const updatedData = JSON.stringify({
       ...designData,
       branches: [...existingBranches, branchEntry],
-      // Upgrade the source type to fusion once a Builder branch is provisioned,
+      // Upgrade the source type to fusion once a Jami Studio branch is provisioned,
       // so the capability matrix reflects the new real-app tier.
       sourceType: "fusion",
     });

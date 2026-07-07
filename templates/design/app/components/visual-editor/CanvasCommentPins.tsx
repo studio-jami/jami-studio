@@ -532,7 +532,7 @@ export function CanvasCommentPins({
 
     try {
       // Use the client chat bridge (not the shared `agentChat.submit`) so the
-      // request routes correctly when design is embedded in Builder/Frame
+      // request routes correctly when design is embedded in Jami Studio/Frame
       // and so the agent sidebar is reliably opened via the `agent-panel:open`
       // custom event even if the user has it collapsed.
       sendToDesignAgentChat({

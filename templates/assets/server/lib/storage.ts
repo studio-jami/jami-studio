@@ -2,7 +2,7 @@
  * Storage layer for the Assets template.
  *
  * Routes through the framework's `uploadFile()` provider chain so the same
- * code path works whether the deploy uses Builder.io managed storage,
+ * code path works whether the deploy uses Jami Studio managed storage,
  * S3-compatible object storage (registered via `s3FileUploadProvider`), or
  * the local-fs fallback in dev.
  *
@@ -85,8 +85,8 @@ async function readPublicPathKey(key: string): Promise<Buffer> {
 }
 
 /**
- * True if a real upload provider is registered (S3 or Builder.io), or if the
- * Builder.io credential is resolvable per-request. Used by the onboarding
+ * True if a real upload provider is registered (S3 or Jami Studio), or if the
+ * Jami Studio credential is resolvable per-request. Used by the onboarding
  * step's `isComplete` check.
  */
 export async function isObjectStorageConfigured(): Promise<boolean> {
@@ -114,7 +114,7 @@ export async function putObject(input: {
   // Buffer extends Uint8Array, so a single cast covers both inputs.
   const data: Uint8Array = input.body;
 
-  // Try the framework provider chain first (S3 → Builder.io → SQL fallback).
+  // Try the framework provider chain first (S3 → Jami Studio → SQL fallback).
   const result = await uploadFile({
     data,
     filename,
@@ -131,7 +131,7 @@ export async function putObject(input: {
   // Local fs fallback for dev (no provider configured).
   if (process.env.NODE_ENV === "production") {
     throw new Error(
-      "Asset storage is not configured. Connect Builder.io in onboarding, set BUILDER_PRIVATE_KEY, or fill in the ASSETS_STORAGE_* secrets.",
+      "Asset storage is not configured. Connect Jami Studio in onboarding, set BUILDER_PRIVATE_KEY, or fill in the ASSETS_STORAGE_* secrets.",
     );
   }
   const localPath = path.join(LOCAL_ROOT, input.key);

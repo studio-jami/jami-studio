@@ -15,7 +15,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "order.completed",
   { total: 49.99, items: 3 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -101,7 +101,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "meal.logged",
   { mealName: "Salad", calories: 350 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -112,7 +112,7 @@ track(
 ```ts
 import { identify } from "@agent-native/core/tracking";
 
-identify("steve@builder.io", { plan: "pro", company: "Builder.io" });
+identify("steve@jami.studio", { plan: "pro", company: "Jami Studio" });
 ```
 
 需要自定义后端、提供程序注册表 API 或批处理/单例内部组件？见最后的[Advanced: custom providers & internals](#advanced)。
@@ -342,7 +342,7 @@ interface TrackingEvent {
 - `llm_connection_source` — `app_secrets`、`settings` 或 `env`
 - `llm_connection_configured` — LLM 连接是否可用
 
-该框架还跟踪来自 Connect Builder CTA 的 `builder connect clicked`，服务器端 Builder 连接路由跟踪已启动/成功/失败的生命周期事件。 `configureTracking()`由框架自动调用；您不需要在自己的模板代码中调用它。
+该框架还跟踪来自 Connect Jami Studio CTA 的 `builder connect clicked`，服务器端 Jami Studio 连接路由跟踪已启动/成功/失败的生命周期事件。 `configureTracking()`由框架自动调用；您不需要在自己的模板代码中调用它。
 
 </details>
 

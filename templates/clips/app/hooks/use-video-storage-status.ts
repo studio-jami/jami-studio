@@ -20,7 +20,7 @@ export async function fetchVideoStorageStatus(): Promise<VideoStorageStatus> {
     uploadStatus = r.ok ? ((await r.json()) as VideoStorageStatus) : null;
     if (uploadStatus?.configured) return uploadStatus;
   } catch {
-    // Fall through to the Builder status check.
+    // Fall through to the Jami Studio status check.
   }
 
   try {
@@ -31,7 +31,7 @@ export async function fetchVideoStorageStatus(): Promise<VideoStorageStatus> {
     if (builderStatus?.configured) {
       return {
         configured: true,
-        activeProvider: { id: "builder", name: "Builder.io" },
+        activeProvider: { id: "builder", name: "Jami Studio" },
         builderConfigured: true,
       };
     }

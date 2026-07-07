@@ -55,7 +55,7 @@ const CODE_AGENT_PROVIDER_DEFINITIONS: Array<{
 }> = [
   {
     id: "builder",
-    label: "Builder.io",
+    label: "Jami Studio",
     keys: ["BUILDER_PRIVATE_KEY", "BUILDER_PUBLIC_KEY"],
   },
   {

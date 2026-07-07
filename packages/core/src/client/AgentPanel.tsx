@@ -606,7 +606,7 @@ function CodeAccessUnavailablePanel({
   description,
   ctaLabel,
   ctaHref,
-  secondaryCtaLabel = "Use Builder",
+  secondaryCtaLabel = "Use Jami Studio",
   secondaryCtaHref,
   compact = false,
 }: {

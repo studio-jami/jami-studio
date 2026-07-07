@@ -7230,18 +7230,18 @@ export default function DesignEditor() {
 
   useEffect(() => {
     if (!isBuilderDesignEmbed) return;
-    // Announce ready to Builder. The trusted origin is not yet known at this
+    // Announce ready to Jami Studio. The trusted origin is not yet known at this
     // point so we use "*" — this message carries no user data.
     window.parent.postMessage({ type: "agentNative.appReady" }, "*");
 
     function handleDesignHostMessage(event: MessageEvent) {
-      // Only accept messages from builder.io origins
+      // Only accept messages from jami.studio origins
       const origin = event.origin ?? "";
       try {
         const hostname = new URL(origin).hostname.toLowerCase();
         const trusted =
-          hostname === "builder.io" ||
-          hostname.endsWith(".builder.io") ||
+          hostname === "jami.studio" ||
+          hostname.endsWith(".jami.studio") ||
           hostname === "builder.my" ||
           hostname.endsWith(".builder.my") ||
           hostname === "localhost" ||
@@ -8109,7 +8109,7 @@ export default function DesignEditor() {
   >(null);
 
   // Result payload returned by migrate-inline-design-to-app on success.
-  // `null` = not yet migrated; populated once the Builder agent accepts the job.
+  // `null` = not yet migrated; populated once the Jami Studio agent accepts the job.
   const [migrationResult, setMigrationResult] = useState<{
     branchName?: string;
     url?: string;
@@ -9050,7 +9050,7 @@ export default function DesignEditor() {
         cta: r?.cta,
       });
 
-      // When the Builder agent accepted the job (status = "processing"),
+      // When the Jami Studio agent accepted the job (status = "processing"),
       // flip the design data to sourceType "fusion" so capability-gated
       // panels (branches, deploy) light up on refresh.
       if (r?.status === "processing" && r?.url) {
@@ -9072,7 +9072,7 @@ export default function DesignEditor() {
           },
         );
       } else if (r?.status === "not-configured") {
-        // Builder not connected — leave dialog open to show the CTA.
+        // Jami Studio not connected — leave dialog open to show the CTA.
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Migration failed";
@@ -11612,7 +11612,7 @@ export default function DesignEditor() {
     [designDataJson],
   );
 
-  // Builder-hosted preview URL for fusion-source designs. Prefers the flat
+  // Jami Studio-hosted preview URL for fusion-source designs. Prefers the flat
   // `fusionUrl` written by the "Make it real" migration; falls back to the
   // full-app-building `fusionApp.previewUrl` linkage so container dev-server
   // screens render the same way once the container reports a preview URL.
@@ -27123,9 +27123,9 @@ ${serializedHtml}
       {/* §6.6 — "Make this a real app" dialog.
           Three states:
           1. Idle — confirm prompt with description of what will happen.
-          2. Migrating — spinner while the Builder cloud agent accepts the job.
+          2. Migrating — spinner while the Jami Studio cloud agent accepts the job.
           3. Success — branchName + url; sourceType already flipped to fusion.
-          4. Not-configured — CTA to connect Builder.io.
+          4. Not-configured — CTA to connect Jami Studio.
       */}
       <Dialog
         open={makeRealDialogOpen}
@@ -27134,7 +27134,7 @@ ${serializedHtml}
         }}
       >
         <DialogContent className="sm:max-w-md">
-          {/* Not-configured: Builder not connected or no project ID */}
+          {/* Not-configured: Jami Studio not connected or no project ID */}
           {migrationResult?.status === "not-configured" &&
           migrationResult.cta ? (
             <>
@@ -27170,7 +27170,7 @@ ${serializedHtml}
               </DialogFooter>
             </>
           ) : migrationResult?.status === "processing" ? (
-            /* Success: Builder accepted the migration job */
+            /* Success: Jami Studio accepted the migration job */
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
@@ -27179,7 +27179,7 @@ ${serializedHtml}
                 </DialogTitle>
                 <DialogDescription>
                   {
-                    "Builder is generating a React app branch from your design. The original inline design is preserved and recoverable." /* i18n-ignore */
+                    "Jami Studio is generating a React app branch from your design. The original inline design is preserved and recoverable." /* i18n-ignore */
                   }
                 </DialogDescription>
               </DialogHeader>
@@ -27201,7 +27201,7 @@ ${serializedHtml}
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-sm text-[var(--design-editor-accent-color)] hover:underline"
                   >
-                    {"Open in Builder" /* i18n-ignore */}
+                    {"Open in Jami Studio" /* i18n-ignore */}
                     <IconExternalLink className="size-3.5" />
                   </a>
                 )}
@@ -27232,7 +27232,7 @@ ${serializedHtml}
                 </DialogTitle>
                 <DialogDescription>
                   {
-                    "Connect Builder.io to convert this design into a React + Tailwind app with real components, props, branches, and deploys. Your current inline design is preserved as a snapshot you can restore at any time." /* i18n-ignore */
+                    "Connect Jami Studio to convert this design into a React + Tailwind app with real components, props, branches, and deploys. Your current inline design is preserved as a snapshot you can restore at any time." /* i18n-ignore */
                   }
                 </DialogDescription>
               </DialogHeader>
@@ -27241,12 +27241,12 @@ ${serializedHtml}
                 <ul className="list-disc pl-4 space-y-1">
                   <li>
                     {
-                      "Your design HTML and tokens are sent to the Builder cloud agent" /* i18n-ignore */
+                      "Your design HTML and tokens are sent to the Jami Studio cloud agent" /* i18n-ignore */
                     }
                   </li>
                   <li>
                     {
-                      "A React + Tailwind branch is generated in Builder" /* i18n-ignore */
+                      "A React + Tailwind branch is generated in Jami Studio" /* i18n-ignore */
                     }
                   </li>
                   <li>
@@ -27262,7 +27262,7 @@ ${serializedHtml}
                 </ul>
                 <p className="pt-1 text-xs">
                   {
-                    "Requires Builder.io to be connected with a branch project configured." /* i18n-ignore */
+                    "Requires Jami Studio to be connected with a branch project configured." /* i18n-ignore */
                   }
                 </p>
               </div>

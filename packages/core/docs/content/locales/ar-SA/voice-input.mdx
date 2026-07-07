@@ -1,19 +1,19 @@
 ---
 title: "الإدخال الصوتي"
-description: "الإملاء الصوتي في مؤلف دردشة الوكيل — Builder Gemini وموفرو BYOK والاحتياطي لحديث الويب في المتصفح."
+description: "الإملاء الصوتي في مؤلف دردشة الوكيل — Jami Studio Gemini وموفرو BYOK والاحتياطي لحديث الويب في المتصفح."
 ---
 
 # الإدخال الصوتي
 
 يحتوي كل تطبيق أصلي للوكيل على ميكروفون في مؤلف الدردشة. انقر فوقه، وتحدث، وسيتم نسخ كلماتك إلى الموجه. مفيد على الهاتف المحمول، ومفيد للمطالبات الطويلة، ومفيد عندما تكون يديك على شيء آخر.
 
-يتعامل إطار العمل مع كل هذا تلقائيًا. يحصل المستخدمون المتصلون بـ Builder على Gemini Flash-Lite المستضاف على Builder افتراضيًا؛ وإلا يمكن للمستخدمين إحضار مفتاح الموفر الخاص بهم أو العودة إلى التعرف على الكلام في المتصفح.
+يتعامل إطار العمل مع كل هذا تلقائيًا. يحصل المستخدمون المتصلون بـ Jami Studio على Gemini Flash-Lite المستضاف على Jami Studio افتراضيًا؛ وإلا يمكن للمستخدمين إحضار مفتاح الموفر الخاص بهم أو العودة إلى التعرف على الكلام في المتصفح.
 
 ## كيفية العمل {#how-it-works}
 
 يسجل زر صوت الملحن الصوت في المتصفح، ثم يختار الموفر:
 
-1. **Builder Gemini Flash-Lite (افتراضي عند اتصال Builder).** يقوم المتصفح بنشر الصوت إلى `/_agent-native/transcribe-voice`، الذي يقوم بالتوصيل من خلال Builder.io باستخدام Gemini Flash-Lite. لا يلزم وجود مفتاح Google API.
+1. **Jami Studio Gemini Flash-Lite (افتراضي عند اتصال Jami Studio).** يقوم المتصفح بنشر الصوت إلى `/_agent-native/transcribe-voice`، الذي يقوم بالتوصيل من خلال Jami Studio باستخدام Gemini Flash-Lite. لا يلزم وجود مفتاح Google API.
 2. **موفرو الخدمات السحابية BYOK.** يمكن للمستخدمين اختيار Google Gemini أو Groq Whisper أو OpenAI Whisper من الإعدادات. يحل المسار الأسرار المشفرة على نطاق المستخدم قبل بيانات اعتماد النشر المشتركة.
 3. **كلام الويب للمتصفح API (احتياطي).** في حالة عدم توفر موفر خادم، يمكن للمؤلف استخدام ميزة التعرف على الكلام المضمنة في المتصفح. يعمل في المتصفحات المستندة إلى Chromium (Chrome وEdge وArc) وSafari. أقل دقة؛ تيارات حية.
 
@@ -28,8 +28,8 @@ description: "الإملاء الصوتي في مؤلف دردشة الوكيل 
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-card col">
-    <div class="diagram-pill accent">1 &middot; Builder Gemini</div>
-    <small class="diagram-muted">الافتراضي عند اتصال Builder</small>
+    <div class="diagram-pill accent">1 &middot; Jami Studio Gemini</div>
+    <small class="diagram-muted">الافتراضي عند اتصال Jami Studio</small>
     <div class="diagram-pill">2 &middot; BYOK cloud</div>
     <small class="diagram-muted"
       >Gemini &middot; Groq &middot; OpenAI Whisper</small
@@ -69,7 +69,7 @@ description: "الإملاء الصوتي في مؤلف دردشة الوكيل 
 
 ## تمكين الموفرين {#enabling-providers}
 
-Builder هو المسار الأسهل: قم بتوصيل Builder.io من الإعدادات وسيصبح الموفر الافتراضي Builder Gemini Flash-Lite. بالنسبة لموفري BYOK، أضف المفتاح المطابق في الإعدادات → مفاتيح API.
+Jami Studio هو المسار الأسهل: قم بتوصيل Jami Studio من الإعدادات وسيصبح الموفر الافتراضي Jami Studio Gemini Flash-Lite. بالنسبة لموفري BYOK، أضف المفتاح المطابق في الإعدادات → مفاتيح API.
 
 ### لكل مستخدم (موصى به لـ SaaS)
 

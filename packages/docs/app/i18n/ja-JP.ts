@@ -1221,11 +1221,11 @@ const jaJP = {
       eyebrow: "プライバシーポリシー",
       title: "Agent-Native ホスト型アプリケーション",
       intro:
-        "このポリシーでは、Builder.io がホストされる Agent-Native アプリケーション、ホストされるテンプレート、デモ、および公式ブラウザー拡張機能を操作する際に、データを収集、使用、共有、および保持する方法について説明します。",
+        "このポリシーでは、Jami Studio がホストされる Agent-Native アプリケーション、ホストされるテンプレート、デモ、および公式ブラウザー拡張機能を操作する際に、データを収集、使用、共有、および保持する方法について説明します。",
       scopeCards: {
         hosted: {
           title: "ホストされているアプリ",
-          body: "Builder.io が Agent-Native サービスまたはホストされたテンプレートを操作する場合に適用されます。",
+          body: "Jami Studio が Agent-Native サービスまたはホストされたテンプレートを操作する場合に適用されます。",
         },
         openSource: {
           title: "オープンソース",
@@ -1249,9 +1249,9 @@ const jaJP = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native はオープン ソースであり、ソース コードは MIT ライセンスに基づいて入手できます。このポリシーは、Builder.io が Agent-Native ユーザー向けに運用するホスト型アプリケーションおよびサービスにのみ適用されます。これは、フォーク、カスタマイズされたテンプレート、プライベート展開、自己ホスト型バージョンなど、他人によるコードの使用には適用されません。独自の展開を運用する場合は、独自のデータ慣行とプライバシー ポリシーに対して責任を負います。",
+          "Agent-Native はオープン ソースであり、ソース コードは MIT ライセンスに基づいて入手できます。このポリシーは、Jami Studio が Agent-Native ユーザー向けに運用するホスト型アプリケーションおよびサービスにのみ適用されます。これは、フォーク、カスタマイズされたテンプレート、プライベート展開、自己ホスト型バージョンなど、他人によるコードの使用には適用されません。独自の展開を運用する場合は、独自のデータ慣行とプライバシー ポリシーに対して責任を負います。",
         scope2Prefix:
-          "このポリシーは、Builder.io の広範なポリシーを補足することを目的としています。",
+          "このポリシーは、Jami Studio の広範なポリシーを補足することを目的としています。",
         scope2Suffix:
           "Agent-Native ホストされたアプリケーションの動作について。",
         clips1:
@@ -1275,7 +1275,7 @@ const jaJP = {
         changes1:
           "Agent-Native ホスト型アプリケーションの変更に応じて、このポリシーを更新する場合があります。ページの上部にある更新日は、ポリシーが最後に改訂された日を示します。",
         changes2Prefix:
-          "プライバシーのリクエストや質問がある場合は、以下にリストされているサポートおよびプライバシー チャネルを通じて Builder.io までお問い合わせください。",
+          "プライバシーのリクエストや質問がある場合は、以下にリストされているサポートおよびプライバシー チャネルを通じて Jami Studio までお問い合わせください。",
       },
       dataCategories: {
         account: {
@@ -1308,18 +1308,18 @@ const jaJP = {
       },
       links: {
         builderPrivacy: "プライバシーポリシー",
-        builderPrivacyFull: "Builder.io プライバシー ポリシー",
+        builderPrivacyFull: "Jami Studio プライバシー ポリシー",
       },
     },
     terms: {
       eyebrow: "利用規約",
       title: "Agent-Native ホスト型アプリケーション",
       intro:
-        "これらの規約は、Builder.io が Agent-Native ホスト型アプリケーション、ホスト型テンプレート、デモ、および公式ホスト型サービスを運用する場合に適用されます。",
+        "これらの規約は、Jami Studio が Agent-Native ホスト型アプリケーション、ホスト型テンプレート、デモ、および公式ホスト型サービスを運用する場合に適用されます。",
       scopeCards: {
         hosted: {
           title: "ホストされているアプリ",
-          body: "Builder.io によって操作される Agent-Native アプリまたはテンプレートを使用する場合に適用されます。",
+          body: "Jami Studio によって操作される Agent-Native アプリまたはテンプレートを使用する場合に適用されます。",
         },
         openSource: {
           title: "オープンソース",
@@ -1327,7 +1327,7 @@ const jaJP = {
         },
         selfHosted: {
           title: "自己ホスト型",
-          body: "あなたまたは他の人が運用する個別の展開は、Builder.io ホスト型サービスではありません。",
+          body: "あなたまたは他の人が運用する個別の展開は、Jami Studio ホスト型サービスではありません。",
         },
       },
       sections: {
@@ -1344,20 +1344,20 @@ const jaJP = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native はオープン ソースであり、そのソース コードは MIT ライセンスの下で入手できます。 These terms apply only to hosted applications and services operated by Builder.io for Agent-Native users. They do not govern forks, custom templates, private deployments, or self-hosted versions operated outside Builder.io.",
+          "Agent-Native はオープン ソースであり、そのソース コードは MIT ライセンスの下で入手できます。 These terms apply only to hosted applications and services operated by Jami Studio for Agent-Native users. They do not govern forks, custom templates, private deployments, or self-hosted versions operated outside Jami Studio.",
         scope2Prefix:
-          "これらの用語は、Builder.io のより広範な内容を補足するものです",
+          "これらの用語は、Jami Studio のより広範な内容を補足するものです",
         scope2Middle: "そしてAgent-Native",
         scope2Suffix:
           "企業または組織を代表してホストされた Agent-Native アプリを使用する場合、その組織に対してこれらの規約に同意する権限があることを表明することになります。",
         hostedService:
-          "Builder.io は、ホストされた Agent-Native アプリケーション、テンプレート、デモ、共有ワークスペース、ブラウザ拡張機能、および関連するエージェント ワークフローを提供する場合があります。 The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
+          "Jami Studio は、ホストされた Agent-Native アプリケーション、テンプレート、デモ、共有ワークスペース、ブラウザ拡張機能、および関連するエージェント ワークフローを提供する場合があります。 The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
         accounts1:
           "あなたは、アカウント情報の正確性、アカウントでのアクティビティ、および資格情報の安全な保管について責任を負います。ホストされた Agent-Native アプリには、組織機能、招待状、共有リソース、接続された統合、およびアプリ固有のアクセス制御が含まれる場合があります。 Only invite users and connect services you are authorized to use.",
         accounts2:
-          "アカウント、ワークスペース、統合、または共有リソースが侵害されているか悪用されていると思われる場合は、速やかに Builder.io サポートにご連絡ください。",
+          "アカウント、ワークスペース、統合、または共有リソースが侵害されているか悪用されていると思われる場合は、速やかに Jami Studio サポートにご連絡ください。",
         content1:
-          "あなたは、ホストされた Agent-Native アプリを作成、アップロード、記録、インポート、または接続するコンテンツの所有権を保持します。 You grant Builder.io the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
+          "あなたは、ホストされた Agent-Native アプリを作成、アップロード、記録、インポート、または接続するコンテンツの所有権を保持します。 You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
         content2:
           "お客様は、サービスに提供するコンテンツ、録音、プロンプト、ファイル、認証情報、および接続された統合データに必要な権利と許可を取得する責任があります。",
         agents1:
@@ -1367,17 +1367,17 @@ const jaJP = {
         openSource:
           "これらの条件は、Agent-Native コードのオープンソース ライセンスを変更するものではありません。 If you download, fork, modify, or self-host Agent-Native, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
         suspensionPrefix:
-          "Builder.io は、ユーザーの保護、法律の遵守、悪用の防止、セキュリティ リスクへの対処、またはサービスの運用に必要な場合、ホストされている Agent-Native サービスへのアクセスを一時停止または制限することがあります。ホストされているサービスの使用はいつでも停止できます。一部のデータは、「」で説明されているように、限られた期間バックアップ、ログ、または監査レコードに残る場合があります。",
+          "Jami Studio は、ユーザーの保護、法律の遵守、悪用の防止、セキュリティ リスクへの対処、またはサービスの運用に必要な場合、ホストされている Agent-Native サービスへのアクセスを一時停止または制限することがあります。ホストされているサービスの使用はいつでも停止できます。一部のデータは、「」で説明されているように、限られた期間バックアップ、ログ、または監査レコードに残る場合があります。",
         disclaimers1:
-          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Builder.io. Builder.io は、ホストされるアプリ、統合、自動化、または AI 出力が中断されないこと、エラーがないこと、またはすべての要件を満たすことを保証しません。",
+          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio は、ホストされるアプリ、統合、自動化、または AI 出力が中断されないこと、エラーがないこと、またはすべての要件を満たすことを保証しません。",
         disclaimers2Prefix:
-          "法律で許可される最大限の範囲で、ホスト型 Agent-Native サービスに対する Builder.io の責任は、Builder.io の広範な規定に記載されているように制限されます。",
+          "法律で許可される最大限の範囲で、ホスト型 Agent-Native サービスに対する Jami Studio の責任は、Jami Studio の広範な規定に記載されているように制限されます。",
         disclaimers2Suffix:
           "またはお客様の使用に適用される別の書面による契約。",
         changes1:
           "Agent-Native ホスト型アプリケーションの変更に応じて、これらの規約を更新する場合があります。ページ上部の更新日は、規約が最後に改訂された日を示します。",
         changes2Prefix:
-          "これらの用語に関する質問については、Builder.io のサポート チャネルを通じて Builder.io にお問い合わせください。",
+          "これらの用語に関する質問については、Jami Studio のサポート チャネルを通じて Jami Studio にお問い合わせください。",
       },
       hostedServicePoints: {
         create:

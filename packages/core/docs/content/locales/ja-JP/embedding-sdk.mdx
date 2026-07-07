@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -467,7 +467,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -669,6 +669,6 @@ iframe 内で使用可能なグローバル:
 
 ## 推奨される製品形状
 
-iframe を最初に開始します。リリース サイクルや CSS/ランタイムの前提条件を考慮することなく、Builder.io、顧客の SaaS アプリ、内部管理ツールで機能します。
+iframe を最初に開始します。リリース サイクルや CSS/ランタイムの前提条件を考慮することなく、Jami Studio、顧客の SaaS アプリ、内部管理ツールで機能します。
 
 サイドカー自体は依然として Agent-Native アプリ/テンプレートである必要があります。actions はバックエンド API サーフェスであり、SQL でバックアップされたアプリの状態はエージェントのメモリであり、Slack や Telegram などの統合は同じ永続的なチャットにルーティングできます。埋め込み SDK は、そのサイドカーと現在のホスト ページの間にライブ メンブレンを提供します。

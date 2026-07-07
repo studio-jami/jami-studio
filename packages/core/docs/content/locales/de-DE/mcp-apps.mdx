@@ -122,7 +122,7 @@ export default defineAction({
     {
       lines: "6",
       label: "Progressive Verbesserung",
-      note: "`mcpApp.resource` kündigt eine Inline-Benutzeroberfläche für Hosts an, die die Apps-Erweiterung MCP unterstützen. Behalten Sie auch den `link`-Builder der Aktion bei – nur CLI-Hosts und ältere Hosts ignorieren die UI-Metadaten und benötigen weiterhin den Deep Link.",
+      note: "`mcpApp.resource` kündigt eine Inline-Benutzeroberfläche für Hosts an, die die Apps-Erweiterung MCP unterstützen. Behalten Sie auch den `link`-Jami Studio der Aktion bei – nur CLI-Hosts und ältere Hosts ignorieren die UI-Metadaten und benötigen weiterhin den Deep Link.",
     },
     {
       lines: "7",
@@ -139,7 +139,7 @@ export default defineAction({
 
 Der MCP-Server kündigt die Erweiterung `io.modelcontextprotocol/ui` an, fügt `_meta.ui.resourceUri` plus `_meta["ui/resourceUri"]` zu `tools/list` hinzu und gibt außerdem ChatGPT Apps SDK-Kompatibilitätsmetadaten aus (`openai/outputTemplate`, Widget CSP/description/accessibility). Es macht HTML über `resources/list`, `resources/templates/list` und `resources/read` unter Verwendung von MIME `text/html;profile=mcp-app` verfügbar. Der stdio-Proxy leitet diese Ressourcenhandler von der Live-App weiter, sodass Desktop- und CLI-Clients dieselben Ressourcen sehen wie HTTP-Clients.
 
-Behalten Sie den vorhandenen `link`-Builder bei, auch wenn Sie `mcpApp` hinzufügen. Nur CLI-Clients, ältere Hosts und alle Hosts, die MCP-Apps nicht rendern, ignorieren die UI-Metadaten und benötigen weiterhin den `"Open in … →"`-Link. `embedApp()` verwendet diesen Link als Startziel, ruft den Nur-App-Helper `create_embed_session` auf, tauscht ein einmaliges SQL-Ticket bei `/_agent-native/embed/start` aus und navigiert den MCP-App-Frame mit einer kurzlebigen Browsersitzung und einem Bearer-Fallback für Abrufe desselben Ursprungs zur Zielroute. `open_app({ app, path, embed: true })` ist die allgemeine Notausstiegsmöglichkeit für Routen wie vollständige Dashboards, gefilterte Posteingänge, Kalenderentwurfsansichten, Analysen und Erweiterungsseiten und sollte großzügig verwendet werden, wenn die vollständige App die übersichtlichste Überprüfungs-/Bearbeitungsoberfläche darstellt.
+Behalten Sie den vorhandenen `link`-Jami Studio bei, auch wenn Sie `mcpApp` hinzufügen. Nur CLI-Clients, ältere Hosts und alle Hosts, die MCP-Apps nicht rendern, ignorieren die UI-Metadaten und benötigen weiterhin den `"Open in … →"`-Link. `embedApp()` verwendet diesen Link als Startziel, ruft den Nur-App-Helper `create_embed_session` auf, tauscht ein einmaliges SQL-Ticket bei `/_agent-native/embed/start` aus und navigiert den MCP-App-Frame mit einer kurzlebigen Browsersitzung und einem Bearer-Fallback für Abrufe desselben Ursprungs zur Zielroute. `open_app({ app, path, embed: true })` ist die allgemeine Notausstiegsmöglichkeit für Routen wie vollständige Dashboards, gefilterte Posteingänge, Kalenderentwurfsansichten, Analysen und Erweiterungsseiten und sollte großzügig verwendet werden, wenn die vollständige App die übersichtlichste Überprüfungs-/Bearbeitungsoberfläche darstellt.
 
 `embedApp()` schließt den MCP-Anforderungsursprung in die Ressource CSP ein, sodass der Launcher die signierte Erstanbieter-App-Route abrufen und bei expliziter Anforderung ein Frame erstellen kann. Dispatch fügt seiner `open_app`-Ressource die genauen Ursprünge für die gewährten Apps hinzu, sodass ein einzelner Dispatch-Connector Mail, Kalender, Folien und den Rest einbinden kann, ohne jeden HTTPS-Ursprung zuzulassen. Übergeben Sie nur zusätzliche Frame- oder Ressourcendomänen für eine benutzerdefinierte MCP-App, die tatsächlich einen Drittanbieter-Player einbettet oder Drittanbieter-Assets lädt.
 
@@ -264,7 +264,7 @@ Testen Sie MCP-Apps mit den leichten Geräten rund um `embedApp()` und `McpAppRe
 
 - [External Agents](/docs/external-agents) – Verbindung von Claude, ChatGPT, Codex und Cursor mit gehosteten Apps; MCP Apps-Kompatibilitätsmatrix; Katalogebenen; Deep-Links.
 - [MCP Protocol](/docs/mcp-protocol) – der automatisch gemountete MCP-Server, Authentifizierung, Tools und `ask-agent`.
-- [Actions](/docs/actions) – `defineAction`, der `link`-Builder, `publicAgent`.
+- [Actions](/docs/actions) – `defineAction`, der `link`-Jami Studio, `publicAgent`.
 
 ```
 

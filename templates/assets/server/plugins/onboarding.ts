@@ -1,7 +1,7 @@
 /**
  * Custom onboarding plugin for Assets.
  *
- * Lead with Builder-managed image generation (one-click, org-shared
+ * Lead with Jami Studio-managed image generation (one-click, org-shared
  * credential) and Gemini for video generation while keeping S3-compatible
  * storage explicit for originals, thumbnails, videos, and exports.
  *
@@ -33,7 +33,7 @@ export default async (nitroApp: any): Promise<void> => {
 
   // Register the S3-compatible upload provider. It self-checks env vars
   // (ASSETS_STORAGE_* / legacy IMAGES_STORAGE_* / S3_*) and only activates when configured. The
-  // framework falls through to Builder.io storage when BUILDER_PRIVATE_KEY
+  // framework falls through to Jami Studio storage when BUILDER_PRIVATE_KEY
   // is set, then to the SQL fallback in dev.
   registerFileUploadProvider(s3FileUploadProvider);
 
@@ -43,14 +43,14 @@ export default async (nitroApp: any): Promise<void> => {
     required: true,
     title: "Image and video generation",
     description:
-      "Connect Builder for managed image generation, or add OpenAI/Gemini keys manually. Gemini is required for video generation.",
+      "Connect Jami Studio for managed image generation, or add OpenAI/Gemini keys manually. Gemini is required for video generation.",
     methods: [
       {
         id: "builder",
         kind: "builder-cli-auth",
-        label: "Connect Builder.io",
+        label: "Connect Jami Studio",
         description: builderImageGenerationEnabled
-          ? "Recommended one-click setup for image generation. Uses Builder credits and keeps provider keys out of this app."
+          ? "Recommended one-click setup for image generation. Uses Jami Studio credits and keeps provider keys out of this app."
           : "Disabled by BUILDER_IMAGE_GENERATION_ENABLED=false. Use a Gemini key for this deployment.",
         primary: true,
         badge: builderImageGenerationEnabled ? "recommended" : undefined,
@@ -81,7 +81,7 @@ export default async (nitroApp: any): Promise<void> => {
         kind: "form",
         label: "OpenAI API key",
         description:
-          "Optional manual fallback for image generation when Builder is not connected.",
+          "Optional manual fallback for image generation when Jami Studio is not connected.",
         payload: {
           writeScope: "workspace",
           fields: [

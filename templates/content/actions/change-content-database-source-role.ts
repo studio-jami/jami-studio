@@ -325,7 +325,9 @@ export default defineAction({
       await ensureDatabaseSourceProperty({ database, now });
     } else {
       if (normalizedType !== "builder-cms") {
-        throw new Error("Only Builder sources can add more items right now.");
+        throw new Error(
+          "Only Jami Studio sources can add more items right now.",
+        );
       }
 
       const read = await readBuilderCmsContentEntries({

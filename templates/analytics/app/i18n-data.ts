@@ -170,21 +170,21 @@ const enUS = {
       "Use the Data Sources page to manage connections. Use the Query Explorer for ad-hoc BigQuery SQL.",
     replayStorage: "Session replay storage",
     replayStorageDescription:
-      "Session replay recordings need a configured file-upload provider. Connect Builder.io for free-tier object storage, or use your own S3-compatible bucket.",
+      "Session replay recordings need a configured file-upload provider. Connect Jami Studio for free-tier object storage, or use your own S3-compatible bucket.",
     connected: "Connected",
-    connectBuilder: "Connect Builder.io",
-    checkingBuilder: "Checking Builder.io...",
-    builderConnected: "Builder.io connected",
-    builderConnectedToast: "Builder.io connected",
+    connectBuilder: "Connect Jami Studio",
+    checkingBuilder: "Checking Jami Studio...",
+    builderConnected: "Jami Studio connected",
+    builderConnectedToast: "Jami Studio connected",
     builderConnectedFor: "Connected to {{orgName}}.",
-    builderConnectedGeneric: "Replay chunks are stored with Builder.io.",
+    builderConnectedGeneric: "Replay chunks are stored with Jami Studio.",
     builderIncludes:
-      "Builder.io's free tier includes object storage for replay chunks.",
+      "Jami Studio's free tier includes object storage for replay chunks.",
     s3Title: "S3-compatible storage",
     secondary: "Secondary",
     active: "Active",
     s3BuilderConnectedDescription:
-      "Optional. Use your own bucket instead of Builder.io storage.",
+      "Optional. Use your own bucket instead of Jami Studio storage.",
     s3CurrentProvider: "Current provider: {{providerName}}.",
     s3OwnBucketDescription:
       "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO, or any S3-compatible service.",
@@ -1024,9 +1024,9 @@ const enUS = {
     time: "Time",
     storageSetupTitle: "Connect replay storage",
     storageSetupDescription:
-      "Session replay recordings need storage before chunks can be saved. Connect Builder.io for free-tier storage, or configure your own S3-compatible bucket.",
+      "Session replay recordings need storage before chunks can be saved. Connect Jami Studio for free-tier storage, or configure your own S3-compatible bucket.",
     storageConnected: "Storage connected",
-    connectBuilder: "Use Builder.io (free)",
+    connectBuilder: "Use Jami Studio (free)",
     configureS3: "Configure S3 storage",
     devtools: "Dev Tools",
     devtoolsIssueCount: "{{count}} issues detected",
@@ -8033,20 +8033,20 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "会话回放存储",
       replayStorageDescription:
-        "会话回放录制需要配置文件上传服务商。可连接 Builder.io 使用免费层对象存储，或使用您自己的 S3 兼容存储桶。",
+        "会话回放录制需要配置文件上传服务商。可连接 Jami Studio 使用免费层对象存储，或使用您自己的 S3 兼容存储桶。",
       connected: "已连接",
-      connectBuilder: "连接 Builder.io",
-      checkingBuilder: "正在检查 Builder.io...",
-      builderConnected: "Builder.io 已连接",
-      builderConnectedToast: "Builder.io 已连接",
+      connectBuilder: "连接 Jami Studio",
+      checkingBuilder: "正在检查 Jami Studio...",
+      builderConnected: "Jami Studio 已连接",
+      builderConnectedToast: "Jami Studio 已连接",
       builderConnectedFor: "已连接到 {{orgName}}。",
-      builderConnectedGeneric: "回放片段已存储在 Builder.io。",
-      builderIncludes: "Builder.io 的免费层包含用于存储回放片段的对象存储。",
+      builderConnectedGeneric: "回放片段已存储在 Jami Studio。",
+      builderIncludes: "Jami Studio 的免费层包含用于存储回放片段的对象存储。",
       s3Title: "S3 兼容存储",
       secondary: "备用",
       active: "已启用",
       s3BuilderConnectedDescription:
-        "可选。使用您自己的存储桶替代 Builder.io 存储。",
+        "可选。使用您自己的存储桶替代 Jami Studio 存储。",
       s3CurrentProvider: "当前服务商：{{providerName}}。",
       s3OwnBucketDescription:
         "AWS S3、Cloudflare R2、DigitalOcean Spaces、MinIO 或任何 S3 兼容服务。",
@@ -8066,9 +8066,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "连接回放存储",
       storageSetupDescription:
-        "保存会话回放录制片段前需要先配置存储。可连接 Builder.io 使用免费层存储，或配置您自己的 S3 兼容存储桶。",
+        "保存会话回放录制片段前需要先配置存储。可连接 Jami Studio 使用免费层存储，或配置您自己的 S3 兼容存储桶。",
       storageConnected: "存储已连接",
-      connectBuilder: "使用 Builder.io（免费）",
+      connectBuilder: "使用 Jami Studio（免费）",
       configureS3: "配置 S3 存储",
       title: "会话",
       description:
@@ -8147,22 +8147,22 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "Almacenamiento de repeticiones de sesión",
       replayStorageDescription:
-        "Las grabaciones de repetición de sesión necesitan un proveedor de subida de archivos configurado. Conecta Builder.io para usar almacenamiento de objetos de nivel gratuito o usa tu propio bucket compatible con S3.",
+        "Las grabaciones de repetición de sesión necesitan un proveedor de subida de archivos configurado. Conecta Jami Studio para usar almacenamiento de objetos de nivel gratuito o usa tu propio bucket compatible con S3.",
       connected: "Conectado",
-      connectBuilder: "Conectar Builder.io",
-      checkingBuilder: "Comprobando Builder.io...",
-      builderConnected: "Builder.io conectado",
-      builderConnectedToast: "Builder.io conectado",
+      connectBuilder: "Conectar Jami Studio",
+      checkingBuilder: "Comprobando Jami Studio...",
+      builderConnected: "Jami Studio conectado",
+      builderConnectedToast: "Jami Studio conectado",
       builderConnectedFor: "Conectado a {{orgName}}.",
       builderConnectedGeneric:
-        "Los fragmentos de repetición se almacenan con Builder.io.",
+        "Los fragmentos de repetición se almacenan con Jami Studio.",
       builderIncludes:
-        "El nivel gratuito de Builder.io incluye almacenamiento de objetos para los fragmentos de repetición.",
+        "El nivel gratuito de Jami Studio incluye almacenamiento de objetos para los fragmentos de repetición.",
       s3Title: "Almacenamiento compatible con S3",
       secondary: "Secundario",
       active: "Activo",
       s3BuilderConnectedDescription:
-        "Opcional. Usa tu propio bucket en lugar del almacenamiento de Builder.io.",
+        "Opcional. Usa tu propio bucket en lugar del almacenamiento de Jami Studio.",
       s3CurrentProvider: "Proveedor actual: {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO o cualquier servicio compatible con S3.",
@@ -8183,9 +8183,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "Conectar almacenamiento de repeticiones",
       storageSetupDescription:
-        "Las grabaciones de repetición de sesión necesitan almacenamiento antes de poder guardar los fragmentos. Conecta Builder.io para usar almacenamiento de nivel gratuito o configura tu propio bucket compatible con S3.",
+        "Las grabaciones de repetición de sesión necesitan almacenamiento antes de poder guardar los fragmentos. Conecta Jami Studio para usar almacenamiento de nivel gratuito o configura tu propio bucket compatible con S3.",
       storageConnected: "Almacenamiento conectado",
-      connectBuilder: "Usar Builder.io (gratis)",
+      connectBuilder: "Usar Jami Studio (gratis)",
       configureS3: "Configurar almacenamiento S3",
       title: "Sesiones",
       description:
@@ -8266,22 +8266,22 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "Stockage des relectures de session",
       replayStorageDescription:
-        "Les enregistrements de relecture de session nécessitent un fournisseur d'envoi de fichiers configuré. Connectez Builder.io pour un stockage d'objets en formule gratuite, ou utilisez votre propre bucket compatible S3.",
+        "Les enregistrements de relecture de session nécessitent un fournisseur d'envoi de fichiers configuré. Connectez Jami Studio pour un stockage d'objets en formule gratuite, ou utilisez votre propre bucket compatible S3.",
       connected: "Connecté",
-      connectBuilder: "Connecter Builder.io",
-      checkingBuilder: "Vérification de Builder.io...",
-      builderConnected: "Builder.io connecté",
-      builderConnectedToast: "Builder.io connecté",
+      connectBuilder: "Connecter Jami Studio",
+      checkingBuilder: "Vérification de Jami Studio...",
+      builderConnected: "Jami Studio connecté",
+      builderConnectedToast: "Jami Studio connecté",
       builderConnectedFor: "Connecté à {{orgName}}.",
       builderConnectedGeneric:
-        "Les fragments de relecture sont stockés avec Builder.io.",
+        "Les fragments de relecture sont stockés avec Jami Studio.",
       builderIncludes:
-        "La formule gratuite de Builder.io inclut un stockage d'objets pour les fragments de relecture.",
+        "La formule gratuite de Jami Studio inclut un stockage d'objets pour les fragments de relecture.",
       s3Title: "Stockage compatible S3",
       secondary: "Secondaire",
       active: "Actif",
       s3BuilderConnectedDescription:
-        "Facultatif. Utilisez votre propre bucket au lieu du stockage Builder.io.",
+        "Facultatif. Utilisez votre propre bucket au lieu du stockage Jami Studio.",
       s3CurrentProvider: "Fournisseur actuel : {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO ou tout autre service compatible S3.",
@@ -8301,9 +8301,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "Connecter le stockage des relectures",
       storageSetupDescription:
-        "Les enregistrements de relecture de session nécessitent un espace de stockage avant de pouvoir sauvegarder les fragments. Connectez Builder.io pour un stockage en formule gratuite, ou configurez votre propre bucket compatible S3.",
+        "Les enregistrements de relecture de session nécessitent un espace de stockage avant de pouvoir sauvegarder les fragments. Connectez Jami Studio pour un stockage en formule gratuite, ou configurez votre propre bucket compatible S3.",
       storageConnected: "Stockage connecté",
-      connectBuilder: "Utiliser Builder.io (gratuit)",
+      connectBuilder: "Utiliser Jami Studio (gratuit)",
       configureS3: "Configurer le stockage S3",
       title: "Sessions",
       description:
@@ -8385,22 +8385,22 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "Speicher für Sitzungswiedergabe",
       replayStorageDescription:
-        "Aufzeichnungen der Sitzungswiedergabe benötigen einen konfigurierten Datei-Upload-Anbieter. Verbinden Sie Builder.io für Objektspeicher im kostenlosen Kontingent oder verwenden Sie Ihren eigenen S3-kompatiblen Bucket.",
+        "Aufzeichnungen der Sitzungswiedergabe benötigen einen konfigurierten Datei-Upload-Anbieter. Verbinden Sie Jami Studio für Objektspeicher im kostenlosen Kontingent oder verwenden Sie Ihren eigenen S3-kompatiblen Bucket.",
       connected: "Verbunden",
-      connectBuilder: "Builder.io verbinden",
-      checkingBuilder: "Builder.io wird geprüft …",
-      builderConnected: "Builder.io verbunden",
-      builderConnectedToast: "Builder.io verbunden",
+      connectBuilder: "Jami Studio verbinden",
+      checkingBuilder: "Jami Studio wird geprüft …",
+      builderConnected: "Jami Studio verbunden",
+      builderConnectedToast: "Jami Studio verbunden",
       builderConnectedFor: "Verbunden mit {{orgName}}.",
       builderConnectedGeneric:
-        "Wiedergabe-Chunks werden bei Builder.io gespeichert.",
+        "Wiedergabe-Chunks werden bei Jami Studio gespeichert.",
       builderIncludes:
-        "Das kostenlose Kontingent von Builder.io umfasst Objektspeicher für Wiedergabe-Chunks.",
+        "Das kostenlose Kontingent von Jami Studio umfasst Objektspeicher für Wiedergabe-Chunks.",
       s3Title: "S3-kompatibler Speicher",
       secondary: "Sekundär",
       active: "Aktiv",
       s3BuilderConnectedDescription:
-        "Optional. Verwenden Sie Ihren eigenen Bucket anstelle des Builder.io-Speichers.",
+        "Optional. Verwenden Sie Ihren eigenen Bucket anstelle des Jami Studio-Speichers.",
       s3CurrentProvider: "Aktueller Anbieter: {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO oder ein beliebiger S3-kompatibler Dienst.",
@@ -8421,9 +8421,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "Wiedergabe-Speicher verbinden",
       storageSetupDescription:
-        "Aufzeichnungen der Sitzungswiedergabe benötigen einen Speicher, bevor Chunks gesichert werden können. Verbinden Sie Builder.io für Speicher im kostenlosen Kontingent oder konfigurieren Sie Ihren eigenen S3-kompatiblen Bucket.",
+        "Aufzeichnungen der Sitzungswiedergabe benötigen einen Speicher, bevor Chunks gesichert werden können. Verbinden Sie Jami Studio für Speicher im kostenlosen Kontingent oder konfigurieren Sie Ihren eigenen S3-kompatiblen Bucket.",
       storageConnected: "Speicher verbunden",
-      connectBuilder: "Builder.io verwenden (kostenlos)",
+      connectBuilder: "Jami Studio verwenden (kostenlos)",
       configureS3: "S3-Speicher konfigurieren",
       title: "Sitzungen",
       description:
@@ -8504,21 +8504,22 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "セッションリプレイのストレージ",
       replayStorageDescription:
-        "セッションリプレイの録画には、ファイルアップロードプロバイダーの設定が必要です。Builder.io の無料枠オブジェクトストレージを接続するか、独自の S3 互換バケットをご利用ください。",
+        "セッションリプレイの録画には、ファイルアップロードプロバイダーの設定が必要です。Jami Studio の無料枠オブジェクトストレージを接続するか、独自の S3 互換バケットをご利用ください。",
       connected: "接続済み",
-      connectBuilder: "Builder.io を接続",
-      checkingBuilder: "Builder.io を確認中...",
-      builderConnected: "Builder.io 接続済み",
-      builderConnectedToast: "Builder.io を接続しました",
+      connectBuilder: "Jami Studio を接続",
+      checkingBuilder: "Jami Studio を確認中...",
+      builderConnected: "Jami Studio 接続済み",
+      builderConnectedToast: "Jami Studio を接続しました",
       builderConnectedFor: "{{orgName}} に接続しました。",
-      builderConnectedGeneric: "リプレイチャンクは Builder.io に保存されます。",
+      builderConnectedGeneric:
+        "リプレイチャンクは Jami Studio に保存されます。",
       builderIncludes:
-        "Builder.io の無料枠には、リプレイチャンク用のオブジェクトストレージが含まれます。",
+        "Jami Studio の無料枠には、リプレイチャンク用のオブジェクトストレージが含まれます。",
       s3Title: "S3 互換ストレージ",
       secondary: "セカンダリ",
       active: "有効",
       s3BuilderConnectedDescription:
-        "任意。Builder.io ストレージの代わりに独自のバケットを使用します。",
+        "任意。Jami Studio ストレージの代わりに独自のバケットを使用します。",
       s3CurrentProvider: "現在のプロバイダー: {{providerName}}。",
       s3OwnBucketDescription:
         "AWS S3、Cloudflare R2、DigitalOcean Spaces、MinIO など、任意の S3 互換サービス。",
@@ -8538,9 +8539,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "リプレイストレージを接続",
       storageSetupDescription:
-        "セッションリプレイの録画を保存するには、まずストレージが必要です。Builder.io の無料枠ストレージを接続するか、独自の S3 互換バケットを設定してください。",
+        "セッションリプレイの録画を保存するには、まずストレージが必要です。Jami Studio の無料枠ストレージを接続するか、独自の S3 互換バケットを設定してください。",
       storageConnected: "ストレージ接続済み",
-      connectBuilder: "Builder.io を使う（無料）",
+      connectBuilder: "Jami Studio を使う（無料）",
       configureS3: "S3 ストレージを設定",
       title: "セッション",
       description:
@@ -8621,21 +8622,21 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "세션 재생 저장소",
       replayStorageDescription:
-        "세션 재생 녹화에는 파일 업로드 제공자 구성이 필요합니다. 무료 등급 객체 저장소를 사용하려면 Builder.io를 연결하거나, 직접 S3 호환 버킷을 사용하세요.",
+        "세션 재생 녹화에는 파일 업로드 제공자 구성이 필요합니다. 무료 등급 객체 저장소를 사용하려면 Jami Studio를 연결하거나, 직접 S3 호환 버킷을 사용하세요.",
       connected: "연결됨",
-      connectBuilder: "Builder.io 연결",
-      checkingBuilder: "Builder.io 확인 중...",
-      builderConnected: "Builder.io 연결됨",
-      builderConnectedToast: "Builder.io 연결됨",
+      connectBuilder: "Jami Studio 연결",
+      checkingBuilder: "Jami Studio 확인 중...",
+      builderConnected: "Jami Studio 연결됨",
+      builderConnectedToast: "Jami Studio 연결됨",
       builderConnectedFor: "{{orgName}}에 연결되었습니다.",
-      builderConnectedGeneric: "재생 청크가 Builder.io에 저장됩니다.",
+      builderConnectedGeneric: "재생 청크가 Jami Studio에 저장됩니다.",
       builderIncludes:
-        "Builder.io 무료 등급에는 재생 청크를 위한 객체 저장소가 포함되어 있습니다.",
+        "Jami Studio 무료 등급에는 재생 청크를 위한 객체 저장소가 포함되어 있습니다.",
       s3Title: "S3 호환 저장소",
       secondary: "보조",
       active: "활성",
       s3BuilderConnectedDescription:
-        "선택 사항입니다. Builder.io 저장소 대신 직접 버킷을 사용할 수 있습니다.",
+        "선택 사항입니다. Jami Studio 저장소 대신 직접 버킷을 사용할 수 있습니다.",
       s3CurrentProvider: "현재 제공자: {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO 또는 모든 S3 호환 서비스.",
@@ -8655,9 +8656,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "재생 저장소 연결",
       storageSetupDescription:
-        "세션 재생 녹화를 저장하려면 먼저 저장소가 필요합니다. 무료 등급 저장소를 사용하려면 Builder.io를 연결하거나, 직접 S3 호환 버킷을 구성하세요.",
+        "세션 재생 녹화를 저장하려면 먼저 저장소가 필요합니다. 무료 등급 저장소를 사용하려면 Jami Studio를 연결하거나, 직접 S3 호환 버킷을 구성하세요.",
       storageConnected: "저장소 연결됨",
-      connectBuilder: "Builder.io 사용 (무료)",
+      connectBuilder: "Jami Studio 사용 (무료)",
       configureS3: "S3 저장소 구성",
       title: "세션",
       description:
@@ -8736,22 +8737,22 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "Armazenamento de replay de sessão",
       replayStorageDescription:
-        "As gravações de replay de sessão precisam de um provedor de upload de arquivos configurado. Conecte o Builder.io para armazenamento de objetos no plano gratuito ou use seu próprio bucket compatível com S3.",
+        "As gravações de replay de sessão precisam de um provedor de upload de arquivos configurado. Conecte o Jami Studio para armazenamento de objetos no plano gratuito ou use seu próprio bucket compatível com S3.",
       connected: "Conectado",
-      connectBuilder: "Conectar Builder.io",
-      checkingBuilder: "Verificando Builder.io...",
-      builderConnected: "Builder.io conectado",
-      builderConnectedToast: "Builder.io conectado",
+      connectBuilder: "Conectar Jami Studio",
+      checkingBuilder: "Verificando Jami Studio...",
+      builderConnected: "Jami Studio conectado",
+      builderConnectedToast: "Jami Studio conectado",
       builderConnectedFor: "Conectado a {{orgName}}.",
       builderConnectedGeneric:
-        "Os fragmentos de replay são armazenados no Builder.io.",
+        "Os fragmentos de replay são armazenados no Jami Studio.",
       builderIncludes:
-        "O plano gratuito do Builder.io inclui armazenamento de objetos para fragmentos de replay.",
+        "O plano gratuito do Jami Studio inclui armazenamento de objetos para fragmentos de replay.",
       s3Title: "Armazenamento compatível com S3",
       secondary: "Secundário",
       active: "Ativo",
       s3BuilderConnectedDescription:
-        "Opcional. Use seu próprio bucket em vez do armazenamento do Builder.io.",
+        "Opcional. Use seu próprio bucket em vez do armazenamento do Jami Studio.",
       s3CurrentProvider: "Provedor atual: {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO ou qualquer serviço compatível com S3.",
@@ -8772,9 +8773,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "Conectar armazenamento de replay",
       storageSetupDescription:
-        "As gravações de replay de sessão precisam de armazenamento antes que os fragmentos possam ser salvos. Conecte o Builder.io para armazenamento no plano gratuito ou configure seu próprio bucket compatível com S3.",
+        "As gravações de replay de sessão precisam de armazenamento antes que os fragmentos possam ser salvos. Conecte o Jami Studio para armazenamento no plano gratuito ou configure seu próprio bucket compatível com S3.",
       storageConnected: "Armazenamento conectado",
-      connectBuilder: "Usar Builder.io (gratuito)",
+      connectBuilder: "Usar Jami Studio (gratuito)",
       configureS3: "Configurar armazenamento S3",
       title: "Sessões",
       description:
@@ -8855,21 +8856,21 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "सेशन रीप्ले स्टोरेज",
       replayStorageDescription:
-        "सेशन रीप्ले रिकॉर्डिंग के लिए एक कॉन्फ़िगर किया गया फ़ाइल-अपलोड प्रोवाइडर ज़रूरी है। फ्री-टियर ऑब्जेक्ट स्टोरेज के लिए Builder.io कनेक्ट करें, या अपना खुद का S3-संगत बकेट इस्तेमाल करें।",
+        "सेशन रीप्ले रिकॉर्डिंग के लिए एक कॉन्फ़िगर किया गया फ़ाइल-अपलोड प्रोवाइडर ज़रूरी है। फ्री-टियर ऑब्जेक्ट स्टोरेज के लिए Jami Studio कनेक्ट करें, या अपना खुद का S3-संगत बकेट इस्तेमाल करें।",
       connected: "कनेक्ट हो गया",
-      connectBuilder: "Builder.io कनेक्ट करें",
-      checkingBuilder: "Builder.io जाँच रहे हैं...",
-      builderConnected: "Builder.io कनेक्ट हो गया",
-      builderConnectedToast: "Builder.io कनेक्ट हो गया",
+      connectBuilder: "Jami Studio कनेक्ट करें",
+      checkingBuilder: "Jami Studio जाँच रहे हैं...",
+      builderConnected: "Jami Studio कनेक्ट हो गया",
+      builderConnectedToast: "Jami Studio कनेक्ट हो गया",
       builderConnectedFor: "{{orgName}} से कनेक्ट हो गया।",
-      builderConnectedGeneric: "रीप्ले चंक्स Builder.io के साथ स्टोर किए जाते हैं।",
+      builderConnectedGeneric: "रीप्ले चंक्स Jami Studio के साथ स्टोर किए जाते हैं।",
       builderIncludes:
-        "Builder.io के फ्री टियर में रीप्ले चंक्स के लिए ऑब्जेक्ट स्टोरेज शामिल है।",
+        "Jami Studio के फ्री टियर में रीप्ले चंक्स के लिए ऑब्जेक्ट स्टोरेज शामिल है।",
       s3Title: "S3-संगत स्टोरेज",
       secondary: "सेकेंडरी",
       active: "सक्रिय",
       s3BuilderConnectedDescription:
-        "वैकल्पिक। Builder.io स्टोरेज के बजाय अपना खुद का बकेट इस्तेमाल करें।",
+        "वैकल्पिक। Jami Studio स्टोरेज के बजाय अपना खुद का बकेट इस्तेमाल करें।",
       s3CurrentProvider: "मौजूदा प्रोवाइडर: {{providerName}}।",
       s3OwnBucketDescription:
         "AWS S3, Cloudflare R2, DigitalOcean Spaces, MinIO, या कोई भी S3-संगत सेवा।",
@@ -8889,9 +8890,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "रीप्ले स्टोरेज कनेक्ट करें",
       storageSetupDescription:
-        "चंक्स सेव करने से पहले सेशन रीप्ले रिकॉर्डिंग के लिए स्टोरेज ज़रूरी है। फ्री-टियर स्टोरेज के लिए Builder.io कनेक्ट करें, या अपना खुद का S3-संगत बकेट कॉन्फ़िगर करें।",
+        "चंक्स सेव करने से पहले सेशन रीप्ले रिकॉर्डिंग के लिए स्टोरेज ज़रूरी है। फ्री-टियर स्टोरेज के लिए Jami Studio कनेक्ट करें, या अपना खुद का S3-संगत बकेट कॉन्फ़िगर करें।",
       storageConnected: "स्टोरेज कनेक्ट हो गया",
-      connectBuilder: "Builder.io इस्तेमाल करें (मुफ़्त)",
+      connectBuilder: "Jami Studio इस्तेमाल करें (मुफ़्त)",
       configureS3: "S3 स्टोरेज कॉन्फ़िगर करें",
       title: "सत्र",
       description:
@@ -8970,21 +8971,21 @@ const translatedSessionReplayTranslations = {
     settings: {
       replayStorage: "تخزين إعادة عرض الجلسات",
       replayStorageDescription:
-        "تحتاج تسجيلات إعادة عرض الجلسات إلى مزوّد مُهيّأ لرفع الملفات. اربط Builder.io للحصول على تخزين كائنات بالباقة المجانية، أو استخدم حاوية متوافقة مع S3 خاصة بك.",
+        "تحتاج تسجيلات إعادة عرض الجلسات إلى مزوّد مُهيّأ لرفع الملفات. اربط Jami Studio للحصول على تخزين كائنات بالباقة المجانية، أو استخدم حاوية متوافقة مع S3 خاصة بك.",
       connected: "متصل",
-      connectBuilder: "ربط Builder.io",
-      checkingBuilder: "جارٍ التحقق من Builder.io...",
-      builderConnected: "تم ربط Builder.io",
-      builderConnectedToast: "تم ربط Builder.io",
+      connectBuilder: "ربط Jami Studio",
+      checkingBuilder: "جارٍ التحقق من Jami Studio...",
+      builderConnected: "تم ربط Jami Studio",
+      builderConnectedToast: "تم ربط Jami Studio",
       builderConnectedFor: "متصل بـ {{orgName}}.",
-      builderConnectedGeneric: "تُخزَّن أجزاء التسجيلات لدى Builder.io.",
+      builderConnectedGeneric: "تُخزَّن أجزاء التسجيلات لدى Jami Studio.",
       builderIncludes:
-        "تتضمن الباقة المجانية من Builder.io تخزين كائنات لأجزاء التسجيلات.",
+        "تتضمن الباقة المجانية من Jami Studio تخزين كائنات لأجزاء التسجيلات.",
       s3Title: "تخزين متوافق مع S3",
       secondary: "ثانوي",
       active: "نشط",
       s3BuilderConnectedDescription:
-        "اختياري. استخدم حاويتك الخاصة بدلاً من تخزين Builder.io.",
+        "اختياري. استخدم حاويتك الخاصة بدلاً من تخزين Jami Studio.",
       s3CurrentProvider: "المزوّد الحالي: {{providerName}}.",
       s3OwnBucketDescription:
         "AWS S3 أو Cloudflare R2 أو DigitalOcean Spaces أو MinIO أو أي خدمة متوافقة مع S3.",
@@ -9004,9 +9005,9 @@ const translatedSessionReplayTranslations = {
     sessions: {
       storageSetupTitle: "ربط مساحة تخزين التسجيلات",
       storageSetupDescription:
-        "تحتاج تسجيلات إعادة عرض الجلسات إلى مساحة تخزين قبل أن يتسنى حفظ الأجزاء. اربط Builder.io للحصول على تخزين بالباقة المجانية، أو هيّئ حاوية متوافقة مع S3 خاصة بك.",
+        "تحتاج تسجيلات إعادة عرض الجلسات إلى مساحة تخزين قبل أن يتسنى حفظ الأجزاء. اربط Jami Studio للحصول على تخزين بالباقة المجانية، أو هيّئ حاوية متوافقة مع S3 خاصة بك.",
       storageConnected: "تم ربط مساحة التخزين",
-      connectBuilder: "استخدام Builder.io (مجاناً)",
+      connectBuilder: "استخدام Jami Studio (مجاناً)",
       configureS3: "تهيئة تخزين S3",
       title: "الجلسات",
       description:

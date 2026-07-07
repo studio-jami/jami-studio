@@ -71,14 +71,14 @@ export function BackgroundAgentSection() {
     <SettingsSection
       icon={<IconGitBranch size={14} />}
       title="Background Agent"
-      subtitle="Make code changes from production mode. Builder creates a branch, the agent makes changes, and you get a preview URL."
+      subtitle="Make code changes from production mode. Jami Studio creates a branch, the agent makes changes, and you get a preview URL."
       connected={connected}
     >
       {!connected ? (
         <div className="space-y-2">
           <p className="text-[10px] text-muted-foreground">
-            Connect Builder to enable code changes from production. The agent
-            will create branches and provide preview URLs.
+            Connect Jami Studio to enable code changes from production. The
+            agent will create branches and provide preview URLs.
           </p>
           {builderConnectHref && (
             <a
@@ -96,7 +96,7 @@ export function BackgroundAgentSection() {
               }}
               className="inline-flex items-center gap-1 rounded bg-accent px-2 py-1 text-[10px] font-medium text-foreground hover:bg-accent/80"
             >
-              Connect Builder
+              Connect Jami Studio
               <IconExternalLink size={10} />
             </a>
           )}
@@ -105,15 +105,15 @@ export function BackgroundAgentSection() {
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
             <IconCheck size={10} />
-            Builder connected
+            Jami Studio connected
             {builder?.orgName && (
               <span className="text-muted-foreground">({builder.orgName})</span>
             )}
           </div>
           <p className="text-[10px] text-muted-foreground">
-            You don't have access to Builder Cloud Agents for this workspace
-            yet; they are not enabled from Builder org settings. Use the desktop
-            app or your local clone for code changes.
+            You don't have access to Jami Studio Cloud Agents for this workspace
+            yet; they are not enabled from Jami Studio org settings. Use the
+            desktop app or your local clone for code changes.
           </p>
           <a
             href="https://www.agent-native.com/download"
@@ -129,7 +129,7 @@ export function BackgroundAgentSection() {
         <div className="space-y-2.5">
           <div className="flex items-center gap-1.5 text-[10px] text-green-500">
             <IconCheck size={10} />
-            Builder connected
+            Jami Studio connected
             {builder?.orgName && (
               <span className="text-muted-foreground">({builder.orgName})</span>
             )}
@@ -137,7 +137,7 @@ export function BackgroundAgentSection() {
 
           <div>
             <label className="text-[10px] font-medium text-foreground block mb-1">
-              Builder Project URL or ID
+              Jami Studio Project URL or ID
             </label>
             <div className="flex gap-1.5">
               <input

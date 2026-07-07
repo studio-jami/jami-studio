@@ -101,7 +101,7 @@ export type DatabaseSettingsPanel =
   | "group";
 
 // One step in the Sources drill-down: Sources (root, empty stack) → provider
-// (Builder) → space → model leaf. The model step carries the full summary so
+// (Jami Studio) → space → model leaf. The model step carries the full summary so
 // the leaf can attach without re-fetching.
 // A second source being added, awaiting the canonical-key confirm step.
 type PendingSourceCandidate = {
@@ -124,7 +124,7 @@ type SourceNavStep =
 function sourceNavTitle(stack: SourceNavStep[]): string {
   const top = stack[stack.length - 1];
   if (!top) return dbText("sources");
-  if (top.kind === "provider") return "Builder";
+  if (top.kind === "provider") return "Jami Studio";
   if (top.kind === "space") return top.spaceName;
   if (top.kind === "addSource") return dbText("addASource");
   if (top.kind === "secondarySource") return top.sourceName;
@@ -133,7 +133,7 @@ function sourceNavTitle(stack: SourceNavStep[]): string {
   return top.model.displayName;
 }
 
-// The Builder "B" brand mark (first glyph of the wordmark), drawn with
+// The Jami Studio "B" brand mark (first glyph of the wordmark), drawn with
 // currentColor so it themes against the panel background.
 function BuilderLogoMark({ className }: { className?: string }) {
   return (
@@ -584,8 +584,8 @@ export function buildClientBuilderReviewPayload(
   return {
     summary:
       rows.length === 1
-        ? "1 Builder row has changes ready to review."
-        : `${rows.length} Builder rows have changes ready to review.`,
+        ? "1 Jami Studio row has changes ready to review."
+        : `${rows.length} Jami Studio rows have changes ready to review.`,
     sourceName: source.sourceName,
     sourceTable: source.sourceTable,
     pushMode: source.metadata.pushMode ?? "autosave",
@@ -598,22 +598,22 @@ export function buildClientBuilderReviewPayload(
       status: resultStatus,
       message:
         resultStatus === "succeeded"
-          ? "Pushed to Builder and reconciled locally."
+          ? "Pushed to Jami Studio and reconciled locally."
           : resultStatus === "failed"
-            ? "Builder push failed. The change remains retryable."
+            ? "Jami Studio push failed. The change remains retryable."
             : resultStatus === "running"
-              ? "Builder push is running."
+              ? "Jami Studio push is running."
               : resultStatus === "validated"
                 ? source.capabilities.liveWritesEnabled
                   ? hasExecutionEvidence
-                    ? "Push checked successfully. Ready to send to Builder."
-                    : "Ready to send to Builder."
-                  : "Push checked successfully. Nothing was sent to Builder."
+                    ? "Push checked successfully. Ready to send to Jami Studio."
+                    : "Ready to send to Jami Studio."
+                  : "Push checked successfully. Nothing was sent to Jami Studio."
                 : resultStatus === "blocked"
-                  ? "Push needs attention before anything can be sent to Builder."
+                  ? "Push needs attention before anything can be sent to Jami Studio."
                   : resultStatus === "stale"
                     ? "Push needs a fresh review because the plan changed."
-                    : "Builder writes are off in this local build. Push will check the update only.",
+                    : "Jami Studio writes are off in this local build. Push will check the update only.",
     },
   };
 }
@@ -707,7 +707,7 @@ function DatabaseSettingsSourcePanel({
 
   // Auto-sync: the manual Refresh button is gone, so pull the read-only
   // snapshot when the panel opens and whenever the window regains focus.
-  // Throttled so rapid focus changes don't hammer Builder; the refresh
+  // Throttled so rapid focus changes don't hammer Jami Studio; the refresh
   // mutation is silent (no toast), so this stays quiet in the background.
   const refreshSourceRef = useRef(onRefreshSource);
   refreshSourceRef.current = onRefreshSource;
@@ -867,10 +867,10 @@ function DatabaseSettingsSourcePanel({
     );
   }
 
-  // ── Builder provider → space list ─────────────────────────────────────
+  // ── Jami Studio provider → space list ─────────────────────────────────────
   if (top.kind === "provider") {
     if (!builderConfigured) {
-      // Don't flash "Connect Builder" at an already-connected user while the
+      // Don't flash "Connect Jami Studio" at an already-connected user while the
       // status is still loading — show a checking state until we actually know.
       if (!builderStatus.status && builderStatus.loading) {
         return (
@@ -897,7 +897,7 @@ function DatabaseSettingsSourcePanel({
               ) : (
                 <IconExternalLink className="mr-1.5 size-3.5" />
               )}
-              Connect Builder
+              Connect Jami Studio
             </Button>
           </div>
         </div>
@@ -1114,14 +1114,14 @@ function DatabaseSettingsSourcePanel({
             <div className="grid min-w-0 gap-2 rounded-lg border border-border bg-background p-3 text-sm">
               <div className="font-medium">
                 {source.sourceType === "builder-cms"
-                  ? "Local Builder changes"
+                  ? "Local Jami Studio changes"
                   : "Local outbound changes"}
               </div>
               <div className="text-xs text-muted-foreground">
                 {source.sourceType === "builder-cms"
                   ? source.capabilities.liveWritesEnabled
-                    ? "Local edits can be reviewed and sent through the guarded Builder autosave path."
-                    : "Local edits can be staged as a Builder save revision/autosave record. Live Builder writes are disabled."
+                    ? "Local edits can be reviewed and sent through the guarded Jami Studio autosave path."
+                    : "Local edits can be staged as a Jami Studio save revision/autosave record. Live Jami Studio writes are disabled."
                   : "No local outbound push lane is active for this mock source."}
               </div>
               <div className="grid min-w-0 gap-2">
@@ -1135,7 +1135,7 @@ function DatabaseSettingsSourcePanel({
                 {outboundChangeSets.length === 0 ? (
                   <div className="text-xs text-muted-foreground">
                     {source.sourceType === "builder-cms"
-                      ? "No pending local Builder changes yet. Rename a source-backed row to see a local outbound diff."
+                      ? "No pending local Jami Studio changes yet. Rename a source-backed row to see a local outbound diff."
                       : "No local outbound changes yet."}
                   </div>
                 ) : null}
@@ -1205,7 +1205,7 @@ function DatabaseSettingsSourcePanel({
 }
 
 // Root of the Sources drill-down: third-party integrations + Agent-Native apps,
-// each provider a row. Builder is live; the rest are disabled "coming soon".
+// each provider a row. Jami Studio is live; the rest are disabled "coming soon".
 function SourcesListView({
   source,
   sources,
@@ -1277,7 +1277,7 @@ function SourcesListView({
         </div>
         <DatabaseSettingsRow
           icon={<BuilderLogoMark className="size-4" />}
-          label="Builder"
+          label="Jami Studio"
           value={
             isBuilderSource
               ? (builderSpaceLabel ?? "Connected")
@@ -1500,7 +1500,7 @@ function CanonicalKeyConfirmView({
 }
 
 // Pick a second source to federate. NEXT supports local tables (any other
-// workspace database); integrations beyond Builder are coming soon.
+// workspace database); integrations beyond Jami Studio are coming soon.
 function AddSourceView({
   excludeDatabaseIds,
   canEdit,
@@ -2094,7 +2094,7 @@ function SourceDetailsFieldPicker({
   );
 }
 
-// A Builder space's data models, as drill-in rows. The attached model (if any)
+// A Jami Studio space's data models, as drill-in rows. The attached model (if any)
 // is marked; selecting a row opens that model's leaf.
 function BuilderSpaceModelsView({
   attachedModelName,
@@ -2128,7 +2128,8 @@ function BuilderSpaceModelsView({
     return (
       <div className="grid min-w-0 gap-2">
         <div className="text-xs text-destructive">
-          {modelsQuery.data.message ?? "Builder models could not be loaded."}
+          {modelsQuery.data.message ??
+            "Jami Studio models could not be loaded."}
         </div>
         <Button
           type="button"
@@ -2507,9 +2508,9 @@ function formatRelativeSyncTime(value: string | null): string | null {
 }
 
 function sourceBuilderReadModeSummary(source: ContentDatabaseSource) {
-  if (source.metadata.liveReadConfigured) return "Builder API read-only";
+  if (source.metadata.liveReadConfigured) return "Jami Studio API read-only";
   if (source.metadata.readMode === "fixture") {
-    return "Local fixture; Builder credentials unavailable";
+    return "Local fixture; Jami Studio credentials unavailable";
   }
   return "Local fixture";
 }

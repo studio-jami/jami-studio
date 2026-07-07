@@ -1,13 +1,13 @@
 /**
  * create-fusion-app — start a brand-new full-app (fusion) design.
  *
- * Provisions a Builder Fusion branch (one branch per design) in the
- * configured Builder branch project and hands the user's prompt to the
- * Builder cloud agent to scaffold the app. The branch/container is not
+ * Provisions a Jami Studio Fusion branch (one branch per design) in the
+ * configured Jami Studio branch project and hands the user's prompt to the
+ * Jami Studio cloud agent to scaffold the app. The branch/container is not
  * necessarily ready immediately — call `sync-fusion-app` to poll the
  * container and pick up the preview URL once it boots.
  *
- * Gated behind `FULL_APP_BUILDING_ENABLED`. When Builder is not configured
+ * Gated behind `FULL_APP_BUILDING_ENABLED`. When Jami Studio is not configured
  * (no credentials or no branch project ID), returns the same graceful
  * `{ status: "not-configured", cta, message }` shape as
  * `migrate-inline-design-to-app` instead of throwing.
@@ -50,10 +50,10 @@ function buildConnectUrl(origin: string): string {
 
 export default defineAction({
   description:
-    "Create a brand-new full-app (fusion) design: provisions a Builder Fusion " +
-    "branch and hands the prompt to the Builder cloud agent to scaffold a real " +
+    "Create a brand-new full-app (fusion) design: provisions a Jami Studio Fusion " +
+    "branch and hands the prompt to the Jami Studio cloud agent to scaffold a real " +
     "running app. Use this when the user wants a real app (not an HTML " +
-    "prototype) built from scratch for a design. Requires Builder.io to be " +
+    "prototype) built from scratch for a design. Requires Jami Studio to be " +
     "connected with a branch project ID configured; when not configured " +
     "returns a connect CTA — never throws. If the design already has a " +
     "fusion app, returns the existing linkage instead of creating a second " +
@@ -71,7 +71,7 @@ export default defineAction({
       .string()
       .optional()
       .describe(
-        "Optional branch name for the Builder agent to use. If omitted, Builder generates one.",
+        "Optional branch name for the Jami Studio agent to use. If omitted, Jami Studio generates one.",
       ),
   }),
   run: async ({ designId, prompt, branchName }) => {
@@ -116,13 +116,13 @@ export default defineAction({
             kind: "connect-builder" as const,
             label: "Build a real app",
             description:
-              "Connect Builder.io to build this design as a real running app " +
+              "Connect Jami Studio to build this design as a real running app " +
               "with a live container, branches, and deploys.",
-            primaryAction: "Connect Builder.io",
+            primaryAction: "Connect Jami Studio",
             connectUrl,
           },
           message:
-            "Builder is not connected. Call connect-builder-app to start " +
+            "Jami Studio is not connected. Call connect-builder-app to start " +
             "the OAuth flow, then retry create-fusion-app.",
         };
       }
@@ -132,16 +132,16 @@ export default defineAction({
         designId,
         cta: {
           kind: "configure-project" as const,
-          label: "Configure Builder project",
+          label: "Configure Jami Studio project",
           description:
-            "Builder credentials are present but no branch project ID is set. " +
+            "Jami Studio credentials are present but no branch project ID is set. " +
             "Set DISPATCH_BUILDER_PROJECT_ID, BUILDER_BRANCH_PROJECT_ID, or " +
             "BUILDER_PROJECT_ID to enable full app building.",
-          primaryAction: "Open Builder settings",
+          primaryAction: "Open Jami Studio settings",
           connectUrl: `${appHost}/account-settings`,
         },
         message:
-          "Builder credentials are configured but no branch project ID is set. " +
+          "Jami Studio credentials are configured but no branch project ID is set. " +
           "Set DISPATCH_BUILDER_PROJECT_ID to enable full app building.",
       };
     }
@@ -149,7 +149,7 @@ export default defineAction({
     const projectId = await resolveBuilderBranchProjectId();
     if (!projectId) {
       throw new Error(
-        "Builder branch project ID is not configured. " +
+        "Jami Studio branch project ID is not configured. " +
           "Set DISPATCH_BUILDER_PROJECT_ID, BUILDER_BRANCH_PROJECT_ID, or " +
           "BUILDER_PROJECT_ID and try again.",
       );

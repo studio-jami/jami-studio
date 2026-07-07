@@ -178,7 +178,7 @@ export function BuilderSymbolRead({
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <IconPuzzle className="size-4" />
-        <span>Builder Symbol</span>
+        <span>Jami Studio Symbol</span>
       </div>
       <div className="mt-1 text-xs text-muted-foreground">
         {data.model || "model unknown"} / {data.entry || "entry unknown"}
@@ -208,7 +208,7 @@ export function BuilderRawBlockRead({
     >
       <div className="flex items-center gap-2 font-medium text-foreground">
         <IconBox className="size-4" />
-        <span>{data.componentName || "Raw Builder block"}</span>
+        <span>{data.componentName || "Raw Jami Studio block"}</span>
       </div>
       {data.summary ? <div className="mt-1">{data.summary}</div> : null}
       <SidecarBadge rawRef={data.rawRef} />

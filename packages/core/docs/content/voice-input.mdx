@@ -1,19 +1,19 @@
 ---
 title: "Voice Input"
-description: "Voice dictation in the agent chat composer — Builder Gemini, BYOK providers, and browser Web Speech fallback."
+description: "Voice dictation in the agent chat composer — Jami Studio Gemini, BYOK providers, and browser Web Speech fallback."
 ---
 
 # Voice Input
 
 Every agent-native app has a microphone in the chat composer. Click it, talk, and your words get transcribed into the prompt. Useful on mobile, useful for long prompts, useful when your hands are on something else.
 
-The framework handles all of this automatically. Builder-connected users get Builder-hosted Gemini Flash-Lite by default; otherwise users can bring their own provider key or fall back to browser speech recognition.
+The framework handles all of this automatically. Jami Studio-connected users get Jami Studio-hosted Gemini Flash-Lite by default; otherwise users can bring their own provider key or fall back to browser speech recognition.
 
 ## How it works {#how-it-works}
 
 The composer's voice button records audio in the browser, then picks a provider:
 
-1. **Builder Gemini Flash-Lite (default when Builder is connected).** The browser POSTs audio to `/_agent-native/transcribe-voice`, which proxies through Builder.io using Gemini Flash-Lite. No Google API key required.
+1. **Jami Studio Gemini Flash-Lite (default when Jami Studio is connected).** The browser POSTs audio to `/_agent-native/transcribe-voice`, which proxies through Jami Studio using Gemini Flash-Lite. No Google API key required.
 2. **BYOK cloud providers.** Users can choose Google Gemini, Groq Whisper, or OpenAI Whisper from Settings. The route resolves user-scoped encrypted secrets before shared deployment credentials.
 3. **Browser Web Speech API (fallback).** If no server provider is available, the composer can use the browser's built-in speech recognition. Works in Chromium-based browsers (Chrome, Edge, Arc) and Safari. Less accurate; streams live.
 
@@ -28,8 +28,8 @@ Provider choice is stored in application state under `voice-transcription-prefs`
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-card col">
-    <div class="diagram-pill accent">1 &middot; Builder Gemini</div>
-    <small class="diagram-muted">default when Builder connected</small>
+    <div class="diagram-pill accent">1 &middot; Jami Studio Gemini</div>
+    <small class="diagram-muted">default when Jami Studio connected</small>
     <div class="diagram-pill">2 &middot; BYOK cloud</div>
     <small class="diagram-muted"
       >Gemini &middot; Groq &middot; OpenAI Whisper</small
@@ -69,7 +69,7 @@ The route is **same-origin only** — cross-site POSTs are rejected so an attack
 
 ## Enabling Providers {#enabling-providers}
 
-Builder is the easiest path: connect Builder.io from Settings and the default provider becomes Builder Gemini Flash-Lite. For BYOK providers, add the matching key in Settings → API Keys.
+Jami Studio is the easiest path: connect Jami Studio from Settings and the default provider becomes Jami Studio Gemini Flash-Lite. For BYOK providers, add the matching key in Settings → API Keys.
 
 ### Per-user (recommended for SaaS)
 

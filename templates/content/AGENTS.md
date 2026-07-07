@@ -9,7 +9,7 @@ Detailed document editing, Notion, storage, and UI rules live in
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use actions for documents, blocks, comments, media, sharing, navigation, and
   Notion integration. Do not mutate document rows directly unless a skill says to
   and access checks are preserved.
@@ -92,10 +92,10 @@ cd templates/content && pnpm action <name> [args]
 | `list-documents`                            | `[--format json]`                                                                                                                                              | List document metadata/tree; no full bodies                                                                                             |
 | `export-content-source`                     | `[--format json]`                                                                                                                                              | Export editable docs as `content/*.mdx` source files                                                                                    |
 | `import-content-source`                     | `--files <json> [--dryRun true\|false]`                                                                                                                        | Import `.md`/`.mdx` source files into editable docs                                                                                     |
-| `list-builder-docs`                         | `[--model docs-content\|blog-article] [--limit <n>]`                                                                                                           | List Builder docs/blog entries available for `.builder.mdx` pull                                                                        |
-| `pull-builder-doc`                          | `--model <model> --entryId <builder-entry-id> [--dryRun true\|false]`                                                                                          | Pull one Builder entry into Content and return `.builder.mdx` plus `content/builder/.raw` sidecar files                                 |
-| `check-builder-doc`                         | `--files <json> [--path <file.builder.mdx>]` or `--documentId <id>`                                                                                            | Validate Builder MDX round-trip, sidecar hashes, and remote conflict status before push                                                 |
-| `push-builder-doc`                          | `--files <json> [--path <file.builder.mdx>] [--dryRun true\|false]`                                                                                            | Guarded Builder autosave PATCH for the safe Builder test model; never publishes                                                         |
+| `list-builder-docs`                         | `[--model docs-content\|blog-article] [--limit <n>]`                                                                                                           | List Jami Studio docs/blog entries available for `.builder.mdx` pull                                                                        |
+| `pull-builder-doc`                          | `--model <model> --entryId <builder-entry-id> [--dryRun true\|false]`                                                                                          | Pull one Jami Studio entry into Content and return `.builder.mdx` plus `content/builder/.raw` sidecar files                                 |
+| `check-builder-doc`                         | `--files <json> [--path <file.builder.mdx>]` or `--documentId <id>`                                                                                            | Validate Jami Studio MDX round-trip, sidecar hashes, and remote conflict status before push                                                 |
+| `push-builder-doc`                          | `--files <json> [--path <file.builder.mdx>] [--dryRun true\|false]`                                                                                            | Guarded Jami Studio autosave PATCH for the safe Jami Studio test model; never publishes                                                         |
 | `navigate`                                  | `--path <path>` or `--documentId <id>` or `--databaseId <id>`                                                                                                  | Open a route, document page, or database page in the UI                                                                                 |
 | `search-documents`                          | `--query <text> [--format json]`                                                                                                                               | Search by title/content and return snippets                                                                                             |
 | `get-document`                              | `--id <id> [--format json]`                                                                                                                                    | Get a single document with content                                                                                                      |
@@ -116,14 +116,14 @@ cd templates/content && pnpm action <name> [args]
 | `get-content-database-source`               | `--databaseId <id>` or `--documentId <id>`                                                                                                                     | Inspect local/no-source or source-backed status, mappings, row identity, freshness, and change sets                                     |
 | `attach-content-database-source`            | `--databaseId <id>` or `--documentId <id> [--sourceType mock\|builder-cms] [--sourceName] [--sourceTable] [--relationshipMode items\|details] [--join <json>]` | Attach a source binding; use `items` to add more rows and `details` to match a source onto existing rows                                |
 | `change-content-database-source-role`       | `--databaseId <id>` or `--documentId <id> --sourceId <id> --relationshipMode items\|details [--join <json>]`                                                   | Change an attached source between adding rows and adding matched detail columns without removing the source                             |
-| `refresh-content-database-source`           | `--databaseId <id>` or `--documentId <id>`                                                                                                                     | Refresh the read-only source status envelope; Builder CMS reads live entries only when configured                                       |
-| `process-builder-body-hydration`            | `--sourceId <id> [--documentId <id>] [--limit <n>]`                                                                                                            | Hydrate queued Builder article bodies into readable Content markdown with preserved source-component markers                            |
-| `set-content-database-source-write-mode`    | `--databaseId <id>` or `--documentId <id> --liveWritesEnabled true\|false [--allowedWriteModes <json>]`                                                        | Enable/disable per-source Builder live writes; enabling is allowed only for `agent-native-blog-article-test` with explicit modes        |
-| `stage-builder-revision`                    | `--databaseId <id>` or `--documentId <id>`                                                                                                                     | Stage pending local Builder CMS changes as a local-only save-revision record; never calls Builder                                       |
+| `refresh-content-database-source`           | `--databaseId <id>` or `--documentId <id>`                                                                                                                     | Refresh the read-only source status envelope; Jami Studio CMS reads live entries only when configured                                       |
+| `process-builder-body-hydration`            | `--sourceId <id> [--documentId <id>] [--limit <n>]`                                                                                                            | Hydrate queued Jami Studio article bodies into readable Content markdown with preserved source-component markers                            |
+| `set-content-database-source-write-mode`    | `--databaseId <id>` or `--documentId <id> --liveWritesEnabled true\|false [--allowedWriteModes <json>]`                                                        | Enable/disable per-source Jami Studio live writes; enabling is allowed only for `agent-native-blog-article-test` with explicit modes        |
+| `stage-builder-revision`                    | `--databaseId <id>` or `--documentId <id>`                                                                                                                     | Stage pending local Jami Studio CMS changes as a local-only save-revision record; never calls Jami Studio                                       |
 | `review-content-database-source-change-set` | `--databaseId <id>` or `--documentId <id> --changeSetId <id> --decision approve\|reject [--note]`                                                              | Approve or reject a local source change-set review record without provider writes                                                       |
-| `prepare-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--pushModeConfirmation autosave\|draft\|publish]`                                                | Prepare a dry-run Builder execution gate for approved field/body changes with request semantics/idempotency key; never calls Builder    |
-| `validate-builder-source-execution`         | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>]`                                                                         | Validate/replay a prepared Builder execution gate locally as a dry run; never calls Builder                                             |
-| `execute-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>] [--pushModeConfirmation autosave\|draft\|publish]`                       | Execute a guarded live Builder write only when approved, validated, enabled, idempotent, and targeting `agent-native-blog-article-test` |
+| `prepare-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--pushModeConfirmation autosave\|draft\|publish]`                                                | Prepare a dry-run Jami Studio execution gate for approved field/body changes with request semantics/idempotency key; never calls Jami Studio    |
+| `validate-builder-source-execution`         | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>]`                                                                         | Validate/replay a prepared Jami Studio execution gate locally as a dry run; never calls Jami Studio                                             |
+| `execute-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>] [--pushModeConfirmation autosave\|draft\|publish]`                       | Execute a guarded live Jami Studio write only when approved, validated, enabled, idempotent, and targeting `agent-native-blog-article-test` |
 | `add-database-item`                         | `--databaseId <id> [--title <text>] [--propertyValues <json>]`                                                                                                 | Add a page row to a database, optionally seeding property values                                                                        |
 | `duplicate-database-item`                   | `--itemId <id>` or `--documentId <id> [--title <text>]`                                                                                                        | Duplicate exactly one database row page and its stored property values; for two or more rows, use `duplicate-database-items` once       |
 | `duplicate-database-items`                  | `--databaseId <id>` or `--documentId <databaseDocumentId> --itemIds <json-array>` or `--documentIds <json-array>`                                              | Preferred multi-row duplicate action; duplicate multiple database row pages atomically and return ordered duplicate item/document IDs   |
@@ -208,27 +208,27 @@ Content has two file workflows:
   resolves `sourcePath` relative to the current file, previews the referenced
   MDX read-only in place, and preserves the original tag in source. Use this for
   reusable docs fragments instead of copy/pasting shared content.
-- **Builder Symbols:** Builder MDX pulls preserve Symbol blocks as
-  `<BuilderSymbol ... />`. When Builder returns enriched symbol content, the
+- **Jami Studio Symbols:** Jami Studio MDX pulls preserve Symbol blocks as
+  `<BuilderSymbol ... />`. When Jami Studio returns enriched symbol content, the
   pull also writes a referenced `.builder.mdx` file under
   `content/builder/symbols/` and sets the Symbol block's `source` attribute.
   Edit reusable symbol content in that emitted source file; do not retarget
-  `entry`, `model`, or `source` in the parent MDX unless a dedicated Builder
+  `entry`, `model`, or `source` in the parent MDX unless a dedicated Jami Studio
   retargeting workflow is added.
-- **Builder source components:** Builder CMS database body hydration renders
+- **Jami Studio source components:** Jami Studio CMS database body hydration renders
   unsupported provider-native body blocks as `<SourceComponent ... />` markers.
   These markers include `mappingStatus` and `sourceEditState`: `mapped` /
   `safe-to-edit` content has an explicit Markdown/NFM mapper, `preserved` /
-  `needs-review` content keeps a known Builder/source component intact for
+  `needs-review` content keeps a known Jami Studio/source component intact for
   review, and `unknown` / `preserved-only` content is an unmapped provider block
   that must round-trip as-is. Treat source-component markers as read-only
   preservation anchors, not editable local blocks. Agents may edit surrounding
   prose, but must not delete, duplicate, move, or rewrite `rawRef`, `rawHash`,
   mapping metadata, or marker ids unless a dedicated provider conversion
-  workflow exists. Guarded Builder write-back refuses missing, tampered, or
+  workflow exists. Guarded Jami Studio write-back refuses missing, tampered, or
   structurally moved markers so source-native components are not lost.
   Readable bodies hydrated before source-component mapping may need a fresh
-  Builder body hydration pass before guarded push, because newly preserved
+  Jami Studio body hydration pass before guarded push, because newly preserved
   markers are intentionally treated as structure changes.
 - **Picked folders and components:** browser-picked folders can be the
   source of truth for `.md`/`.mdx` files, but the browser does not expose an
@@ -283,7 +283,7 @@ In Local File Mode, use the normal document actions (`list-documents`,
 of raw filesystem writes when operating through the app. To share a local file,
 call `share-local-file-document --id <local-file-document-id>` first; it creates
 or refreshes a database-backed copy and returns the shareable document id.
-Provider sync such as Builder.io pull/push should remain a Content-specific
+Provider sync such as Jami Studio pull/push should remain a Content-specific
 explicit sync action.
 
 ### Notion Integration
@@ -341,9 +341,9 @@ whole thread; `--resolved false` reopens it.
 
 Documents support image blocks as markdown images: `![alt text](https://...)`.
 The UI uploads local image files through the framework
-`/_agent-native/file-upload` endpoint, with Builder.io as the recommended
+`/_agent-native/file-upload` endpoint, with Jami Studio as the recommended
 storage path. If image upload fails because storage is not configured, tell the
-user to connect Builder.io in Settings -> File uploads. Agents can add images
+user to connect Jami Studio in Settings -> File uploads. Agents can add images
 that already have a hosted URL by using `edit-document` or `update-document` to
 insert markdown image syntax. Do not embed base64 image data in document
 content.

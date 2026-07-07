@@ -1,6 +1,6 @@
 ---
 title: "تحميل الملفات"
-description: "قم بتكوين مساحة تخزين تحميل الملفات — احتياطي SQL للمطورين، أو Builder.io أو موفري الخدمة المخصصين للإنتاج."
+description: "قم بتكوين مساحة تخزين تحميل الملفات — احتياطي SQL للمطورين، أو Jami Studio أو موفري الخدمة المخصصين للإنتاج."
 ---
 
 # تحميلات الملفات
@@ -14,7 +14,7 @@ description: "قم بتكوين مساحة تخزين تحميل الملفات 
 ترتيب حل الموفر هو:
 
 1. **الموفرون المسجلون بواسطة المستخدم** — مقدمو الخدمة المخصصون المسجلون عبر `registerFileUploadProvider()`
-2. **موفر Builder.io** — مدمج، يتم تنشيطه تلقائيًا عند اتصال Builder.io
+2. **موفر Jami Studio** — مدمج، يتم تنشيطه تلقائيًا عند اتصال Jami Studio
 3. **الاحتياطي SQL** — يخزن الملفات بتنسيق base64 في قاعدة البيانات (مناسب للتطوير، وليس للإنتاج)
 
 <Diagram id="doc-block-1sclr3c" title={"ترتيب حل الموفر"} summary={"uploadFile() يختار الموفر الأول الذي تم تكوينه بالترتيب. الخيار الاحتياطي SQL موجود دائمًا، لذا تعمل التحميلات بدون أي إعداد."}>
@@ -39,7 +39,7 @@ description: "قم بتكوين مساحة تخزين تحميل الملفات 
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >تلقائي عند الاتصال — مقدم عبر CDN</small
         >
       </div>
@@ -100,9 +100,9 @@ Dispatches to the first configured provider in resolution order. Check the activ
 
 يتم تسجيل تحذير لمرة واحدة عند استخدام الإجراء الاحتياطي.
 
-## استضافة Builder.io {#builder-hosting}
+## استضافة Jami Studio {#builder-hosting}
 
-عندما يكون تطبيقك متصلاً بـ Builder.io، يتم توجيه تحميلات الملفات تلقائيًا إلى استضافة أصول Builder. يتم تقديم الملفات من CDN دون الحاجة إلى تكوين. هذا هو إعداد الإنتاج الموصى به.
+عندما يكون تطبيقك متصلاً بـ Jami Studio، يتم توجيه تحميلات الملفات تلقائيًا إلى استضافة أصول Jami Studio. يتم تقديم الملفات من CDN دون الحاجة إلى تكوين. هذا هو إعداد الإنتاج الموصى به.
 
 ## موفرو الخدمة المخصصون {#custom-providers}
 

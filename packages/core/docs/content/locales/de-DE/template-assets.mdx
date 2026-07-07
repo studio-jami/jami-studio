@@ -87,7 +87,7 @@ Wenn Sie die App öffnen, bleiben die ausgewählte Bibliothek, die Eingabeauffor
 
 - **Ihr Team benötigt eine wiederverwendbare visuelle Anleitung**, keine einmaligen generischen Medienaufforderungen – sammeln Sie genehmigte Logos, Produktfotos und Stilbeispiele, damit Generationen bei der Marke bleiben.
 - **Sie möchten, dass die generierten Medien überprüft und verfeinert werden**, mit einem vollständigen Prüfprotokoll der Eingabeaufforderungen, Modelle, Referenzen und Herkunft für jeden Lauf.
-- **Andere Apps benötigen eine Asset-Auswahl oder einen Asset-Generator** – Folien, Design, Inhalte, ein Blog-Editor oder ein Website-Builder können die Auswahl einbetten oder Assets über A2A aufrufen.
+- **Andere Apps benötigen eine Asset-Auswahl oder einen Asset-Generator** – Folien, Design, Inhalte, ein Blog-Editor oder ein Website-Jami Studio können die Auswahl einbetten oder Assets über A2A aufrufen.
 - **Sie möchten, dass Markenmedien von Ihrem Coding-Agenten verfügbar sind** – Codex, Claude Code, Claude oder ChatGPT können Assets generieren und auswählen, ohne den Chat zu verlassen.
 
 ## Erste Schritte
@@ -116,11 +116,11 @@ Live-Demo: [assets.agent-native.com](https://assets.agent-native.com).
 
 - **Erstellen Sie Asset-Bibliotheken.** Gruppieren Sie Referenzbilder, Videos, kanonische Logos, Stilhinweise, Paletten, Ordner und generierte Ausgaben nach Marke, Kampagne, Produkt oder Kategorie.
 - **Generieren über Chat.** Die Home Verfassenr- und Bibliotheks-Generate-Steuerelemente senden die Eingabeaufforderung mit `sendToAgentChat()` an den Agenten, sodass Benutzer Varianten prüfen, Feedback geben und iterieren können.
-- **Generieren Sie Bilder und Videos.** Die von Builder verwaltete Bildgenerierung ist verfügbar, wenn sie aktiviert ist, und Gemini unterstützt die Videogenerierung sowie den manuellen Bild-Fallback.
+- **Generieren Sie Bilder und Videos.** Die von Jami Studio verwaltete Bildgenerierung ist verfügbar, wenn sie aktiviert ist, und Gemini unterstützt die Videogenerierung sowie den manuellen Bild-Fallback.
 - **Referenzen hochladen und beschreiben.** Fügen Sie Bilder oder Videos aus der Bibliothek UI oder der Schaltfläche zum Anhängen des Prompt Verfassenr hinzu und suchen Sie dann nach Titel, Beschreibung, Alternativtext, Prompt, Modell, Medientyp, Status, Rolle, Ordner oder Sammlung.
 - **Führen Sie ein Generierungs-Audit-Protokoll.** Bei jedem Lauf werden Eingabeaufforderungen, Modell, Seitenverhältnis, Referenzen, Quell-Asset, Herkunft, generierte Assets, Status, Fehler und Zeitstempel für eine spätere Entwurfsüberprüfung aufgezeichnet.
 - **Behalten Sie die Genauigkeit des Logos bei.** Der Agent kann einen Platzhalterbereich generieren und der Server fügt das hochgeladene kanonische Logo zum endgültigen Bild zusammen, anstatt sich beim Neuzeichnen auf das Bildmodell zu verlassen.
-- **Als Picker einbetten.** Andere Apps können `/picker` iframen und auf das `chooseAsset`-Ereignis von `@agent-native/embedding` warten, wodurch Assets in einen Asset-Picker/Generator für Blog-Editoren, Website-Builder, Foliendecks und benutzerdefinierte Apps umgewandelt werden. Der Picker gibt auch den Legacy-Alias `chooseImage` für vorhandene Nur-Image-Hosts aus.
+- **Als Picker einbetten.** Andere Apps können `/picker` iframen und auf das `chooseAsset`-Ereignis von `@agent-native/embedding` warten, wodurch Assets in einen Asset-Picker/Generator für Blog-Editoren, Website-Jami Studio, Foliendecks und benutzerdefinierte Apps umgewandelt werden. Der Picker gibt auch den Legacy-Alias `chooseImage` für vorhandene Nur-Image-Hosts aus.
 - **Als app-gestützten Skill installieren.** Das `agent-native.app-skill.json`-Manifest exportiert einen Assets-Skill plus MCP-Connector-Metadaten, damit Marktplätze die App, ihre Anweisungen und ihre Auswahl gemeinsam installieren können.
 - **Andere Agenten bedienen.** Folien, Design, Inhalt, E-Mail und Versand können Assets über A2A aufrufen, um Bibliotheken aufzulisten, Stapel zu generieren, Videos zu erstellen, ein Asset zu verfeinern, Exporte abzurufen und Inline-Vorschauen zu rendern, wo das Einbetten zulässig ist.
 
@@ -139,7 +139,7 @@ Generieren und wählen Sie Markenmedien aus, ohne Codex, Claude Code, Claude ode
    Skills CLI, verwenden Sie:
 
    ```bash
-   npx skills@latest add BuilderIO/agent-native --skill asset
+   npx skills@latest add Jami Studio/agent-native --skill asset
    ```
 
    Der Vercel/open Skills CLI installiert nur die Anweisungsdatei; Das ist nicht der Fall
@@ -495,7 +495,7 @@ Der Assets-App-Skill hat die App-ID `assets` und wird als MCP URL gehostet
 npx @agent-native/core@latest skills add assets
 
 # Vercel/open-Kenntnisse CLI-Installation: Nur exportierte Anweisungen, keine MCP-Konfiguration.
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 
 # Gehostete Installation: URL-nur MCP-Connector, keine gemeinsamen Geheimnisse in Skill-Dateien.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json

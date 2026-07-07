@@ -43,17 +43,17 @@ export interface StorageSetupCardProps {
   description?: string;
   connectDescription?: string;
   connectedDescription?: string;
-  /** Analytics source for the Builder connect popup. */
+  /** Analytics source for the Jami Studio connect popup. */
   connectSource?: string;
-  /** Analytics flow for the Builder connect popup. */
+  /** Analytics flow for the Jami Studio connect popup. */
   connectFlow?: string;
 }
 
 export function StorageSetupCard({
   onConfigured,
   title = "Connect storage",
-  description = "Store recorded videos with Builder.io or S3-compatible storage.",
-  connectDescription = "Builder.io's free tier includes video storage and AI credits.",
+  description = "Store recorded videos with Jami Studio or S3-compatible storage.",
+  connectDescription = "Jami Studio's free tier includes video storage and AI credits.",
   connectedDescription = "You're all set. Starting recorder...",
   connectSource = "clips_file_upload_storage_setup_card",
   connectFlow = "file_upload",
@@ -137,7 +137,7 @@ export function StorageSetupCard({
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
 
-      {/* Builder.io — primary option, one-click Connect flow. */}
+      {/* Jami Studio — primary option, one-click Connect flow. */}
       <button
         type="button"
         onClick={handleConnect}

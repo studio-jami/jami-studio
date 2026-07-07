@@ -6,7 +6,7 @@ import { listBuilderCmsModels } from "./_builder-cms-read-client.js";
 
 export default defineAction({
   description:
-    "List Builder CMS models available to attach as read-only database sources. Uses configured Builder credentials and never writes to Builder.",
+    "List Jami Studio CMS models available to attach as read-only database sources. Uses configured Jami Studio credentials and never writes to Jami Studio.",
   schema: z.object({}),
   http: { method: "GET" },
   readOnly: true,

@@ -9,7 +9,7 @@ const MAX_NETWORK_REQUESTS = 400;
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_URL_LENGTH = 1_000;
 const STORAGE_SETUP_REQUIRED_MESSAGE =
-  "Connect storage to finish saving this clip: Builder.io (free tier storage + AI) or S3-compatible storage.";
+  "Connect storage to finish saving this clip: Jami Studio (free tier storage + AI) or S3-compatible storage.";
 const STORAGE_SETUP_FAILURE_RE =
   /video storage is not connected|no video storage configured|file upload provider|storage provider|connect builder|s3-compatible/i;
 const SECRET_KEY_FRAGMENT =

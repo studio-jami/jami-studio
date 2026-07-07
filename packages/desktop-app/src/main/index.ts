@@ -6551,7 +6551,7 @@ function ensureCodeAgentLlmProvider(): {
   return {
     ok: false,
     error:
-      "Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, Builder credentials, or run `codex login` for Codex CLI.",
+      "Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, Jami Studio credentials, or run `codex login` for Codex CLI.",
   };
 }
 
@@ -6730,7 +6730,7 @@ function getCodeAgentModelList(): CodeAgentModelListResult {
     if (builderConfigured) {
       pushCodeAgentModelOptions(models, {
         engine: "builder",
-        engineLabel: "Builder.io",
+        engineLabel: "Jami Studio",
         supportedModels: BUILDER_MODEL_CONFIG.supportedModels,
         configured: true,
       });
@@ -7973,7 +7973,7 @@ function desktopBuilderCallbackPage(
   message: string,
 ) {
   const title =
-    kind === "success" ? "Builder.io connected" : "Builder.io connect failed";
+    kind === "success" ? "Jami Studio connected" : "Jami Studio connect failed";
   return `<!doctype html>
 <html>
   <head>
@@ -8039,13 +8039,13 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
       const privateKey = requestUrl.searchParams.get("p-key");
       const publicKey = requestUrl.searchParams.get("api-key");
       if (!privateKey || !publicKey) {
-        const message = "Builder did not return credentials.";
+        const message = "Jami Studio did not return credentials.";
         res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
         res.end(desktopBuilderCallbackPage("error", message));
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Could not connect Builder.io.",
+          message: "Could not connect Jami Studio.",
           error: message,
         });
         return;
@@ -8067,7 +8067,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
       finish({
         ok: true,
         settings,
-        message: "Builder.io connected for Code.",
+        message: "Jami Studio connected for Code.",
       });
     };
 
@@ -8077,7 +8077,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
       finish({
         ok: false,
         settings: getCodeAgentProviderSettings(),
-        message: "Could not start Builder.io connect flow.",
+        message: "Could not start Jami Studio connect flow.",
         error: err instanceof Error ? err.message : String(err),
       });
     });
@@ -8088,7 +8088,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Could not start Builder.io connect flow.",
+          message: "Could not start Jami Studio connect flow.",
           error: "No callback server was available.",
         });
         return;
@@ -8098,7 +8098,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Could not start Builder.io connect flow.",
+          message: "Could not start Jami Studio connect flow.",
           error: "No callback port was assigned.",
         });
         return;
@@ -8112,8 +8112,8 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Could not open Builder.io connect.",
-          error: "The Builder.io connect URL was not valid.",
+          message: "Could not open Jami Studio connect.",
+          error: "The Jami Studio connect URL was not valid.",
         });
         return;
       }
@@ -8122,7 +8122,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Could not open Builder.io connect.",
+          message: "Could not open Jami Studio connect.",
           error: err instanceof Error ? err.message : String(err),
         });
       });
@@ -8130,7 +8130,7 @@ function connectDesktopBuilderProvider(): Promise<CodeAgentProviderSettingsUpdat
         finish({
           ok: false,
           settings: getCodeAgentProviderSettings(),
-          message: "Builder.io connect timed out.",
+          message: "Jami Studio connect timed out.",
           error: "No callback was received before the connect flow timed out.",
         });
       }, DESKTOP_BUILDER_CONNECT_TIMEOUT_MS);

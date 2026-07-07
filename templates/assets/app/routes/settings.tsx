@@ -219,7 +219,7 @@ function AssetsSetupCard({ libraryCount }: { libraryCount: number }) {
       <CardContent className="p-0">
         <SettingsRow
           icon={<IconKey className="size-4" />}
-          title="Builder"
+          title="Jami Studio"
           description={
             builderConnected
               ? orgName

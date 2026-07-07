@@ -323,7 +323,7 @@ function askAgentAboutSelection(selection: {
 | `newTab: true`      | 為更大的建立工作啟動單獨的聊天對話串                     |
 | `type: "code"`      | 當請求涉及更改應用程式來源時路由到程式碼編輯框架         |
 
-`sendToAgentChat()` 是提交的聊天路徑受支援的瀏覽器包裝器，有時在內部被視為 `agentNative.submitChat`。應用程式 UI 應呼叫包裝器，而不是直接發布 `agentNative.submitChat`，因為包裝器處理本機側邊欄、Builder/Frame 路由、MCP 應用程式主機路由、分頁 ID 和程式碼請求路由。
+`sendToAgentChat()` 是提交的聊天路徑受支援的瀏覽器包裝器，有時在內部被視為 `agentNative.submitChat`。應用程式 UI 應呼叫包裝器，而不是直接發布 `agentNative.submitChat`，因為包裝器處理本機側邊欄、Jami Studio/Frame 路由、MCP 應用程式主機路由、分頁 ID 和程式碼請求路由。
 
 對於沒有瀏覽器側邊欄的節點/指令碼脈絡，請使用 `agentChat.submit()` 或 `agentChat.prefill()`。伺服器actions一般不應該呼叫僅瀏覽器的`sendToAgentChat()`；如果某個操作需要開啟 UI 向代理詢問某些內容，請將一個小請求寫入 `application_state` 並讓 UI 橋接器從瀏覽器傳送它。
 

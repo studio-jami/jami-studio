@@ -80,12 +80,12 @@ export async function upsertBuilderProxyDesignSystem({
   return {
     localDesignSystemId,
     instructions: [
-      "Builder design-system indexing has started.",
-      `Builder design system: ${result.designSystemId}`,
+      "Jami Studio design-system indexing has started.",
+      `Jami Studio design system: ${result.designSystemId}`,
       `Local selectable design system: ${localDesignSystemId}`,
-      `Builder job: ${result.jobId}`,
+      `Jami Studio job: ${result.jobId}`,
       `Open: ${result.builderUrl}`,
-      "Use the local design system id in Design flows; Builder remains the source of truth for the indexed brand kit.",
+      "Use the local design system id in Design flows; Jami Studio remains the source of truth for the indexed brand kit.",
     ].join("\n"),
   };
 }

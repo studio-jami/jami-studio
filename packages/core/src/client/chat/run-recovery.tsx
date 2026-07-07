@@ -217,7 +217,7 @@ export function BuilderConnectCta({
               Waiting…
             </>
           ) : (
-            "Connect Builder.io"
+            "Connect Jami Studio"
           )}
         </button>
         {error && (
@@ -236,7 +236,7 @@ export function BuilderConnectCta({
     return (
       <div className={containerClass}>
         <div className="min-w-0 flex-1">
-          <div className="text-xs font-medium text-foreground">Builder.io</div>
+          <div className="text-xs font-medium text-foreground">Jami Studio</div>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             {orgName ? `Connected — ${orgName}` : "Connected"}
           </p>
@@ -253,7 +253,7 @@ export function BuilderConnectCta({
     <div className={containerClass}>
       <div className="min-w-0 flex-1">
         <div className="text-xs font-medium text-foreground">
-          Connect Builder.io
+          Connect Jami Studio
         </div>
         <p className="text-[11px] text-muted-foreground mt-0.5 max-w-[220px]">
           Free credits for LLM, hosting, and more — no API key needed
@@ -459,7 +459,7 @@ export function BuilderSetupCard({
               Connect AI
             </h3>
             <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
-              Use Builder.io (free credits), or add an Anthropic/OpenAI key.
+              Use Jami Studio (free credits), or add an Anthropic/OpenAI key.
             </p>
           </div>
           <div
@@ -594,8 +594,8 @@ export function RunErrorRecoveryCard({
           </p>
           {shouldShowBuilderReconnect && !builderReconnectResolved && (
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              The current Builder.io or model-provider credential was rejected.
-              Reconnect Builder.io, then retry this message.
+              The current Jami Studio or model-provider credential was rejected.
+              Reconnect Jami Studio, then retry this message.
             </p>
           )}
           {isConnectionRecoveryError && (
@@ -655,8 +655,8 @@ export function RunErrorRecoveryCard({
               <IconExternalLink size={13} />
             )}
             {builderReconnect.connecting
-              ? "Connecting Builder.io"
-              : "Reconnect Builder.io"}
+              ? "Connecting Jami Studio"
+              : "Reconnect Jami Studio"}
           </button>
         )}
         {canRecover && (

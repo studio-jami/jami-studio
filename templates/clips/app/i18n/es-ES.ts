@@ -21,16 +21,16 @@ const messages = {
     gotIt: "Entendido",
   },
   builderCredits: {
-    pausedTitle: "Créditos de Builder.io en pausa",
+    pausedTitle: "Créditos de Jami Studio en pausa",
     transcriptionDescription:
-      "Actualiza Builder.io para reanudar la transcripción de respaldo. Las transcripciones nativas existentes seguirán visibles.",
+      "Actualiza Jami Studio para reanudar la transcripción de respaldo. Las transcripciones nativas existentes seguirán visibles.",
     cleanupDescription:
-      "Actualiza Builder.io para reanudar la limpieza de transcripciones, los resúmenes y los títulos con IA. Se conservó la transcripción nativa.",
+      "Actualiza Jami Studio para reanudar la limpieza de transcripciones, los resúmenes y los títulos con IA. Se conservó la transcripción nativa.",
     settingsDescription:
-      "Actualiza Builder.io para reanudar la transcripción de respaldo, la limpieza de transcripciones, los resúmenes y los títulos con IA. Las transcripciones nativas existentes seguirán visibles.",
+      "Actualiza Jami Studio para reanudar la transcripción de respaldo, la limpieza de transcripciones, los resúmenes y los títulos con IA. Las transcripciones nativas existentes seguirán visibles.",
     titleDescription:
       "La generación de títulos con IA está en pausa. Tu transcripción sigue funcionando.",
-    upgrade: "Actualizar Builder.io",
+    upgrade: "Actualizar Jami Studio",
     retryAfterUpgrade: "Reintentar tras actualizar",
     openAiSetup: "Configuración de IA",
     featureBackupTranscription: "Transcripción de respaldo",
@@ -140,7 +140,7 @@ const messages = {
     backToLibrary: "Volver a la biblioteca",
     storageStillDisconnected: "El almacenamiento aún no está conectado",
     finishBuilderOrS3:
-      "Finalice la ventana emergente Builder.io o configure el almacenamiento S3 y vuelva a intentarlo.",
+      "Finalice la ventana emergente Jami Studio o configure el almacenamiento S3 y vuelva a intentarlo.",
     loomImportResumed: "Se reanudó la importación de Loom",
     clipUploadResumed: "Se reanudó la carga del clip",
     couldNotRetryLoom: "No se pudo volver a intentar importar Loom",
@@ -177,9 +177,9 @@ const messages = {
     savingWentWrong: "Algo salió mal al guardar este clip.",
     finishingClip: "Terminando tu clip...",
     loomSourcePreserved:
-      "Se conserva el enlace fuente de Loom. Conecte el almacenamiento Builder.io o S3 y Clips volverá a intentar guardar su propia copia.",
+      "Se conserva el enlace fuente de Loom. Conecte el almacenamiento Jami Studio o S3 y Clips volverá a intentar guardar su propia copia.",
     clipDataPreserved:
-      "Los datos de su clip aún se conservan. Conecte el almacenamiento Builder.io o S3 y Clips lo cargará automáticamente.",
+      "Los datos de su clip aún se conservan. Conecte el almacenamiento Jami Studio o S3 y Clips lo cargará automáticamente.",
     details: "Detalles",
     importingLoom: "Importando Loom...",
     uploadingSavedClip: "Subiendo clip guardado...",
@@ -260,13 +260,13 @@ const messages = {
     savingWentWrong: "Algo salió mal al guardar este clip.",
     finishingClip: "Terminando este clip...",
     loomPreservedManage:
-      "Se conserva el enlace fuente de Loom. Conecte el almacenamiento Builder.io o S3 y luego vuelva a intentar la importación.",
+      "Se conserva el enlace fuente de Loom. Conecte el almacenamiento Jami Studio o S3 y luego vuelva a intentar la importación.",
     videoPreservedManage:
-      "El vídeo se conserva. Conecte el almacenamiento Builder.io o S3 y Clips terminará de cargarlo.",
+      "El vídeo se conserva. Conecte el almacenamiento Jami Studio o S3 y Clips terminará de cargarlo.",
     creatorNeedsStorage:
-      "El creador debe conectar el almacenamiento Builder.io o S3 antes de que este clip pueda finalizar.",
+      "El creador debe conectar el almacenamiento Jami Studio o S3 antes de que este clip pueda finalizar.",
     signInStorage:
-      "Si este es su clip, inicie sesión aquí para conectar el almacenamiento Builder.io o S3 y finalizar la carga.",
+      "Si este es su clip, inicie sesión aquí para conectar el almacenamiento Jami Studio o S3 y finalizar la carga.",
     uploadNotCompleteSession:
       "La carga aún no se ha completado. Abra el panel de este clip o pídale al creador que verifique el almacenamiento.",
     uploadNotCompleteSignIn:
@@ -372,7 +372,7 @@ const messages = {
     transcriptUnavailableTitle: "Transcripción no disponible",
     providerNeedsAttention: "El proveedor requiere atención",
     providerNeedsAttentionDescription:
-      "El proveedor actual pausó esta solicitud. Cambia a Builder.io o actualiza la clave y vuelve a intentarlo.",
+      "El proveedor actual pausó esta solicitud. Cambia a Jami Studio o actualiza la clave y vuelve a intentarlo.",
     enableTranscriptionTitle: "Activar transcripción",
     enableTranscriptionDescription:
       "Activa subtítulos, búsqueda en la transcripción y resúmenes para este Clip.",
@@ -390,9 +390,9 @@ const messages = {
     cleanupKept:
       "La limpieza no pudo terminar. Se mantuvo la transcripción nativa.",
     cleanupBuilderFailed:
-      "La limpieza no pudo finalizar aunque Builder.io esté conectado. Se mantuvo la transcripción nativa.",
+      "La limpieza no pudo finalizar aunque Jami Studio esté conectado. Se mantuvo la transcripción nativa.",
     cleanupPaused:
-      "La limpieza está en pausa. Conecte IA en Configuración: Builder.io (créditos gratis) o su propia clave LLM.",
+      "La limpieza está en pausa. Conecte IA en Configuración: Jami Studio (créditos gratis) o su propia clave LLM.",
     builderNoResponse:
       "No recibí respuesta del constructor. Permita ventanas emergentes e inténtelo de nuevo.",
     saveFailed: "Error al guardar ({{status}})",
@@ -643,26 +643,26 @@ Todos los cambios visibles para los usuarios de Clips se documentan aquí. Puede
       "Recibe un correo cuando alguien comenta, reacciona o comparte una grabación contigo.",
     saved: "Ajustes guardados",
     saveFailed: "No se pudo guardar",
-    builderConnectedToast: "Builder.io conectado",
+    builderConnectedToast: "Jami Studio conectado",
     videoStorage: "Almacenamiento de vídeo",
     videoStorageDescription:
-      "Builder.io es la ruta principal de almacenamiento para las subidas de Clips. S3 está disponible si necesitas usar tu propio bucket.",
-    checkingBuilder: "Comprobando Builder.io",
-    builderConnected: "Builder.io conectado",
-    connectBuilder: "Usar Builder.io (gratis)",
-    builderConnectedFor: "Usando Builder.io para {{orgName}}.",
+      "Jami Studio es la ruta principal de almacenamiento para las subidas de Clips. S3 está disponible si necesitas usar tu propio bucket.",
+    checkingBuilder: "Comprobando Jami Studio",
+    builderConnected: "Jami Studio conectado",
+    connectBuilder: "Usar Jami Studio (gratis)",
+    builderConnectedFor: "Usando Jami Studio para {{orgName}}.",
     builderConnectedGeneric:
-      "Los clips nuevos usan el proveedor Builder.io conectado.",
+      "Los clips nuevos usan el proveedor Jami Studio conectado.",
     builderIncludes:
       "Incluye almacenamiento de objetos, subidas y transcripción gestionada para clips nuevos.",
     s3Title: "Almacenamiento compatible con S3",
     secondary: "Secundario",
     active: "Activo",
     s3BuilderConnectedDescription:
-      "Úsalo solo si este espacio debe subir a tu propio bucket en lugar de Builder.io.",
+      "Úsalo solo si este espacio debe subir a tu propio bucket en lugar de Jami Studio.",
     s3CurrentProvider: "Usando actualmente {{providerName}}.",
     s3OwnBucketDescription:
-      "Usa tu propio bucket si no quieres almacenamiento de Builder.io.",
+      "Usa tu propio bucket si no quieres almacenamiento de Jami Studio.",
     configureS3: "Configurar S3",
     hideS3: "Ocultar S3",
     saveStorage: "Guardar almacenamiento",
@@ -681,12 +681,12 @@ Todos los cambios visibles para los usuarios de Clips se documentan aquí. Puede
     s3RegionInvalid: 'Debe ser una región válida (p. ej. us-east-1) o "auto"',
     apiSetup: "Configuración de IA",
     apiSetupDescription:
-      "Conecta IA con créditos gratis de Builder.io o tus propias claves LLM.",
-    builderEasySetup: "Créditos gratis de Builder.io",
+      "Conecta IA con créditos gratis de Jami Studio o tus propias claves LLM.",
+    builderEasySetup: "Créditos gratis de Jami Studio",
     builderAiAvailable:
       "Los créditos de IA incluidos y la transcripción gestionada están disponibles para Clips.",
     builderAiDescription:
-      "Usa Builder.io primero para créditos de IA incluidos, almacenamiento de objetos, subidas y transcripción gestionada.",
+      "Usa Jami Studio primero para créditos de IA incluidos, almacenamiento de objetos, subidas y transcripción gestionada.",
     providerKeyTitle: "Usar tu propia clave de proveedor",
     providerKeyDescription:
       "Añade claves de Anthropic, OpenAI, Gemini, Groq u OpenRouter para uso facturado por proveedor.",
@@ -843,7 +843,7 @@ Todos los cambios visibles para los usuarios de Clips se documentan aquí. Puede
     videoUrlMissing:
       "Una o más grabaciones aún no tienen una URL de video lista",
     connectStorage:
-      "Conecta almacenamiento antes de unir grabaciones: Builder.io (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3.",
+      "Conecta almacenamiento antes de unir grabaciones: Jami Studio (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3.",
     created: "Grabación unida creada",
     failed: "No se pudieron unir las grabaciones",
     noOtherRecordings: "No hay otras grabaciones disponibles.",
@@ -1083,15 +1083,15 @@ Todos los cambios visibles para los usuarios de Clips se documentan aquí. Puede
   },
   storageSetup: {
     builderTimeout:
-      "No hubo respuesta de Builder en 5 minutos. Revisa la ventana emergente e inténtalo de nuevo.",
-    builderConnected: "Builder.io conectado",
-    waitingForBuilder: "Esperando a Builder...",
-    connectBuilder: "Usar Builder.io (gratis)",
+      "No hubo respuesta de Jami Studio en 5 minutos. Revisa la ventana emergente e inténtalo de nuevo.",
+    builderConnected: "Jami Studio conectado",
+    waitingForBuilder: "Esperando a Jami Studio...",
+    connectBuilder: "Usar Jami Studio (gratis)",
     free: "Gratis",
     configureS3: "configurar almacenamiento compatible con S3",
     whyPrompt: "¿Por qué veo esto?",
     whyDescription:
-      "Clips es 100% gratis y de código abierto, así que necesitas conectar una forma de almacenar clips. Conecta almacenamiento con Builder.io para almacenamiento e IA en el plan gratuito, o usa almacenamiento compatible con S3 y tus propias claves LLM.",
+      "Clips es 100% gratis y de código abierto, así que necesitas conectar una forma de almacenar clips. Conecta almacenamiento con Jami Studio para almacenamiento e IA en el plan gratuito, o usa almacenamiento compatible con S3 y tus propias claves LLM.",
   },
   captureInstall: {
     title: "Choose your recorder (Localizado)",
@@ -1294,9 +1294,9 @@ Todos los cambios visibles para los usuarios de Clips se documentan aquí. Puede
     downloadRecording: "Download recording (Localizado)",
     openRecorderInTab: "Open recorder in tab (Localizado)",
     connectStorageToFinish:
-      "Conecta almacenamiento en la siguiente pantalla: Builder.io (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3. Clips terminará de guardarlo.",
+      "Conecta almacenamiento en la siguiente pantalla: Jami Studio (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3. Clips terminará de guardarlo.",
     connectStorageToRetryLoom:
-      "Conecta almacenamiento en la siguiente pantalla: Builder.io (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3. Clips reintentará la importación.",
+      "Conecta almacenamiento en la siguiente pantalla: Jami Studio (almacenamiento + IA en el plan gratuito) o almacenamiento compatible con S3. Clips reintentará la importación.",
   },
   dictateRoute: {
     pageTitle: "Dictate · Clips (Localizado)",

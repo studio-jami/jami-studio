@@ -116,7 +116,7 @@ Der UI schreibt bei jeder Routenänderung einen `navigation`-Schlüssel in den A
 
 Was in den Navigationsstatus aufgenommen werden soll:
 
-- `view` – die aktuelle Seite/der aktuelle Abschnitt, z. B. „Posteingang“, „Formular-Builder“ oder „Dashboard“
+- `view` – die aktuelle Seite/der aktuelle Abschnitt, z. B. „Posteingang“, „Formular-Jami Studio“ oder „Dashboard“
 - Artikel-IDs – der ausgewählte/offene Artikel, z. B. `threadId` oder `formId`
 - Semantische Aliase – aktive Registerkarte, Labelname oder andere stabile App-Konzepte, die dem Agenten bei der Argumentation helfen
 - Lichtfokusstatus – fokussierte Zeile, aktive Registerkarte, aktuelles Panel
@@ -323,7 +323,7 @@ Verwenden Sie die Felder bewusst:
 | `newTab: true`      | Starten Sie einen separaten Chat-Thread für eine größere Erstellungsaufgabe                                       |
 | `type: "code"`      | Weiterleitung zum Codebearbeitungs-Frame, wenn es bei der Anfrage darum geht, die App-Quelle zu ändern            |
 
-`sendToAgentChat()` ist der unterstützte Browser-Wrapper für den Pfad des übermittelten Chats, der intern manchmal als `agentNative.submitChat` angezeigt wird. Die App UI sollte den Wrapper aufrufen, anstatt `agentNative.submitChat` direkt zu veröffentlichen, da der Wrapper lokale Seitenleisten, Builder/Frame-Routing, MCP-App-Host-Routing, Tab-IDs und Code-Anfrage-Routing verarbeitet.
+`sendToAgentChat()` ist der unterstützte Browser-Wrapper für den Pfad des übermittelten Chats, der intern manchmal als `agentNative.submitChat` angezeigt wird. Die App UI sollte den Wrapper aufrufen, anstatt `agentNative.submitChat` direkt zu veröffentlichen, da der Wrapper lokale Seitenleisten, Jami Studio/Frame-Routing, MCP-App-Host-Routing, Tab-IDs und Code-Anfrage-Routing verarbeitet.
 
 Verwenden Sie `agentChat.submit()` oder `agentChat.prefill()` für Knoten-/Skriptkontexte, in denen es keine Browser-Seitenleiste gibt. Der Server actions sollte im Allgemeinen nicht den reinen Browser `sendToAgentChat()` aufrufen. Wenn eine Aktion das offene UI benötigt, um den Agenten etwas zu fragen, schreiben Sie eine kleine Anfrage in `application_state` und lassen Sie sie von einer UI-Brücke vom Browser senden.
 

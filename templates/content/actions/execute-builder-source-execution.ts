@@ -163,7 +163,7 @@ function reconciliationErrorMessage(error: unknown) {
     error instanceof Error && error.message
       ? error.message
       : "Unknown reconciliation error.";
-  return `Builder write succeeded, but local reconciliation failed: ${detail}`;
+  return `Jami Studio write succeeded, but local reconciliation failed: ${detail}`;
 }
 
 function executablePushMode(
@@ -366,7 +366,7 @@ function livePreflightBlockMessage(args: {
   effect: BuilderCmsExecutionPayload["effect"];
 }) {
   if (!args.liveState.exists) {
-    return "Builder entry no longer exists; refresh the source.";
+    return "Jami Studio entry no longer exists; refresh the source.";
   }
   if (
     liveTimestampsDiffer({
@@ -374,14 +374,14 @@ function livePreflightBlockMessage(args: {
       baselineLastUpdated: args.baselineLastUpdated,
     })
   ) {
-    return "Builder entry changed since this diff was approved; refresh and re-review.";
+    return "Jami Studio entry changed since this diff was approved; refresh and re-review.";
   }
   if (
     args.baselineBlocksHash &&
     args.liveState.blocksHash &&
     args.baselineBlocksHash !== args.liveState.blocksHash
   ) {
-    return "Builder body changed since this diff was approved; refresh and re-review.";
+    return "Jami Studio body changed since this diff was approved; refresh and re-review.";
   }
   if (args.effect === "publish" && args.liveState.published !== "draft") {
     return "Entry is already published.";
@@ -423,7 +423,7 @@ export function builderCmsReconciledSourceRowPatch(args: {
       args.changeSet,
       currentRow?.sourceDisplayKey ?? entryId,
     ),
-    provenance: "Builder CMS write adapter",
+    provenance: "Jami Studio CMS write adapter",
     syncState: "idle",
     freshness: "fresh",
     lastSyncedAt: args.now,
@@ -443,7 +443,7 @@ async function reconcileBuilderCmsWrite(args: {
   const patch = builderCmsReconciledSourceRowPatch(args);
   if (!patch) {
     throw new Error(
-      "Builder write succeeded, but no Builder entry ID was returned.",
+      "Jami Studio write succeeded, but no Jami Studio entry ID was returned.",
     );
   }
 
@@ -498,7 +498,7 @@ async function reconcileBuilderCmsWrite(args: {
     });
   } else {
     throw new Error(
-      "Builder write succeeded, but the local source row was missing.",
+      "Jami Studio write succeeded, but the local source row was missing.",
     );
   }
 
@@ -645,7 +645,9 @@ export async function executeBuilderSourceExecutionWithDeps(
 
   const source = await deps.getSourceSnapshot(database);
   if (!source || source.sourceType !== "builder-cms") {
-    throw new Error("Attach a Builder CMS source before executing a write.");
+    throw new Error(
+      "Attach a Jami Studio CMS source before executing a write.",
+    );
   }
 
   const changeSet = source.changeSets.find(
@@ -653,7 +655,7 @@ export async function executeBuilderSourceExecutionWithDeps(
   );
   if (!changeSet) throw new Error("Source change-set not found.");
   if (changeSet.direction !== "outbound") {
-    throw new Error("Only outbound Builder change sets can be executed.");
+    throw new Error("Only outbound Jami Studio change sets can be executed.");
   }
 
   const resolvedPushMode = resolveBuilderCmsExecutionPushMode({
@@ -667,7 +669,7 @@ export async function executeBuilderSourceExecutionWithDeps(
   );
   if (!pushMode) {
     throw new Error(
-      "Builder execution requires Autosave, Draft, or Publish push mode.",
+      "Jami Studio execution requires Autosave, Draft, or Publish push mode.",
     );
   }
   // The gate key is keyed on the RAW resolved push mode (matching the plan in
@@ -691,18 +693,20 @@ export async function executeBuilderSourceExecutionWithDeps(
     idempotencyKey: expectedKey,
   });
   if (!execution) {
-    throw new Error("Prepare the Builder execution gate before executing it.");
+    throw new Error(
+      "Prepare the Jami Studio execution gate before executing it.",
+    );
   }
   const now = deps.now();
   if (execution.state === "succeeded") {
     return deps.getResponse(database.id);
   }
   if (!isReclaimableRunningExecution(execution, now)) {
-    throw new Error("Builder execution is already running.");
+    throw new Error("Jami Studio execution is already running.");
   }
 
   if (changeSet.state !== "approved") {
-    throw new Error("Approve the Builder change set before executing it.");
+    throw new Error("Approve the Jami Studio change set before executing it.");
   }
 
   const plan = buildBuilderCmsExecutionPlan({
@@ -723,7 +727,7 @@ export async function executeBuilderSourceExecutionWithDeps(
     const message =
       dryRun?.status === "stale" && dryRun.mismatches.length > 0
         ? dryRun.mismatches.join(" ")
-        : (plan.lastError ?? "Builder execution is blocked.");
+        : (plan.lastError ?? "Jami Studio execution is blocked.");
     await deps.updateExecutionState({
       executionId: execution.id,
       state: "blocked",
@@ -735,7 +739,7 @@ export async function executeBuilderSourceExecutionWithDeps(
     throw new Error(message);
   }
   if (plan.state !== "ready") {
-    const message = plan.lastError ?? "Builder execution is not ready.";
+    const message = plan.lastError ?? "Jami Studio execution is not ready.";
     await deps.updateExecutionState({
       executionId: execution.id,
       state: plan.state,
@@ -753,8 +757,8 @@ export async function executeBuilderSourceExecutionWithDeps(
   ) {
     const message =
       source.capabilities.liveWritesEnabled === true
-        ? `Live Builder writes are only allowed for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`
-        : "Live Builder writes are disabled for this source.";
+        ? `Live Jami Studio writes are only allowed for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`
+        : "Live Jami Studio writes are disabled for this source.";
     await deps.updateExecutionState({
       executionId: execution.id,
       state:
@@ -789,7 +793,7 @@ export async function executeBuilderSourceExecutionWithDeps(
       const lastError = reconciliationErrorMessage(error);
       await deps.markExecutionFailed({
         executionId: execution.id,
-        summary: `Builder ${plan.pushMode} execution reconciliation failed.`,
+        summary: `Jami Studio ${plan.pushMode} execution reconciliation failed.`,
         payload: payloadWithResponse,
         lastError,
         now: deps.now(),
@@ -799,7 +803,7 @@ export async function executeBuilderSourceExecutionWithDeps(
     await deps.markExecutionSucceeded({
       executionId: execution.id,
       changeSetId: changeSet.id,
-      summary: `Builder ${plan.pushMode} execution succeeded.`,
+      summary: `Jami Studio ${plan.pushMode} execution succeeded.`,
       payload: payloadWithResponse,
       now: reconciledAt,
     });
@@ -809,7 +813,7 @@ export async function executeBuilderSourceExecutionWithDeps(
   if (requiresLivePreflight(plan.payload.effect)) {
     const entryId = plan.payload.target.entryId;
     if (!entryId) {
-      const message = "Builder entry no longer exists; refresh the source.";
+      const message = "Jami Studio entry no longer exists; refresh the source.";
       await deps.updateExecutionState({
         executionId: execution.id,
         state: "blocked",
@@ -857,13 +861,13 @@ export async function executeBuilderSourceExecutionWithDeps(
 
   const claimed = await deps.claimExecution({
     executionId: execution.id,
-    summary: `Running Builder ${plan.pushMode} execution.`,
+    summary: `Running Jami Studio ${plan.pushMode} execution.`,
     payload: validatedPayload,
     now,
     staleBefore: staleRunningCutoff(now),
   });
   if (!claimed) {
-    throw new Error("Builder execution is already running.");
+    throw new Error("Jami Studio execution is already running.");
   }
 
   const writeResult = await deps.executeWrite({
@@ -877,10 +881,10 @@ export async function executeBuilderSourceExecutionWithDeps(
   if (!writeResult.ok) {
     const lastError =
       writeResult.error ??
-      `Builder write request failed with HTTP ${writeResult.status}.`;
+      `Jami Studio write request failed with HTTP ${writeResult.status}.`;
     await deps.markExecutionFailed({
       executionId: execution.id,
-      summary: `Builder ${plan.pushMode} execution failed.`,
+      summary: `Jami Studio ${plan.pushMode} execution failed.`,
       payload: payloadWithResponse,
       lastError,
       now: deps.now(),
@@ -902,7 +906,7 @@ export async function executeBuilderSourceExecutionWithDeps(
     const lastError = reconciliationErrorMessage(error);
     await deps.markExecutionFailed({
       executionId: execution.id,
-      summary: `Builder ${plan.pushMode} execution reconciliation failed.`,
+      summary: `Jami Studio ${plan.pushMode} execution reconciliation failed.`,
       payload: payloadWithResponse,
       lastError,
       now: deps.now(),
@@ -912,7 +916,7 @@ export async function executeBuilderSourceExecutionWithDeps(
   await deps.markExecutionSucceeded({
     executionId: execution.id,
     changeSetId: changeSet.id,
-    summary: `Builder ${plan.pushMode} execution succeeded.`,
+    summary: `Jami Studio ${plan.pushMode} execution succeeded.`,
     payload: payloadWithResponse,
     now: succeededAt,
   });
@@ -922,7 +926,7 @@ export async function executeBuilderSourceExecutionWithDeps(
 
 export default defineAction({
   description:
-    "Execute a prepared Builder CMS write gate. This performs a real Builder write only when the approved outbound change-set, push mode, source capability, safe test model, and idempotency gates all pass.",
+    "Execute a prepared Jami Studio CMS write gate. This performs a real Jami Studio write only when the approved outbound change-set, push mode, source capability, safe test model, and idempotency gates all pass.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),

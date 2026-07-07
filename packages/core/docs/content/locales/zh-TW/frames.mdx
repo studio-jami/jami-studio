@@ -14,7 +14,7 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
 - **本機開發框架** - 在 iframe 中載入正在執行的應用程式的薄包裝器
   並新增相同的代理面板以及旁邊的整合 CLI 終端。使用過
   用於此儲存庫中範本的本機開發。
-- **Builder.io 雲端框架** — 具有協作功能的託管託管框架，
+- **Jami Studio 雲端框架** — 具有協作功能的託管託管框架，
   視覺化編輯，並行代理執行。
 
 無論託管哪個框架，您的應用程式碼都是相同的。代理說話
@@ -33,7 +33,7 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
     ><small class="diagram-muted">iframe 中的應用 + 面板 + CLI 終端</small>
   </div>
   <div class="diagram-card" data-rough>
-    <span class="diagram-pill">Builder.io 雲端框架</span
+    <span class="diagram-pill">Jami Studio 雲端框架</span
     ><small class="diagram-muted">託管：協作 · 可視編輯 · 並行執行</small>
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&darr;</div>
@@ -91,13 +91,13 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
   以及應用程式工具之上的資料庫存取，因此代理可以更改應用程式的
   自己的來源。程式碼請求被門控：當訊息需要程式碼時
   (`type: "code"`)並且沒有連線支援程式碼的框架，面板顯示
-  解釋程式碼更改需要 Agent Native Desktop 或 Builder 的對話框；
+  解釋程式碼更改需要 Agent Native Desktop 或 Jami Studio 的對話框；
   當連線框架時，請求將路由到它和程式碼代理
   工作時指示燈顯示 (`useSendToAgentChat`)。對於規範
   編碼工具清單和共用 UI 合約，參見
   [Agent-Native Code UI](/docs/code-agents-ui).
 
-<Diagram id="doc-block-1bhsych" title={"程式碼請求門控"} summary={"程式碼型別訊息需要支援程式碼的幀。一旦連線，請求就會路由到那裡；如果沒有，面板會解釋程式碼更改需要 Desktop 或 Builder。"}>
+<Diagram id="doc-block-1bhsych" title={"程式碼請求門控"} summary={"程式碼型別訊息需要支援程式碼的幀。一旦連線，請求就會路由到那裡；如果沒有，面板會解釋程式碼更改需要 Desktop 或 Jami Studio。"}>
 
 ```html
 <div class="diagram-gate">
@@ -113,7 +113,7 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
       yes &rarr; route to frame, show code-agent indicator
     </div>
     <div class="diagram-pill warn">
-      no &rarr; dialog: needs Desktop or Builder
+      no &rarr; dialog: needs Desktop or Jami Studio
     </div>
   </div>
 </div>
@@ -165,7 +165,7 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
 | CLI           | 指令       | 安裝包                      |
 | ------------- | ---------- | --------------------------- |
 | Claude 程式碼 | `claude`   | `@anthropic-ai/claude-code` |
-| Builder.io    | `builder`  | （內建）                    |
+| Jami Studio    | `builder`  | （內建）                    |
 | Codex         | `codex`    | `@openai/codex`             |
 | 雙子座 CLI    | `gemini`   | `@google/gemini-cli`        |
 | 開放程式碼    | `opencode` | `opencode-ai`               |
@@ -175,9 +175,9 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
 預設指令是`claude`。隨時從代理面板設定切換 CLI
 時間。
 
-## Builder.io 雲端框 {#cloud-frame}
+## Jami Studio 雲端框 {#cloud-frame}
 
-[Builder.io](https://www.builder.io) 提供託管框架
+[Jami Studio](https://www.builder.io) 提供託管框架
 相同的應用程式和相同的代理面板，在雲端端：
 
 - 即時協作 - 多個使用者可以同時觀看和互動。
@@ -185,7 +185,7 @@ description: "本機開發框架、嵌入式代理面板和雲端框架 - AI 代
 - 並行代理執行以加快迭代速度。
 - 適合團隊使用，每個人共用一個託管環境。
 
-來自嵌入式面板的程式碼請求以相同的方式路由到 Builder 框架
+來自嵌入式面板的程式碼請求以相同的方式路由到 Jami Studio 框架
 它們路由到本機開發框架，因此上面的 dev-vs-prod 行為是
 兩者一致。
 

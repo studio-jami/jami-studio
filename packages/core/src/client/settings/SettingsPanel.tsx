@@ -172,14 +172,14 @@ function SettingsSelect({
   );
 }
 
-// ─── Disconnect button for the Builder card's connected state ───────────────
+// ─── Disconnect button for the Jami Studio card's connected state ───────────────
 //
 // Two-step confirmation: first click arms the button ("Confirm?"), second
 // click actually disconnects. Arm auto-reverts after 4s of idle so a user
 // who wandered off doesn't come back to a disconnect waiting for them.
 //
 // Hits /_agent-native/builder/disconnect which removes request-scoped
-// Builder credentials from app_secrets. Deployment env credentials are left
+// Jami Studio credentials from app_secrets. Deployment env credentials are left
 // alone and remain as fallback. On success we dispatch
 // `agent-engine:configured-changed` so dependent cards refresh inline.
 function DisconnectBuilderButton() {
@@ -324,7 +324,7 @@ function DisconnectBuilderButton() {
   );
 }
 
-// ─── "Connect Builder.io" card (shared across all sections) ─────────────────
+// ─── "Connect Jami Studio" card (shared across all sections) ─────────────────
 
 function UseBuilderCard({
   builderFlow,
@@ -335,7 +335,7 @@ function UseBuilderCard({
   credentialSource,
   trackingSource = "settings_panel_builder_card",
   trackingFlow = "connect_llm",
-  label = "Connect Builder.io",
+  label = "Connect Jami Studio",
   subtitle = "Free credits to start — no API key needed.",
   dim,
 }: {
@@ -360,7 +360,7 @@ function UseBuilderCard({
       <div className={`rounded-md border border-border px-2.5 py-2 ${bgClass}`}>
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-medium text-foreground">
-            Builder.io
+            Jami Studio
           </div>
           <span className="flex items-center gap-1 text-[10px] text-green-500">
             <IconCheck size={10} />
@@ -376,7 +376,7 @@ function UseBuilderCard({
           <p className="text-[10px] text-muted-foreground mt-1">
             {credentialSource === "env"
               ? "Deployment fallback is available. Connect your own account to override it."
-              : "Using your connected Builder account. Deployment fallback is still available."}
+              : "Using your connected Jami Studio account. Deployment fallback is still available."}
           </p>
         ) : null}
         {connectUrl || credentialSource !== "env" ? (
@@ -421,7 +421,7 @@ function UseBuilderCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[12px] font-semibold text-foreground">
-              {builderFlow.connecting ? "Connecting Builder.io..." : label}
+              {builderFlow.connecting ? "Connecting Jami Studio..." : label}
             </span>
             {builderFlow.connecting && (
               <IconLoader2
@@ -538,7 +538,7 @@ function computeSourceBadge(args: {
   builderConnected: boolean;
 }): string | undefined {
   const { settingsConfigured, settingsStatus } = args;
-  if (args.builderConnected) return "Connected via Builder";
+  if (args.builderConnected) return "Connected via Jami Studio";
   if (settingsConfigured) {
     if (settingsStatus?.source === "env") {
       return `Connected via ${settingsStatus.envVar ?? args.envVar ?? "env"}`;
@@ -894,7 +894,7 @@ function LLMSectionInner({
             credentialSource={credentialSource}
             trackingSource="llm_settings"
             trackingFlow="connect_llm"
-            label="Connect Builder.io"
+            label="Connect Jami Studio"
           />
           {!builderConnected && (
             <ManualSetupCard
@@ -1231,7 +1231,7 @@ function AppModelDefaultsSectionInner({
       value: engine.name,
       label:
         engine.name === "builder"
-          ? "Builder.io Gateway"
+          ? "Jami Studio Gateway"
           : engine.label || engine.name,
       description: engine.configured
         ? "Configured for this workspace"
@@ -2107,7 +2107,7 @@ const agentModeOptions: SettingsSelectOption[] = [
     value: "production",
     label: "App mode",
     description:
-      "App tools only; code, bash, and files require Builder or a local clone.",
+      "App tools only; code, bash, and files require Jami Studio or a local clone.",
   },
   {
     value: "development",
@@ -2157,7 +2157,7 @@ function CapabilityStatusStrip({
   const codeLabel = isDevMode
     ? "Local tools"
     : builderConnected && builderBranchesAvailable
-      ? "Builder branches"
+      ? "Jami Studio branches"
       : "Desktop/local";
 
   return (
@@ -2173,7 +2173,7 @@ function CapabilityStatusStrip({
           active={codeAvailable}
         />
         <CapabilityStatusRow
-          label="Builder"
+          label="Jami Studio"
           active={builderConnected}
           value={
             builderLoading ? (
@@ -2693,7 +2693,7 @@ function SettingsPanelContent({
         <SettingsSection
           icon={<IconGitBranch size={14} />}
           title="Background Agent"
-          subtitle="Make code changes from production mode via Builder."
+          subtitle="Make code changes from production mode via Jami Studio."
           connected={connected}
           open={openSection === "background"}
           onToggle={() => toggle("background")}

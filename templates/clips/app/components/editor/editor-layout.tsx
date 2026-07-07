@@ -142,7 +142,7 @@ function getWaveformMediaUrl({
     return videoUrl.startsWith("/") ? `${appBasePath()}${videoUrl}` : videoUrl;
   }
 
-  // Cross-origin provider URLs (R2 / S3 / Builder) get proxied through the
+  // Cross-origin provider URLs (R2 / S3 / Jami Studio) get proxied through the
   // same-origin `/api/video/:id` route for CORS reasons. We intentionally do
   // NOT forward the password here — the plaintext password was previously
   // appended via `?password=…`, but it isn't sent to this component anymore

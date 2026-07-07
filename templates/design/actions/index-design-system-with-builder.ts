@@ -19,35 +19,37 @@ const codeFileSchema = z.object({
 
 export default defineAction({
   description:
-    "Start Builder DSI design-system indexing from connected code, a GitHub repository, code/design files, and optional design.md guidance. " +
+    "Start Jami Studio DSI design-system indexing from connected code, a GitHub repository, code/design files, and optional design.md guidance. " +
     "Use this instead of local import-code/import-github when the user wants a reusable brand kit or design system. " +
-    "Requires Builder.io to be connected; Builder owns the indexed design-system docs, generated guidance, token/component extraction, and job state.",
+    "Requires Jami Studio to be connected; Jami Studio owns the indexed design-system docs, generated guidance, token/component extraction, and job state.",
   schema: z.object({
     projectName: z
       .string()
       .optional()
-      .describe("Optional Builder project/design-system name"),
+      .describe("Optional Jami Studio project/design-system name"),
     description: z
       .string()
       .optional()
-      .describe("Additional brand context or instructions for Builder"),
+      .describe("Additional brand context or instructions for Jami Studio"),
     githubRepoUrl: z
       .string()
       .optional()
-      .describe("GitHub repository URL to index with Builder"),
+      .describe("GitHub repository URL to index with Jami Studio"),
     connectedProjectId: z
       .string()
       .optional()
-      .describe("Optional existing Builder project id to attach indexing to"),
+      .describe(
+        "Optional existing Jami Studio project id to attach indexing to",
+      ),
     codeFiles: z
       .array(codeFileSchema)
       .optional()
-      .describe("Optional inlined code/design files to upload to Builder"),
+      .describe("Optional inlined code/design files to upload to Jami Studio"),
     designMd: z
       .string()
       .optional()
       .describe(
-        "Optional design.md guidance to upload to Builder DSI alongside Figma/code sources",
+        "Optional design.md guidance to upload to Jami Studio DSI alongside Figma/code sources",
       ),
   }),
   run: async ({

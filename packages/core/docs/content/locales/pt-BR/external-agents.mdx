@@ -210,7 +210,7 @@ O caminho Vercel/open Skills CLI também está disponível quando você deseja a
 instruções:
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 O `skills` CLI bruto instala apenas arquivos `SKILL.md`; clientes MCP locais ainda
@@ -705,7 +705,7 @@ Se `connect dev` não puder inferir sua identidade de proprietário local a part
 
 O caminho OAuth padrão nunca expõe tokens para aplicativos MCP: o host armazena tokens de acesso/atualização OAuth e medeia chamadas de ferramenta e `resources/read` pela conexão MCP autenticada. Os iframes incorporados recebem dados do aplicativo e resultados de ferramentas, e não segredos do portador.
 
-As incorporações completas do aplicativo também evitam entregar o token de portador MCP ao navegador. O chamador MCP cria um ticket de incorporação único em SQL; a rota de inicialização do iframe o consome e define um cookie de sessão do navegador seguro para iframe e de curta duração. O URL de destino carrega um parâmetro de consulta `__an_embed_token` temporário apenas por tempo suficiente para que o cliente o capture, remova-o da barra de endereço e anexe-o a chamadas `fetch` de mesma origem quando cookies de terceiros são bloqueados. As sessões incorporadas têm escopo de rota; as buscas de aplicativos incluem o destino incorporado atual e o servidor rejeita a reutilização de token fora da rota criada. As páginas do aplicativo intencionalmente não emitem `X-Frame-Options` ou CSP `frame-ancestors`, portanto, os hosts de aplicativos Builder, Design e MCP podem fazer iframe delas. As navegações iframe do navegador também optam por COEP/CORP quando necessário para hosts isolados de origem cruzada.
+As incorporações completas do aplicativo também evitam entregar o token de portador MCP ao navegador. O chamador MCP cria um ticket de incorporação único em SQL; a rota de inicialização do iframe o consome e define um cookie de sessão do navegador seguro para iframe e de curta duração. O URL de destino carrega um parâmetro de consulta `__an_embed_token` temporário apenas por tempo suficiente para que o cliente o capture, remova-o da barra de endereço e anexe-o a chamadas `fetch` de mesma origem quando cookies de terceiros são bloqueados. As sessões incorporadas têm escopo de rota; as buscas de aplicativos incluem o destino incorporado atual e o servidor rejeita a reutilização de token fora da rota criada. As páginas do aplicativo intencionalmente não emitem `X-Frame-Options` ou CSP `frame-ancestors`, portanto, os hosts de aplicativos Jami Studio, Design e MCP podem fazer iframe delas. As navegações iframe do navegador também optam por COEP/CORP quando necessário para hosts isolados de origem cruzada.
 
 O fluxo `connect` hospedado substituto nunca copia o segredo compartilhado da implantação. Em vez disso:
 

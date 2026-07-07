@@ -91,7 +91,7 @@ Most apps bolt AI on as an afterthought that can't actually _do_ things in the a
 
 ### Is it open source? {#is-this-open-source}
 
-Yes. The framework and all templates are open source. You can run everything locally, self-host, or use Builder.io's cloud for managed hosting, collaboration, and team features.
+Yes. The framework and all templates are open source. You can run everything locally, self-host, or use Jami Studio's cloud for managed hosting, collaboration, and team features.
 
 ### How much does it cost? {#how-much}
 
@@ -100,7 +100,7 @@ The framework itself is free. The two costs you'll see in practice:
 - **AI usage.** You bring your own API key (Anthropic, OpenAI, etc.) and pay the model provider directly. There's no markup from us.
 - **Hosting.** Whatever your host charges. Most templates run fine on free tiers (Netlify, Vercel, Cloudflare) for small workloads.
 
-If you'd rather not manage any of this, the hosted version on `agent-native.com` (operated by Builder.io) bundles inference and hosting into a per-seat plan.
+If you'd rather not manage any of this, the hosted version on `agent-native.com` (operated by Jami Studio) bundles inference and hosting into a per-seat plan.
 
 ### Can I host this myself? {#can-i-self-host}
 
@@ -164,7 +164,7 @@ Any AI coding tool that reads project instructions. The framework uses AGENTS.md
 - **Cursor** — reads AGENTS.md directly, or `.cursorrules` (Cursor's legacy location) if present in your project
 - **Windsurf** — reads .windsurfrules (symlinked from AGENTS.md by the CLI setup)
 - **Codex, Gemini, and others** — work via the embedded agent panel
-- **Builder.io** — cloud-hosted agent with visual editing and collaboration
+- **Jami Studio** — cloud-hosted agent with visual editing and collaboration
 
 ### Can I use my own database? {#can-i-use-my-own-database}
 
@@ -172,7 +172,7 @@ Yes. Set `DATABASE_URL` and the framework auto-detects it. Supported databases i
 
 ### Where can I deploy? {#where-can-i-deploy}
 
-Anywhere. The server runs on Nitro, which compiles to any deployment target: Node.js, Cloudflare Workers/Pages, Netlify, Vercel, Deno Deploy, AWS Lambda, and Bun. You can also use Builder.io's hosting for managed deployments. See the [Deployment guide](/docs/deployment).
+Anywhere. The server runs on Nitro, which compiles to any deployment target: Node.js, Cloudflare Workers/Pages, Netlify, Vercel, Deno Deploy, AWS Lambda, and Bun. You can also use Jami Studio's hosting for managed deployments. See the [Deployment guide](/docs/deployment).
 
 ## Architecture {#architecture}
 

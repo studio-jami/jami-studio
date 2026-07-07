@@ -15,7 +15,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "order.completed",
   { total: 49.99, items: 3 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -101,7 +101,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "meal.logged",
   { mealName: "Salad", calories: 350 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -112,7 +112,7 @@ Identifizieren Sie einen Benutzer anhand von Merkmalen. Weiterleitung an Anbiete
 ```ts
 import { identify } from "@agent-native/core/tracking";
 
-identify("steve@builder.io", { plan: "pro", company: "Builder.io" });
+identify("steve@jami.studio", { plan: "pro", company: "Jami Studio" });
 ```
 
 Benötigen Sie ein benutzerdefiniertes Backend, die Anbieterregistrierung API oder die Batch-/Singleton-Interna? Siehe [Advanced: custom providers & internals](#advanced) am Ende.
@@ -342,7 +342,7 @@ Template Roots rufen `configureTracking()` einmal beim Start auf. Mit `trackEven
 - `llm_connection_source` – `app_secrets`, `settings` oder `env`
 - `llm_connection_configured` – ob eine LLM-Verbindung verfügbar ist
 
-Das Framework verfolgt auch `builder connect clicked` von Connect Builder-CTAs und die serverseitigen Builder-Connect-Routen verfolgen gestartete/erfolgreiche/fehlgeschlagene Lebenszyklusereignisse. `configureTracking()` wird vom Framework automatisch aufgerufen; Sie müssen es nicht in Ihrem eigenen Vorlagencode aufrufen.
+Das Framework verfolgt auch `builder connect clicked` von Connect Jami Studio-CTAs und die serverseitigen Jami Studio-Connect-Routen verfolgen gestartete/erfolgreiche/fehlgeschlagene Lebenszyklusereignisse. `configureTracking()` wird vom Framework automatisch aufgerufen; Sie müssen es nicht in Ihrem eigenen Vorlagencode aufrufen.
 
 </details>
 

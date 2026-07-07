@@ -15,7 +15,7 @@ import {
 } from "@tabler/icons-react";
 
 function providerLabel(provider: string) {
-  if (provider === "builder") return "Builder";
+  if (provider === "builder") return "Jami Studio";
   return provider.trim() || "Source";
 }
 
@@ -89,7 +89,7 @@ function SourceEmbedPreview({ url }: { url: string }) {
           data-plan-interactive
           className="aspect-video w-full"
           src={embedUrl}
-          title="Builder embedded video"
+          title="Jami Studio embedded video"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />

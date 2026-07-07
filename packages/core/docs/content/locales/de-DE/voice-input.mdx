@@ -1,19 +1,19 @@
 ---
 title: "Spracheingabe"
-description: "Sprachdiktat im Agent Chat Verfassenr – Builder Gemini, BYOK-Anbieter und Browser-Web-Speech-Fallback."
+description: "Sprachdiktat im Agent Chat Verfassenr – Jami Studio Gemini, BYOK-Anbieter und Browser-Web-Speech-Fallback."
 ---
 
 # Spracheingabe
 
 Jede agentennative App verfügt über ein Mikrofon im Chat Verfassenr. Klicken Sie darauf, sprechen Sie und Ihre Worte werden in die Eingabeaufforderung übertragen. Nützlich auf Mobilgeräten, nützlich für lange Eingabeaufforderungen, nützlich, wenn Sie etwas anderes in der Hand haben.
 
-Das Framework erledigt das alles automatisch. Mit Builder verbundene Benutzer erhalten standardmäßig das von Builder gehostete Gemini Flash-Lite. Andernfalls können Benutzer ihren eigenen Anbieterschlüssel mitbringen oder auf die Spracherkennung des Browsers zurückgreifen.
+Das Framework erledigt das alles automatisch. Mit Jami Studio verbundene Benutzer erhalten standardmäßig das von Jami Studio gehostete Gemini Flash-Lite. Andernfalls können Benutzer ihren eigenen Anbieterschlüssel mitbringen oder auf die Spracherkennung des Browsers zurückgreifen.
 
 ## Wie es funktioniert {#how-it-works}
 
 Die Sprachtaste des Komponisten zeichnet Audio im Browser auf und wählt dann einen Anbieter aus:
 
-1. **Builder Gemini Flash-Lite (Standard, wenn Builder verbunden ist).** Der Browser sendet Audio an `/_agent-native/transcribe-voice`, das mithilfe von Gemini Flash-Lite über Builder.io weitergeleitet wird. Kein Google API-Schlüssel erforderlich.
+1. **Jami Studio Gemini Flash-Lite (Standard, wenn Jami Studio verbunden ist).** Der Browser sendet Audio an `/_agent-native/transcribe-voice`, das mithilfe von Gemini Flash-Lite über Jami Studio weitergeleitet wird. Kein Google API-Schlüssel erforderlich.
 2. **BYOK Cloud-Anbieter.** Benutzer können in den Einstellungen Google Gemini, Groq Whisper oder OpenAI Whisper auswählen. Die Route löst benutzerbezogene verschlüsselte Geheimnisse vor gemeinsam genutzten Anmeldeinformationen für die Bereitstellung auf.
 3. **Browser Web Speech API (Fallback).** Wenn kein Serveranbieter verfügbar ist, kann der Verfassenr die integrierte Spracherkennung des Browsers verwenden. Funktioniert in Chromium-basierten Browsern (Chrome, Edge, Arc) und Safari. Weniger genau; Live-Streams.
 
@@ -30,8 +30,8 @@ Die Anbieterauswahl wird im Anwendungsstatus unter `voice-transcription-prefs` g
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-card col">
-    <div class="diagram-pill accent">1 &middot; Builder Gemini</div>
-    <small class="diagram-muted">Standard, wenn Builder verbunden ist</small>
+    <div class="diagram-pill accent">1 &middot; Jami Studio Gemini</div>
+    <small class="diagram-muted">Standard, wenn Jami Studio verbunden ist</small>
     <div class="diagram-pill">2 &middot; BYOK cloud</div>
     <small class="diagram-muted"
       >Gemini &middot; Groq &middot; OpenAI Whisper</small
@@ -71,7 +71,7 @@ Die Route ist **nur Same-Origin** – Site-übergreifende POSTs werden abgelehnt
 
 ## Anbieter aktivieren {#enabling-providers}
 
-Builder ist der einfachste Weg: Verbinden Sie Builder.io über die Einstellungen und der Standardanbieter wird Builder Gemini Flash-Lite. Für BYOK-Anbieter fügen Sie den passenden Schlüssel unter Einstellungen → API-Schlüssel hinzu.
+Jami Studio ist der einfachste Weg: Verbinden Sie Jami Studio über die Einstellungen und der Standardanbieter wird Jami Studio Gemini Flash-Lite. Für BYOK-Anbieter fügen Sie den passenden Schlüssel unter Einstellungen → API-Schlüssel hinzu.
 
 ### Pro Benutzer (empfohlen für SaaS)
 

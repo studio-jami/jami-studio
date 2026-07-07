@@ -2,7 +2,7 @@
  * get-fusion-deploy-status — read-only poll of a fusion app's last deploy.
  *
  * No DB writes: reads the persisted lastDeployId/deployedUrl off the fusion
- * app linkage and asks Builder for the current deploy status.
+ * app linkage and asks Jami Studio for the current deploy status.
  */
 
 import { defineAction } from "@agent-native/core";

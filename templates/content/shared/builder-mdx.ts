@@ -400,7 +400,7 @@ function shouldReadThroughBuilderChildren(componentName: string | null) {
 function isReadableUnsupportedBuilderPlaceholder(value: string) {
   const trimmed = value.trim();
   return (
-    /^>\s*Builder .+ component preserved from source\.$/.test(trimmed) ||
+    /^>\s*Jami Studio .+ component preserved from source\.$/.test(trimmed) ||
     /^<SourceComponent\b/.test(trimmed)
   );
 }
@@ -463,7 +463,7 @@ async function readableLayoutFingerprint(markdown: string) {
   const units = markdownUnits(markdown);
   const fingerprint: string[] = [];
   for (const unit of units) {
-    if (/^>\s*Builder .+ component preserved from source\.$/.test(unit)) {
+    if (/^>\s*Jami Studio .+ component preserved from source\.$/.test(unit)) {
       fingerprint.push("source:legacy");
       continue;
     }
@@ -536,7 +536,9 @@ async function validateReadableSourceComponentMarkers(
     try {
       const parsed = await parseRegistryBlockData(marker);
       if (parsed?.type !== "source-component") {
-        warnings.push("Readable Builder body has an invalid source marker.");
+        warnings.push(
+          "Readable Jami Studio body has an invalid source marker.",
+        );
         continue;
       }
       rawBlockForData(parsed.data as SourceComponentData, sidecars);
@@ -544,7 +546,7 @@ async function validateReadableSourceComponentMarkers(
       warnings.push(
         error instanceof Error
           ? error.message
-          : "Readable Builder body has a source marker that could not be validated.",
+          : "Readable Jami Studio body has a source marker that could not be validated.",
       );
     }
   }
@@ -607,7 +609,7 @@ function blockSummary(block: unknown) {
   if (typeof options.title === "string" && options.title.trim()) {
     return options.title.trim().slice(0, 160);
   }
-  return name ?? "Builder block";
+  return name ?? "Jami Studio block";
 }
 
 function countArrayColumns(rows: unknown[]) {
@@ -806,7 +808,9 @@ function builderSourceComponentPreview(
   const options = componentOptions(block);
   const url = typeof options.url === "string" ? options.url.trim() : "";
   if (name === "Embed") {
-    const summary = url ? `Embedded URL: ${url}` : "Embedded Builder content.";
+    const summary = url
+      ? `Embedded URL: ${url}`
+      : "Embedded Jami Studio content.";
     return {
       previewKind: "embed",
       previewUrl: url || undefined,
@@ -814,7 +818,7 @@ function builderSourceComponentPreview(
       preview: {
         status: url ? "available" : "unavailable",
         kind: "embed",
-        label: "Builder Embed",
+        label: "Jami Studio Embed",
         summary,
         url: url || undefined,
       },
@@ -826,7 +830,7 @@ function builderSourceComponentPreview(
       typeof options.image === "string" ? options.image.trim() : "";
     const altText =
       typeof options.altText === "string" ? options.altText.trim() : "";
-    const summary = altText || "Builder image.";
+    const summary = altText || "Jami Studio image.";
     return {
       previewKind: "component",
       previewUrl: imageUrl || undefined,
@@ -834,7 +838,7 @@ function builderSourceComponentPreview(
       preview: {
         status: imageUrl ? "available" : "unavailable",
         kind: "component",
-        label: "Builder Image",
+        label: "Jami Studio Image",
         summary,
         url: imageUrl || undefined,
         fields: altText ? [{ label: "Alt", value: altText }] : undefined,
@@ -848,15 +852,15 @@ function builderSourceComponentPreview(
       ? [pluralize(shape.rows, "row"), pluralize(shape.columns, "column")]
       : undefined;
     const summary = shape
-      ? `Builder table with ${items?.join(", ")}.`
-      : "Builder table component preserved from source.";
+      ? `Jami Studio table with ${items?.join(", ")}.`
+      : "Jami Studio table component preserved from source.";
     return {
       previewKind: "table",
       previewItems: items,
       preview: {
         status: shape ? "available" : "unavailable",
         kind: "table",
-        label: "Builder Table",
+        label: "Jami Studio Table",
         summary,
         fields: items?.map((item) => {
           const [value, ...label] = item.split(" ");
@@ -879,15 +883,15 @@ function builderSourceComponentPreview(
     );
     const summary =
       model || entry
-        ? `Builder symbol ${[model, entry].filter(Boolean).join(" / ")}.`
-        : "Builder symbol reference.";
+        ? `Jami Studio symbol ${[model, entry].filter(Boolean).join(" / ")}.`
+        : "Jami Studio symbol reference.";
     return {
       previewKind: "symbol",
       previewItems: [model, entry].filter(Boolean),
       preview: {
         status: fields.length ? "available" : "unavailable",
         kind: "symbol",
-        label: "Builder Symbol",
+        label: "Jami Studio Symbol",
         summary,
         fields: fields.length ? fields : undefined,
       },
@@ -1184,15 +1188,15 @@ async function builderBlockToReadableMdx(
 
   if (name) {
     ctx.warnings.push(
-      `${markerMapping.label} is preserved in the Builder raw sidecar and shown as a read-only source component.`,
+      `${markerMapping.label} is preserved in the Jami Studio raw sidecar and shown as a read-only source component.`,
     );
   }
   const data: SourceComponentData = {
     provider: "builder",
-    componentName: name || "Builder component",
+    componentName: name || "Jami Studio component",
     rawRef,
     rawHash: stableHash(block),
-    sourceLabel: "Builder body",
+    sourceLabel: "Jami Studio body",
     mappingId: markerMapping.id,
     mappingStatus: markerMapping.mappingStatus,
     mappingReason: markerMapping.reason,
@@ -1402,7 +1406,7 @@ export async function builderReadableBodyToBuilderBlocks(args: {
     return {
       blocks: null,
       warnings: [
-        `Readable Builder body changed preserved source component markers from ${expectedSourceMarkerCount} to ${currentSourceMarkerCount}; refresh or review in Builder before pushing.`,
+        `Readable Jami Studio body changed preserved source component markers from ${expectedSourceMarkerCount} to ${currentSourceMarkerCount}; refresh or review in Jami Studio before pushing.`,
       ],
     };
   }
@@ -1424,7 +1428,7 @@ export async function builderReadableBodyToBuilderBlocks(args: {
     return {
       blocks: null,
       warnings: [
-        "Readable Builder body changed structure or moved or restructured preserved source component markers; refresh or review in Builder before pushing.",
+        "Readable Jami Studio body changed structure or moved or restructured preserved source component markers; refresh or review in Jami Studio before pushing.",
       ],
     };
   }
@@ -1446,7 +1450,7 @@ export async function builderReadableBodyToBuilderBlocks(args: {
     return {
       blocks: null,
       warnings: [
-        `Readable Builder body changed structure from ${expectedUnitCount} markdown blocks to ${currentUnits.length}; review in Builder before pushing.`,
+        `Readable Jami Studio body changed structure from ${expectedUnitCount} markdown blocks to ${currentUnits.length}; review in Jami Studio before pushing.`,
       ],
     };
   }
@@ -1465,7 +1469,7 @@ export async function builderReadableBodyToBuilderBlocks(args: {
         return {
           blocks: null,
           warnings: [
-            "Readable Builder tab heading changed into unsupported markdown; keep it as a level-3 heading before pushing.",
+            "Readable Jami Studio tab heading changed into unsupported markdown; keep it as a level-3 heading before pushing.",
           ],
         };
       }
@@ -1480,7 +1484,7 @@ export async function builderReadableBodyToBuilderBlocks(args: {
         return {
           blocks: null,
           warnings: [
-            "Readable Builder image changed into unsupported markdown; keep it as a standard image block before pushing.",
+            "Readable Jami Studio image changed into unsupported markdown; keep it as a standard image block before pushing.",
           ],
         };
       }
@@ -1691,7 +1695,7 @@ export function normalizeBuilderMetadata(
       : fallbackPath;
   if (!model || !entryId || !sourceHash || !blocksHash) {
     throw new Error(
-      "Builder frontmatter must include model, entryId, sourceHash, and blocksHash.",
+      "Jami Studio frontmatter must include model, entryId, sourceHash, and blocksHash.",
     );
   }
   return {
@@ -1737,7 +1741,7 @@ function nodeSlice(body: string, node: MdxNode) {
 function freshTextBlock(markdown: string): unknown {
   const text = markdownToBuilderTextHtml(markdown);
   return {
-    "@type": "@builder.io/sdk:Element",
+    "@type": "@jami.studio/sdk:Element",
     "@version": 2,
     id: `builder-mdx-${stableHash(markdown).slice(0, 16)}`,
     component: {
@@ -1758,7 +1762,7 @@ function freshImageBlock(markdown: string): unknown | null {
   const image = parseMarkdownImage(markdown);
   if (!image?.src) return null;
   return {
-    "@type": "@builder.io/sdk:Element",
+    "@type": "@jami.studio/sdk:Element",
     "@version": 2,
     id: `builder-mdx-image-${stableHash(markdown).slice(0, 16)}`,
     component: {
@@ -1783,11 +1787,11 @@ function rawBlockForData(
   sidecars: Record<string, string>,
 ): Record<string, unknown> {
   if (!data.rawRef || !data.rawHash) {
-    throw new Error("Builder MDX block is missing rawRef/rawHash.");
+    throw new Error("Jami Studio MDX block is missing rawRef/rawHash.");
   }
   const raw = sidecars[data.rawRef];
   if (raw === undefined) {
-    throw new Error(`Missing Builder raw sidecar: ${data.rawRef}`);
+    throw new Error(`Missing Jami Studio raw sidecar: ${data.rawRef}`);
   }
   let parsed: unknown;
   try {
@@ -1795,14 +1799,14 @@ function rawBlockForData(
   } catch (error) {
     throw new Error(
       error instanceof Error
-        ? `Invalid Builder raw sidecar ${data.rawRef}: ${error.message}`
-        : `Invalid Builder raw sidecar ${data.rawRef}.`,
+        ? `Invalid Jami Studio raw sidecar ${data.rawRef}: ${error.message}`
+        : `Invalid Jami Studio raw sidecar ${data.rawRef}.`,
     );
   }
   const actualHash = stableHash(parsed);
   if (actualHash !== data.rawHash) {
     throw new Error(
-      `Builder raw sidecar hash mismatch for ${data.rawRef}: expected ${data.rawHash}, got ${actualHash}.`,
+      `Jami Studio raw sidecar hash mismatch for ${data.rawRef}: expected ${data.rawHash}, got ${actualHash}.`,
     );
   }
   return JSON.parse(JSON.stringify(parsed)) as Record<string, unknown>;
@@ -1921,12 +1925,12 @@ function applySymbolData(
       : undefined;
   if (data.entry !== undefined && data.entry !== rawEntry) {
     throw new Error(
-      "Builder Symbol entry is read-only in Builder MDX. Pull or retarget the Symbol through an explicit Builder workflow.",
+      "Jami Studio Symbol entry is read-only in Jami Studio MDX. Pull or retarget the Symbol through an explicit Jami Studio workflow.",
     );
   }
   if (data.model !== undefined && data.model !== rawModel) {
     throw new Error(
-      "Builder Symbol model is read-only in Builder MDX. Pull or retarget the Symbol through an explicit Builder workflow.",
+      "Jami Studio Symbol model is read-only in Jami Studio MDX. Pull or retarget the Symbol through an explicit Jami Studio workflow.",
     );
   }
   if (data.data !== undefined) symbol.data = data.data;
@@ -1985,12 +1989,12 @@ export async function builderMdxBodyToBuilderBlocks(
         continue;
       }
       throw new Error(
-        `Unsupported Builder MDX component: <${child.name || "unknown"}>.`,
+        `Unsupported Jami Studio MDX component: <${child.name || "unknown"}>.`,
       );
     }
     if (child.type === "mdxjsEsm") {
       throw new Error(
-        "Unsupported Builder MDX syntax: import/export statements cannot be pushed to Builder.",
+        "Unsupported Jami Studio MDX syntax: import/export statements cannot be pushed to Jami Studio.",
       );
     }
     const imageBlock = freshImageBlock(raw);

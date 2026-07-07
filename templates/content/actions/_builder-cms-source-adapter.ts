@@ -38,7 +38,8 @@ export interface ExistingBuilderSourceRowIdentity {
   sourceValuesJson?: string | null;
 }
 
-export const BUILDER_CMS_FIXTURE_ROW_PROVENANCE = "Builder CMS fixture adapter";
+export const BUILDER_CMS_FIXTURE_ROW_PROVENANCE =
+  "Jami Studio CMS fixture adapter";
 
 function slugifyBuilderTitle(title: string, fallback: string) {
   return (
@@ -183,14 +184,14 @@ export function builderCmsSourceMetadata(sourceTable: string) {
     pushMode: "none" as const,
     pushModeLabel: "No writes",
     pushModeDescription:
-      "Read-only Builder source. Choose a write tier before any Builder API write can run.",
+      "Read-only Jami Studio source. Choose a write tier before any Jami Studio API write can run.",
     writeMode: "read_only" as const,
     allowPublicationTransitions: false,
     allowedWriteModes: [],
     allowDraftWrites: false,
     allowPublishWrites: false,
     notes:
-      "Builder CMS binding for local read/diff/revision staging only. Push and publish are represented as capabilities, but live writes are disabled.",
+      "Jami Studio CMS binding for local read/diff/revision staging only. Push and publish are represented as capabilities, but live writes are disabled.",
     label: `builder.cms.${sourceTable}`,
   };
 }
@@ -241,8 +242,8 @@ function pickStringField(
   return null;
 }
 
-// Builder reference values look like
-// `{ "@type": "@builder.io/core:Reference", id, model, value? }`. When the read
+// Jami Studio reference values look like
+// `{ "@type": "@jami.studio/core:Reference", id, model, value? }`. When the read
 // is enriched, the referenced entry is inlined on `value` (with its own `name`
 // and `data`) — prefer a human field from it (so e.g. a blog-article's author
 // shows the author's name). Without enrichment, fall back to a readable
@@ -250,7 +251,7 @@ function pickStringField(
 function builderReferenceLabel(value: unknown): string | null {
   if (!value || typeof value !== "object") return null;
   const ref = value as Record<string, unknown>;
-  if (ref["@type"] !== "@builder.io/core:Reference") return null;
+  if (ref["@type"] !== "@jami.studio/core:Reference") return null;
   const inlined =
     ref.value && typeof ref.value === "object"
       ? (ref.value as Record<string, unknown>)

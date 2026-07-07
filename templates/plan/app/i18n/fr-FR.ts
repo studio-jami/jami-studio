@@ -292,7 +292,7 @@ const messages = {
     create: {
       advanced: "Avancé",
       agentMissing:
-        "Connectez l'agent à exécuter - ajoutez une clé API ou utilisez Builder.",
+        "Connectez l'agent à exécuter - ajoutez une clé API ou utilisez Jami Studio.",
       assessment: {
         ui: "États ou flux d'interface utilisateur détectés automatiquement ; l'agent élaborera d'abord un plan filaire.",
         visual:

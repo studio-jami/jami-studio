@@ -89,7 +89,7 @@ export default function Index() {
   const [newDesignSystemId, setNewDesignSystemId] = useState<
     string | null | undefined
   >(undefined);
-  // "Design" (default, inline prototype) vs "Full app" (Builder Fusion
+  // "Design" (default, inline prototype) vs "Full app" (Jami Studio Fusion
   // cloud container). Only reachable behind FULL_APP_BUILDING_ENABLED — the
   // popover renders no mode control at all when the flag is off, so this
   // state is always "design" in that case.
@@ -337,16 +337,16 @@ export default function Index() {
           )
           .then((result: any) => {
             if (result?.status !== "not-configured") return;
-            // Builder isn't connected/configured, so no fusionApp linkage was
+            // Jami Studio isn't connected/configured, so no fusionApp linkage was
             // written and no banner will render. Hand off to the agent chat,
-            // which owns the connect-Builder card flow, keeping the user's
+            // which owns the connect-Jami Studio card flow, keeping the user's
             // prompt so nothing is lost.
             sendToDesignAgentChat({
               message: `I want to build this design as a full app: ${prompt}`,
               context:
                 `create-fusion-app returned status "not-configured" for design ` +
                 `${id}. ${result?.message ?? ""} Help the user connect ` +
-                `Builder.io (see connect-builder-app), then retry ` +
+                `Jami Studio (see connect-builder-app), then retry ` +
                 `create-fusion-app with the user's prompt.`,
               submit: true,
             });
@@ -360,7 +360,7 @@ export default function Index() {
               message: `I want to build this design as a full app: ${prompt}`,
               context:
                 `Starting the full-app build for design ${id} failed: ` +
-                `${message}. Check whether the design row exists, Builder is ` +
+                `${message}. Check whether the design row exists, Jami Studio is ` +
                 `connected, and create-fusion-app can be retried safely.`,
               submit: true,
             });

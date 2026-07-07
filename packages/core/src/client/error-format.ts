@@ -1,5 +1,5 @@
 /**
- * Append a Builder CTA markdown link to gateway errors that users can fix
+ * Append a Jami Studio CTA markdown link to gateway errors that users can fix
  * outside the app. Used by both
  * chat SSE consumers (`sse-event-processor.ts` and `useProductionAgent.ts`)
  * to keep the copy in lockstep.
@@ -38,7 +38,7 @@ export function formatChatErrorText(
     errorCode === "gateway_not_enabled" ||
     /space has not enabled the LLM gateway/i.test(normalized.message)
   ) {
-    return `Error: ${normalized.message}\n\n[Open Builder space settings](${BUILDER_SPACE_SETTINGS_URL})`;
+    return `Error: ${normalized.message}\n\n[Open Jami Studio space settings](${BUILDER_SPACE_SETTINGS_URL})`;
   }
   if (errorCode === "builder_gateway_error") {
     return `Error: ${normalized.message}\n\n[Start new chat](${NEW_CHAT_ACTION_HREF})`;
@@ -52,7 +52,7 @@ export function formatChatErrorText(
   if (!upgradeUrl || !isSafeUpgradeUrl(upgradeUrl)) {
     return `Error: ${normalized.message}`;
   }
-  return `Error: ${normalized.message}\n\n[Upgrade at builder.io](${upgradeUrl})`;
+  return `Error: ${normalized.message}\n\n[Upgrade at jami.studio](${upgradeUrl})`;
 }
 
 export interface NormalizedChatError {

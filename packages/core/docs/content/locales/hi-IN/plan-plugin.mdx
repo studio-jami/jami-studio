@@ -224,14 +224,14 @@ npx @agent-native/core@latest recap doctor
 एजेंट क्लाइंट को पुनः लोड करें ताकि नया skills और टूल लोड हो, फिर चलाएं
 `/visual-plan`.
 
-> नोट: बेयर `npx skills@latest add BuilderIO/agent-native --skill visual-plan` (वर्सेल/ओपन Skills CLI) **केवल निर्देश** स्थापित करता है - यह MCP कनेक्टर को पंजीकृत नहीं करता है। जब आप कनेक्टर को भी वायर्ड करना चाहते हैं तो ऊपर दिए गए Agent-Native CLI का उपयोग करें।
+> नोट: बेयर `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (वर्सेल/ओपन Skills CLI) **केवल निर्देश** स्थापित करता है - यह MCP कनेक्टर को पंजीकृत नहीं करता है। जब आप कनेक्टर को भी वायर्ड करना चाहते हैं तो ऊपर दिए गए Agent-Native CLI का उपयोग करें।
 
 ### Claude कोड (प्लगइन) {#claude-code}
 
-सार्वजनिक `BuilderIO/agent-native` रेपो स्वयं एक Claude कोड प्लगइन मार्केटप्लेस है, इसलिए आप इसे सीधे जोड़ते हैं - कोई बिल्ड चरण नहीं। Claude कोड के अंदर:
+सार्वजनिक `Jami Studio/agent-native` रेपो स्वयं एक Claude कोड प्लगइन मार्केटप्लेस है, इसलिए आप इसे सीधे जोड़ते हैं - कोई बिल्ड चरण नहीं। Claude कोड के अंदर:
 
 ```text
-/plugin marketplace add BuilderIO/agent-native
+/plugin marketplace add Jami Studio/agent-native
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ npx @agent-native/core@latest recap doctor
 वही रेपो एक Codex प्लगइन मार्केटप्लेस है। इसे जोड़ें, प्लगइन इंस्टॉल करें, फिर कनेक्टर को प्रमाणित करें:
 
 ```bash
-codex plugin marketplace add BuilderIO/agent-native
+codex plugin marketplace add Jami Studio/agent-native
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth ब्राउज़र में
 ```
@@ -269,7 +269,7 @@ codex mcp login plan   # OAuth ब्राउज़र में
 
 ## क्या आपको कुछ भी सबमिट करने की आवश्यकता है? {#submission}
 
-**इसे वितरित या स्थापित करने के लिए किसी सबमिशन या समीक्षा की आवश्यकता नहीं है।** `BuilderIO/agent-native` एक स्व-होस्टेड, सार्वजनिक गिट मार्केटप्लेस है, इसलिए उपयोगकर्ता इसे सीधे ऊपर दिए गए कमांड के साथ **Claude कोड और Codex** दोनों पर जोड़ते हैं - कोई आवेदन या अनुमोदन नहीं। सार्वभौमिक CLI मार्ग को किसी बाज़ार की आवश्यकता नहीं है।
+**इसे वितरित या स्थापित करने के लिए किसी सबमिशन या समीक्षा की आवश्यकता नहीं है।** `Jami Studio/agent-native` एक स्व-होस्टेड, सार्वजनिक गिट मार्केटप्लेस है, इसलिए उपयोगकर्ता इसे सीधे ऊपर दिए गए कमांड के साथ **Claude कोड और Codex** दोनों पर जोड़ते हैं - कोई आवेदन या अनुमोदन नहीं। सार्वभौमिक CLI मार्ग को किसी बाज़ार की आवश्यकता नहीं है।
 
 यदि आप सार्वजनिक सूची चाहते हैं तो वैकल्पिक खोज योग्यता:
 

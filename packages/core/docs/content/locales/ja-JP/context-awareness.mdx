@@ -325,7 +325,7 @@ function askAgentAboutSelection(selection: {
 | `newTab: true`      | 大規模な作成タスク用に別のチャット スレッドを開始します                                            |
 | `type: "code"`      | リクエストがアプリのソースの変更に関するものである場合は、コード編集フレームにルーティングします   |
 
-`sendToAgentChat()` は、内部的に `agentNative.submitChat` として認識されることがある送信チャット パスのサポートされているブラウザ ラッパーです。アプリ UI は、`agentNative.submitChat` を直接ポストするのではなく、ラッパーを呼び出す必要があります。これは、ラッパーがローカル サイドバー、Builder/フレーム ルーティング、MCP アプリ ホスト ルーティング、タブ ID、およびコードリクエスト ルーティングを処理するためです。
+`sendToAgentChat()` は、内部的に `agentNative.submitChat` として認識されることがある送信チャット パスのサポートされているブラウザ ラッパーです。アプリ UI は、`agentNative.submitChat` を直接ポストするのではなく、ラッパーを呼び出す必要があります。これは、ラッパーがローカル サイドバー、Jami Studio/フレーム ルーティング、MCP アプリ ホスト ルーティング、タブ ID、およびコードリクエスト ルーティングを処理するためです。
 
 ブラウザのサイドバーがないノード/スクリプト コンテキストには、`agentChat.submit()` または `agentChat.prefill()` を使用します。サーバー actions は通常、ブラウザ専用 `sendToAgentChat()` を呼び出すべきではありません。アクションでエージェントに何かを尋ねるためにオープンな UI が必要な場合は、小さなリクエストを `application_state` に書き込み、UI ブリッジがブラウザからリクエストを送信できるようにします。
 

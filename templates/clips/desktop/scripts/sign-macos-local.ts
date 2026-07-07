@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DEFAULT_IDENTITY =
-  "Developer ID Application: Builder.io, Inc (W3PMF2T3MW)";
+  "Developer ID Application: Jami Studio, Inc (W3PMF2T3MW)";
 
 if (process.platform !== "darwin") {
   process.exit(0);
@@ -56,7 +56,7 @@ if (
   )
 ) {
   console.warn(
-    "[clips-desktop] Builder.io Developer ID identity is unavailable; falling back to ad-hoc signing.",
+    "[clips-desktop] Jami Studio Developer ID identity is unavailable; falling back to ad-hoc signing.",
   );
   console.warn(
     "[clips-desktop] Camera capture may still require a Developer ID signed local build.",

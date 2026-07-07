@@ -25,7 +25,7 @@ interface ImageDropPromptPopoverProps {
  * that doesn't have a clear target (i.e. not on an image placeholder or
  * existing `<img>`). The popover previews the image, lets the user describe
  * what to do with it, and hands the task off to the agent chat with the image
- * uploaded to Builder.io as a reference URL.
+ * uploaded to Jami Studio as a reference URL.
  *
  * Why this exists: dropping image files onto an unclear target previously did
  * one of two unhelpful things — opened the file in a new browser tab (when the
@@ -115,7 +115,7 @@ export default function ImageDropPromptPopover({
       form.append("file", file);
       // Use the slides assets endpoint (which routes through the framework's
       // uploadFile() provider chain first, then falls back to local disk in
-      // dev). Goes via Builder.io when configured; works without it in dev.
+      // dev). Goes via Jami Studio when configured; works without it in dev.
       const res = await fetch(`${appBasePath()}/api/assets/upload`, {
         method: "POST",
         body: form,
@@ -127,7 +127,7 @@ export default function ImageDropPromptPopover({
       if (!res.ok || !data?.url) {
         throw new Error(
           data?.error ||
-            "Image upload failed. Connect Builder.io from the agent composer model menu, or register a custom provider via registerFileUploadProvider().",
+            "Image upload failed. Connect Jami Studio from the agent composer model menu, or register a custom provider via registerFileUploadProvider().",
         );
       }
 

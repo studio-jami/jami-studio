@@ -39,13 +39,13 @@ import type {
 } from "./types";
 
 /**
- * Allowlist check for Fusion (Builder-hosted) frame origins.
+ * Allowlist check for Fusion (Jami Studio-hosted) frame origins.
  *
- * Fusion frames are served cross-origin from the Builder-hosted app, so the
+ * Fusion frames are served cross-origin from the Jami Studio-hosted app, so the
  * strict `origin === parentOrigin` bridge check can never match. Before relaxing
  * trust to window-identity only, we must confirm the message origin is actually
- * a Builder host — the exact origin of the `fusionUrl` we were asked to render,
- * or any `*.builder.io` host (plus the bare `builder.io`), over https. This
+ * a Jami Studio host — the exact origin of the `fusionUrl` we were asked to render,
+ * or any `*.jami.studio` host (plus the bare `jami.studio`), over https. This
  * prevents the relaxed-trust path from accepting messages from an arbitrary
  * cross-origin frame that merely shares our iframe's window reference.
  */
@@ -63,7 +63,7 @@ function isAllowedFusionOrigin(
   } catch {
     return false;
   }
-  // Only allow secure (https) Builder origins.
+  // Only allow secure (https) Jami Studio origins.
   if (protocol !== "https:") return false;
   // Exact match against the configured fusion URL's origin.
   if (fusionUrl) {
@@ -73,8 +73,8 @@ function isAllowedFusionOrigin(
       // Malformed fusionUrl — fall through to the host-family allowlist.
     }
   }
-  // Builder host family: builder.io and any subdomain of it.
-  return host === "builder.io" || host.endsWith(".builder.io");
+  // Jami Studio host family: jami.studio and any subdomain of it.
+  return host === "jami.studio" || host.endsWith(".jami.studio");
 }
 
 /**
@@ -309,15 +309,15 @@ interface DesignCanvasProps {
    *   origin; all bridge scripts injected by DesignCanvas.
    * - `"localhost"` — `src=devServerUrl`; dev server is same-origin in most
    *   setups; bridge trust: origin must match parent or be "null".
-   * - `"fusion"` — `src=builderHostedUrl`; cross-origin Builder-hosted app;
+   * - `"fusion"` — `src=builderHostedUrl`; cross-origin Jami Studio-hosted app;
    *   bridge trust is relaxed to window-identity only (no origin check) so
-   *   the Builder-hosted iframe can communicate with the editor.  The sandbox
-   *   grants `allow-same-origin` so the Builder app can reach its own resources.
+   *   the Jami Studio-hosted iframe can communicate with the editor.  The sandbox
+   *   grants `allow-same-origin` so the Jami Studio app can reach its own resources.
    *
    * When omitted, DesignCanvas infers the tier from the content value:
    * a value that passes `getExternalPreviewUrl` is treated as `"localhost"`;
    * otherwise `"inline"`.  Pass `sourceType="fusion"` explicitly when the
-   * content URL is a Builder-hosted (cross-origin) app so the bridge security
+   * content URL is a Jami Studio-hosted (cross-origin) app so the bridge security
    * model uses window-identity trust instead of same-origin trust.
    */
   sourceType?: "inline" | "localhost" | "fusion";
@@ -336,12 +336,12 @@ interface DesignCanvasProps {
     contentType?: string;
   }) => void;
   /**
-   * Explicit Builder-hosted app URL for fusion source rendering.
+   * Explicit Jami Studio-hosted app URL for fusion source rendering.
    *
    * When `sourceType === "fusion"` and this prop is provided, the iframe uses
    * this URL as `src` regardless of what `content` contains.  This lets the
    * caller hold the original inline HTML in `content` (for collab/history
-   * purposes) while pointing the canvas at the migrated Builder-hosted app.
+   * purposes) while pointing the canvas at the migrated Jami Studio-hosted app.
    *
    * When absent and `sourceType === "fusion"`, the component falls back to
    * the existing external-URL detection on `content` (i.e. if `content` is
@@ -1094,7 +1094,7 @@ export function DesignCanvas({
   const isEmbeddedFrame = Boolean(embeddedFrame);
   // Resolve the URL to render in the iframe:
   // 1. When sourceType === "fusion" and fusionUrl is set, prefer the explicit
-  //    Builder-hosted URL over whatever is in `content` (which may still be the
+  //    Jami Studio-hosted URL over whatever is in `content` (which may still be the
   //    original inline HTML).
   // 2. Otherwise fall back to the content-based URL detection (handles the case
   //    where the branch URL has been written into the design file content, or
@@ -1450,12 +1450,12 @@ export function DesignCanvas({
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
       const iframeWindow = iframeRef.current?.contentWindow;
-      // For fusion sources the Builder-hosted app is cross-origin, so the strict
+      // For fusion sources the Jami Studio-hosted app is cross-origin, so the strict
       // `origin === parentOrigin` check can never match. We still require window
       // identity (the message must come from our own iframe window, not any
       // arbitrary cross-origin frame), AND we validate the message origin
-      // against a Builder-host allowlist (the configured fusionUrl origin or the
-      // *.builder.io family) before relaxing the origin check. If the origin is
+      // against a Jami Studio-host allowlist (the configured fusionUrl origin or the
+      // *.jami.studio family) before relaxing the origin check. If the origin is
       // not on the allowlist we keep the strict check so a hostile frame that
       // somehow shares our window reference still can't be trusted.
       const trusted =

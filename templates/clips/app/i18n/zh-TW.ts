@@ -20,15 +20,15 @@ const messages = {
     gotIt: "知道了",
   },
   builderCredits: {
-    pausedTitle: "Builder.io 額度已暫停",
+    pausedTitle: "Jami Studio 額度已暫停",
     transcriptionDescription:
-      "升級 Builder.io 即可恢復備份轉錄。現有的原生轉錄仍會顯示。",
+      "升級 Jami Studio 即可恢復備份轉錄。現有的原生轉錄仍會顯示。",
     cleanupDescription:
-      "升級 Builder.io 即可恢復轉錄清理、摘要和 AI 標題。原生轉錄已保留。",
+      "升級 Jami Studio 即可恢復轉錄清理、摘要和 AI 標題。原生轉錄已保留。",
     settingsDescription:
-      "升級 Builder.io 即可恢復備份轉錄、轉錄清理、摘要和 AI 標題。現有的原生轉錄仍會顯示。",
+      "升級 Jami Studio 即可恢復備份轉錄、轉錄清理、摘要和 AI 標題。現有的原生轉錄仍會顯示。",
     titleDescription: "AI 標題生成已暫停。你的轉錄仍可使用。",
-    upgrade: "升級 Builder.io",
+    upgrade: "升級 Jami Studio",
     retryAfterUpgrade: "升級後重試",
     openAiSetup: "AI 設定",
     featureBackupTranscription: "備份轉錄",
@@ -134,7 +134,7 @@ const messages = {
     noAccess: "您可能無權存取此剪輯。",
     backToLibrary: "返回媒體庫",
     storageStillDisconnected: "儲存仍未連線",
-    finishBuilderOrS3: "完成 Builder.io 快顯視窗或設定 S3 儲存，然後重試。",
+    finishBuilderOrS3: "完成 Jami Studio 快顯視窗或設定 S3 儲存，然後重試。",
     loomImportResumed: "Loom 匯入已恢復",
     clipUploadResumed: "剪輯上傳已恢復",
     couldNotRetryLoom: "無法重試 Loom 匯入",
@@ -167,9 +167,9 @@ const messages = {
     savingWentWrong: "儲存此剪輯時出現問題。",
     finishingClip: "正在完成您的剪輯...",
     loomSourcePreserved:
-      "已保留 Loom 來源連結。連線 Builder.io（免費方案儲存 + AI）或 S3 相容儲存後，Clips 將重試儲存自己的副本。",
+      "已保留 Loom 來源連結。連線 Jami Studio（免費方案儲存 + AI）或 S3 相容儲存後，Clips 將重試儲存自己的副本。",
     clipDataPreserved:
-      "您的剪輯資料仍會保留。連線 Builder.io（免費方案儲存 + AI）或 S3 相容儲存後，Clips 將自動上傳。",
+      "您的剪輯資料仍會保留。連線 Jami Studio（免費方案儲存 + AI）或 S3 相容儲存後，Clips 將自動上傳。",
     details: "詳細資料",
     importingLoom: "正在匯入 Loom...",
     uploadingSavedClip: "正在上傳儲存的剪輯...",
@@ -244,13 +244,13 @@ const messages = {
     savingWentWrong: "儲存此剪輯時出現問題。",
     finishingClip: "完成這個剪輯...",
     loomPreservedManage:
-      "Loom 來源連結被保留。連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存，然後重試匯入。",
+      "Loom 來源連結被保留。連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存，然後重試匯入。",
     videoPreservedManage:
-      "影片已保留。連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存，Clips 將完成上傳。",
+      "影片已保留。連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存，Clips 將完成上傳。",
     creatorNeedsStorage:
-      "建立者需要先連線儲存才能完成此剪輯：Builder.io（免費方案儲存 + AI）或 S3 相容儲存。",
+      "建立者需要先連線儲存才能完成此剪輯：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存。",
     signInStorage:
-      "如果這是您的剪輯，請在此處登入以連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存，並完成上傳。",
+      "如果這是您的剪輯，請在此處登入以連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存，並完成上傳。",
     uploadNotCompleteSession:
       "上傳尚未完成。開啟此剪輯的儀表板或要求建立者檢查儲存空間。",
     uploadNotCompleteSignIn:
@@ -349,7 +349,7 @@ const messages = {
     transcriptUnavailableTitle: "轉錄無法使用",
     providerNeedsAttention: "提供者需要處理",
     providerNeedsAttentionDescription:
-      "目前提供者已暫停此請求。切換到 Builder.io 或更新金鑰，然後重試。",
+      "目前提供者已暫停此請求。切換到 Jami Studio 或更新金鑰，然後重試。",
     enableTranscriptionTitle: "啟用轉錄",
     enableTranscriptionDescription: "為此 Clip 啟用字幕、轉錄搜尋和摘要。",
     searchPlaceholder: "搜尋逐字稿",
@@ -364,10 +364,10 @@ const messages = {
     backupNotSetup: "本機未擷取到任何語音，且未設定備份轉錄。",
     cleanupKept: "清理工作無法完成。已保留本機逐字稿。",
     cleanupBuilderFailed:
-      "即使 Builder.io 已連線，清理也無法完成。已保留本機逐字稿。",
+      "即使 Jami Studio 已連線，清理也無法完成。已保留本機逐字稿。",
     cleanupPaused:
-      "清理已暫停。請在「設定」中連線 AI：Builder.io（免費額度）或您自己的 LLM 金鑰。",
-    builderNoResponse: "沒有收到 Builder 的回覆。允許快顯視窗並重試。",
+      "清理已暫停。請在「設定」中連線 AI：Jami Studio（免費額度）或您自己的 LLM 金鑰。",
+    builderNoResponse: "沒有收到 Jami Studio 的回覆。允許快顯視窗並重試。",
     saveFailed: "儲存失敗（{{status}}）",
     savedRetrying: "已儲存。正在重試轉錄...",
     getGroqKey: "取得 Groq 金鑰",
@@ -597,24 +597,24 @@ const messages = {
       "當有人評論、回應或與你分享錄製時，收到郵件通知。",
     saved: "設定已儲存",
     saveFailed: "儲存失敗",
-    builderConnectedToast: "Builder.io 已連線",
+    builderConnectedToast: "Jami Studio 已連線",
     videoStorage: "影片儲存",
     videoStorageDescription:
-      "Builder.io 是 Clips 上傳的主要儲存路徑。需要自帶儲存桶時，也可以使用 S3。",
-    checkingBuilder: "正在檢查 Builder.io",
-    builderConnected: "Builder.io 已連線",
-    connectBuilder: "使用 Builder.io（免費）",
-    builderConnectedFor: "正在為 {{orgName}} 使用 Builder.io。",
-    builderConnectedGeneric: "新的剪輯會使用已連線的 Builder.io 提供方。",
+      "Jami Studio 是 Clips 上傳的主要儲存路徑。需要自帶儲存桶時，也可以使用 S3。",
+    checkingBuilder: "正在檢查 Jami Studio",
+    builderConnected: "Jami Studio 已連線",
+    connectBuilder: "使用 Jami Studio（免費）",
+    builderConnectedFor: "正在為 {{orgName}} 使用 Jami Studio。",
+    builderConnectedGeneric: "新的剪輯會使用已連線的 Jami Studio 提供方。",
     builderIncludes: "包含物件儲存、上傳，以及新剪輯的託管轉錄。",
     s3Title: "S3 相容儲存",
     secondary: "備用",
     active: "目前啟用",
     s3BuilderConnectedDescription:
-      "僅當此工作區應上傳到您自己的儲存桶而不是 Builder.io 時使用。",
+      "僅當此工作區應上傳到您自己的儲存桶而不是 Jami Studio 時使用。",
     s3CurrentProvider: "目前正在使用 {{providerName}}。",
     s3OwnBucketDescription:
-      "如果不想使用 Builder.io 儲存，可以使用自己的儲存桶。",
+      "如果不想使用 Jami Studio 儲存，可以使用自己的儲存桶。",
     configureS3: "設定 S3",
     hideS3: "隱藏 S3",
     saveStorage: "儲存空間設定",
@@ -630,11 +630,12 @@ const messages = {
     s3BucketInvalid: "儲存貯體名稱必須為 3–63 個小寫字母、數字或連字號",
     s3RegionInvalid: '必須是有效的區域（例如 us-east-1）或 "auto"',
     apiSetup: "AI 設定",
-    apiSetupDescription: "使用 Builder.io 免費額度或您自己的 LLM 金鑰連線 AI。",
-    builderEasySetup: "Builder.io 免費額度",
+    apiSetupDescription:
+      "使用 Jami Studio 免費額度或您自己的 LLM 金鑰連線 AI。",
+    builderEasySetup: "Jami Studio 免費額度",
     builderAiAvailable: "Clips 可使用包含的 AI 額度和託管轉錄。",
     builderAiDescription:
-      "優先使用 Builder.io，可獲得內建 AI 額度、物件儲存、上傳和託管轉錄。",
+      "優先使用 Jami Studio，可獲得內建 AI 額度、物件儲存、上傳和託管轉錄。",
     providerKeyTitle: "使用自己的提供方金鑰",
     providerKeyDescription:
       "新增 Anthropic、OpenAI、Gemini、Groq 或 OpenRouter 金鑰，用於按提供方計費的使用。",
@@ -782,7 +783,7 @@ const messages = {
     pickAtLeastTwo: "請選取至少 2 個錄製進行拼接",
     videoUrlMissing: "一個或多個錄製還沒有可用的影片 URL",
     connectStorage:
-      "拼接錄製前請連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存。",
+      "拼接錄製前請連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存。",
     created: "拼接錄製已建立",
     failed: "拼接錄製失敗",
     noOtherRecordings: "沒有其他可用錄製。",
@@ -1016,15 +1017,15 @@ const messages = {
     setBubbleSize: "設定攝影機氣泡大小 {{size}}",
   },
   storageSetup: {
-    builderTimeout: "5 分鐘內未收到 Builder 回應。請檢查快顯視窗並重試。",
-    builderConnected: "Builder.io 已連線",
-    waitingForBuilder: "正在等待 Builder...",
-    connectBuilder: "使用 Builder.io（免費）",
+    builderTimeout: "5 分鐘內未收到 Jami Studio 回應。請檢查快顯視窗並重試。",
+    builderConnected: "Jami Studio 已連線",
+    waitingForBuilder: "正在等待 Jami Studio...",
+    connectBuilder: "使用 Jami Studio（免費）",
     free: "免費",
     configureS3: "設定 S3 相容儲存",
     whyPrompt: "為什麼我會看到這個？",
     whyDescription:
-      "Clips 是 100% 免費且開放原始碼，因此您需要連線一種儲存 clips 的方式。使用 Builder.io 可取得免費方案儲存和 AI，或使用 S3 相容物件儲存和您自己的 LLM 金鑰。",
+      "Clips 是 100% 免費且開放原始碼，因此您需要連線一種儲存 clips 的方式。使用 Jami Studio 可取得免費方案儲存和 AI，或使用 S3 相容物件儲存和您自己的 LLM 金鑰。",
   },
   captureInstall: {
     title: "選擇錄製工具",
@@ -1212,9 +1213,9 @@ const messages = {
     downloadRecording: "下載錄製",
     openRecorderInTab: "在分頁中開啟錄製工具",
     connectStorageToFinish:
-      "在下一個畫面連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存。Clips 將完成儲存。",
+      "在下一個畫面連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存。Clips 將完成儲存。",
     connectStorageToRetryLoom:
-      "在下一個畫面連線儲存：Builder.io（免費方案儲存 + AI）或 S3 相容儲存。Clips 將重試匯入。",
+      "在下一個畫面連線儲存：Jami Studio（免費方案儲存 + AI）或 S3 相容儲存。Clips 將重試匯入。",
   },
   dictateRoute: {
     pageTitle: "聽寫 · Clips",

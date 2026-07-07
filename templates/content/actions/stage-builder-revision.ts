@@ -15,7 +15,7 @@ import { getContentDatabaseResponse } from "./_database-utils.js";
 
 export default defineAction({
   description:
-    "Stage pending local Builder CMS changes as a local-only save-revision review record. This never calls Builder APIs or performs external writes.",
+    "Stage pending local Jami Studio CMS changes as a local-only save-revision review record. This never calls Jami Studio APIs or performs external writes.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -34,7 +34,9 @@ export default defineAction({
       args.sourceId,
     );
     if (!source || source.sourceType !== "builder-cms") {
-      throw new Error("Attach a Builder CMS source before staging a revision.");
+      throw new Error(
+        "Attach a Jami Studio CMS source before staging a revision.",
+      );
     }
 
     const pendingOutboundChanges = source.changeSets.filter(
@@ -44,7 +46,7 @@ export default defineAction({
     );
 
     if (pendingOutboundChanges.length === 0) {
-      throw new Error("No pending local Builder changes to stage.");
+      throw new Error("No pending local Jami Studio changes to stage.");
     }
 
     const now = new Date().toISOString();
@@ -64,8 +66,8 @@ export default defineAction({
         states: ["pending_push", "staged_revision"],
       });
       const summary = changeSet.summary.replace(
-        /^Pending local Builder CMS/,
-        "Staged local-only Builder CMS",
+        /^Pending local Jami Studio CMS/,
+        "Staged local-only Jami Studio CMS",
       );
 
       if (existing) {

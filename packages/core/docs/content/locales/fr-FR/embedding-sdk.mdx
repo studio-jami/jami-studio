@@ -107,7 +107,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -126,7 +126,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -328,7 +328,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -469,7 +469,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -671,6 +671,6 @@ L'assistant renvoie intentionnellement des objets `{ name, description, paramete
 
 ## Forme de produit recommandée
 
-Démarrez l'iframe en premier. Il fonctionne pour Builder.io, les applications SaaS client et les outils d'administration internes sans coupler les cycles de publication ou les hypothèses CSS/runtime.
+Démarrez l'iframe en premier. Il fonctionne pour Jami Studio, les applications SaaS client et les outils d'administration internes sans coupler les cycles de publication ou les hypothèses CSS/runtime.
 
 Le side-car lui-même doit toujours être une application/un modèle Agent-Native : les actions sont la surface du backend API, l'état de l'application soutenu par SQL est la mémoire de l'agent et des intégrations telles que Slack ou Telegram peuvent être acheminées vers la même discussion durable. L'intégration SDK fournit la membrane active entre ce side-car et la page hôte actuelle.

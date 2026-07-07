@@ -21,16 +21,16 @@ const messages = {
     gotIt: "Got it",
   },
   builderCredits: {
-    pausedTitle: "Builder.io credits paused",
+    pausedTitle: "Jami Studio credits paused",
     transcriptionDescription:
-      "Upgrade Builder.io to resume backup transcription. Existing native transcripts stay visible.",
+      "Upgrade Jami Studio to resume backup transcription. Existing native transcripts stay visible.",
     cleanupDescription:
-      "Upgrade Builder.io to resume transcript cleanup, summaries, and AI titles. The native transcript was kept.",
+      "Upgrade Jami Studio to resume transcript cleanup, summaries, and AI titles. The native transcript was kept.",
     settingsDescription:
-      "Upgrade Builder.io to resume backup transcription, transcript cleanup, summaries, and AI titles. Existing native transcripts stay visible.",
+      "Upgrade Jami Studio to resume backup transcription, transcript cleanup, summaries, and AI titles. Existing native transcripts stay visible.",
     titleDescription:
       "AI title generation is paused. Your transcript still works.",
-    upgrade: "Upgrade Builder.io",
+    upgrade: "Upgrade Jami Studio",
     retryAfterUpgrade: "Retry after upgrade",
     openAiSetup: "AI setup",
     featureBackupTranscription: "Backup transcription",
@@ -139,7 +139,7 @@ const messages = {
     backToLibrary: "Back to library",
     storageStillDisconnected: "Storage still isn't connected",
     finishBuilderOrS3:
-      "Finish the Builder.io popup or configure S3-compatible storage, then try again.",
+      "Finish the Jami Studio popup or configure S3-compatible storage, then try again.",
     loomImportResumed: "Loom import resumed",
     clipUploadResumed: "Clip upload resumed",
     couldNotRetryLoom: "Couldn't retry Loom import",
@@ -173,9 +173,9 @@ const messages = {
     savingWentWrong: "Something went wrong while saving this clip.",
     finishingClip: "Finishing up your clip…",
     loomSourcePreserved:
-      "The Loom source link is preserved. Connect storage with Builder.io (free tier storage + AI) or S3-compatible storage, and Clips will retry saving its own copy.",
+      "The Loom source link is preserved. Connect storage with Jami Studio (free tier storage + AI) or S3-compatible storage, and Clips will retry saving its own copy.",
     clipDataPreserved:
-      "Your clip data is still preserved. Connect storage with Builder.io (free tier storage + AI) or S3-compatible storage, and Clips will upload it automatically.",
+      "Your clip data is still preserved. Connect storage with Jami Studio (free tier storage + AI) or S3-compatible storage, and Clips will upload it automatically.",
     details: "Details",
     importingLoom: "Importing Loom...",
     uploadingSavedClip: "Uploading saved clip…",
@@ -252,13 +252,13 @@ const messages = {
     savingWentWrong: "Something went wrong while saving this clip.",
     finishingClip: "Finishing up this clip...",
     loomPreservedManage:
-      "The Loom source link is preserved. Connect storage with Builder.io (free tier storage + AI) or S3-compatible storage, then retry the import.",
+      "The Loom source link is preserved. Connect storage with Jami Studio (free tier storage + AI) or S3-compatible storage, then retry the import.",
     videoPreservedManage:
-      "The video is preserved. Connect storage with Builder.io (free tier storage + AI) or S3-compatible storage, and Clips will finish uploading it.",
+      "The video is preserved. Connect storage with Jami Studio (free tier storage + AI) or S3-compatible storage, and Clips will finish uploading it.",
     creatorNeedsStorage:
-      "The creator needs to connect storage before this clip can finish: Builder.io (free tier storage + AI) or S3-compatible storage.",
+      "The creator needs to connect storage before this clip can finish: Jami Studio (free tier storage + AI) or S3-compatible storage.",
     signInStorage:
-      "If this is your clip, sign in here to connect storage with Builder.io (free tier storage + AI) or S3-compatible storage and finish the upload.",
+      "If this is your clip, sign in here to connect storage with Jami Studio (free tier storage + AI) or S3-compatible storage and finish the upload.",
     uploadNotCompleteSession:
       "The upload has not completed yet. Open the dashboard for this clip or ask the creator to check storage.",
     uploadNotCompleteSignIn:
@@ -360,7 +360,7 @@ const messages = {
     transcriptUnavailableTitle: "Transcript unavailable",
     providerNeedsAttention: "Provider needs attention",
     providerNeedsAttentionDescription:
-      "The current provider paused this request. Switch to Builder.io or update the key, then retry.",
+      "The current provider paused this request. Switch to Jami Studio or update the key, then retry.",
     enableTranscriptionTitle: "Enable transcription",
     enableTranscriptionDescription:
       "Unlock captions, transcript search, and summaries for this Clip.",
@@ -377,11 +377,11 @@ const messages = {
       "No speech was captured locally, and backup transcription is not set up.",
     cleanupKept: "Cleanup could not finish. Native transcript was kept.",
     cleanupBuilderFailed:
-      "Cleanup could not finish even though Builder.io is connected. Native transcript was kept.",
+      "Cleanup could not finish even though Jami Studio is connected. Native transcript was kept.",
     cleanupPaused:
-      "Cleanup is paused. Connect AI in Settings: Builder.io (free credits) or your own LLM key.",
+      "Cleanup is paused. Connect AI in Settings: Jami Studio (free credits) or your own LLM key.",
     builderNoResponse:
-      "Didn't hear back from Builder. Allow popups and try again.",
+      "Didn't hear back from Jami Studio. Allow popups and try again.",
     saveFailed: "Save failed ({{status}})",
     savedRetrying: "Saved. Retrying transcription…",
     getGroqKey: "Get Groq key",
@@ -626,25 +626,26 @@ All notable user-facing changes to Clips are documented here. Open it any time f
       "Get an email when someone comments, reacts, or shares a recording with you.",
     saved: "Settings saved",
     saveFailed: "Failed to save",
-    builderConnectedToast: "Builder.io connected",
+    builderConnectedToast: "Jami Studio connected",
     videoStorage: "Video storage",
     videoStorageDescription:
-      "Builder.io is the primary storage path for Clips uploads. S3 is available when you need to bring your own bucket.",
-    checkingBuilder: "Checking Builder.io",
-    builderConnected: "Builder.io connected",
-    connectBuilder: "Use Builder.io (free)",
-    builderConnectedFor: "Using Builder.io for {{orgName}}.",
-    builderConnectedGeneric: "New clips use the connected Builder.io provider.",
+      "Jami Studio is the primary storage path for Clips uploads. S3 is available when you need to bring your own bucket.",
+    checkingBuilder: "Checking Jami Studio",
+    builderConnected: "Jami Studio connected",
+    connectBuilder: "Use Jami Studio (free)",
+    builderConnectedFor: "Using Jami Studio for {{orgName}}.",
+    builderConnectedGeneric:
+      "New clips use the connected Jami Studio provider.",
     builderIncludes:
       "Includes object storage, uploads, and managed transcription for new clips.",
     s3Title: "S3-compatible storage",
     secondary: "Secondary",
     active: "Active",
     s3BuilderConnectedDescription:
-      "Use this only if this workspace should upload to your own bucket instead of Builder.io.",
+      "Use this only if this workspace should upload to your own bucket instead of Jami Studio.",
     s3CurrentProvider: "Currently using {{providerName}}.",
     s3OwnBucketDescription:
-      "Use your own bucket if you do not want Builder.io storage.",
+      "Use your own bucket if you do not want Jami Studio storage.",
     configureS3: "Configure S3",
     hideS3: "Hide S3",
     saveStorage: "Save storage",
@@ -663,12 +664,12 @@ All notable user-facing changes to Clips are documented here. Open it any time f
     s3RegionInvalid: 'Must be a valid region (e.g. us-east-1) or "auto"',
     apiSetup: "AI setup",
     apiSetupDescription:
-      "Connect AI with Builder.io free credits or your own LLM keys.",
-    builderEasySetup: "Builder.io free credits",
+      "Connect AI with Jami Studio free credits or your own LLM keys.",
+    builderEasySetup: "Jami Studio free credits",
     builderAiAvailable:
       "Included AI credits and managed transcription are available for Clips.",
     builderAiDescription:
-      "Use Builder.io first for included AI credits, object storage, uploads, and managed transcription.",
+      "Use Jami Studio first for included AI credits, object storage, uploads, and managed transcription.",
     providerKeyTitle: "Bring your own provider key",
     providerKeyDescription:
       "Add Anthropic, OpenAI, Gemini, Groq, or OpenRouter keys for provider-billed usage.",
@@ -822,7 +823,7 @@ All notable user-facing changes to Clips are documented here. Open it any time f
     pickAtLeastTwo: "Pick at least 2 recordings to stitch together",
     videoUrlMissing: "One or more recordings don't have a ready video URL yet",
     connectStorage:
-      "Connect storage before stitching recordings: Builder.io (free tier storage + AI) or S3-compatible storage.",
+      "Connect storage before stitching recordings: Jami Studio (free tier storage + AI) or S3-compatible storage.",
     created: "Stitched recording created",
     failed: "Failed to stitch recordings",
     noOtherRecordings: "No other recordings available.",
@@ -1060,15 +1061,15 @@ All notable user-facing changes to Clips are documented here. Open it any time f
   },
   storageSetup: {
     builderTimeout:
-      "Didn't hear back from Builder in 5 minutes. Check the popup and try again.",
-    builderConnected: "Builder.io connected",
-    waitingForBuilder: "Waiting for Builder...",
-    connectBuilder: "Use Builder.io (free)",
+      "Didn't hear back from Jami Studio in 5 minutes. Check the popup and try again.",
+    builderConnected: "Jami Studio connected",
+    waitingForBuilder: "Waiting for Jami Studio...",
+    connectBuilder: "Use Jami Studio (free)",
     free: "Free",
     configureS3: "configure S3-compatible storage",
     whyPrompt: "Why am I seeing this?",
     whyDescription:
-      "Clips is 100% free and open source, so you need to hook up a way to store clips. Connect storage with Builder.io for free-tier storage and AI, or use S3-compatible object storage and your own LLM keys.",
+      "Clips is 100% free and open source, so you need to hook up a way to store clips. Connect storage with Jami Studio for free-tier storage and AI, or use S3-compatible object storage and your own LLM keys.",
   },
   captureInstall: {
     title: "Choose your recorder",
@@ -1265,9 +1266,9 @@ All notable user-facing changes to Clips are documented here. Open it any time f
     downloadRecording: "Download recording",
     openRecorderInTab: "Open recorder in tab",
     connectStorageToFinish:
-      "Connect storage on the next screen: Builder.io (free tier storage + AI) or S3-compatible storage. Clips will finish saving it.",
+      "Connect storage on the next screen: Jami Studio (free tier storage + AI) or S3-compatible storage. Clips will finish saving it.",
     connectStorageToRetryLoom:
-      "Connect storage on the next screen: Builder.io (free tier storage + AI) or S3-compatible storage. Clips will retry the import.",
+      "Connect storage on the next screen: Jami Studio (free tier storage + AI) or S3-compatible storage. Clips will retry the import.",
   },
   dictateRoute: {
     pageTitle: "Dictate · Clips",

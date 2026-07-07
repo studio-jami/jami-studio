@@ -61,7 +61,7 @@ export function builderReviewEffectiveRowEffect(
   baseEffect: BuilderCmsWriteEffect,
   selection?: BuilderReviewPublicationTransitionSelection,
 ): BuilderCmsWriteEffect {
-  // A create has no Builder entry yet, so a publish/unpublish transition can't
+  // A create has no Jami Studio entry yet, so a publish/unpublish transition can't
   // apply — the adapter always writes a draft (create_draft) when there's no
   // entry id. Never let a transition relabel a create.
   if (baseEffect === "create_draft") return "create_draft";
@@ -113,7 +113,7 @@ export function builderReviewDestinationLine(args: {
   liveWritesEnabled: boolean;
 }) {
   if (!args.liveWritesEnabled) {
-    return "Checks the update only — nothing is sent to Builder.";
+    return "Checks the update only — nothing is sent to Jami Studio.";
   }
   const effects = new Set(
     args.rows.map((row) =>
@@ -124,17 +124,17 @@ export function builderReviewDestinationLine(args: {
     ),
   );
   if (effects.has("unpublish")) {
-    return "Unpublishes selected entries in Builder.";
+    return "Unpublishes selected entries in Jami Studio.";
   }
   if (effects.has("publish")) {
-    return "Publishes selected entries in Builder.";
+    return "Publishes selected entries in Jami Studio.";
   }
   if (effects.size === 1 && effects.has("create_draft")) {
     return args.rows.length === 1
-      ? "Writes a new draft to Builder — won't publish."
-      : "Writes new drafts to Builder — nothing is published.";
+      ? "Writes a new draft to Jami Studio — won't publish."
+      : "Writes new drafts to Jami Studio — nothing is published.";
   }
-  return "Updates content in Builder — publication state is preserved.";
+  return "Updates content in Jami Studio — publication state is preserved.";
 }
 
 export function builderReviewResultStatus(status?: string): {
@@ -322,7 +322,7 @@ export function BuilderSourceReviewDialog({
   );
   const footerHint = pending
     ? review?.liveWritesEnabled
-      ? "Sending to Builder…"
+      ? "Sending to Jami Studio…"
       : "Checking…"
     : hasUnconfirmedUnpublish
       ? "Confirm unpublish on the selected rows first."
@@ -422,7 +422,7 @@ export function BuilderSourceReviewDialog({
               {t("database.reviewBuilderUpdate")}
             </DialogTitle>
             <DialogDescription className="truncate text-xs text-muted-foreground">
-              {review?.summary ?? "No pending Builder changes."}
+              {review?.summary ?? "No pending Jami Studio changes."}
             </DialogDescription>
           </div>
           <button

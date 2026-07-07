@@ -492,7 +492,7 @@ export async function prepareAudioOnlyTranscriptionMedia({
     });
   } catch (err) {
     // No ffmpeg to strip the audio track. Rather than fail outright, hand the
-    // original media to the transcription provider — Gemini/Builder accepts
+    // original media to the transcription provider — Gemini/Jami Studio accepts
     // video containers directly. (Whisper-style providers may reject it, in
     // which case the normal provider error path takes over.)
     if (isFfmpegUnavailableError(err)) {

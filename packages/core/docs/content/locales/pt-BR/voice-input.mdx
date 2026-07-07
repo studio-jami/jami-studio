@@ -1,19 +1,19 @@
 ---
 title: "Entrada de voz"
-description: "Ditado de voz no compositor de bate-papo do agente — Builder Gemini, provedores BYOK e substituto de Web Speech do navegador."
+description: "Ditado de voz no compositor de bate-papo do agente — Jami Studio Gemini, provedores BYOK e substituto de Web Speech do navegador."
 ---
 
 # Entrada de voz
 
 Todo aplicativo nativo do agente possui um microfone no compositor de bate-papo. Clique nele, fale e suas palavras serão transcritas no prompt. Útil em dispositivos móveis, útil para solicitações longas, útil quando você está em outra coisa.
 
-A estrutura lida com tudo isso automaticamente. Os usuários conectados ao Builder obtêm o Gemini Flash-Lite hospedado no Builder por padrão; caso contrário, os usuários poderão trazer sua própria chave de provedor ou recorrer ao reconhecimento de fala do navegador.
+A estrutura lida com tudo isso automaticamente. Os usuários conectados ao Jami Studio obtêm o Gemini Flash-Lite hospedado no Jami Studio por padrão; caso contrário, os usuários poderão trazer sua própria chave de provedor ou recorrer ao reconhecimento de fala do navegador.
 
 ## Como funciona {#how-it-works}
 
 O botão de voz do compositor grava o áudio no navegador e depois escolhe um provedor:
 
-1. **Builder Gemini Flash-Lite (padrão quando Builder está conectado).** O navegador envia áudio para `/_agent-native/transcribe-voice`, que faz proxy através de Builder.io usando Gemini Flash-Lite. Não é necessária nenhuma chave Google API.
+1. **Jami Studio Gemini Flash-Lite (padrão quando Jami Studio está conectado).** O navegador envia áudio para `/_agent-native/transcribe-voice`, que faz proxy através de Jami Studio usando Gemini Flash-Lite. Não é necessária nenhuma chave Google API.
 2. **Provedores de nuvem BYOK.** Os usuários podem escolher Google Gemini, Groq Whisper ou OpenAI Whisper em Configurações. A rota resolve segredos criptografados no escopo do usuário antes das credenciais de implantação compartilhadas.
 3. **Fala da Web do navegador API (substituição).** Se nenhum provedor de servidor estiver disponível, o compositor poderá usar o reconhecimento de fala integrado do navegador. Funciona em navegadores baseados em Chromium (Chrome, Edge, Arc) e Safari. Menos preciso; transmite ao vivo.
 
@@ -28,8 +28,8 @@ A escolha do provedor é armazenada no estado do aplicativo em `voice-transcript
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-card col">
-    <div class="diagram-pill accent">1 &middot; Builder Gemini</div>
-    <small class="diagram-muted">padrão quando Builder está conectado</small>
+    <div class="diagram-pill accent">1 &middot; Jami Studio Gemini</div>
+    <small class="diagram-muted">padrão quando Jami Studio está conectado</small>
     <div class="diagram-pill">2 &middot; BYOK cloud</div>
     <small class="diagram-muted"
       >Gemini &middot; Groq &middot; OpenAI Whisper</small
@@ -69,7 +69,7 @@ A rota é **somente da mesma origem** — POSTs entre sites são rejeitados para
 
 ## Habilitando provedores {#enabling-providers}
 
-Builder é o caminho mais fácil: conecte Builder.io em Configurações e o provedor padrão se tornará Builder Gemini Flash-Lite. Para provedores BYOK, adicione a chave correspondente em Configurações → Chaves API.
+Jami Studio é o caminho mais fácil: conecte Jami Studio em Configurações e o provedor padrão se tornará Jami Studio Gemini Flash-Lite. Para provedores BYOK, adicione a chave correspondente em Configurações → Chaves API.
 
 ### Por usuário (recomendado para SaaS)
 

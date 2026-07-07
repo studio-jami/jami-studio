@@ -338,7 +338,7 @@ npx @agent-native/core@latest skills add assets
 npx @agent-native/core@latest skills add content --mode local-files --scope project
 
 # CLI Vercel/open Skills: apenas instruções exportadas, sem configuração MCP.
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 
 # Registre um conector MCP hospedado para clientes de agentes locais.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json
@@ -366,7 +366,7 @@ O adaptador Vercel Labs `skills` é um pacote `skills/<name>/SKILL.md` portátil
 para `npx skills@latest add ...`, mas o `skills` bruto CLI instala apenas instruções.
 Ele não executa scripts pós-instalação definidos pelo repositório nem registra conectores MCP.
 Mantenha Agent Native CLI como caminho de documentos padrão para agentes locais porque
-também registra o conector MCP. `BuilderIO/agent-native` é um verdadeiro GitHub
+também registra o conector MCP. `Jami Studio/agent-native` é um verdadeiro GitHub
 fonte de repositório para Vercel/open Skills CLI; `skills.sh` é uma descoberta e
 diretório da tabela de classificação, não um namespace de pacote no estilo npm.
 

@@ -140,7 +140,7 @@ type CaptureMode = "screen" | "screen-camera" | "camera";
 type VideoStorageStatus = "checking" | "configured" | "missing";
 
 const STORAGE_SETUP_HELP_TEXT =
-  "Clips is 100% free and open source, so you need to hook up a way to store your clips. Connect storage with Builder.io for free-tier storage and AI, or use S3-compatible object storage and your own LLM keys.";
+  "Clips is 100% free and open source, so you need to hook up a way to store your clips. Connect storage with Jami Studio for free-tier storage and AI, or use S3-compatible object storage and your own LLM keys.";
 const STORAGE_SETUP_FAILURE_RE =
   /video storage is not connected|no video storage configured|file upload provider|storage provider|connect builder|s3-compatible/i;
 const DEFAULT_SCREEN_MEMORY_CONFIG = {
@@ -266,7 +266,7 @@ async function hasConfiguredVideoStorage(
       }
     }
   } catch {
-    // Fall through to the Builder status endpoint.
+    // Fall through to the Jami Studio status endpoint.
   }
 
   try {
@@ -1660,7 +1660,7 @@ export function App() {
       console.error("[clips-tray] retry saved upload failed:", err);
       setRecError(
         isStorageSetupFailureMessage(message)
-          ? "Connect storage to finish uploading this saved clip: Builder.io (free tier storage + AI) or S3-compatible storage."
+          ? "Connect storage to finish uploading this saved clip: Jami Studio (free tier storage + AI) or S3-compatible storage."
           : message,
       );
       await loadPendingUploads();
@@ -3646,7 +3646,7 @@ function Setup({
       : "Uses the browser's built-in speech recognition when available.",
     whisper: "Uses the local Whisper model for offline AI transcription.",
     builder:
-      "Uses Builder.io for fast cleanup. No separate provider key needed.",
+      "Uses Jami Studio for fast cleanup. No separate provider key needed.",
     byok: "Use your own provider key for cleanup.",
   };
   const shortcutHint: Record<VoiceShortcutPreference, string> = {
@@ -3749,7 +3749,7 @@ function Setup({
     openExternal(`${base}/_agent-native/builder/connect`).catch((err) => {
       setApiKeyMessage({
         kind: "error",
-        text: (err as Error)?.message ?? "Could not open Builder.io connect.",
+        text: (err as Error)?.message ?? "Could not open Jami Studio connect.",
       });
     });
   }
@@ -3762,7 +3762,7 @@ function Setup({
     if (selectedMode === "builder") {
       return providerStatus.builder
         ? null
-        : "Builder.io is not connected — cleanup will fail until connected.";
+        : "Jami Studio is not connected — cleanup will fail until connected.";
     }
     if (providerStatus[byokProvider]) return null;
     return `${keyForByokProvider(byokProvider)} is not set — cleanup will fail until configured.`;
@@ -4210,7 +4210,7 @@ function Setup({
           <div className="setup-section">
             <SettingLabel
               label="Provider"
-              hint="Choose free on-device dictation, Builder.io cleanup, or a provider key you own."
+              hint="Choose free on-device dictation, Jami Studio cleanup, or a provider key you own."
               htmlFor="voice-provider"
             />
             <select
@@ -4227,7 +4227,7 @@ function Setup({
                   ? "Local Whisper (offline AI)"
                   : "Local Whisper — enable Whisper model first"}
               </option>
-              <option value="builder">Builder.io</option>
+              <option value="builder">Jami Studio</option>
               <option value="byok">Add your own key</option>
             </select>
             <p className="setup-hint">{providerHint[selectedMode]}</p>
@@ -4246,7 +4246,7 @@ function Setup({
                 className="secondary"
                 onClick={connectBuilder}
               >
-                Use Builder.io (free)
+                Use Jami Studio (free)
               </button>
             ) : null}
           </div>
@@ -4337,7 +4337,7 @@ function Setup({
                 onChange={(event) =>
                   onVoiceInstructionsChange(event.target.value)
                 }
-                placeholder="Example: keep it casual, spell Builder.io with a dot, and preserve technical terms exactly."
+                placeholder="Example: keep it casual, spell Jami Studio with a dot, and preserve technical terms exactly."
               />
               <p className="setup-hint">
                 These instructions are sent only when an LLM-based provider is

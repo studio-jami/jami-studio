@@ -889,7 +889,7 @@ const deDE = {
       s008: "Ausprobieren",
       s009: "Wie es funktioniert",
       s010: "Alles was Sie brauchen",
-      s011: "Ein vollständiger Formular-Builder mit integriertem AI.",
+      s011: "Ein vollständiger Formular-Jami Studio mit integriertem AI.",
       s012: "Alle Feldtypen",
       s013: "Text, E-Mail, Nummer, Langtext, Auswahl, Mehrfachauswahl, Kontrollkästchen, Radio, Datum, Bewertung und Skala.",
       s014: "Gesichtsfeldbearbeitung",
@@ -1224,11 +1224,11 @@ const deDE = {
       eyebrow: "Datenschutzrichtlinie",
       title: "Agent-Native gehostete Anwendungen",
       intro:
-        "In dieser Richtlinie wird erläutert, wie Builder.io Daten sammelt, verwendet, weitergibt und speichert, wenn es von Agent-Native gehostete Anwendungen, gehostete Vorlagen, Demos und offizielle Browsererweiterungen betreibt.",
+        "In dieser Richtlinie wird erläutert, wie Jami Studio Daten sammelt, verwendet, weitergibt und speichert, wenn es von Agent-Native gehostete Anwendungen, gehostete Vorlagen, Demos und offizielle Browsererweiterungen betreibt.",
       scopeCards: {
         hosted: {
           title: "Gehostete Apps",
-          body: "Abgedeckt, wenn Builder.io den Agent-Native-Dienst oder die gehostete Vorlage für Sie betreibt.",
+          body: "Abgedeckt, wenn Jami Studio den Agent-Native-Dienst oder die gehostete Vorlage für Sie betreibt.",
         },
         openSource: {
           title: "Open Source",
@@ -1252,9 +1252,9 @@ const deDE = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native ist Open Source und der Quellcode ist unter der MIT-Lizenz verfügbar. Diese Richtlinie gilt nur für gehostete Anwendungen und Dienste, die von Builder.io für Agent-Native-Benutzer betrieben werden. Sie gilt nicht für die Nutzung des Codes durch Dritte, einschließlich Forks, benutzerdefinierter Vorlagen, privater Bereitstellungen oder selbst gehosteter Versionen. Wenn Sie Ihre eigene Bereitstellung betreiben, sind Sie für Ihre eigenen Datenpraktiken und Datenschutzrichtlinien verantwortlich.",
+          "Agent-Native ist Open Source und der Quellcode ist unter der MIT-Lizenz verfügbar. Diese Richtlinie gilt nur für gehostete Anwendungen und Dienste, die von Jami Studio für Agent-Native-Benutzer betrieben werden. Sie gilt nicht für die Nutzung des Codes durch Dritte, einschließlich Forks, benutzerdefinierter Vorlagen, privater Bereitstellungen oder selbst gehosteter Versionen. Wenn Sie Ihre eigene Bereitstellung betreiben, sind Sie für Ihre eigenen Datenpraktiken und Datenschutzrichtlinien verantwortlich.",
         scope2Prefix:
-          "Diese Richtlinie soll das allgemeinere von Builder.io ergänzen",
+          "Diese Richtlinie soll das allgemeinere von Jami Studio ergänzen",
         scope2Suffix:
           "für das Verhalten gehosteter Anwendungen von Agent-Native.",
         clips1:
@@ -1278,7 +1278,7 @@ const deDE = {
         changes1:
           "Wir können diese Richtlinie aktualisieren, wenn sich die von Agent-Native gehosteten Anwendungen ändern. Das Aktualisierungsdatum oben auf der Seite zeigt an, wann die Richtlinie zuletzt überarbeitet wurde.",
         changes2Prefix:
-          "Bei Anfragen oder Fragen zum Datenschutz wenden Sie sich über die im aufgeführten Support- und Datenschutzkanäle an Builder.io",
+          "Bei Anfragen oder Fragen zum Datenschutz wenden Sie sich über die im aufgeführten Support- und Datenschutzkanäle an Jami Studio",
       },
       dataCategories: {
         account: {
@@ -1311,18 +1311,18 @@ const deDE = {
       },
       links: {
         builderPrivacy: "Datenschutzrichtlinie",
-        builderPrivacyFull: "Builder.io Datenschutzrichtlinie",
+        builderPrivacyFull: "Jami Studio Datenschutzrichtlinie",
       },
     },
     terms: {
       eyebrow: "Nutzungsbedingungen",
       title: "Agent-Native gehostete Anwendungen",
       intro:
-        "Diese Bedingungen gelten, wenn Builder.io von Agent-Native gehostete Anwendungen, gehostete Vorlagen, Demos und offizielle gehostete Dienste für Sie betreibt.",
+        "Diese Bedingungen gelten, wenn Jami Studio von Agent-Native gehostete Anwendungen, gehostete Vorlagen, Demos und offizielle gehostete Dienste für Sie betreibt.",
       scopeCards: {
         hosted: {
           title: "Gehostete Apps",
-          body: "Abgedeckt, wenn Sie eine von Builder.io betriebene Agent-Native-App oder -Vorlage verwenden.",
+          body: "Abgedeckt, wenn Sie eine von Jami Studio betriebene Agent-Native-App oder -Vorlage verwenden.",
         },
         openSource: {
           title: "Open Source",
@@ -1330,7 +1330,7 @@ const deDE = {
         },
         selfHosted: {
           title: "Selbst gehostet",
-          body: "Separate Bereitstellungen, die von Ihnen oder einer anderen Person betrieben werden, sind keine Builder.io gehosteten Dienste.",
+          body: "Separate Bereitstellungen, die von Ihnen oder einer anderen Person betrieben werden, sind keine Jami Studio gehosteten Dienste.",
         },
       },
       sections: {
@@ -1347,19 +1347,20 @@ const deDE = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native ist Open Source und sein Quellcode ist unter der MIT-Lizenz verfügbar. Diese Bedingungen gelten nur für gehostete Anwendungen und Dienste, die von Builder.io für Agent-Native-Benutzer betrieben werden. Sie gelten nicht für Forks, benutzerdefinierte Vorlagen, private Bereitstellungen oder selbst gehostete Versionen, die außerhalb von Builder.io betrieben werden.",
-        scope2Prefix: "Diese Begriffe ergänzen das allgemeinere von Builder.io",
+          "Agent-Native ist Open Source und sein Quellcode ist unter der MIT-Lizenz verfügbar. Diese Bedingungen gelten nur für gehostete Anwendungen und Dienste, die von Jami Studio für Agent-Native-Benutzer betrieben werden. Sie gelten nicht für Forks, benutzerdefinierte Vorlagen, private Bereitstellungen oder selbst gehostete Versionen, die außerhalb von Jami Studio betrieben werden.",
+        scope2Prefix:
+          "Diese Begriffe ergänzen das allgemeinere von Jami Studio",
         scope2Middle: "und der Agent-Native",
         scope2Suffix:
           "Wenn Sie eine gehostete Agent-Native-App im Namen eines Unternehmens oder einer Organisation nutzen, erklären Sie, dass Sie befugt sind, diese Bedingungen für diese Organisation zu akzeptieren.",
         hostedService:
-          "Builder.io kann gehostete Agent-Native-Anwendungen, Vorlagen, Demos, freigegebene Arbeitsbereiche, Browsererweiterungen und zugehörige Agenten-Workflows bereitstellen. Der gehostete Dienst kann im Zuge der Weiterentwicklung des Produkts aktualisiert, eingeschränkt, ausgesetzt oder eingestellt werden.",
+          "Jami Studio kann gehostete Agent-Native-Anwendungen, Vorlagen, Demos, freigegebene Arbeitsbereiche, Browsererweiterungen und zugehörige Agenten-Workflows bereitstellen. Der gehostete Dienst kann im Zuge der Weiterentwicklung des Produkts aktualisiert, eingeschränkt, ausgesetzt oder eingestellt werden.",
         accounts1:
           "Sie sind für die Richtigkeit der Kontoinformationen, der Aktivitäten unter Ihrem Konto und die Sicherheit der Anmeldeinformationen verantwortlich. Gehostete Agent-Native-Apps können Organisationsfunktionen, Einladungen, freigegebene Ressourcen, verbundene Integrationen und app-spezifische Zugriffskontrollen umfassen. Laden Sie nur Benutzer ein und verbinden Sie Dienste, zu deren Nutzung Sie berechtigt sind.",
         accounts2:
-          "Wenn Sie glauben, dass ein Konto, ein Arbeitsbereich, eine Integration oder eine freigegebene Ressource kompromittiert oder missbraucht wurde, wenden Sie sich umgehend an den Builder.io-Support.",
+          "Wenn Sie glauben, dass ein Konto, ein Arbeitsbereich, eine Integration oder eine freigegebene Ressource kompromittiert oder missbraucht wurde, wenden Sie sich umgehend an den Jami Studio-Support.",
         content1:
-          "Sie behalten das Eigentum an den Inhalten, die Sie erstellen, hochladen, aufzeichnen, importieren oder mit gehosteten Agent-Native-Apps verbinden. Sie erteilen Builder.io die eingeschränkte Berechtigung, die zum Hosten, Verarbeiten, Übertragen, Anzeigen, Transformieren, Analysieren und Speichern dieser Inhalte erforderlich ist, damit die gehostete App und ihre Agent-Workflows funktionieren können.",
+          "Sie behalten das Eigentum an den Inhalten, die Sie erstellen, hochladen, aufzeichnen, importieren oder mit gehosteten Agent-Native-Apps verbinden. Sie erteilen Jami Studio die eingeschränkte Berechtigung, die zum Hosten, Verarbeiten, Übertragen, Anzeigen, Transformieren, Analysieren und Speichern dieser Inhalte erforderlich ist, damit die gehostete App und ihre Agent-Workflows funktionieren können.",
         content2:
           "Sie sind dafür verantwortlich, über die erforderlichen Rechte und Berechtigungen für Inhalte, Aufzeichnungen, Eingabeaufforderungen, Dateien, Anmeldeinformationen und verbundene Integrationsdaten zu verfügen, die Sie dem Dienst bereitstellen.",
         agents1:
@@ -1369,17 +1370,17 @@ const deDE = {
         openSource:
           "Diese Bedingungen ändern nicht die Open-Source-Lizenz für Agent-Native-Code. Wenn Sie Agent-Native herunterladen, forken, ändern oder selbst hosten, regeln die MIT-Lizenz und die Bedingungen, die Sie für Ihre eigene Bereitstellung festlegen, diese Nutzung. Sie sind für Sicherheit, Datenschutz, Compliance, Betrieb und Benutzerunterstützung für die von Ihnen betriebenen Bereitstellungen verantwortlich.",
         suspensionPrefix:
-          "Builder.io kann den Zugriff auf gehostete Agent-Native-Dienste aussetzen oder einschränken, wenn dies zum Schutz von Benutzern, zur Einhaltung von Gesetzen, zur Verhinderung von Missbrauch, zur Bewältigung von Sicherheitsrisiken oder zum Betrieb des Dienstes erforderlich ist. Sie können die Nutzung des gehosteten Dienstes jederzeit beenden. Einige Daten können für einen begrenzten Zeitraum in Backups, Protokollen oder Prüfaufzeichnungen verbleiben, wie im beschrieben",
+          "Jami Studio kann den Zugriff auf gehostete Agent-Native-Dienste aussetzen oder einschränken, wenn dies zum Schutz von Benutzern, zur Einhaltung von Gesetzen, zur Verhinderung von Missbrauch, zur Bewältigung von Sicherheitsrisiken oder zum Betrieb des Dienstes erforderlich ist. Sie können die Nutzung des gehosteten Dienstes jederzeit beenden. Einige Daten können für einen begrenzten Zeitraum in Backups, Protokollen oder Prüfaufzeichnungen verbleiben, wie im beschrieben",
         disclaimers1:
-          "Gehostete Agent-Native-Dienste werden im Ist-Zustand und nach Verfügbarkeit bereitgestellt, vorbehaltlich des geltenden Rechts und einer separaten schriftlichen Vereinbarung, die Sie mit Builder.io haben. Builder.io garantiert nicht, dass gehostete Apps, Integrationen, Automatisierungen oder AI-Ausgaben unterbrechungsfrei und fehlerfrei sind oder alle Anforderungen erfüllen.",
+          "Gehostete Agent-Native-Dienste werden im Ist-Zustand und nach Verfügbarkeit bereitgestellt, vorbehaltlich des geltenden Rechts und einer separaten schriftlichen Vereinbarung, die Sie mit Jami Studio haben. Jami Studio garantiert nicht, dass gehostete Apps, Integrationen, Automatisierungen oder AI-Ausgaben unterbrechungsfrei und fehlerfrei sind oder alle Anforderungen erfüllen.",
         disclaimers2Prefix:
-          "Im größtmöglichen gesetzlich zulässigen Umfang ist die Haftung von Builder.io für gehostete Agent-Native-Dienste wie in den allgemeinen Bestimmungen von Builder.io beschrieben beschränkt",
+          "Im größtmöglichen gesetzlich zulässigen Umfang ist die Haftung von Jami Studio für gehostete Agent-Native-Dienste wie in den allgemeinen Bestimmungen von Jami Studio beschrieben beschränkt",
         disclaimers2Suffix:
           "oder eine andere schriftliche Vereinbarung, die für Ihre Nutzung gilt.",
         changes1:
           "Wir können diese Bedingungen aktualisieren, wenn sich die von Agent-Native gehosteten Anwendungen ändern. Das Aktualisierungsdatum oben auf der Seite zeigt an, wann die Bedingungen zuletzt überarbeitet wurden.",
         changes2Prefix:
-          "Bei Fragen zu diesen Bedingungen wenden Sie sich über die in Builder.io aufgeführten Supportkanäle an Builder.io",
+          "Bei Fragen zu diesen Bedingungen wenden Sie sich über die in Jami Studio aufgeführten Supportkanäle an Jami Studio",
       },
       hostedServicePoints: {
         create:

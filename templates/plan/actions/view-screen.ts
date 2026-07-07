@@ -38,7 +38,7 @@ export default defineAction({
     screen.brandingCustomization = {
       surface: "sidebar brand header",
       workflow:
-        "The Customize branding popover sends a source-code request. In local Code mode it routes to the local code agent; on hosted/live surfaces it should guide the user to Desktop or Builder for source edits.",
+        "The Customize branding popover sends a source-code request. In local Code mode it routes to the local code agent; on hosted/live surfaces it should guide the user to Desktop or Jami Studio for source edits.",
     };
     const nav = navigation as {
       planId?: string;

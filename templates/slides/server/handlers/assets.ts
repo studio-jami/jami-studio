@@ -90,13 +90,13 @@ export function canSaveAsUploadedAsset(args: {
 /**
  * Upload an image asset through the framework's `uploadFile()` provider chain.
  *
- * All uploads go to the configured remote provider — Builder.io by default,
+ * All uploads go to the configured remote provider — Jami Studio by default,
  * or any provider registered via `registerFileUploadProvider()` (S3, R2, etc.).
  * There is intentionally NO local-disk fallback: writing into the source tree
  * (`public/uploads/`) pollutes git, doesn't persist on serverless deploys,
  * and isn't reachable across nodes. If no provider is configured, the request
  * fails with a clear 503 instructing the caller to configure one — connect
- * Builder.io or register a custom provider.
+ * Jami Studio or register a custom provider.
  */
 export async function uploadImageAsset(args: {
   email: string;
@@ -131,7 +131,7 @@ export async function uploadImageAsset(args: {
 
   if (!result) {
     const err: Error & { statusCode?: number } = new Error(
-      "No file upload provider is configured. Connect Builder.io from the agent composer model menu, or register a custom provider via registerFileUploadProvider().",
+      "No file upload provider is configured. Connect Jami Studio from the agent composer model menu, or register a custom provider via registerFileUploadProvider().",
     );
     err.statusCode = 503;
     throw err;
@@ -204,7 +204,7 @@ export const listAssets = defineEventHandler(async (event) => {
 
 /**
  * DELETE /api/assets/:filename — used to delete from `public/uploads/`. With
- * uploads routed through Builder.io / S3 / etc., deletion has to happen via
+ * uploads routed through Jami Studio / S3 / etc., deletion has to happen via
  * the active provider's API. Returning 501 keeps the endpoint reachable so
  * the frontend doesn't error, and signals that this isn't wired yet.
  */
@@ -216,6 +216,6 @@ export const deleteAsset = defineEventHandler(async (event) => {
   setResponseStatus(event, 501);
   return {
     error:
-      "Asset deletion via this endpoint is not implemented — uploads now live in the configured file-upload provider (Builder.io, S3, etc.). Delete them through the provider's dashboard.",
+      "Asset deletion via this endpoint is not implemented — uploads now live in the configured file-upload provider (Jami Studio, S3, etc.). Delete them through the provider's dashboard.",
   };
 });

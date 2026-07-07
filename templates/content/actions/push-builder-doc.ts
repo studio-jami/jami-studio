@@ -5,7 +5,7 @@ import { pushBuilderDocsSource } from "./_builder-docs-client.js";
 
 export default defineAction({
   description:
-    "Push a Builder .builder.mdx document body to Builder via a guarded autosave PATCH. Live writes are currently restricted to the safe Builder test model.",
+    "Push a Jami Studio .builder.mdx document body to Jami Studio via a guarded autosave PATCH. Live writes are currently restricted to the safe Jami Studio test model.",
   schema: z.object({
     documentId: z.string().optional().describe("Content document ID."),
     id: z.string().optional().describe("Alias for --documentId."),
@@ -23,16 +23,16 @@ export default defineAction({
       .boolean()
       .optional()
       .default(true)
-      .describe("Preview the PATCH request without calling Builder."),
+      .describe("Preview the PATCH request without calling Jami Studio."),
   }),
   publicAgent: {
     expose: true,
     readOnly: false,
     requiresAuth: true,
     isConsequential: true,
-    title: "Push Builder Doc",
+    title: "Push Jami Studio Doc",
     description:
-      "Validate and autosave a Builder MDX body back to the safe Builder model.",
+      "Validate and autosave a Jami Studio MDX body back to the safe Jami Studio model.",
   },
   run: async ({ documentId, id, path, files, dryRun }) => {
     return await pushBuilderDocsSource({

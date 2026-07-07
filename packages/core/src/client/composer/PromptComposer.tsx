@@ -598,7 +598,7 @@ function PromptComposerInner({
                 Connect AI
               </p>
               <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">
-                Connect Builder.io before sending.
+                Connect Jami Studio before sending.
               </p>
             </div>
             <BuilderConnectCta

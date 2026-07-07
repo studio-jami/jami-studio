@@ -1219,11 +1219,11 @@ const enUS = {
       eyebrow: "Privacy Policy",
       title: "Agent-Native hosted applications",
       intro:
-        "This policy explains how Builder.io collects, uses, shares, and retains data when it operates Agent-Native hosted applications, hosted apps, demos, and official browser extensions.",
+        "This policy explains how Jami Studio collects, uses, shares, and retains data when it operates Agent-Native hosted applications, hosted apps, demos, and official browser extensions.",
       scopeCards: {
         hosted: {
           title: "Hosted apps",
-          body: "Covered when Builder.io operates the Agent-Native service or hosted app for you.",
+          body: "Covered when Jami Studio operates the Agent-Native service or hosted app for you.",
         },
         openSource: {
           title: "Open source",
@@ -1247,9 +1247,9 @@ const enUS = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native is open source, and the source code is available under the MIT license. This policy applies only to hosted applications and services operated by Builder.io for Agent-Native users. It does not apply to someone else's use of the code, including forks, customized apps, private deployments, or self-hosted versions. If you operate your own deployment, you are responsible for your own data practices and privacy policy.",
+          "Agent-Native is open source, and the source code is available under the MIT license. This policy applies only to hosted applications and services operated by Jami Studio for Agent-Native users. It does not apply to someone else's use of the code, including forks, customized apps, private deployments, or self-hosted versions. If you operate your own deployment, you are responsible for your own data practices and privacy policy.",
         scope2Prefix:
-          "This policy is intended to supplement Builder.io's broader",
+          "This policy is intended to supplement Jami Studio's broader",
         scope2Suffix: "for Agent-Native hosted application behavior.",
         clips1:
           "The Agent-Native Clips Chrome extension helps you start browser-based recordings and, when enabled, attach browser diagnostics to a clip. It may collect the selected capture source, camera and microphone media you choose to include, the active tab title and URL, and authentication state needed to connect the extension to hosted Clips.",
@@ -1272,7 +1272,7 @@ const enUS = {
         changes1:
           "We may update this policy as Agent-Native hosted applications change. The updated date at the top of the page shows when the policy was last revised.",
         changes2Prefix:
-          "For privacy requests or questions, contact Builder.io through the support and privacy channels listed in the",
+          "For privacy requests or questions, contact Jami Studio through the support and privacy channels listed in the",
       },
       dataCategories: {
         account: {
@@ -1304,18 +1304,18 @@ const enUS = {
       },
       links: {
         builderPrivacy: "Privacy Policy",
-        builderPrivacyFull: "Builder.io Privacy Policy",
+        builderPrivacyFull: "Jami Studio Privacy Policy",
       },
     },
     terms: {
       eyebrow: "Terms of Service",
       title: "Agent-Native hosted applications",
       intro:
-        "These terms apply when Builder.io operates Agent-Native hosted applications, hosted apps, demos, and official hosted services for you.",
+        "These terms apply when Jami Studio operates Agent-Native hosted applications, hosted apps, demos, and official hosted services for you.",
       scopeCards: {
         hosted: {
           title: "Hosted apps",
-          body: "Covered when you use an Agent-Native app or template operated by Builder.io.",
+          body: "Covered when you use an Agent-Native app or template operated by Jami Studio.",
         },
         openSource: {
           title: "Open source",
@@ -1323,7 +1323,7 @@ const enUS = {
         },
         selfHosted: {
           title: "Self-hosted",
-          body: "Separate deployments operated by you or someone else are not Builder.io hosted services.",
+          body: "Separate deployments operated by you or someone else are not Jami Studio hosted services.",
         },
       },
       sections: {
@@ -1340,19 +1340,19 @@ const enUS = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native is open source, and its source code is available under the MIT license. These terms apply only to hosted applications and services operated by Builder.io for Agent-Native users. They do not govern forks, custom apps, private deployments, or self-hosted versions operated outside Builder.io.",
-        scope2Prefix: "These terms supplement Builder.io's broader",
+          "Agent-Native is open source, and its source code is available under the MIT license. These terms apply only to hosted applications and services operated by Jami Studio for Agent-Native users. They do not govern forks, custom apps, private deployments, or self-hosted versions operated outside Jami Studio.",
+        scope2Prefix: "These terms supplement Jami Studio's broader",
         scope2Middle: "and the Agent-Native",
         scope2Suffix:
           "If you use a hosted Agent-Native app on behalf of a company or organization, you represent that you have authority to accept these terms for that organization.",
         hostedService:
-          "Builder.io may provide hosted Agent-Native applications, apps, demos, shared workspaces, browser extensions, and related agent workflows. The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
+          "Jami Studio may provide hosted Agent-Native applications, apps, demos, shared workspaces, browser extensions, and related agent workflows. The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
         accounts1:
           "You are responsible for the accuracy of account information, activity under your account, and keeping credentials secure. Hosted Agent-Native apps may include organization features, invitations, shared resources, connected integrations, and app-specific access controls. Only invite users and connect services you are authorized to use.",
         accounts2:
-          "If you believe an account, workspace, integration, or shared resource has been compromised or misused, contact Builder.io support promptly.",
+          "If you believe an account, workspace, integration, or shared resource has been compromised or misused, contact Jami Studio support promptly.",
         content1:
-          "You retain ownership of content you create, upload, record, import, or connect to hosted Agent-Native apps. You grant Builder.io the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
+          "You retain ownership of content you create, upload, record, import, or connect to hosted Agent-Native apps. You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
         content2:
           "You are responsible for having the rights and permissions needed for content, recordings, prompts, files, credentials, and connected integration data you provide to the service.",
         agents1:
@@ -1362,17 +1362,17 @@ const enUS = {
         openSource:
           "These terms do not change the open-source license for Agent-Native code. If you download, fork, modify, or self-host Agent-Native, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
         suspensionPrefix:
-          "Builder.io may suspend or restrict access to hosted Agent-Native services when needed to protect users, comply with law, prevent abuse, address security risk, or operate the service. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
+          "Jami Studio may suspend or restrict access to hosted Agent-Native services when needed to protect users, comply with law, prevent abuse, address security risk, or operate the service. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
         disclaimers1:
-          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Builder.io. Builder.io does not guarantee that hosted apps, integrations, automations, or AI outputs will be uninterrupted, error-free, or meet every requirement.",
+          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio does not guarantee that hosted apps, integrations, automations, or AI outputs will be uninterrupted, error-free, or meet every requirement.",
         disclaimers2Prefix:
-          "To the maximum extent permitted by law, Builder.io's liability for hosted Agent-Native services is limited as described in Builder.io's broader",
+          "To the maximum extent permitted by law, Jami Studio's liability for hosted Agent-Native services is limited as described in Jami Studio's broader",
         disclaimers2Suffix:
           "or another written agreement that applies to your use.",
         changes1:
           "We may update these terms as Agent-Native hosted applications change. The updated date at the top of the page shows when the terms were last revised.",
         changes2Prefix:
-          "For questions about these terms, contact Builder.io through the support channels listed in Builder.io's",
+          "For questions about these terms, contact Jami Studio through the support channels listed in Jami Studio's",
       },
       hostedServicePoints: {
         create: "Create and operate hosted Agent-Native workspaces and apps.",

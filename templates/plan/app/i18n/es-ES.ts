@@ -292,7 +292,7 @@ const messages = {
     create: {
       advanced: "Avanzado",
       agentMissing:
-        "Conecte el agente para ejecutarlo: agregue una clave API o use Builder.",
+        "Conecte el agente para ejecutarlo: agregue una clave API o use Jami Studio.",
       assessment: {
         ui: "Estados o flujos de UI detectados automáticamente; el agente hará un plan primero con estructura alámbrica.",
         visual:

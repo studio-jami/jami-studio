@@ -312,7 +312,7 @@ const runContentMigrations = runMigrations(
       version: 36,
       sql: `ALTER TABLE documents ADD COLUMN IF NOT EXISTS source_updated_at TEXT`,
     },
-    // v37-v45: source-aware Builder database foundation tables (additive).
+    // v37-v45: source-aware Jami Studio database foundation tables (additive).
     {
       version: 37,
       sql: `CREATE TABLE IF NOT EXISTS content_database_sources (
@@ -540,8 +540,8 @@ const runContentMigrations = runMigrations(
       version: 55,
       sql: `ALTER TABLE content_databases ADD COLUMN IF NOT EXISTS deleted_at TEXT`,
     },
-    // v56-v57: DB-backed Builder MDX documents keep their raw sidecar files in a
-    // document-scoped cache. Local-file Builder MDX still uses in-repo sidecars
+    // v56-v57: DB-backed Jami Studio MDX documents keep their raw sidecar files in a
+    // document-scoped cache. Local-file Jami Studio MDX still uses in-repo sidecars
     // as the portable source of truth; these rows only make pulled SQL documents
     // round-trip through the visual editor and push validator.
     {

@@ -95,7 +95,7 @@ Then set these GitHub secrets on the repository:
 | `CLIPS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | The password you entered at `tauri signer generate`     |
 | `APPLE_CERTIFICATE`                        | Base64-encoded Developer ID .p12 (shared with Electron) |
 | `APPLE_CERTIFICATE_PASSWORD`               | .p12 password (shared with Electron)                    |
-| `APPLE_SIGNING_IDENTITY`                   | e.g. `Developer ID Application: Builder (W3PMF2T3MW)`   |
+| `APPLE_SIGNING_IDENTITY`                   | e.g. `Developer ID Application: Jami Studio (W3PMF2T3MW)`   |
 | `APPLE_ID`                                 | Apple ID for notarization (shared with Electron)        |
 | `APPLE_APP_SPECIFIC_PASSWORD`              | App-specific password for notarization                  |
 

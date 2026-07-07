@@ -165,7 +165,7 @@ export default defineAction({
   description:
     "Read action: return a code + visual diff for a design branch. " +
     "Visual diff compares design_versions snapshots (before and after branching). " +
-    "Code/branch diff surfaces branch metadata (name, url, status) from Builder; " +
+    "Code/branch diff surfaces branch metadata (name, url, status) from Jami Studio; " +
     "file-level code diffs become available once bridge write hardening is complete " +
     "(currently planned, not available). " +
     "For inline/localhost designs without branches, returns ctaRequired=true with a " +
@@ -225,8 +225,8 @@ export default defineAction({
             : ("make-it-real" as const),
         ctaMessage:
           sourceType === "fusion"
-            ? "Builder is not yet connected. Connect Builder.io to view branch diffs."
-            : "Branch diffs require a Builder-hosted app. Use 'Make it real' to upgrade " +
+            ? "Jami Studio is not yet connected. Connect Jami Studio to view branch diffs."
+            : "Branch diffs require a Jami Studio-hosted app. Use 'Make it real' to upgrade " +
               "this inline design to a real-app source.",
         branch: null,
         visualDiff: [] as VisualDiffEntry[],
@@ -327,9 +327,9 @@ export default defineAction({
       url: branch.url ?? null,
       status: branch.status ?? null,
       note: codeDiffAvailable
-        ? "Branch is connected. File-level diffs are available via the Builder Visual Editor."
+        ? "Branch is connected. File-level diffs are available via the Jami Studio Visual Editor."
         : "File-level code diffs are planned pending bridge write hardening. " +
-          "The Builder Visual Editor at the branch URL shows the full code diff.",
+          "The Jami Studio Visual Editor at the branch URL shows the full code diff.",
     };
 
     return {

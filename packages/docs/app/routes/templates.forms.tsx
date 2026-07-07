@@ -12,7 +12,7 @@ export const meta = () =>
     [
       {
         title:
-          "Agent-Native Forms — Open Source AI Form Builder & Typeform Alternative",
+          "Agent-Native Forms — Open Source AI Form Jami Studio & Typeform Alternative",
       },
       {
         name: "description",
@@ -22,7 +22,7 @@ export const meta = () =>
       {
         property: "og:title",
         content:
-          "Agent-Native Forms — Open Source AI Form Builder & Typeform Alternative",
+          "Agent-Native Forms — Open Source AI Form Jami Studio & Typeform Alternative",
       },
       {
         property: "og:description",

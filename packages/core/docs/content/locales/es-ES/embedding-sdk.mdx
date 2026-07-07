@@ -107,7 +107,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -126,7 +126,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -328,7 +328,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -469,7 +469,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -671,6 +671,6 @@ El asistente devuelve intencionalmente objetos `{ name, description, parameters,
 
 ## Forma recomendada del producto
 
-Iniciar primero el iframe. Funciona para Builder.io, aplicaciones SaaS de clientes y herramientas de administración interna sin acoplar ciclos de lanzamiento ni suposiciones de CSS/tiempo de ejecución.
+Iniciar primero el iframe. Funciona para Jami Studio, aplicaciones SaaS de clientes y herramientas de administración interna sin acoplar ciclos de lanzamiento ni suposiciones de CSS/tiempo de ejecución.
 
 El sidecar en sí debe seguir siendo una aplicación/plantilla Agent-Native: actions es la superficie backend API, el estado de la aplicación respaldada por SQL es la memoria del agente y las integraciones como Slack o Telegram pueden enrutarse al mismo chat duradero. El SDK integrado proporciona la membrana activa entre ese sidecar y la página de host actual.

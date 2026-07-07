@@ -657,7 +657,7 @@ export default function BookingLinksPage({
   const zoomStatus = useZoomStatus();
   const connectZoom = useConnectZoom();
 
-  // Derive a default username from the Google email (e.g. "steve" from "steve@builder.io")
+  // Derive a default username from the Google email (e.g. "steve" from "steve@jami.studio")
   const suggestedUsername = useMemo(() => {
     const email = googleStatus.data?.accounts?.[0]?.email;
     if (!email) return "";

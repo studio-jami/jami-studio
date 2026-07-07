@@ -224,14 +224,14 @@ acesso e configuração Actions necessária. Após o término da instalação, r
 recarregue o cliente do agente para que o novo skills e as ferramentas sejam carregados e depois execute
 `/visual-plan`.
 
-> Nota: o `npx skills@latest add BuilderIO/agent-native --skill visual-plan` simples (Vercel/open Skills CLI) instala **apenas instruções** — ele não registra o conector MCP. Use o Agent-Native CLI acima quando quiser que o conector também seja conectado.
+> Nota: o `npx skills@latest add Jami Studio/agent-native --skill visual-plan` simples (Vercel/open Skills CLI) instala **apenas instruções** — ele não registra o conector MCP. Use o Agent-Native CLI acima quando quiser que o conector também seja conectado.
 
 ### Código Claude (plug-in) {#claude-code}
 
-O repositório público `BuilderIO/agent-native` é em si um mercado de plug-ins de código Claude, então você o adiciona diretamente - sem etapa de construção. Código interno Claude:
+O repositório público `Jami Studio/agent-native` é em si um mercado de plug-ins de código Claude, então você o adiciona diretamente - sem etapa de construção. Código interno Claude:
 
 ```text
-/plugin marketplace add BuilderIO/agent-native
+/plugin marketplace add Jami Studio/agent-native
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ O repositório público `BuilderIO/agent-native` é em si um mercado de plug-ins
 O mesmo repositório é um mercado de plugins Codex. Adicione-o, instale o plugin e autentique o conector:
 
 ```bash
-codex plugin marketplace add BuilderIO/agent-native
+codex plugin marketplace add Jami Studio/agent-native
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth no navegador
 ```
@@ -269,7 +269,7 @@ O conector aponta para um aplicativo **hospedado**, portanto, o actions do aplic
 
 ## Você precisa enviar alguma coisa? {#submission}
 
-**Nenhum envio ou revisão é necessário para distribuir ou instalar isso.** `BuilderIO/agent-native` é um mercado git público auto-hospedado, então os usuários o adicionam diretamente com os comandos acima em **Código Claude e Codex** — sem aplicação ou aprovação. A rota universal CLI não precisa de nenhum mercado.
+**Nenhum envio ou revisão é necessário para distribuir ou instalar isso.** `Jami Studio/agent-native` é um mercado git público auto-hospedado, então os usuários o adicionam diretamente com os comandos acima em **Código Claude e Codex** — sem aplicação ou aprovação. A rota universal CLI não precisa de nenhum mercado.
 
 Capacidade de descoberta opcional, se você quiser uma listagem pública:
 

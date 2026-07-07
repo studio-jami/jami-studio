@@ -14,7 +14,7 @@ pick a preset, tune it with `ShaderControls`, and the iframe previews the fill a
 a CSS gradient (`preview-shader-fill`). With an element selected on the canvas, the
 card's **Apply fill** button persists that fill via the `apply-shader-fill` action.
 
-`apply-shader-fill` is **no longer gated** — it is SAFETY-gated, not Builder-gated:
+`apply-shader-fill` is **no longer gated** — it is SAFETY-gated, not Jami Studio-gated:
 
 - It asserts **editor** access on the target design (`accessFilter` read +
   `assertAccess("design", id, "editor")`) before any write.

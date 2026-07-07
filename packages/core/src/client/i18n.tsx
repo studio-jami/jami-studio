@@ -515,29 +515,29 @@ const CORE_FALLBACK_MESSAGES: Record<string, string> = {
   "runsTray.updatedDate": "Updated {{date}}",
   "runsTray.finishedDate": "Finished {{date}}",
   "codeRequired.fallbackDetail":
-    "Edit locally or use Builder.io to edit this code in the cloud and continue customizing the app any way you like.",
+    "Edit locally or use Jami Studio to edit this code in the cloud and continue customizing the app any way you like.",
   "codeRequired.defaultFeature": "Make the requested code changes to this app",
   "codeRequired.branchError": "Failed to create branch",
   "codeRequired.title": "Code changes required",
   "codeRequired.subtitleWithFeature":
-    '"{{feature}}" creates or modifies source code, which needs Desktop or Builder from this surface.',
+    '"{{feature}}" creates or modifies source code, which needs Desktop or Jami Studio from this surface.',
   "codeRequired.subtitle":
-    "This action creates or modifies source code, which needs Desktop or Builder from this surface.",
+    "This action creates or modifies source code, which needs Desktop or Jami Studio from this surface.",
   "codeRequired.desktopTitle": "Use Agent Native Desktop",
   "codeRequired.desktopDescription":
     "Open the project in the desktop app to enable source edits and CLI access.",
-  "codeRequired.builderAgentTitle": "Use Builder.io Agent",
+  "codeRequired.builderAgentTitle": "Use Jami Studio Agent",
   "codeRequired.builderAgentDescription":
     "Let our cloud agent make the changes for you. You'll get a link to preview and deploy.",
   "codeRequired.codeChangeTitle": "This requires a code change",
   "codeRequired.codeChangeBadge": "Code change",
-  "codeRequired.connectBuilderTitle": "Connect Builder.io",
+  "codeRequired.connectBuilderTitle": "Connect Jami Studio",
   "codeRequired.connectBuilderDescription":
-    "Connect Builder to enable cloud-based code changes from this app.",
+    "Connect Jami Studio to enable cloud-based code changes from this app.",
   "codeRequired.setupRequired": "Setup required",
   "codeRequired.branchCreated": "Branch created",
   "codeRequired.close": "Close",
-  "agentPanel.useBuilder": "Use Builder",
+  "agentPanel.useBuilder": "Use Jami Studio",
   "agentPanel.openDesktopToEditCode": "Open Desktop to edit code",
   "agentPanel.codeUnavailableDescription":
     "Source-code changes and CLI access are available in the Agent Native Desktop app.",
@@ -564,7 +564,7 @@ const CORE_FALLBACK_MESSAGES: Record<string, string> = {
   "agentPanel.clearChat": "Clear chat",
   "agentPanel.cliRequiresDevMode": "CLI requires dev mode",
   "agentPanel.cliRequiresDevModeDescription":
-    "Run this app locally with pnpm dev or use Builder.io to access the CLI terminal.",
+    "Run this app locally with pnpm dev or use Jami Studio to access the CLI terminal.",
   "agentPanel.toggleAgent": "Toggle agent",
 };
 

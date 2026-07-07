@@ -214,7 +214,7 @@ npx @agent-native/core@latest recap setup
 
 إذا كنت ترغب في إنشاء ملخصات لـ PRs للشوكة، يتوفر ملف سير عمل ثانٍ: `.github/workflows/pr-visual-recap-fork.yml`. إنه يستخدم `pull_request_target` (الذي يعمل مع أسرار الريبو الأساسية) ولكنه لا يقوم أبدًا بفحص أو تنفيذ كود الشوكة. يعمل مؤلفو الشوكة الموثوق بهم مع جمعية المؤلفين GitHub `OWNER` أو `MEMBER` أو `COLLABORATOR` تلقائيًا. تتطلب العلاقات العامة للشوكة الخارجية **اشتراكًا صريحًا للمشرف لكل رأس** عبر حدث تسمية `recap` جديد قبل تشغيل وكيل الخلاصة.
 
-لتثبيته، انسخ الملف من [BuilderIO/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) إلى دليل `.github/workflows/` الخاص بالمستودع الخاص بك إلى جانب `pr-visual-recap.yml` الموجود. تنطبق نفس الأسرار (`PLAN_RECAP_TOKEN`، `ANTHROPIC_API_KEY`).
+لتثبيته، انسخ الملف من [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) إلى دليل `.github/workflows/` الخاص بالمستودع الخاص بك إلى جانب `pr-visual-recap.yml` الموجود. تنطبق نفس الأسرار (`PLAN_RECAP_TOKEN`، `ANTHROPIC_API_KEY`).
 
 <Diagram id="doc-block-1ez4ofk" title={"بوابة موافقة Fork PR"} summary={"لا يحصل ممثلو العلاقات العامة في Fork على أي أسرار بشكل افتراضي؛ يعمل المؤلفون الموثوق بهم تلقائيًا، ويتطلب المساهمون الخارجيون ملصقًا جديدًا لملخص المشرف."}>
 
@@ -328,7 +328,7 @@ npx @agent-native/core@latest recap setup
 | `**/AGENTS.md`                             | تعليمات الوكيل التي يقوم العداء بتحميلها |
 | `**/.mcp.json`                             | يقوم خادم MCP بتحميل العداء              |
 
-في `BuilderIO/agent-native` monorepo، يقوم سير العمل بتشغيل ملخص CLI من مصدر فرع أساسي موثوق به بدلاً من مصدر رأس العلاقات العامة. يؤدي ذلك إلى إبقاء تغييرات الحزمة العادية، بما في ذلك `packages/core/**`، مؤهلة للملخّصات دون تنفيذ كود CLI المعدل بواسطة PR.
+في `Jami Studio/agent-native` monorepo، يقوم سير العمل بتشغيل ملخص CLI من مصدر فرع أساسي موثوق به بدلاً من مصدر رأس العلاقات العامة. يؤدي ذلك إلى إبقاء تغييرات الحزمة العادية، بما في ذلك `packages/core/**`، مؤهلة للملخّصات دون تنفيذ كود CLI المعدل بواسطة PR.
 
 ## وضع خصوصية الملفات المحلية
 
@@ -416,7 +416,7 @@ EXAMPLE_API_KEY=placeholder-value
 
 يقوم المثبت الافتراضي بنسخ سير العمل YAML الكامل ~360 سطرًا إلى الريبو الخاص بك (خيار **النسخ**). هذا هو الاختيار الصحيح لعمليات إعادة الشراء أو عمليات إعادة الشراء التي تحتاج إلى مراجعة كل سطر مما يتم تشغيله. الجانب السلبي هو أن إصلاحات الأخطاء والتحسينات لا تصل إليك أبدًا — تحتاج إلى إعادة تشغيل `npx @agent-native/core@latest recap setup` يدويًا بعد كل إصدار.
 
-يقوم الخيار **القابل لإعادة الاستخدام** بكتابة متصل رفيع يصل إلى 20 سطرًا بدلاً من ذلك. يقوم بالتفويض إلى `BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml` عبر `uses:`. يلتقط كل متصل تلقائيًا أحدث المنطق عند تشغيل سير العمل، دون الحاجة إلى تحديث محلي.
+يقوم الخيار **القابل لإعادة الاستخدام** بكتابة متصل رفيع يصل إلى 20 سطرًا بدلاً من ذلك. يقوم بالتفويض إلى `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` عبر `uses:`. يلتقط كل متصل تلقائيًا أحدث المنطق عند تشغيل سير العمل، دون الحاجة إلى تحديث محلي.
 
 |                                          | نسخ (افتراضي)                | قابلة لإعادة الاستخدام               |
 | ---------------------------------------- | ---------------------------- | ------------------------------------ |
@@ -432,7 +432,7 @@ EXAMPLE_API_KEY=placeholder-value
 ```yaml
 name: PR Visual Recap
 
-# المتصل البسيط — منطق سير العمل الكامل موجود في BuilderIO/agent-native.
+# المتصل البسيط — منطق سير العمل الكامل موجود في Jami Studio/agent-native.
 # تصل الإصلاحات والتحسينات إلى هذا الريبو تلقائيًا في كل مرة يتم تشغيلها.
 # لتثبيت إصدار محدد قابل لإعادة الإنتاج، استبدل '@main' بـ
 # وسم أو SHA، مثل '@v1.2.3' أو '@abc1234'.
@@ -449,7 +449,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -484,7 +484,7 @@ npx @agent-native/core@latest recap setup --reusable --ref v1.2.3
 افتراضيًا، يشير المتصل إلى `@main`، والذي يستخدم دائمًا أحدث إصدار منشور من سير العمل القابل لإعادة الاستخدام. بالنسبة إلى مستودعات الإنتاج التي تحتاج إلى CI قابل للتكرار، قم بتثبيته على علامة أو SHA:
 
 ```yaml
-uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 يتحكم إدخال `cli-version` في إصدار `@agent-native/core` CLI الذي يتم تشغيله داخل سير العمل - اتركه في `"latest"` لتتبع الإصدار الأحدث، أو قم بتثبيته في سلسلة إصدار (على سبيل المثال، `"1.5.0"`) للحصول على إمكانية تكرار نتائج كاملة.

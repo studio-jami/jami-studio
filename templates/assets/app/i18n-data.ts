@@ -494,7 +494,7 @@ const enUS = {
     description: "Asset generation, storage, and brand kit access.",
     connections: "Connections",
     connectionsDescription:
-      "Keep Assets ready to generate, save, and share brand-safe media. Builder is the simplest path; manual keys stay available when you need them.",
+      "Keep Assets ready to generate, save, and share brand-safe media. Jami Studio is the simplest path; manual keys stay available when you need them.",
     languageTitle: "Language",
     languageDescription:
       "Choose the interface language for this Assets workspace.",
@@ -535,11 +535,11 @@ const enUS = {
     saveKey: "Save key",
     saving: "Saving",
     noManualOptions: "No manual setup options are available for this item.",
-    builderManaged: "Builder is handling managed image generation.",
+    builderManaged: "Jami Studio is handling managed image generation.",
     providerConfigured: "{{providers}} configured.",
     addGeminiOrOpenAI: "Add Gemini or OpenAI before generating new assets.",
     addBuilderGeminiOrOpenAI:
-      "Add Builder, Gemini, or OpenAI before generating new assets.",
+      "Add Jami Studio, Gemini, or OpenAI before generating new assets.",
     enterValueFirst: "Enter a value first.",
     saveFailed: "Save failed",
   },
@@ -3036,19 +3036,19 @@ export const messagesByLocale = {
       description: "资产生成、存储和品牌套件访问。",
       connections: "连接",
       connectionsDescription:
-        "让 Assets 随时可生成、保存并共享品牌安全媒体。Builder 是最简单的路径；需要时也可使用手动密钥。",
+        "让 Assets 随时可生成、保存并共享品牌安全媒体。Jami Studio 是最简单的路径；需要时也可使用手动密钥。",
       languageTitle: "语言",
       languageDescription: "选择此 Assets 工作区的界面语言。",
       languageLabel: "界面语言",
 
       addBuilderGeminiOrOpenAI:
-        "在生成新资产之前添加 Builder、Gemini 或 OpenAI。",
+        "在生成新资产之前添加 Jami Studio、Gemini 或 OpenAI。",
       addGeminiOrOpenAI: "在生成新资产之前添加Gemini或OpenAI。",
       brandKits: "品牌套件",
       builderDescriptionDisabled: "对此部署禁用。",
       builderDescriptionManaged: "托管图像生成和存储，无需提供商密钥。",
       builderDescriptionReady: "连接管理一代。",
-      builderManaged: "Builder 正在处理托管映像生成。",
+      builderManaged: "Jami Studio 正在处理托管映像生成。",
       chooseProvider: "选择提供商",
       enterValueFirst: "首先输入一个值。",
       generationNeedsSetup: "需要设置",
@@ -3750,14 +3750,14 @@ export const messagesByLocale = {
       description: "Generación, almacenamiento y acceso a kits de marca.",
       connections: "Conexiones",
       connectionsDescription:
-        "Mantén Assets listo para generar, guardar y compartir contenido seguro para la marca. Builder es la ruta más simple; las claves manuales siguen disponibles.",
+        "Mantén Assets listo para generar, guardar y compartir contenido seguro para la marca. Jami Studio es la ruta más simple; las claves manuales siguen disponibles.",
       languageTitle: "Idioma",
       languageDescription:
         "Elige el idioma de la interfaz para este workspace.",
       languageLabel: "Idioma de la interfaz",
 
       addBuilderGeminiOrOpenAI:
-        "Agregue Builder, Gemini o OpenAI antes de generar nuevos activos.",
+        "Agregue Jami Studio, Gemini o OpenAI antes de generar nuevos activos.",
       addGeminiOrOpenAI:
         "Agregue Gemini o OpenAI antes de generar nuevos activos.",
       brandKits: "Kits de marca",
@@ -3766,7 +3766,7 @@ export const messagesByLocale = {
         "Generación y almacenamiento de imágenes gestionados, sin claves de proveedor.",
       builderDescriptionReady: "Conectado para generación gestionada.",
       builderManaged:
-        "Builder se encarga de la generación de imágenes administradas.",
+        "Jami Studio se encarga de la generación de imágenes administradas.",
       chooseProvider: "Elige un proveedor",
       enterValueFirst: "Introduzca un valor primero.",
       generationNeedsSetup: "Necesita configuración",
@@ -4212,14 +4212,14 @@ export const messagesByLocale = {
       description: "Génération d'assets, stockage et accès aux kits de marque.",
       connections: "Connexions",
       connectionsDescription:
-        "Gardez Assets prêt à générer, enregistrer et partager des médias conformes à la marque. Builder est le chemin le plus simple; les clés manuelles restent disponibles.",
+        "Gardez Assets prêt à générer, enregistrer et partager des médias conformes à la marque. Jami Studio est le chemin le plus simple; les clés manuelles restent disponibles.",
       languageTitle: "Langue",
       languageDescription:
         "Choisissez la langue de l'interface pour cet espace Assets.",
       languageLabel: "Langue de l'interface",
 
       addBuilderGeminiOrOpenAI:
-        "Ajoutez Builder, Gemini ou OpenAI avant de générer de nouveaux actifs.",
+        "Ajoutez Jami Studio, Gemini ou OpenAI avant de générer de nouveaux actifs.",
       addGeminiOrOpenAI:
         "Ajoutez Gemini ou OpenAI avant de générer de nouveaux actifs.",
       brandKits: "Kits de marque",
@@ -4227,7 +4227,7 @@ export const messagesByLocale = {
       builderDescriptionManaged:
         "Génération et stockage d'images gérés, pas de clés de fournisseur.",
       builderDescriptionReady: "Connecté pour une génération gérée.",
-      builderManaged: "Builder gère la génération d'images gérées.",
+      builderManaged: "Jami Studio gère la génération d'images gérées.",
       chooseProvider: "Choisissez un fournisseur",
       enterValueFirst: "Entrez d'abord une valeur.",
       generationNeedsSetup: "Nécessite une configuration",
@@ -4663,7 +4663,7 @@ export const messagesByLocale = {
       description: "Asset-Erstellung, Speicher und Zugriff auf Brand Kits.",
       connections: "Verbindungen",
       connectionsDescription:
-        "Halte Assets bereit, um markensichere Medien zu erstellen, zu speichern und zu teilen. Builder ist der einfachste Weg; manuelle Schlüssel bleiben verfügbar.",
+        "Halte Assets bereit, um markensichere Medien zu erstellen, zu speichern und zu teilen. Jami Studio ist der einfachste Weg; manuelle Schlüssel bleiben verfügbar.",
       languageTitle: "Sprache",
       languageDescription:
         "Wähle die Oberflächensprache für diesen Assets-Workspace.",
@@ -4696,11 +4696,11 @@ export const messagesByLocale = {
       connecting: "Verbindung wird hergestellt",
       noManualOptions:
         "Für dieses Element sind keine manuellen Einrichtungsoptionen verfügbar.",
-      builderManaged: "Builder verwaltet die Bildgenerierung.",
+      builderManaged: "Jami Studio verwaltet die Bildgenerierung.",
       providerConfigured: "{{providers}} konfiguriert.",
 
       addBuilderGeminiOrOpenAI:
-        "Fügen Sie Builder, Gemini oder OpenAI hinzu, bevor Sie neue Assets generieren.",
+        "Fügen Sie Jami Studio, Gemini oder OpenAI hinzu, bevor Sie neue Assets generieren.",
       addGeminiOrOpenAI:
         "Fügen Sie Gemini oder OpenAI hinzu, bevor Sie neue Assets generieren.",
       brandKits: "Marken-Kits",
@@ -5011,7 +5011,7 @@ export const messagesByLocale = {
       description: "アセット生成、保存、ブランドキットへのアクセス。",
       connections: "接続",
       connectionsDescription:
-        "Assets を、ブランドに安全なメディアの生成、保存、共有に使える状態に保ちます。Builder が最も簡単な方法で、必要に応じて手動キーも利用できます。",
+        "Assets を、ブランドに安全なメディアの生成、保存、共有に使える状態に保ちます。Jami Studio が最も簡単な方法で、必要に応じて手動キーも利用できます。",
       languageTitle: "言語",
       languageDescription:
         "この Assets ワークスペースのインターフェース言語を選択します。",
@@ -5042,11 +5042,11 @@ export const messagesByLocale = {
       available: "利用可能",
       connecting: "接続中",
       noManualOptions: "この項目で利用できる手動設定オプションはありません。",
-      builderManaged: "Builder が管理された画像生成を処理しています。",
+      builderManaged: "Jami Studio が管理された画像生成を処理しています。",
       providerConfigured: "{{providers}} が設定済みです。",
 
       addBuilderGeminiOrOpenAI:
-        "新しい資産を生成する前に、Builder、Gemini、または OpenAI を追加します。",
+        "新しい資産を生成する前に、Jami Studio、Gemini、または OpenAI を追加します。",
       addGeminiOrOpenAI:
         "新しい資産を生成する前に、Gemini または OpenAI を追加します。",
       brandKits: "ブランドキット",
@@ -5355,7 +5355,7 @@ export const messagesByLocale = {
       description: "자산 생성, 저장소, 브랜드 키트 접근.",
       connections: "연결",
       connectionsDescription:
-        "Assets가 브랜드 안전 미디어를 생성, 저장, 공유할 준비를 유지합니다. Builder가 가장 간단한 경로이며 필요하면 수동 키도 사용할 수 있습니다.",
+        "Assets가 브랜드 안전 미디어를 생성, 저장, 공유할 준비를 유지합니다. Jami Studio가 가장 간단한 경로이며 필요하면 수동 키도 사용할 수 있습니다.",
       languageTitle: "언어",
       languageDescription:
         "이 Assets 워크스페이스의 인터페이스 언어를 선택하세요.",
@@ -5386,11 +5386,11 @@ export const messagesByLocale = {
       available: "사용 가능",
       connecting: "연결 중",
       noManualOptions: "이 항목에 사용할 수 있는 수동 설정 옵션이 없습니다.",
-      builderManaged: "Builder가 관리형 이미지 생성을 처리합니다.",
+      builderManaged: "Jami Studio가 관리형 이미지 생성을 처리합니다.",
       providerConfigured: "{{providers}} 설정됨.",
 
       addBuilderGeminiOrOpenAI:
-        "새 자산을 생성하기 전에 Builder, Gemini 또는 OpenAI를 추가하세요.",
+        "새 자산을 생성하기 전에 Jami Studio, Gemini 또는 OpenAI를 추가하세요.",
       addGeminiOrOpenAI:
         "새 자산을 생성하기 전에 Gemini 또는 OpenAI를 추가하세요.",
       brandKits: "브랜드 키트",
@@ -5701,14 +5701,14 @@ export const messagesByLocale = {
       description: "Geração de assets, armazenamento e acesso a kits de marca.",
       connections: "Conexões",
       connectionsDescription:
-        "Mantenha o Assets pronto para gerar, salvar e compartilhar mídia segura para a marca. Builder é o caminho mais simples; chaves manuais continuam disponíveis.",
+        "Mantenha o Assets pronto para gerar, salvar e compartilhar mídia segura para a marca. Jami Studio é o caminho mais simples; chaves manuais continuam disponíveis.",
       languageTitle: "Idioma",
       languageDescription:
         "Escolha o idioma da interface deste workspace de Assets.",
       languageLabel: "Idioma da interface",
 
       addBuilderGeminiOrOpenAI:
-        "Adicione Builder, Gemini ou OpenAI antes de gerar novos ativos.",
+        "Adicione Jami Studio, Gemini ou OpenAI antes de gerar novos ativos.",
       addGeminiOrOpenAI:
         "Adicione Gemini ou OpenAI antes de gerar novos ativos.",
       brandKits: "Kits de marca",
@@ -5717,7 +5717,7 @@ export const messagesByLocale = {
         "Geração e armazenamento de imagens gerenciados, sem chaves de provedor.",
       builderDescriptionReady: "Conectado para geração gerenciada.",
       builderManaged:
-        "Builder está lidando com a geração de imagens gerenciadas.",
+        "Jami Studio está lidando com a geração de imagens gerenciadas.",
       chooseProvider: "Escolha um provedor",
       enterValueFirst: "Insira um valor primeiro.",
       generationNeedsSetup: "Precisa de configuração",
@@ -6145,7 +6145,7 @@ export const messagesByLocale = {
       description: "एसेट जेनरेशन, स्टोरेज और ब्रांड किट एक्सेस।",
       connections: "कनेक्शन",
       connectionsDescription:
-        "Assets को ब्रांड-सुरक्षित मीडिया बनाने, सहेजने और साझा करने के लिए तैयार रखें। Builder सबसे आसान रास्ता है; जरूरत पड़ने पर मैनुअल कुंजियां उपलब्ध रहती हैं।",
+        "Assets को ब्रांड-सुरक्षित मीडिया बनाने, सहेजने और साझा करने के लिए तैयार रखें। Jami Studio सबसे आसान रास्ता है; जरूरत पड़ने पर मैनुअल कुंजियां उपलब्ध रहती हैं।",
       languageTitle: "भाषा",
       languageDescription: "इस Assets workspace की इंटरफ़ेस भाषा चुनें।",
       languageLabel: "इंटरफ़ेस भाषा",
@@ -6175,11 +6175,11 @@ export const messagesByLocale = {
       available: "उपलब्ध",
       connecting: "कनेक्ट हो रहा है",
       noManualOptions: "इस item के लिए कोई manual setup options उपलब्ध नहीं हैं.",
-      builderManaged: "Builder managed image generation संभाल रहा है.",
+      builderManaged: "Jami Studio managed image generation संभाल रहा है.",
       providerConfigured: "{{providers}} configured.",
 
       addBuilderGeminiOrOpenAI:
-        "नई संपत्तियां बनाने से पहले Builder, Gemini, या OpenAI जोड़ें।",
+        "नई संपत्तियां बनाने से पहले Jami Studio, Gemini, या OpenAI जोड़ें।",
       addGeminiOrOpenAI: "नई संपत्तियां बनाने से पहले Gemini या OpenAI जोड़ें।",
       brandKits: "ब्रांड किट",
       chooseProvider: "एक प्रदाता चुनें",
@@ -6489,20 +6489,20 @@ export const messagesByLocale = {
       description: "إنشاء الأصول والتخزين والوصول إلى مجموعات العلامة.",
       connections: "الاتصالات",
       connectionsDescription:
-        "اجعل Assets جاهزًا لإنشاء الوسائط الآمنة للعلامة وحفظها ومشاركتها. Builder هو المسار الأبسط، وتبقى المفاتيح اليدوية متاحة عند الحاجة.",
+        "اجعل Assets جاهزًا لإنشاء الوسائط الآمنة للعلامة وحفظها ومشاركتها. Jami Studio هو المسار الأبسط، وتبقى المفاتيح اليدوية متاحة عند الحاجة.",
       languageTitle: "اللغة",
       languageDescription: "اختر لغة الواجهة لمساحة عمل Assets هذه.",
       languageLabel: "لغة الواجهة",
 
       addBuilderGeminiOrOpenAI:
-        "قم بإضافة Builder، أو Gemini، أو OpenAI قبل إنشاء أصول جديدة.",
+        "قم بإضافة Jami Studio، أو Gemini، أو OpenAI قبل إنشاء أصول جديدة.",
       addGeminiOrOpenAI: "أضف Gemini أو OpenAI قبل إنشاء أصول جديدة.",
       brandKits: "مجموعات العلامة التجارية",
       builderDescriptionDisabled: "معطل لهذا النشر.",
       builderDescriptionManaged:
         "إدارة إنشاء الصور وتخزينها، بدون مفاتيح الموفر.",
       builderDescriptionReady: "متصل للجيل المدار.",
-      builderManaged: "يتعامل Builder مع إنشاء الصور المُدارة.",
+      builderManaged: "يتعامل Jami Studio مع إنشاء الصور المُدارة.",
       chooseProvider: "اختر مزودًا",
       enterValueFirst: "أدخل قيمة أولاً.",
       generationNeedsSetup: "يحتاج إلى إعداد",

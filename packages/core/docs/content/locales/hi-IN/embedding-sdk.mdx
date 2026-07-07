@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -465,7 +465,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -667,6 +667,6 @@ iframe के अंदर उपलब्ध ग्लोबल्स:
 
 ## अनुशंसित उत्पाद आकार
 
-iframe-पहले प्रारंभ करें। यह Builder.io, ग्राहक SaaS ऐप्स और आंतरिक व्यवस्थापक टूल के लिए रिलीज चक्र या CSS/रनटाइम धारणाओं को जोड़े बिना काम करता है।
+iframe-पहले प्रारंभ करें। यह Jami Studio, ग्राहक SaaS ऐप्स और आंतरिक व्यवस्थापक टूल के लिए रिलीज चक्र या CSS/रनटाइम धारणाओं को जोड़े बिना काम करता है।
 
 साइडकार अभी भी एक Agent-Native ऐप/टेम्पलेट होना चाहिए: actions बैकएंड API सतह है, SQL-समर्थित ऐप स्टेट एजेंट की मेमोरी है, और Slack या टेलीग्राम जैसे एकीकरण उसी टिकाऊ चैट में रूट कर सकते हैं। एम्बेडिंग SDK उस साइडकार और वर्तमान होस्ट पेज के बीच लाइव झिल्ली की आपूर्ति करता है।

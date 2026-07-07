@@ -154,7 +154,7 @@ export default defineEventHandler(async (event: H3Event) => {
       return { error: "Thumbnail bytes do not match Content-Type" };
     }
 
-    // Try the configured file-upload provider first (Builder.io or a
+    // Try the configured file-upload provider first (Jami Studio or a
     // user-registered one). In dev / solo mode no provider is usually
     // configured and `uploadFile()` returns `null` — in that case we fall
     // back to a base64 `data:` URL inline in the `recordings.thumbnail_url`

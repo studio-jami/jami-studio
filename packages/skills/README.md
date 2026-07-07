@@ -1,6 +1,6 @@
 # @agent-native/skills
 
-Install BuilderIO skill folders into Codex and Claude skill directories.
+Install Jami Studio skill folders into Codex and Claude skill directories.
 
 ```bash
 npx @agent-native/skills@latest add
@@ -28,7 +28,7 @@ this CLI can print anything. For unattended installs, pass explicit flags such
 as `--skill`, `--client`, `--scope`, and `--no-connect` to skip prompts and
 leave MCP authentication for a later `connect` command.
 
-Skill content comes from `BuilderIO/skills@main` at install/list time for plain
+Skill content comes from `Jami Studio/skills@main` at install/list time for plain
 skill installs. Explicit app-backed installs such as `visual-plan`,
 `visual-recap`, `visualize-repo`, and `content` delegate to
 `@agent-native/core` so mode selection, MCP registration, and local-files

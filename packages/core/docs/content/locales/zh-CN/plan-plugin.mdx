@@ -222,14 +222,14 @@ npx @agent-native/core@latest recap doctor
 重新加载代理客户端，以便加载新的 skills 和工具，然后运行
 `/visual-plan`.
 
-> 注意：裸机 `npx skills@latest add BuilderIO/agent-native --skill visual-plan`（Vercel/open Skills CLI）安装**仅说明** - 它不注册 MCP 连接器。当您也想连接连接器时，请使用上面的 Agent-Native CLI。
+> 注意：裸机 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安装**仅说明** - 它不注册 MCP 连接器。当您也想连接连接器时，请使用上面的 Agent-Native CLI。
 
 ### Claude代码（插件） {#claude-code}
 
-公共 `BuilderIO/agent-native` 存储库本身就是一个 Claude 代码插件市场，因此您可以直接添加它 - 无需构建步骤。 Claude 内部代码：
+公共 `Jami Studio/agent-native` 存储库本身就是一个 Claude 代码插件市场，因此您可以直接添加它 - 无需构建步骤。 Claude 内部代码：
 
 ```text
-/plugin marketplace add BuilderIO/agent-native
+/plugin marketplace add Jami Studio/agent-native
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -244,7 +244,7 @@ npx @agent-native/core@latest recap doctor
 同一个存储库是 Codex 插件市场。添加它，安装插件，然后验证连接器：
 
 ```bash
-codex plugin marketplace add BuilderIO/agent-native
+codex plugin marketplace add Jami Studio/agent-native
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # 浏览器中的 OAuth
 ```
@@ -267,7 +267,7 @@ codex mcp login plan   # 浏览器中的 OAuth
 
 ## 您需要提交什么吗？ {#submission}
 
-**分发或安装此程序不需要提交或审核。** `BuilderIO/agent-native` 是一个自托管的公共 git 市场，因此用户可以使用上面的命令直接在 **Claude 代码和 Codex** 上添加它 - 无需申请或批准。通用 CLI 路线根本不需要市场。
+**分发或安装此程序不需要提交或审核。** `Jami Studio/agent-native` 是一个自托管的公共 git 市场，因此用户可以使用上面的命令直接在 **Claude 代码和 Codex** 上添加它 - 无需申请或批准。通用 CLI 路线根本不需要市场。
 
 如果您想要公开列表，可选的可发现性：
 

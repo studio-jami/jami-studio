@@ -452,7 +452,7 @@ export function normalizeDatePropertyValue(
 ): DocumentPropertyDateValue | null {
   if (value === undefined || value === null || value === "") return null;
 
-  // Accept epoch timestamps (e.g. Builder CMS date fields come back as
+  // Accept epoch timestamps (e.g. Jami Studio CMS date fields come back as
   // milliseconds-since-epoch numbers) by coercing to an ISO string first.
   if (typeof value === "number" && Number.isFinite(value)) {
     const epoch = new Date(value);

@@ -99,7 +99,7 @@ export const indexDesignSystemWithBuilder = defineEventHandler(
         return {
           error:
             err.message ||
-            "Connect Builder.io before indexing a design system from Figma.",
+            "Connect Jami Studio before indexing a design system from Figma.",
           builderConnectUrl:
             err.builderConnectUrl ?? "/_agent-native/builder/connect",
         };
@@ -109,7 +109,7 @@ export const indexDesignSystemWithBuilder = defineEventHandler(
         error:
           err instanceof Error
             ? err.message
-            : "Builder design-system indexing failed.",
+            : "Jami Studio design-system indexing failed.",
       };
     }
   },
