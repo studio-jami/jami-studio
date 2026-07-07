@@ -121,6 +121,7 @@ Verification: PostHog project list now reports exactly those four projects.
 Connected account:
 
 - npm token verifies as `jamesnavinhill`.
+- Verified Jami-owned packages under `@jami-studio/*` are still live and were not targeted.
 
 Old public packages found under `@agent-native`:
 
@@ -135,8 +136,10 @@ Attempted `npm unpublish --force` for all six. npm CLI returned success-like out
 packuments still show live versions. Ownership check shows the packages are owned by `steve8708`, not
 `jamesnavinhill`, so deletion/deprecation is blocked from the current npm credentials.
 
-Disposition: npm is connected, but old `@agent-native/*` package deletion requires owner access to the
-old scope/packages or npm support action. Do not treat those packages as Jami-owned canon.
+Disposition: this was an over-broad cleanup attempt against upstream-owned packages, not Jami-owned
+packages. It had no registry effect. npm is connected, and old `@agent-native/*` package deletion would
+require owner access to the old scope/packages or npm support action. Do not treat those packages as
+Jami-owned canon.
 
 ## Amplitude
 
