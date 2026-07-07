@@ -149,6 +149,44 @@ so we can slot GCS / S3 / Algolia / etc. per project. Cloudflare-first, portable
 
 > Status: leanings only, nothing in stone. Cloudflare-first, agnostic-always; revisit per project.
 
+### Observability / telemetry direction — leanings, NOT final (2026-07-07)
+
+**Audit finding — the framework is observability-RICH; GA is the smallest slice.** Already shipping:
+- **Pluggable server-side tracking** ([packages/core/src/tracking/providers.ts](packages/core/src/tracking/providers.ts)) — one `track()`/`identify()` call fans out to **every** registered provider. Built-in, **env-activated, raw HTTP (no SDK deps)**: PostHog (`POSTHOG_API_KEY`), Amplitude (`AMPLITUDE_API_KEY`), Mixpanel (`MIXPANEL_TOKEN`), Webhook (`TRACKING_WEBHOOK_URL`), + first-party Agent Native Analytics (`AGENT_NATIVE_ANALYTICS_PUBLIC_KEY` → `analytics.jami.studio/track`).
+- **First-party product analytics** — pageviews, `anonymousId`/`sessionId` identity, first-touch referral/viral attribution, signup enrichment → `analytics_events` SQL (the `analytics` template is its dashboard).
+- **Agent observability** ([packages/core/src/observability/traces.ts](packages/core/src/observability/traces.ts)) — auto traces (agent_run / llm_call / tool_call w/ tokens+cost), LLM-as-judge evals, feedback (thumbs + Frustration Index), experiments. SQL-first, optional OTel / Langfuse / Datadog export.
+- **Session replay** (`VITE_AGENT_NATIVE_SESSION_REPLAY_*`).
+- **Sentry** — dep present (`@sentry/browser|node|electron`), wired for **desktop** (Tauri/Electron); web/server not wired by default.
+
+**Direction (leaning): run ALL of PostHog + Amplitude + Mixpanel + Sentry in parallel.**
+- We hold large partner credit pools across all four. The tracking registry fans one event out to every provider, so running them simultaneously is trivial — and lets us **exercise each platform's built-in AI + differing analysis offerings side-by-side**. Combined credits are effectively impossible to exhaust.
+- Product events (PostHog / Amplitude / Mixpanel) = **env-activate, zero code** — every provider receives every `track()`.
+- Sentry (errors/perf) = a *different* concern from product events; promote to a first-class core provider/init (server plugin + client root) alongside the existing desktop wiring.
+- PostHog can double as **session replay + feature flags + experiments** — use it to consolidate/compare those layers.
+
+**Guardrail — data hygiene despite abundant credits:** credits are plentiful but ingestion volume, plan quotas, and signal-to-noise are not free. Keep event schemas tight, dedupe (pageviews already do), **sample** high-frequency / agent-trace events, honor the built-in localhost/dev suppression, and keep PII out of properties. "Take advantage" ≠ firehose everything.
+
+**Where it lives (literally):** all providers register in `packages/core/src/tracking/providers.ts` behind the `track()` seam (or `registerTrackingProvider()` for custom). A larger standalone system → a publishable `packages/<name>`; app-specific events → per-template `track()` calls. **Never a new "app" package** — same agnostic-adapter shape as gateway / search / storage.
+
+> Status: leaning "all four in parallel to trial their AI/offerings," data-hygiene-guarded; not final.
+
+### Plugin / marketplace direction — leaning, NOT final (2026-07-07)
+
+**What ships:** Claude Code plugins (+ Codex mirror) via the in-repo marketplace
+[.claude-plugin/marketplace.json](.claude-plugin/marketplace.json) — **Plan** + **Design**. Each plugin =
+`plugin.json` (manifest) + `.mcp.json` (HTTP MCP → `*.jami.studio/_agent-native/mcp`) + `skills/`,
+generated from `BUILT_IN_APP_SKILLS` by the sync scripts. "App-backed skills" = knowledge + live MCP
+tools + a marketplace entry.
+
+**Leaning: stand up our own — high feasibility (config + rebrand, we control the whole pattern).**
+- Own **plugins**: add a plugin dir (or a `BUILT_IN_APP_SKILLS` entry + sync); every app already exposes
+  `/_agent-native/mcp`, so it's plugin-ready by default.
+- Own **marketplace**: host our own `marketplace.json` (`claude plugin marketplace add jami.studio/…`) —
+  this is how we own distribution.
+- Only real dependency: **hosting the MCP endpoints** = the fleet-hosting decision, not a plugin problem.
+- Cosmetic follow-ups: `author: "Agent-Native"` + `repository: BuilderIO/agent-native` still in manifests.
+  Format is Anthropic's spec (MIT here); we author within it. **No scaffolds yet.**
+
 ---
 
 ## Layer C — Hosted fleet endpoints (`*.agent-native.com`)
