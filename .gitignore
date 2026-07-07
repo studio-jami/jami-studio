@@ -77,7 +77,7 @@ e2e/.auth/
 # Wrangler local state
 .wrangler
 
-# Wrangler configs copied at deploy time (from top-level wrangler-*.toml)
+# Wrangler configs copied at deploy time (from deploy/cloudflare/wrangler-*.toml)
 templates/*/wrangler.toml
 wrangler.toml
 .claude/scheduled_tasks.lock
