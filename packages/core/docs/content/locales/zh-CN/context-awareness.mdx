@@ -323,7 +323,7 @@ function askAgentAboutSelection(selection: {
 | `newTab: true`      | 为更大的创建任务启动单独的聊天线程                     |
 | `type: "code"`      | 当请求涉及更改应用程序源时路由到代码编辑框架           |
 
-`sendToAgentChat()` 是提交的聊天路径受支持的浏览器包装器，有时在内部被视为 `agentNative.submitChat`。应用程序 UI 应调用包装器，而不是直接发布 `agentNative.submitChat`，因为包装器处理本地侧边栏、Builder/Frame 路由、MCP 应用程序主机路由、选项卡 ID 和代码请求路由。
+`sendToAgentChat()` 是提交的聊天路径受支持的浏览器包装器，有时在内部被视为 `agentNative.submitChat`。应用程序 UI 应调用包装器，而不是直接发布 `agentNative.submitChat`，因为包装器处理本地侧边栏、Jami Studio/Frame 路由、MCP 应用程序主机路由、选项卡 ID 和代码请求路由。
 
 对于没有浏览器侧边栏的节点/脚本上下文，请使用 `agentChat.submit()` 或 `agentChat.prefill()`。服务器actions一般不应该调用仅浏览器的`sendToAgentChat()`；如果某个操作需要打开 UI 向代理询问某些内容，请将一个小请求写入 `application_state` 并让 UI 桥接器从浏览器发送它。
 

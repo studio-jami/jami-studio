@@ -373,7 +373,7 @@ const enUS = {
     maxAttachments:
       "Google Calendar supports up to {{count}} attachments per event.",
     uploadProviderPermissionError:
-      "File upload is not available with the current upload provider credentials. Check Builder.io permissions in Settings, or paste a Drive/HTTPS URL instead.",
+      "File upload is not available with the current upload provider credentials. Check Jami Studio permissions in Settings, or paste a Drive/HTTPS URL instead.",
     setEventColorTo: "Set event color to {{color}}",
   },
   googleConnect: {
@@ -4837,7 +4837,7 @@ const translatedCalendarDebtTranslations = {
       uploading: "上传中",
       maxAttachments: "Google Calendar 每个事件最多支持 {{count}} 个附件。",
       uploadProviderPermissionError:
-        "当前上传提供商凭据无法进行文件上传。检查Settings中的Builder.io权限，或粘贴Drive/HTTPS URL。",
+        "当前上传提供商凭据无法进行文件上传。检查Settings中的Jami Studio权限，或粘贴Drive/HTTPS URL。",
       setEventColorTo: "将事件颜色设置为 {{color}}",
     },
     googleConnect: {
@@ -4974,7 +4974,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar admite hasta archivos adjuntos {{count}} por evento.",
       uploadProviderPermissionError:
-        "La carga de archivos no está disponible con las credenciales del proveedor de carga actual. Verifique los permisos de Builder.io en Settings o pegue un Drive/HTTPS URL en su lugar.",
+        "La carga de archivos no está disponible con las credenciales del proveedor de carga actual. Verifique los permisos de Jami Studio en Settings o pegue un Drive/HTTPS URL en su lugar.",
       setEventColorTo: "Establecer el color del evento en {{color}}",
     },
     googleConnect: {
@@ -5117,7 +5117,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar prend en charge jusqu'à {{count}} pièces jointes par événement.",
       uploadProviderPermissionError:
-        "Le téléchargement de fichiers n'est pas disponible avec les informations d'identification actuelles du fournisseur de téléchargement. Vérifiez les autorisations Builder.io dans Settings ou collez plutôt un Drive/HTTPS URL.",
+        "Le téléchargement de fichiers n'est pas disponible avec les informations d'identification actuelles du fournisseur de téléchargement. Vérifiez les autorisations Jami Studio dans Settings ou collez plutôt un Drive/HTTPS URL.",
       setEventColorTo: "Définir la couleur de l'événement sur {{color}}",
     },
     googleConnect: {
@@ -5262,7 +5262,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar unterstützt bis zu {{count}}-Anhänge pro Ereignis.",
       uploadProviderPermissionError:
-        "Das Hochladen von Dateien ist mit den aktuellen Anmeldeinformationen des Upload-Anbieters nicht möglich. Überprüfen Sie die Builder.io-Berechtigungen in Settings oder fügen Sie stattdessen einen Drive/HTTPS URL ein.",
+        "Das Hochladen von Dateien ist mit den aktuellen Anmeldeinformationen des Upload-Anbieters nicht möglich. Überprüfen Sie die Jami Studio-Berechtigungen in Settings oder fügen Sie stattdessen einen Drive/HTTPS URL ein.",
       setEventColorTo: "Legen Sie die Ereignisfarbe auf {{color}} fest",
     },
     googleConnect: {
@@ -5408,7 +5408,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar は、イベントごとに最大 {{count}} の添付ファイルをサポートします。",
       uploadProviderPermissionError:
-        "現在のアップロード プロバイダーの資格情報ではファイルのアップロードを利用できません。 Settings で Builder.io の権限を確認するか、代わりに Drive/HTTPS URL を貼り付けてください。",
+        "現在のアップロード プロバイダーの資格情報ではファイルのアップロードを利用できません。 Settings で Jami Studio の権限を確認するか、代わりに Drive/HTTPS URL を貼り付けてください。",
       setEventColorTo: "イベントの色を{{color}}に設定します",
     },
     googleConnect: {
@@ -5550,7 +5550,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar는 이벤트당 최대 {{count}} 첨부 파일을 지원합니다.",
       uploadProviderPermissionError:
-        "현재 업로드 공급자 자격 증명으로는 파일 업로드를 사용할 수 없습니다. Settings에서 Builder.io 권한을 확인하거나 대신 Drive/HTTPS URL를 붙여넣으세요.",
+        "현재 업로드 공급자 자격 증명으로는 파일 업로드를 사용할 수 없습니다. Settings에서 Jami Studio 권한을 확인하거나 대신 Drive/HTTPS URL를 붙여넣으세요.",
       setEventColorTo: "이벤트 색상을 {{color}}로 설정",
     },
     googleConnect: {
@@ -5689,7 +5689,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar suporta até anexos {{count}} por evento.",
       uploadProviderPermissionError:
-        "O upload de arquivos não está disponível com as credenciais atuais do provedor de upload. Verifique as permissões Builder.io em Settings ou cole um Drive/HTTPS URL.",
+        "O upload de arquivos não está disponível com as credenciais atuais do provedor de upload. Verifique as permissões Jami Studio em Settings ou cole um Drive/HTTPS URL.",
       setEventColorTo: "Defina a cor do evento como {{color}}",
     },
     googleConnect: {
@@ -5828,7 +5828,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "Google Calendar प्रति इवेंट {{count}} अटैचमेंट तक का समर्थन करता है।",
       uploadProviderPermissionError:
-        "फ़ाइल अपलोड वर्तमान अपलोड प्रदाता क्रेडेंशियल के साथ उपलब्ध नहीं है। Settings में Builder.io अनुमतियाँ जांचें, या इसके बजाय Drive/HTTPS URL पेस्ट करें।",
+        "फ़ाइल अपलोड वर्तमान अपलोड प्रदाता क्रेडेंशियल के साथ उपलब्ध नहीं है। Settings में Jami Studio अनुमतियाँ जांचें, या इसके बजाय Drive/HTTPS URL पेस्ट करें।",
       setEventColorTo: "इवेंट का रंग {{color}} पर सेट करें",
     },
     googleConnect: {
@@ -5966,7 +5966,7 @@ const translatedCalendarDebtTranslations = {
       maxAttachments:
         "يدعم Google Calendar ما يصل إلى مرفقات {{count}} لكل حدث.",
       uploadProviderPermissionError:
-        "تحميل الملف غير متاح باستخدام بيانات اعتماد موفر التحميل الحالي. تحقق من أذونات Builder.io في Settings، أو الصق Drive/HTTPS URL بدلاً من ذلك.",
+        "تحميل الملف غير متاح باستخدام بيانات اعتماد موفر التحميل الحالي. تحقق من أذونات Jami Studio في Settings، أو الصق Drive/HTTPS URL بدلاً من ذلك.",
       setEventColorTo: "اضبط لون الحدث على {{color}}",
     },
     googleConnect: {

@@ -418,7 +418,7 @@ function ActionBadge({ action }: { action: AutomationAction }) {
   );
 }
 
-// ─── Action Builder ───────────────────────────────────────────────────────────
+// ─── Action Jami Studio ───────────────────────────────────────────────────────────
 
 const ACTION_TYPES = [
   { value: "label", labelKey: "settings.applyLabel" },

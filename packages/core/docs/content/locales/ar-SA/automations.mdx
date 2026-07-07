@@ -21,7 +21,7 @@ description: "عمليات التشغيل التلقائي المجدولة وا
   <div class="diagram-card">
     <span class="diagram-pill">حالة</span
     ><small class="diagram-muted"
-      >يتحقق هايكو: &ldquo;ينتهي البريد الإلكتروني بـ @builder.io&rdquo;</small
+      >يتحقق هايكو: &ldquo;ينتهي البريد الإلكتروني بـ @jami.studio&rdquo;</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -68,7 +68,7 @@ description: "عمليات التشغيل التلقائي المجدولة وا
 
 ### من خلال سؤال الوكيل
 
-> "عندما يحجز شخص ما اجتماعًا باستخدام بريد إلكتروني @builder.io، أرسل لي رسالة على Slack."
+> "عندما يحجز شخص ما اجتماعًا باستخدام بريد إلكتروني @jami.studio، أرسل لي رسالة على Slack."
 
 يكتشف الوكيل الأحداث المتاحة، ويؤكد الخطة، ويكتب لك الأتمتة.
 
@@ -84,7 +84,7 @@ description: "عمليات التشغيل التلقائي المجدولة وا
   filename="jobs/slack-on-builder-booking.md"
   language="markdown"
   code={
-    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @builder.io"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
+    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @jami.studio"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
   }
   annotations={[
     {
@@ -172,7 +172,7 @@ emit(
     customerEmail: "jane@example.com",
     total: 49.99,
   },
-  { owner: "steve@builder.io" },
+  { owner: "steve@jami.studio" },
 );
 ```
 
@@ -189,7 +189,7 @@ emit(
 
 أمثلة على الشروط:
 
-- `"attendee email ends with @builder.io"`
+- `"attendee email ends with @jami.studio"`
 - `"the order total is greater than $100"`
 - `"the message contains the word 'urgent'"`
 
@@ -336,7 +336,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
 
 ## مثال {#example}
 
-**المستخدم:** "عندما يقوم شخص ما بالحجز باستخدام بريد إلكتروني @builder.io، أرسل لي رسالة على Slack."
+**المستخدم:** "عندما يقوم شخص ما بالحجز باستخدام بريد إلكتروني @jami.studio، أرسل لي رسالة على Slack."
 
 **تدفق الوكيل:**
 
@@ -346,7 +346,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
    - `name`: `slack-on-builder-booking`
    - `trigger_type`: `event`
    - `event`: `calendar.booking.created`
-   - `condition`: `attendee email ends with @builder.io`
+   - `condition`: `attendee email ends with @jami.studio`
    - `mode`: `agentic`
    - `domain`: `calendar`
    - `body`: `Send a Slack message to #sales with the booking details. Use the web-request tool to POST to ${keys.SLACK_WEBHOOK}.`

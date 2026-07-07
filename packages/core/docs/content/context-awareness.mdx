@@ -323,7 +323,7 @@ Use the fields deliberately:
 | `newTab: true`      | Start a separate chat thread for a larger creation task                          |
 | `type: "code"`      | Route to the code-editing frame when the request is about changing app source    |
 
-`sendToAgentChat()` is the supported browser wrapper for the submitted-chat path sometimes seen internally as `agentNative.submitChat`. App UI should call the wrapper instead of posting `agentNative.submitChat` directly because the wrapper handles local sidebars, Builder/Frame routing, MCP App host routing, tab IDs, and code-request routing.
+`sendToAgentChat()` is the supported browser wrapper for the submitted-chat path sometimes seen internally as `agentNative.submitChat`. App UI should call the wrapper instead of posting `agentNative.submitChat` directly because the wrapper handles local sidebars, Jami Studio/Frame routing, MCP App host routing, tab IDs, and code-request routing.
 
 Use `agentChat.submit()` or `agentChat.prefill()` for Node/script contexts where there is no browser sidebar. Server actions generally should not call browser-only `sendToAgentChat()`; if an action needs the open UI to ask the agent something, write a small request into `application_state` and let a UI bridge send it from the browser.
 

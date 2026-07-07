@@ -32,7 +32,7 @@ function parsePayload(value: string) {
 
 export default defineAction({
   description:
-    "Validate a prepared Builder CMS execution gate as a local dry run. This rebuilds and compares the write plan, but never calls Builder APIs.",
+    "Validate a prepared Jami Studio CMS execution gate as a local dry run. This rebuilds and compares the write plan, but never calls Jami Studio APIs.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -71,7 +71,7 @@ export default defineAction({
     );
     if (!source || source.sourceType !== "builder-cms") {
       throw new Error(
-        "Attach a Builder CMS source before validating execution.",
+        "Attach a Jami Studio CMS source before validating execution.",
       );
     }
 
@@ -114,7 +114,7 @@ export default defineAction({
       );
     if (!execution) {
       throw new Error(
-        "Prepare the Builder execution gate before validating it.",
+        "Prepare the Jami Studio execution gate before validating it.",
       );
     }
 

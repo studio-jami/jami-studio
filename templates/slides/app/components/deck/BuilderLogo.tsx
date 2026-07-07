@@ -2,7 +2,7 @@ interface BuilderLogoProps {
   className?: string;
 }
 
-/** Builder.io "B" logo extracted from the official builder-logo-white.svg */
+/** Jami Studio "B" logo extracted from the official builder-logo-white.svg */
 export default function BuilderLogo({
   className = "w-7 h-7",
 }: BuilderLogoProps) {

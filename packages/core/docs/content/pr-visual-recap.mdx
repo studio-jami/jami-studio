@@ -214,7 +214,7 @@ This also means you can merge the workflow file **before** the secrets exist: wi
 
 If you want to generate recaps for fork PRs, a second workflow file is available: `.github/workflows/pr-visual-recap-fork.yml`. It uses `pull_request_target` (which runs with base-repo secrets) but never checks out or executes fork code. Trusted fork authors with GitHub author association `OWNER`, `MEMBER`, or `COLLABORATOR` run automatically. Outside fork PRs require an explicit **per-head maintainer opt-in** via a fresh `recap` label event before the recap agent runs.
 
-To install it, copy the file from [BuilderIO/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) into your repo's `.github/workflows/` directory alongside the existing `pr-visual-recap.yml`. The same secrets (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) apply.
+To install it, copy the file from [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) into your repo's `.github/workflows/` directory alongside the existing `pr-visual-recap.yml`. The same secrets (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) apply.
 
 <Diagram id="doc-block-h3lne0" title="Fork PR consent gate" summary={"Fork PRs get no secrets by default; trusted authors run automatically, and outside contributors require a fresh maintainer recap label."}>
 
@@ -328,7 +328,7 @@ The `gate` step skips the recap entirely when a PR touches any of the following 
 | `**/AGENTS.md`                             | Agent instructions the runner loads      |
 | `**/.mcp.json`                             | MCP server config the runner loads       |
 
-In the `BuilderIO/agent-native` monorepo, the workflow runs the recap CLI from trusted base-branch source instead of PR-head source. That keeps normal package changes, including `packages/core/**`, eligible for recaps without executing PR-modified CLI code.
+In the `Jami Studio/agent-native` monorepo, the workflow runs the recap CLI from trusted base-branch source instead of PR-head source. That keeps normal package changes, including `packages/core/**`, eligible for recaps without executing PR-modified CLI code.
 
 ## Local-files privacy mode
 
@@ -416,7 +416,7 @@ The allowlist is only consulted by the secret-scan gate. It does not affect what
 
 The default installer copies the full ~360-line workflow YAML into your repo (the **copy** option). This is the right choice for air-gapped repos or repos that need to audit every line of what runs. The downside is that bug fixes and improvements never reach you — you need to re-run `npx @agent-native/core@latest recap setup` manually after each release.
 
-The **reusable** option writes a thin ~20-line caller instead. It delegates to `BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml` via `uses:`. Every caller automatically picks up the latest logic when the workflow runs, with no local update needed.
+The **reusable** option writes a thin ~20-line caller instead. It delegates to `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` via `uses:`. Every caller automatically picks up the latest logic when the workflow runs, with no local update needed.
 
 |                                | Copy (default)            | Reusable                       |
 | ------------------------------ | ------------------------- | ------------------------------ |
@@ -432,7 +432,7 @@ This is what `npx @agent-native/core@latest recap setup --reusable` writes (or y
 ```yaml
 name: PR Visual Recap
 
-# Thin caller — the full workflow logic lives in BuilderIO/agent-native.
+# Thin caller — the full workflow logic lives in Jami Studio/agent-native.
 # Fixes and improvements reach this repo automatically on each run.
 # To pin a specific version for reproducibility replace '@main' with a
 # tag or SHA, e.g. '@v1.2.3' or '@abc1234'.
@@ -449,7 +449,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -484,7 +484,7 @@ After writing, run `npx @agent-native/core@latest recap doctor` as usual to conf
 By default the caller references `@main`, which always uses the latest published version of the reusable workflow. For production repos that need reproducible CI, pin to a tag or SHA:
 
 ```yaml
-uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 The `cli-version` input controls which `@agent-native/core` CLI version runs inside the workflow — leave it at `"latest"` to track the newest release, or pin it to a version string (e.g. `"1.5.0"`) for full reproducibility.

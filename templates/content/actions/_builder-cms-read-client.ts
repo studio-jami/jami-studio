@@ -194,7 +194,7 @@ async function fetchBuilderContentPage(args: {
   }
   throw lastError instanceof Error
     ? lastError
-    : new Error("Builder read failed.");
+    : new Error("Jami Studio read failed.");
 }
 
 function appendUniqueBuilderEntries(
@@ -261,7 +261,9 @@ async function postBuilderMcp(args: {
   });
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(`Builder MCP request failed with HTTP ${response.status}.`);
+    throw new Error(
+      `Jami Studio MCP request failed with HTTP ${response.status}.`,
+    );
   }
   return {
     json: JSON.parse(text) as Record<string, unknown>,
@@ -569,8 +571,8 @@ async function readBuilderCmsContentEntriesViaContentApi(args: {
         fetchedAt,
         message:
           error instanceof Error
-            ? `Builder CMS read failed: ${error.message}`
-            : "Builder CMS read failed.",
+            ? `Jami Studio CMS read failed: ${error.message}`
+            : "Jami Studio CMS read failed.",
       };
     }
 
@@ -579,7 +581,7 @@ async function readBuilderCmsContentEntriesViaContentApi(args: {
         state: "error",
         entries: [],
         fetchedAt,
-        message: `Builder CMS read failed with HTTP ${response.status}.`,
+        message: `Jami Studio CMS read failed with HTTP ${response.status}.`,
       };
     }
 
@@ -607,7 +609,7 @@ export async function readBuilderCmsEntryLiveState(args: {
   const publicKey = await resolveBuilderCredential("BUILDER_PUBLIC_KEY");
   if (!publicKey) {
     throw new Error(
-      "Builder CMS live entry read skipped because BUILDER_PUBLIC_KEY is not configured.",
+      "Jami Studio CMS live entry read skipped because BUILDER_PUBLIC_KEY is not configured.",
     );
   }
 
@@ -636,7 +638,7 @@ export async function readBuilderCmsEntryLiveState(args: {
   }
   if (!response.ok) {
     throw new Error(
-      `Builder CMS live entry read failed with HTTP ${response.status}.`,
+      `Jami Studio CMS live entry read failed with HTTP ${response.status}.`,
     );
   }
 
@@ -658,7 +660,7 @@ export async function listBuilderCmsModels(
       models: [],
       fetchedAt,
       message:
-        "Builder CMS model discovery skipped because BUILDER_PRIVATE_KEY is not configured.",
+        "Jami Studio CMS model discovery skipped because BUILDER_PRIVATE_KEY is not configured.",
     };
   }
 
@@ -699,7 +701,7 @@ export async function listBuilderCmsModels(
       message:
         error instanceof Error
           ? error.message
-          : "Builder CMS model discovery failed.",
+          : "Jami Studio CMS model discovery failed.",
     };
   }
 }
@@ -760,7 +762,7 @@ export async function readBuilderCmsContentEntries(args: {
         message:
           error instanceof Error
             ? error.message
-            : "Builder CMS MCP read failed.",
+            : "Jami Studio CMS MCP read failed.",
       };
     }
   }
@@ -771,7 +773,7 @@ export async function readBuilderCmsContentEntries(args: {
       entries: [],
       fetchedAt,
       message:
-        "Builder CMS read skipped because BUILDER_PUBLIC_KEY is not configured.",
+        "Jami Studio CMS read skipped because BUILDER_PUBLIC_KEY is not configured.",
     };
   }
 
@@ -779,6 +781,6 @@ export async function readBuilderCmsContentEntries(args: {
     state: "error",
     entries: [],
     fetchedAt,
-    message: "Builder CMS read returned no entries.",
+    message: "Jami Studio CMS read returned no entries.",
   };
 }

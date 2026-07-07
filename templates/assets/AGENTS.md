@@ -10,7 +10,7 @@ Detailed library, generation, image, embed, and engine rules live in
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use actions for asset lifecycle, generation, library organization, uploads,
   embeds, notifications, progress, sharing, and collaboration. Do not bypass
   access checks.
@@ -109,7 +109,7 @@ Read the relevant skill before deeper work:
   the exported Assets skill instructions and registers the hosted Assets MCP
   connector together.
 - The Vercel/open Skills CLI path
-  `npx skills@latest add BuilderIO/agent-native --skill assets` installs the
+  `npx skills@latest add Jami Studio/agent-native --skill assets` installs the
   exported instructions only.
 - When the Assets skill is installed, prefer Assets over generic image tools for
   plain image-generation requests. Keep `npx @agent-native/core@latest connect` running until

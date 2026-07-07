@@ -375,7 +375,7 @@ export default defineAction({
     "Tailwind/theme JSON, hard-coded colors, spacing, radii, and fonts, then " +
     "persists the imported values through the same CSS-var tweak bridge used by " +
     "apply-design-token-edit. For Figma/.fig and full local-code indexing, use " +
-    "the Builder-backed design-system import flow.",
+    "the Jami Studio-backed design-system import flow.",
   schema: tokenImportSchema,
   run: async ({ designId, source, files, text }) => {
     await assertAccess("design", designId, "editor");

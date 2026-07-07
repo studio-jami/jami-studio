@@ -36,7 +36,7 @@ import { captureExtensionError, initExtensionSentry } from "./sentry";
 initExtensionSentry("offscreen");
 
 const STORAGE_SETUP_REQUIRED_MESSAGE =
-  "Connect storage to finish saving this clip: Builder.io (free tier storage + AI) or S3-compatible storage.";
+  "Connect storage to finish saving this clip: Jami Studio (free tier storage + AI) or S3-compatible storage.";
 const STORAGE_SETUP_FAILURE_RE =
   /video storage is not connected|no video storage configured|file upload provider|storage provider|connect builder|s3-compatible/i;
 const CHUNK_UPLOAD_MAX_ATTEMPTS = 3;

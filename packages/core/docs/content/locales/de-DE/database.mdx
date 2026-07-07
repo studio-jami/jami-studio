@@ -87,11 +87,11 @@ DATABASE_URL=libsql://my-db-org.turso.io
 DATABASE_AUTH_TOKEN=your-token
 ```
 
-Das Framework erkennt automatisch den Dialekt von URL und konfiguriert Drizzle entsprechend. Die integrierten Adapter decken Postgres URLs, libSQL/Turso URLs, SQLite-Datei-URLs und Cloudflare D1-Bindungen ab. Zu den gängigen Produktionsoptionen gehören Neon, Supabase, Turso/libSQL, einfaches Postgres, dauerhaftes SQLite und von Builder.io verwaltete Umgebungen, sofern verfügbar.
+Das Framework erkennt automatisch den Dialekt von URL und konfiguriert Drizzle entsprechend. Die integrierten Adapter decken Postgres URLs, libSQL/Turso URLs, SQLite-Datei-URLs und Cloudflare D1-Bindungen ab. Zu den gängigen Produktionsoptionen gehören Neon, Supabase, Turso/libSQL, einfaches Postgres, dauerhaftes SQLite und von Jami Studio verwaltete Umgebungen, sofern verfügbar.
 
-## Builder.io Verwaltete Datenbank {#builder-managed}
+## Jami Studio Verwaltete Datenbank {#builder-managed}
 
-_Geplant (noch nicht verfügbar):_ Wenn Ihre App mit Builder.io verbunden ist, kann sie eine verwaltete Datenbank verwenden, die automatisch bereitgestellt wird, ohne dass Verbindungszeichenfolgen erforderlich sind.
+_Geplant (noch nicht verfügbar):_ Wenn Ihre App mit Jami Studio verbunden ist, kann sie eine verwaltete Datenbank verwenden, die automatisch bereitgestellt wird, ohne dass Verbindungszeichenfolgen erforderlich sind.
 
 ## Wo der DB-Client lebt {#db-client}
 
@@ -198,7 +198,7 @@ Niemals direkt aus `drizzle-orm/sqlite-core` oder `drizzle-orm/pg-core` importie
 
 Tabellen, in denen benutzerbezogene Daten gespeichert werden, müssen eine `owner_email`-Spalte enthalten, damit das Scoping auf SQL-Ebene des Frameworks Zeilen für den authentifizierten Benutzer filtern kann – siehe [Security](/docs/security#data-scoping). Tabellen, die auch die Freigabe mit anderen Benutzern oder Organisationen unterstützen, sollten stattdessen `...ownableColumns()` verbreiten, wodurch `owner_email`, `org_id` und `visibility` in einem Aufruf hinzugefügt werden – siehe [Sharing](/docs/sharing#building).
 
-Verwenden Sie für Lese- und Schreibvorgänge den Abfrage-Builder von Drizzle und die portablen Operatoren von `drizzle-orm`:
+Verwenden Sie für Lese- und Schreibvorgänge den Abfrage-Jami Studio von Drizzle und die portablen Operatoren von `drizzle-orm`:
 
 ```ts
 import { and, desc, eq } from "drizzle-orm";

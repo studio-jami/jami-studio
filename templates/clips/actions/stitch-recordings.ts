@@ -73,7 +73,7 @@ export default defineAction({
     const videoUrl = args.videoUrl?.trim() || null;
     if (videoUrl?.startsWith("data:")) {
       throw new Error(
-        "Stitched videos must be uploaded to Builder.io or S3-compatible storage before creating a recording.",
+        "Stitched videos must be uploaded to Jami Studio or S3-compatible storage before creating a recording.",
       );
     }
 

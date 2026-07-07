@@ -436,14 +436,14 @@ export default createAgentChatPlugin({
 
 [production code execution](#production-code-execution)가 중단된 표준 프로덕션 배포에서 에이전트는 앱 도구(actions, 데이터베이스, MCP)에 액세스할 수 있지만 파일 시스템에는 액세스할 수 없습니다. 즉, 에이전트는 데이터를 읽고 쓰고, actions를 실행하고, 외부 서비스와 상호 작용할 수 있지만 React 구성 요소를 편집하거나 배포된 인스턴스에 새 경로를 추가할 수는 없습니다.
 
-### Builder.io: 프로덕션에서의 시각적 편집 {#builderio}
+### Jami Studio: 프로덕션에서의 시각적 편집 {#builderio}
 
-[Builder.io](https://www.builder.io)는 에이전트가 프로덕션에서 앱의 UI를 수정할 수 있는 기능을 유지하는 관리형 클라우드 환경을 제공하여 이 문제를 해결합니다. 저장소를 Builder.io에 연결하고 UI 변경 사항을 직접 묻는 메시지를 표시하세요. 재배포가 필요하지 않습니다.
+[Jami Studio](https://www.builder.io)는 에이전트가 프로덕션에서 앱의 UI를 수정할 수 있는 기능을 유지하는 관리형 클라우드 환경을 제공하여 이 문제를 해결합니다. 저장소를 Jami Studio에 연결하고 UI 변경 사항을 직접 묻는 메시지를 표시하세요. 재배포가 필요하지 않습니다.
 
 **작동 방식:**
 
-1. 에이전트 기본 저장소를 Builder.io에 연결
-2. Builder.io는 에이전트, 시각적 편집 및 실시간 협업 기능을 갖춘 클라우드 프레임을 제공합니다
+1. 에이전트 기본 저장소를 Jami Studio에 연결
+2. Jami Studio는 에이전트, 시각적 편집 및 실시간 협업 기능을 갖춘 클라우드 프레임을 제공합니다
 3. 에이전트에게 UI 변경을 요청합니다. 구성 요소, 경로 및 스타일을 실시간으로 편집합니다.
 4. 변경 사항이 저장소에 다시 커밋됩니다.
 

@@ -130,7 +130,7 @@ const messages = {
       appBuildingSuffix:
         "after its branch is merged and the workspace deploy finishes.",
       branch: "Branch: {{branch}}",
-      openBuilderBranch: "Open Builder branch",
+      openBuilderBranch: "Open Jami Studio branch",
       openingApp: "Opening {{name}}",
       redirectingTo: "Redirecting to",
       openApp: "Open app",
@@ -154,7 +154,7 @@ const messages = {
       metricsUnavailable: "Metrics unavailable",
       unableToLoadUsage: "Unable to load usage.",
       metricsDescriptionBuilder:
-        "Workspace-wide Builder.io credit spend, chat volume, user activity, and app access.",
+        "Workspace-wide Jami Studio credit spend, chat volume, user activity, and app access.",
       metricsDescriptionLlm:
         "Workspace-wide LLM spend, chat volume, user activity, and app access.",
       llmCalls: "LLM calls",
@@ -164,7 +164,7 @@ const messages = {
     },
   },
   agentPanel: {
-    useBuilder: "Use Builder",
+    useBuilder: "Use Jami Studio",
     openDesktopToEditCode: "Open Desktop to edit code",
     codeUnavailableDescription:
       "Source-code changes and CLI access are available in the Agent Native Desktop app.",
@@ -191,7 +191,7 @@ const messages = {
     clearChat: "Clear chat",
     cliRequiresDevMode: "CLI requires dev mode",
     cliRequiresDevModeDescription:
-      "Run this app locally with pnpm dev or use Builder.io to access the CLI terminal.",
+      "Run this app locally with pnpm dev or use Jami Studio to access the CLI terminal.",
     toggleAgent: "Toggle agent",
   },
   share: {
@@ -264,25 +264,25 @@ const messages = {
   },
   codeRequired: {
     fallbackDetail:
-      "Edit locally or use Builder.io to edit this code in the cloud and continue customizing the app any way you like.",
+      "Edit locally or use Jami Studio to edit this code in the cloud and continue customizing the app any way you like.",
     defaultFeature: "Make the requested code changes to this app",
     branchError: "Failed to create branch",
     title: "Code changes required",
     subtitleWithFeature:
-      '"{{feature}}" creates or modifies source code, which needs Desktop or Builder from this surface.',
+      '"{{feature}}" creates or modifies source code, which needs Desktop or Jami Studio from this surface.',
     subtitle:
-      "This action creates or modifies source code, which needs Desktop or Builder from this surface.",
+      "This action creates or modifies source code, which needs Desktop or Jami Studio from this surface.",
     desktopTitle: "Use Agent Native Desktop",
     desktopDescription:
       "Open the project in the desktop app to enable source edits and CLI access.",
-    builderAgentTitle: "Use Builder.io Agent",
+    builderAgentTitle: "Use Jami Studio Agent",
     builderAgentDescription:
       "Let our cloud agent make the changes for you. You'll get a link to preview and deploy.",
     codeChangeTitle: "This requires a code change",
     codeChangeBadge: "Code change",
-    connectBuilderTitle: "Connect Builder.io",
+    connectBuilderTitle: "Connect Jami Studio",
     connectBuilderDescription:
-      "Connect Builder to enable cloud-based code changes from this app.",
+      "Connect Jami Studio to enable cloud-based code changes from this app.",
     setupRequired: "Setup required",
     branchCreated: "Branch created",
     close: "Close",
@@ -414,7 +414,7 @@ const messages = {
     back: "Back",
     agentEngineRequired: "Agent engine required",
     agentEngineDescription:
-      "Connect Builder.io or an LLM key before {{platform}} can answer.",
+      "Connect Jami Studio or an LLM key before {{platform}} can answer.",
     openLlm: "Open LLM",
     setup: "Setup",
     shareDocumentsWith: "Share documents with",

@@ -77,7 +77,7 @@ export function BuilderTranscriptionCta() {
           clearInterval(pollRef.current!);
           setConnecting(false);
           setError(
-            "Didn't hear back from Builder. Allow popups and try again.",
+            "Didn't hear back from Jami Studio. Allow popups and try again.",
           );
         }
       } catch {
@@ -98,8 +98,8 @@ export function BuilderTranscriptionCta() {
       />
       <span className="flex-1">
         {connecting
-          ? "Waiting for Builder.io…"
-          : "Connect Builder.io for higher-quality transcription — free credits, no API key needed."}
+          ? "Waiting for Jami Studio…"
+          : "Connect Jami Studio for higher-quality transcription — free credits, no API key needed."}
       </span>
       {error ? (
         <span className="text-destructive text-[10px]">{error}</span>

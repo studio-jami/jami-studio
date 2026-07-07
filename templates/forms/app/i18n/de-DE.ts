@@ -128,13 +128,13 @@ const messages = {
     peopleAccessLabel: "Personen mit Bearbeitungszugriff",
     generalAccessLabel: "Allgemeiner Bearbeitungszugriff",
     privateAccessDescription:
-      "Nur eingeladene Personen können dieses Formular im Builder öffnen",
+      "Nur eingeladene Personen können dieses Formular im Jami Studio öffnen",
     orgAccessDescription:
-      "Alle in deiner Organisation können dieses Formular im Builder öffnen",
-    publicBuilderAccess: "Öffentlicher Builder-Zugriff",
+      "Alle in deiner Organisation können dieses Formular im Jami Studio öffnen",
+    publicBuilderAccess: "Öffentlicher Jami Studio-Zugriff",
     publicAccessDescription:
-      "Alle mit dem Builder-Link können die Einrichtung dieses Formulars ansehen",
-    manageBuilderAccess: "Builder-Zugriff verwalten",
+      "Alle mit dem Jami Studio-Link können die Einrichtung dieses Formulars ansehen",
+    manageBuilderAccess: "Jami Studio-Zugriff verwalten",
     publishing: "Wird veröffentlicht...",
     unpublishing: "Veröffentlichung wird aufgehoben...",
     moreActions: "Weitere Aktionen",
@@ -350,19 +350,19 @@ const messages = {
     editFormForms: "Formular bearbeiten — Forms",
     responsesForms: "Antworten — Forms",
     formsIndex:
-      "Agent-Native Forms - Open-Source-AI-Formular-Builder und Antwortanalyse",
+      "Agent-Native Forms - Open-Source-AI-Formular-Jami Studio und Antwortanalyse",
     responseInsightsForms: "Antwort-Insights - Forms",
     settingsForms: "Einstellungen - Forms",
   },
   routeDescriptions: {
     formsIndex:
-      "Open-Source-AI-Formular-Builder zum Erstellen, Veröffentlichen, Bearbeiten und Analysieren von Formularen und Antworten in einem chatzentrierten Workspace.",
+      "Open-Source-AI-Formular-Jami Studio zum Erstellen, Veröffentlichen, Bearbeiten und Analysieren von Formularen und Antworten in einem chatzentrierten Workspace.",
     responseInsights:
       "Analysieren Sie Formularübermittlungen mit nativen Tabellen und Diagrammen.",
   },
   responses: {
     failedLoad: "Antworten konnten nicht geladen werden",
-    backToBuilder: "Zurück zum Builder",
+    backToBuilder: "Zurück zum Jami Studio",
     filteredCount: "{{count}} of {{total}}",
     totalCount: "{{formattedCount}} responses",
     filterPlaceholder: "Antworten filtern...",

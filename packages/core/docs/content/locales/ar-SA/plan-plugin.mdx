@@ -224,14 +224,14 @@ npx @agent-native/core@latest recap doctor
 أعد تحميل العميل الوكيل حتى يتم تحميل skills الجديد والأدوات، ثم قم بتشغيله
 `/visual-plan`.
 
-> ملاحظة: يقوم `npx skills@latest add BuilderIO/agent-native --skill visual-plan` (Vercel/open Skills CLI) بتثبيت **التعليمات فقط** - ولا يسجل موصل MCP. استخدم Agent-Native CLI أعلاه عندما تريد توصيل الموصل أيضًا.
+> ملاحظة: يقوم `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) بتثبيت **التعليمات فقط** - ولا يسجل موصل MCP. استخدم Agent-Native CLI أعلاه عندما تريد توصيل الموصل أيضًا.
 
 ### رمز Claude (مكون إضافي) {#claude-code}
 
-إن مستودع `BuilderIO/agent-native` العام هو في حد ذاته سوق للمكونات الإضافية لـ Claude Code، لذا يمكنك إضافته مباشرة - دون الحاجة إلى خطوة إنشاء. داخل رمز Claude:
+إن مستودع `Jami Studio/agent-native` العام هو في حد ذاته سوق للمكونات الإضافية لـ Claude Code، لذا يمكنك إضافته مباشرة - دون الحاجة إلى خطوة إنشاء. داخل رمز Claude:
 
 ```text
-/plugin marketplace add BuilderIO/agent-native
+/plugin marketplace add Jami Studio/agent-native
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ npx @agent-native/core@latest recap doctor
 نفس الريبو هو سوق المكونات الإضافية Codex. قم بإضافته، وتثبيت المكون الإضافي، ثم قم بمصادقة الموصل:
 
 ```bash
-codex plugin marketplace add BuilderIO/agent-native
+codex plugin marketplace add Jami Studio/agent-native
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth في المتصفح
 ```
@@ -269,7 +269,7 @@ codex mcp login plan   # OAuth في المتصفح
 
 ## هل تحتاج إلى إرسال أي شيء؟ {#submission}
 
-**لا يلزم تقديم أو مراجعة لتوزيع هذا أو تثبيته.** `BuilderIO/agent-native` هو سوق git عام مستضاف ذاتيًا، لذلك يضيفه المستخدمون مباشرة باستخدام الأوامر المذكورة أعلاه على **كل من Claude Code وCodex** — بدون طلب أو موافقة. لا يحتاج مسار CLI العالمي إلى سوق على الإطلاق.
+**لا يلزم تقديم أو مراجعة لتوزيع هذا أو تثبيته.** `Jami Studio/agent-native` هو سوق git عام مستضاف ذاتيًا، لذلك يضيفه المستخدمون مباشرة باستخدام الأوامر المذكورة أعلاه على **كل من Claude Code وCodex** — بدون طلب أو موافقة. لا يحتاج مسار CLI العالمي إلى سوق على الإطلاق.
 
 قابلية الاكتشاف الاختيارية، إذا كنت تريد قائمة عامة:
 

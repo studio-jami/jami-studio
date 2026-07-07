@@ -118,7 +118,7 @@ Demostración en vivo: [assets.agent-native.com](https://assets.agent-native.com
 
 - **Crea bibliotecas de recursos.** Agrupa imágenes de referencia, vídeos, logotipos canónicos, notas de estilo, paletas, carpetas y resultados generados por marca, campaña, producto o categoría.
 - **Generar a través del chat.** El compositor principal y los controles Generar de la biblioteca envían el mensaje al agente con `sendToAgentChat()`, para que los usuarios puedan inspeccionar variantes, dar comentarios e iterar.
-- **Generar imágenes y vídeos.** La generación de imágenes administrada por Builder está disponible cuando está habilitada, y Gemini potencia la generación de vídeos además del respaldo manual de imágenes.
+- **Generar imágenes y vídeos.** La generación de imágenes administrada por Jami Studio está disponible cuando está habilitada, y Gemini potencia la generación de vídeos además del respaldo manual de imágenes.
 - **Cargue y describa referencias.** Agregue imágenes o videos de la biblioteca UI o solicite el botón adjunto del compositor, luego busque por título, descripción, texto alternativo, mensaje, modelo, tipo de medio, estado, función, carpeta o colección.
 - **Mantenga un registro de auditoría de generación.** Cada ejecución registra indicaciones, modelo, relación de aspecto, referencias, activo de origen, linaje, activos generados, estado, errores y marcas de tiempo para una revisión posterior del diseño.
 - **Preservar la precisión del logotipo.** El agente puede generar un área de marcador de posición y el servidor compone el logotipo canónico cargado en la imagen final en lugar de depender del modelo de imagen para volver a dibujarlo.
@@ -141,7 +141,7 @@ Genere y seleccione medios de marca sin salir de Codex, Claude Code, Claude o Ch
    Skills CLI, utilice:
 
    ```bash
-   npx skills@latest agregar BuilderIO/agent-native --skill activos
+   npx skills@latest agregar Jami Studio/agent-native --skill activos
    ```
 
    Vercel/open Skills CLI instala únicamente el archivo de instrucciones; no es así
@@ -497,7 +497,7 @@ La habilidad de la aplicación Assets tiene el ID de aplicación `assets` y est�
 npx @agent-native/core@latest skills add assets
 
 # Vercel/open Habilidades Instalación de CLI: solo instrucciones exportadas, sin configuración de MCP.
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 
 # Instalación alojada: conector MCP solo por URL, sin secretos compartidos en archivos de habilidades.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json

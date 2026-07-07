@@ -110,7 +110,7 @@ Google OAuth tokens are stored in the SQL `oauth_tokens` table. Use the oauth-to
 
 ### Database Access
 
-Use `getDb()` from `server/db/index.ts` to get a Drizzle database instance. All queries are async. Local development defaults to `file:./data/app.db`; deployed apps need a persistent `DATABASE_URL` so data survives container/serverless restarts. Turso is optional, not required. Common choices include Neon, Supabase, Turso/libSQL, plain Postgres, durable SQLite, D1 bindings, and Builder.io-managed environments when available.
+Use `getDb()` from `server/db/index.ts` to get a Drizzle database instance. All queries are async. Local development defaults to `file:./data/app.db`; deployed apps need a persistent `DATABASE_URL` so data survives container/serverless restarts. Turso is optional, not required. Common choices include Neon, Supabase, Turso/libSQL, plain Postgres, durable SQLite, D1 bindings, and Jami Studio-managed environments when available.
 
 ## Build & Dev Commands
 

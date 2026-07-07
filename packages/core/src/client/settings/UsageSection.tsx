@@ -262,7 +262,7 @@ export function UsageSection() {
               <div>
                 <div className="text-[10px] text-muted-foreground">
                   {billing.unit === "builder-credits"
-                    ? "Builder.io credit spend"
+                    ? "Jami Studio credit spend"
                     : "Total spend"}
                 </div>
                 <div className="text-[18px] font-semibold tabular-nums">
@@ -362,7 +362,7 @@ export function UsageSection() {
 
           {billing.unit === "builder-credits" ? (
             <p className="text-[10px] text-muted-foreground">
-              Builder.io credits are estimated from hard token cost, a{" "}
+              Jami Studio credits are estimated from hard token cost, a{" "}
               {billing.hardCostMarginMultiplier ?? 1.25}x margin, and{" "}
               {billing.creditsPerUsd ?? 20} credits per dollar.
             </p>

@@ -1,7 +1,7 @@
 {
   "name": "@agent-native/skills",
   "version": "0.2.257",
-  "description": "Install BuilderIO skills for coding agents.",
+  "description": "Install Jami Studio skills for coding agents.",
   "homepage": "https://github.com/BuilderIO/agent-native#readme",
   "bugs": {
     "url": "https://github.com/BuilderIO/agent-native/issues"

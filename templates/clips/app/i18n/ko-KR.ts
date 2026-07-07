@@ -21,16 +21,16 @@ const messages = {
     gotIt: "확인",
   },
   builderCredits: {
-    pausedTitle: "Builder.io 크레딧이 일시 중지됨",
+    pausedTitle: "Jami Studio 크레딧이 일시 중지됨",
     transcriptionDescription:
-      "백업 전사를 다시 사용하려면 Builder.io를 업그레이드하세요. 기존 네이티브 전사는 계속 표시됩니다.",
+      "백업 전사를 다시 사용하려면 Jami Studio를 업그레이드하세요. 기존 네이티브 전사는 계속 표시됩니다.",
     cleanupDescription:
-      "전사 정리, 요약, AI 제목을 다시 사용하려면 Builder.io를 업그레이드하세요. 네이티브 전사는 유지되었습니다.",
+      "전사 정리, 요약, AI 제목을 다시 사용하려면 Jami Studio를 업그레이드하세요. 네이티브 전사는 유지되었습니다.",
     settingsDescription:
-      "백업 전사, 전사 정리, 요약, AI 제목을 다시 사용하려면 Builder.io를 업그레이드하세요. 기존 네이티브 전사는 계속 표시됩니다.",
+      "백업 전사, 전사 정리, 요약, AI 제목을 다시 사용하려면 Jami Studio를 업그레이드하세요. 기존 네이티브 전사는 계속 표시됩니다.",
     titleDescription:
       "AI 제목 생성이 일시 중지되었습니다. 전사는 계속 사용할 수 있습니다.",
-    upgrade: "Builder.io 업그레이드",
+    upgrade: "Jami Studio 업그레이드",
     retryAfterUpgrade: "업그레이드 후 다시 시도",
     openAiSetup: "AI 설정",
     featureBackupTranscription: "백업 전사",
@@ -139,7 +139,7 @@ const messages = {
     backToLibrary: "라이브러리로 돌아가기",
     storageStillDisconnected: "저장소가 아직 연결되지 않았습니다.",
     finishBuilderOrS3:
-      "Builder.io 팝업을 완료하거나 S3 스토리지를 구성한 후 다시 시도하세요.",
+      "Jami Studio 팝업을 완료하거나 S3 스토리지를 구성한 후 다시 시도하세요.",
     loomImportResumed: "Loom 가져오기가 재개되었습니다.",
     clipUploadResumed: "클립 업로드가 재개되었습니다.",
     couldNotRetryLoom: "Loom 가져오기를 다시 시도할 수 없습니다.",
@@ -174,9 +174,9 @@ const messages = {
     savingWentWrong: "이 클립을 저장하는 중에 문제가 발생했습니다.",
     finishingClip: "클립을 마무리하는 중…",
     loomSourcePreserved:
-      "Loom 소스 링크는 유지됩니다. Builder.io 또는 S3 스토리지를 연결하면 Clips가 자체 복사본 저장을 다시 시도합니다.",
+      "Loom 소스 링크는 유지됩니다. Jami Studio 또는 S3 스토리지를 연결하면 Clips가 자체 복사본 저장을 다시 시도합니다.",
     clipDataPreserved:
-      "클립 데이터는 계속 보존됩니다. Builder.io 또는 S3 스토리지를 연결하면 Clips가 자동으로 업로드합니다.",
+      "클립 데이터는 계속 보존됩니다. Jami Studio 또는 S3 스토리지를 연결하면 Clips가 자동으로 업로드합니다.",
     details: "세부",
     importingLoom: "Loom 가져오는 중...",
     uploadingSavedClip: "저장된 클립 업로드 중…",
@@ -254,13 +254,13 @@ const messages = {
     savingWentWrong: "이 클립을 저장하는 중에 문제가 발생했습니다.",
     finishingClip: "이번 클립을 마무리하며...",
     loomPreservedManage:
-      "Loom 소스 링크는 유지됩니다. Builder.io 또는 S3 스토리지를 연결한 후 가져오기를 다시 시도하세요.",
+      "Loom 소스 링크는 유지됩니다. Jami Studio 또는 S3 스토리지를 연결한 후 가져오기를 다시 시도하세요.",
     videoPreservedManage:
-      "영상은 보존됩니다. Builder.io 또는 S3 스토리지를 연결하면 Clips가 업로드를 완료합니다.",
+      "영상은 보존됩니다. Jami Studio 또는 S3 스토리지를 연결하면 Clips가 업로드를 완료합니다.",
     creatorNeedsStorage:
-      "이 클립을 완료하려면 제작자가 Builder.io 또는 S3 저장소를 연결해야 합니다.",
+      "이 클립을 완료하려면 제작자가 Jami Studio 또는 S3 저장소를 연결해야 합니다.",
     signInStorage:
-      "이것이 귀하의 클립이라면 여기에서 로그인하여 Builder.io 또는 S3 저장소를 연결하고 업로드를 완료하세요.",
+      "이것이 귀하의 클립이라면 여기에서 로그인하여 Jami Studio 또는 S3 저장소를 연결하고 업로드를 완료하세요.",
     uploadNotCompleteSession:
       "아직 업로드가 완료되지 않았습니다. 이 클립의 대시보드를 열거나 제작자에게 저장 공간 확인을 요청하세요.",
     uploadNotCompleteSignIn:
@@ -363,7 +363,7 @@ const messages = {
     transcriptUnavailableTitle: "전사를 사용할 수 없음",
     providerNeedsAttention: "공급자 확인 필요",
     providerNeedsAttentionDescription:
-      "현재 공급자가 이 요청을 일시 중지했습니다. Builder.io로 전환하거나 키를 업데이트한 뒤 다시 시도하세요.",
+      "현재 공급자가 이 요청을 일시 중지했습니다. Jami Studio로 전환하거나 키를 업데이트한 뒤 다시 시도하세요.",
     enableTranscriptionTitle: "전사 사용",
     enableTranscriptionDescription:
       "이 Clip의 캡션, 전사 검색, 요약을 사용합니다.",
@@ -380,11 +380,11 @@ const messages = {
       "음성이 로컬로 캡처되지 않았으며 백업 텍스트 변환이 설정되지 않았습니다.",
     cleanupKept: "정리를 완료할 수 없습니다. 원어민 성적표가 보관되었습니다.",
     cleanupBuilderFailed:
-      "Builder.io가 연결되어 있어도 정리를 완료할 수 없습니다. 원어민 성적표가 보관되었습니다.",
+      "Jami Studio가 연결되어 있어도 정리를 완료할 수 없습니다. 원어민 성적표가 보관되었습니다.",
     cleanupPaused:
-      "정리가 일시중지되었습니다. 설정에서 AI를 연결하세요: Builder.io(무료 크레딧) 또는 직접 보유한 LLM 키.",
+      "정리가 일시중지되었습니다. 설정에서 AI를 연결하세요: Jami Studio(무료 크레딧) 또는 직접 보유한 LLM 키.",
     builderNoResponse:
-      "Builder로부터 답변을 듣지 못했습니다. 팝업을 허용하고 다시 시도하세요.",
+      "Jami Studio로부터 답변을 듣지 못했습니다. 팝업을 허용하고 다시 시도하세요.",
     saveFailed: "저장 실패({{status}})",
     savedRetrying: "저장되었습니다. 텍스트 변환 재시도 중…",
     getGroqKey: "Groq 키 받기",
@@ -630,25 +630,26 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
       "누군가 댓글을 달거나 반응하거나 녹화를 공유하면 이메일을 받습니다.",
     saved: "설정이 저장됨",
     saveFailed: "저장 실패",
-    builderConnectedToast: "Builder.io 연결됨",
+    builderConnectedToast: "Jami Studio 연결됨",
     videoStorage: "동영상 저장소",
     videoStorageDescription:
-      "Builder.io는 Clips 업로드의 기본 저장 경로입니다. 자체 버킷이 필요할 때 S3를 사용할 수 있습니다.",
-    checkingBuilder: "Builder.io 확인 중",
-    builderConnected: "Builder.io 연결됨",
-    connectBuilder: "Builder.io 사용 (무료)",
-    builderConnectedFor: "{{orgName}}에 Builder.io를 사용 중입니다.",
-    builderConnectedGeneric: "새 클립은 연결된 Builder.io 제공자를 사용합니다.",
+      "Jami Studio는 Clips 업로드의 기본 저장 경로입니다. 자체 버킷이 필요할 때 S3를 사용할 수 있습니다.",
+    checkingBuilder: "Jami Studio 확인 중",
+    builderConnected: "Jami Studio 연결됨",
+    connectBuilder: "Jami Studio 사용 (무료)",
+    builderConnectedFor: "{{orgName}}에 Jami Studio를 사용 중입니다.",
+    builderConnectedGeneric:
+      "새 클립은 연결된 Jami Studio 제공자를 사용합니다.",
     builderIncludes:
       "새 클립을 위한 객체 저장소, 업로드, 관리형 전사를 포함합니다.",
     s3Title: "S3 호환 저장소",
     secondary: "보조",
     active: "활성",
     s3BuilderConnectedDescription:
-      "이 워크스페이스가 Builder.io 대신 자체 버킷에 업로드해야 할 때만 사용하세요.",
+      "이 워크스페이스가 Jami Studio 대신 자체 버킷에 업로드해야 할 때만 사용하세요.",
     s3CurrentProvider: "현재 {{providerName}}을(를) 사용 중입니다.",
     s3OwnBucketDescription:
-      "Builder.io 저장소를 원하지 않는 경우 자체 버킷을 사용하세요.",
+      "Jami Studio 저장소를 원하지 않는 경우 자체 버킷을 사용하세요.",
     configureS3: "S3 구성",
     hideS3: "S3 숨기기",
     saveStorage: "저장소 저장",
@@ -667,12 +668,12 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
     s3RegionInvalid: '유효한 리전(예: us-east-1) 또는 "auto"이어야 합니다',
     apiSetup: "AI 설정",
     apiSetupDescription:
-      "Builder.io 무료 크레딧 또는 직접 보유한 LLM 키로 AI를 연결하세요.",
-    builderEasySetup: "Builder.io 무료 크레딧",
+      "Jami Studio 무료 크레딧 또는 직접 보유한 LLM 키로 AI를 연결하세요.",
+    builderEasySetup: "Jami Studio 무료 크레딧",
     builderAiAvailable:
       "포함된 AI 크레딧과 관리형 전사를 Clips에서 사용할 수 있습니다.",
     builderAiDescription:
-      "포함된 AI 크레딧, 객체 스토리지, 업로드, 관리형 전사에는 먼저 Builder.io를 사용하세요.",
+      "포함된 AI 크레딧, 객체 스토리지, 업로드, 관리형 전사에는 먼저 Jami Studio를 사용하세요.",
     providerKeyTitle: "자체 제공자 키 사용",
     providerKeyDescription:
       "제공자 과금 사용을 위해 Anthropic, OpenAI, Gemini, Groq 또는 OpenRouter 키를 추가하세요.",
@@ -823,7 +824,7 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
     pickAtLeastTwo: "이어붙일 녹화를 2개 이상 선택하세요",
     videoUrlMissing: "하나 이상의 녹화에 준비된 동영상 URL이 아직 없습니다",
     connectStorage:
-      "녹화를 이어붙이기 전에 스토리지를 연결하세요: Builder.io(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지.",
+      "녹화를 이어붙이기 전에 스토리지를 연결하세요: Jami Studio(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지.",
     created: "이어붙인 녹화가 생성됨",
     failed: "녹화 이어붙이기 실패",
     noOtherRecordings: "사용 가능한 다른 녹화가 없습니다.",
@@ -1062,15 +1063,15 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
   },
   storageSetup: {
     builderTimeout:
-      "5분 동안 Builder 응답이 없습니다. 팝업을 확인하고 다시 시도하세요.",
-    builderConnected: "Builder.io 연결됨",
-    waitingForBuilder: "Builder 대기 중...",
-    connectBuilder: "Builder.io 사용 (무료)",
+      "5분 동안 Jami Studio 응답이 없습니다. 팝업을 확인하고 다시 시도하세요.",
+    builderConnected: "Jami Studio 연결됨",
+    waitingForBuilder: "Jami Studio 대기 중...",
+    connectBuilder: "Jami Studio 사용 (무료)",
     free: "무료",
     configureS3: "S3 호환 스토리지 구성",
     whyPrompt: "왜 이 화면이 보이나요?",
     whyDescription:
-      "Clips는 100% 무료 오픈 소스 앱이므로 클립을 저장할 방법을 연결해야 합니다. Builder.io로 무료 티어 스토리지와 AI를 사용하거나, S3 호환 객체 스토리지와 직접 보유한 LLM 키를 사용하세요.",
+      "Clips는 100% 무료 오픈 소스 앱이므로 클립을 저장할 방법을 연결해야 합니다. Jami Studio로 무료 티어 스토리지와 AI를 사용하거나, S3 호환 객체 스토리지와 직접 보유한 LLM 키를 사용하세요.",
   },
   captureInstall: {
     title: "Choose your recorder (현지화됨)",
@@ -1273,9 +1274,9 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
     downloadRecording: "Download recording (현지화됨)",
     openRecorderInTab: "Open recorder in tab (현지화됨)",
     connectStorageToFinish:
-      "다음 화면에서 스토리지를 연결하세요: Builder.io(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지. Clips가 저장을 완료합니다.",
+      "다음 화면에서 스토리지를 연결하세요: Jami Studio(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지. Clips가 저장을 완료합니다.",
     connectStorageToRetryLoom:
-      "다음 화면에서 스토리지를 연결하세요: Builder.io(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지. Clips가 가져오기를 다시 시도합니다.",
+      "다음 화면에서 스토리지를 연결하세요: Jami Studio(무료 티어 스토리지 + AI) 또는 S3 호환 스토리지. Clips가 가져오기를 다시 시도합니다.",
   },
   dictateRoute: {
     pageTitle: "Dictate · Clips (현지화됨)",

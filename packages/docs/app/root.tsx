@@ -61,7 +61,7 @@ const JSON_LD = JSON.stringify({
   "@graph": [
     {
       "@type": "Organization",
-      name: "Builder.io",
+      name: "Jami Studio",
       url: "https://builder.io",
       sameAs: ["https://github.com/BuilderIO/agent-native"],
     },
@@ -84,7 +84,7 @@ const JSON_LD = JSON.stringify({
       license: "https://opensource.org/licenses/MIT",
       sourceOrganization: {
         "@type": "Organization",
-        name: "Builder.io",
+        name: "Jami Studio",
         url: "https://builder.io",
       },
       codeRepository: "https://github.com/BuilderIO/agent-native",

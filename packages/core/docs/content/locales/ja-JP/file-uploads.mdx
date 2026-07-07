@@ -1,6 +1,6 @@
 ---
 title: "ファイルのアップロード"
-description: "ファイル アップロード ストレージを構成します — 開発用の SQL フォールバック、本番用の Builder.io またはカスタム プロバイダー。"
+description: "ファイル アップロード ストレージを構成します — 開発用の SQL フォールバック、本番用の Jami Studio またはカスタム プロバイダー。"
 ---
 
 # ファイルのアップロード
@@ -14,7 +14,7 @@ description: "ファイル アップロード ストレージを構成します 
 プロバイダーの解決順序は次のとおりです:
 
 1. **ユーザー登録プロバイダー** — `registerFileUploadProvider()` 経由で登録されたカスタムプロバイダー
-2. **Builder.io プロバイダー** — 組み込み、Builder.io が接続されると自動的にアクティブ化されます
+2. **Jami Studio プロバイダー** — 組み込み、Jami Studio が接続されると自動的にアクティブ化されます
 3. **SQL フォールバック** — ファイルをデータベースに Base64 として保存します (開発には問題ありませんが、運用には問題ありません)
 
 <Diagram id="doc-block-1bqg825" title={"プロバイダーの解決順序"} summary={"UploadFile() は、最初に構成されたプロバイダーを順番に選択します。 SQL フォールバックは常に存在するため、アップロードはセットアップなしで機能します。"}>
@@ -39,7 +39,7 @@ description: "ファイル アップロード ストレージを構成します 
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >接続時に自動 — CDN 配信</small
         >
       </div>
@@ -100,9 +100,9 @@ Dispatches to the first configured provider in resolution order. Check the activ
 
 フォールバックが使用されると、1 回限りの警告がログに記録されます。
 
-## Builder.io ホスティング {#builder-hosting}
+## Jami Studio ホスティング {#builder-hosting}
 
-アプリが Builder.io に接続されている場合、ファイルのアップロードは Builder のアセット ホスティングに自動的にルーティングされます。ファイルは、構成を必要とせずに CDN から提供されます。これは推奨される運用環境設定です。
+アプリが Jami Studio に接続されている場合、ファイルのアップロードは Jami Studio のアセット ホスティングに自動的にルーティングされます。ファイルは、構成を必要とせずに CDN から提供されます。これは推奨される運用環境設定です。
 
 ## カスタムプロバイダー {#custom-providers}
 

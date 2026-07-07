@@ -18,7 +18,7 @@ local Markdown/MDX files.
 - Local Markdown/MDX file editing plus custom interactive MDX components.
 - Inline comments, version history, and full-text search.
 - Private-by-default sharing with per-user / per-org grants and public pages.
-- Optional Notion and Builder.io sync.
+- Optional Notion and Jami Studio sync.
 
 ## Develop locally
 

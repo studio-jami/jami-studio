@@ -115,7 +115,7 @@ export const importDesignFile = defineEventHandler(async (event) => {
 
     if (ext === ".fig") {
       throw new Error(
-        "Use Design system setup to send .fig files through Builder indexing. This import route only accepts HTML.",
+        "Use Design system setup to send .fig files through Jami Studio indexing. This import route only accepts HTML.",
       );
     }
 

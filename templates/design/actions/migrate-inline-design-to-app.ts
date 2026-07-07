@@ -1,27 +1,27 @@
 /**
  * migrate-inline-design-to-app — generate a real React + Tailwind app branch
- * from an inline Alpine/HTML design via the Builder cloud agent.
+ * from an inline Alpine/HTML design via the Jami Studio cloud agent.
  *
  * ## What this action does
  *
- * 1. Requires viewer access to the design and that Builder is fully configured
- *    (credentials + branch project ID).  When Builder is not configured it
+ * 1. Requires viewer access to the design and that Jami Studio is fully configured
+ *    (credentials + branch project ID).  When Jami Studio is not configured it
  *    returns a connect CTA gracefully, never throws.
  * 2. Reads the current design snapshot (live Yjs content when available).
  * 3. Snapshots the current state into `design_versions` (reversible baseline).
  * 4. Builds a migration seed (HTML + :root CSS vars + Brand Kit tokens) via
  *    `buildMigrationSeed` and hands it to `runBuilderAgent`.
  * 5. Returns `{ branchName, url, status, versionId }` so the caller can track
- *    the Builder branch and roll back via `versionId` if needed.
+ *    the Jami Studio branch and roll back via `versionId` if needed.
  *
  * ## Write gating (per DESIGN-STUDIO-PLAN.md §3 & §5)
  *
  * - `writeFile` / `writeTokens` / `writeMotion` on the inline source stay
  *   **planned** until bridge hardening.  This action does NOT write to the
  *   inline design's source files.
- * - `branch` / `deploy` capabilities are **available** once Builder is
+ * - `branch` / `deploy` capabilities are **available** once Jami Studio is
  *   configured (fusion source tier).  This action is the entry point for that
- *   tier — it creates the Builder branch, NOT a local file write.
+ *   tier — it creates the Jami Studio branch, NOT a local file write.
  * - The `design_versions` snapshot is the only local write: it is additive and
  *   never modifies the existing design data.
  *
@@ -33,7 +33,7 @@
  *
  * ## Connect CTA path
  *
- * When Builder is not connected this action returns:
+ * When Jami Studio is not connected this action returns:
  * ```json
  * { "status": "not-configured", "cta": { "kind": "connect-builder", ... } }
  * ```
@@ -64,7 +64,7 @@ import {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** The default Builder app host — mirrors the constant in builder-browser.ts. */
+/** The default Jami Studio app host — mirrors the constant in builder-browser.ts. */
 const DEFAULT_BUILDER_APP_HOST = "https://builder.io";
 
 function resolveBuilderAppHost(): string {
@@ -150,15 +150,15 @@ async function snapshotDesign(
 export default defineAction({
   description:
     "Migrate an inline Alpine/HTML design to a real React + Tailwind app " +
-    "by handing the design's HTML and tokens to the Builder cloud agent. " +
-    "Requires Builder.io to be connected (credentials + branch project ID). " +
-    "When Builder is NOT configured returns a connect CTA — never throws. " +
+    "by handing the design's HTML and tokens to the Jami Studio cloud agent. " +
+    "Requires Jami Studio to be connected (credentials + branch project ID). " +
+    "When Jami Studio is NOT configured returns a connect CTA — never throws. " +
     "Snapshots the current design into design_versions before migrating so " +
     "the inline baseline is always recoverable. " +
     "Returns { branchName, url, status, versionId } on success. " +
     "Real-app source writes (writeFile/writeTokens/writeMotion to the inline " +
     "design) remain planned until bridge hardening; this action only creates a " +
-    "Builder-hosted branch — it does NOT modify the inline design's files.",
+    "Jami Studio-hosted branch — it does NOT modify the inline design's files.",
   schema: z.object({
     designId: z.string().describe("Design project ID to migrate to a real app"),
     brandKitSummary: z
@@ -173,8 +173,8 @@ export default defineAction({
       .string()
       .optional()
       .describe(
-        "Optional branch name for the Builder agent to use. " +
-          "If omitted, Builder generates one.",
+        "Optional branch name for the Jami Studio agent to use. " +
+          "If omitted, Jami Studio generates one.",
       ),
   }),
   run: async ({ designId, brandKitSummary, branchName }) => {
@@ -185,12 +185,12 @@ export default defineAction({
     }
     const design = access.resource as typeof schema.designs.$inferSelect;
 
-    // Snapshotting a design_versions row + kicking off a paid Builder cloud run
+    // Snapshotting a design_versions row + kicking off a paid Jami Studio cloud run
     // are mutations: require editor access. A read-only (viewer) share must not
     // be able to trigger them.
     await assertAccess("design", designId, "editor");
 
-    // ── 2. Builder status check ────────────────────────────────────────────
+    // ── 2. Jami Studio status check ────────────────────────────────────────────
     const builderStatus = await resolveBuilderStatus();
 
     if (!builderStatus.connected || !builderStatus.builderEnabled) {
@@ -211,13 +211,13 @@ export default defineAction({
             kind: "connect-builder" as const,
             label: "Make this a real app",
             description:
-              "Connect Builder.io to migrate this design to a real React app " +
+              "Connect Jami Studio to migrate this design to a real React app " +
               "with components, props, data states, branches, and deploys.",
-            primaryAction: "Connect Builder.io",
+            primaryAction: "Connect Jami Studio",
             connectUrl,
           },
           message:
-            "Builder is not connected. Call connect-builder-app to start " +
+            "Jami Studio is not connected. Call connect-builder-app to start " +
             "the OAuth flow, then retry migrate-inline-design-to-app.",
         };
       }
@@ -228,16 +228,16 @@ export default defineAction({
         designId,
         cta: {
           kind: "configure-project" as const,
-          label: "Configure Builder project",
+          label: "Configure Jami Studio project",
           description:
-            "Builder credentials are present but no branch project ID is set. " +
+            "Jami Studio credentials are present but no branch project ID is set. " +
             "Set DISPATCH_BUILDER_PROJECT_ID, BUILDER_BRANCH_PROJECT_ID, or " +
             "BUILDER_PROJECT_ID to enable cloud agent migration.",
-          primaryAction: "Open Builder settings",
+          primaryAction: "Open Jami Studio settings",
           connectUrl: `${appHost}/account-settings`,
         },
         message:
-          "Builder credentials are configured but no branch project ID is set. " +
+          "Jami Studio credentials are configured but no branch project ID is set. " +
           "Set DISPATCH_BUILDER_PROJECT_ID to enable cloud agent migration.",
       };
     }
@@ -246,7 +246,7 @@ export default defineAction({
     const projectId = await resolveBuilderBranchProjectId();
     if (!projectId) {
       throw new Error(
-        "Builder branch project ID is not configured. " +
+        "Jami Studio branch project ID is not configured. " +
           "Set DISPATCH_BUILDER_PROJECT_ID, BUILDER_BRANCH_PROJECT_ID, or " +
           "BUILDER_PROJECT_ID and try again.",
       );
@@ -269,7 +269,7 @@ export default defineAction({
       brandKitSummary,
     });
 
-    // ── 7. Hand off to the Builder cloud agent ────────────────────────────
+    // ── 7. Hand off to the Jami Studio cloud agent ────────────────────────────
     const ownerEmail = getRequestUserEmail();
     const result = await runBuilderAgent({
       prompt: seed.prompt,
@@ -290,7 +290,7 @@ export default defineAction({
       seedFileCount: seed.fileCount,
       seedTotalBytes: seed.totalBytes,
       message:
-        `Migration started. Builder is generating a React app branch ` +
+        `Migration started. Jami Studio is generating a React app branch ` +
         `"${result.branchName}". Open the url to track progress. ` +
         `The original inline design is preserved as version ${versionId}.`,
     };

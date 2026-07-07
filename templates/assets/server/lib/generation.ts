@@ -127,7 +127,7 @@ export async function getGeminiApiKey(): Promise<string> {
       builderConnectUrl: "/_agent-native/builder/connect",
       byokDocsUrl: "https://aistudio.google.com/apikey",
       message:
-        "Asset generation is not configured. Open Settings and either click Connect Builder.io for images, or expand the Asset generation setup step and paste a Gemini API key for videos and image fallback.",
+        "Asset generation is not configured. Open Settings and either click Connect Jami Studio for images, or expand the Asset generation setup step and paste a Gemini API key for videos and image fallback.",
     });
   }
   return key;
@@ -145,7 +145,7 @@ async function getOpenAIImageApiKey(): Promise<string> {
       builderConnectUrl: "/_agent-native/builder/connect",
       byokDocsUrl: "https://platform.openai.com/api-keys",
       message:
-        "Image generation is not configured. Open Settings and connect Builder.io, or add an OpenAI or Gemini API key manually.",
+        "Image generation is not configured. Open Settings and connect Jami Studio, or add an OpenAI or Gemini API key manually.",
     });
   }
   return key;
@@ -165,7 +165,7 @@ async function isManualImageGenerationConfigured(): Promise<boolean> {
 export function isImageGenerationSetupError(err: unknown): boolean {
   if (err instanceof FeatureNotConfiguredError) return true;
   const message = err instanceof Error ? err.message : "";
-  return /Image generation is not configured|Asset generation is not configured|Builder\.io is connected, but this Builder space/i.test(
+  return /Image generation is not configured|Asset generation is not configured|Jami Studio\.io is connected, but this Jami Studio space/i.test(
     message,
   );
 }
@@ -261,12 +261,12 @@ export async function generateWithBuilderImageApi(
   if (!builderCredentials.privateKey || !builderCredentials.publicKey) {
     const detail =
       !builderCredentials.privateKey && !builderCredentials.publicKey
-        ? "Builder private and public keys are missing"
+        ? "Jami Studio private and public keys are missing"
         : !builderCredentials.privateKey
-          ? "Builder private key is missing"
-          : "Builder public key is missing";
+          ? "Jami Studio private key is missing"
+          : "Jami Studio public key is missing";
     throw new BuilderImageGenerationError(
-      "Builder.io is not fully connected for managed image generation. Reconnect Builder.io so both Builder private and public keys are available.",
+      "Jami Studio is not fully connected for managed image generation. Reconnect Jami Studio so both Jami Studio private and public keys are available.",
       401,
       detail,
     );
@@ -352,7 +352,7 @@ export async function generateWithBuilderImageApi(
         note: "socket aborted at client timeout; provider may still be running under this idempotency key",
       });
       throw new BuilderImageGenerationError(
-        "Builder-managed image generation timed out.",
+        "Jami Studio-managed image generation timed out.",
         504,
         undefined,
         "client_timeout",
@@ -380,7 +380,7 @@ export async function generateWithBuilderImageApi(
     const detail = extractBuilderErrorDetail(text);
     const code = extractBuilderErrorCode(text);
     throw new BuilderImageGenerationError(
-      `Builder-managed image generation failed (${response.status})${detail ? `: ${detail}` : "."}`,
+      `Jami Studio-managed image generation failed (${response.status})${detail ? `: ${detail}` : "."}`,
       response.status,
       detail,
       code,
@@ -391,7 +391,7 @@ export async function generateWithBuilderImageApi(
   const output = body.outputs[0];
   if (!output?.url && !output?.downloadUrl) {
     throw new BuilderImageGenerationError(
-      "Builder-managed image generation returned no image URL.",
+      "Jami Studio-managed image generation returned no image URL.",
       502,
     );
   }
@@ -402,7 +402,7 @@ export async function generateWithBuilderImageApi(
   });
   if (!imageResponse.ok) {
     throw new BuilderImageGenerationError(
-      `Could not download Builder-generated image (${imageResponse.status}).`,
+      `Could not download Jami Studio-generated image (${imageResponse.status}).`,
       imageResponse.status,
     );
   }
@@ -571,7 +571,7 @@ async function generateWithRetryingBuilderImageApi(
             note: "provider never returned a completed result under this idempotency key within the wait budget",
           });
           throw new BuilderImageGenerationError(
-            "Builder-managed image generation is still running after the wait budget. It may finish shortly — try again to pick up the result.",
+            "Jami Studio-managed image generation is still running after the wait budget. It may finish shortly — try again to pick up the result.",
             504,
             err instanceof BuilderImageGenerationError ? err.detail : undefined,
             "client_timeout",
@@ -632,7 +632,7 @@ export async function generateWithManagedImageProvider(
       builderConnectUrl: "/_agent-native/builder/connect",
       byokDocsUrl: "https://aistudio.google.com/apikey",
       message:
-        "Builder-managed image generation is disabled for this deployment. Open Settings and add a Gemini or OpenAI API key manually, or re-enable Builder-managed generation.",
+        "Jami Studio-managed image generation is disabled for this deployment. Open Settings and add a Gemini or OpenAI API key manually, or re-enable Jami Studio-managed generation.",
     });
   }
 
@@ -680,18 +680,18 @@ function builderImageGenerationFallbackMessage(
   const detail = err.detail ? `: ${err.detail}` : ".";
   switch (err.status) {
     case 401:
-      return `Image generation needs Builder.io connected or reconnected${err.detail ? ` (${err.detail})` : ""}. Open Settings and click Connect Builder.io, or expand the Asset generation setup step and add an OpenAI or Gemini API key as the manual fallback.`;
+      return `Image generation needs Jami Studio connected or reconnected${err.detail ? ` (${err.detail})` : ""}. Open Settings and click Connect Jami Studio, or expand the Asset generation setup step and add an OpenAI or Gemini API key as the manual fallback.`;
     case 402:
-      return `Builder.io is connected, but this Builder space cannot use managed image generation credits${detail} Open Builder space settings or reconnect to a space with image-generation credits, or add an OpenAI or Gemini API key as the manual fallback.`;
+      return `Jami Studio is connected, but this Jami Studio space cannot use managed image generation credits${detail} Open Jami Studio space settings or reconnect to a space with image-generation credits, or add an OpenAI or Gemini API key as the manual fallback.`;
     case 403:
-      return `Builder.io is connected, but this Builder space does not have access to managed image generation${detail} Ask a space admin to enable access, reconnect to a different Builder space, or add an OpenAI or Gemini API key as the manual fallback.`;
+      return `Jami Studio is connected, but this Jami Studio space does not have access to managed image generation${detail} Ask a space admin to enable access, reconnect to a different Jami Studio space, or add an OpenAI or Gemini API key as the manual fallback.`;
     case 429:
-      return `Builder-managed image generation is rate limited right now${detail} Retry shortly, or add an OpenAI or Gemini API key as the manual fallback.`;
+      return `Jami Studio-managed image generation is rate limited right now${detail} Retry shortly, or add an OpenAI or Gemini API key as the manual fallback.`;
     case 503:
     case 504:
-      return `Builder-managed image generation is temporarily unavailable${detail} Retry shortly, or add an OpenAI or Gemini API key as the manual fallback.`;
+      return `Jami Studio-managed image generation is temporarily unavailable${detail} Retry shortly, or add an OpenAI or Gemini API key as the manual fallback.`;
     default:
-      return `Builder-managed image generation failed${detail} Add an OpenAI or Gemini API key as the manual fallback if the Builder-managed provider keeps failing.`;
+      return `Jami Studio-managed image generation failed${detail} Add an OpenAI or Gemini API key as the manual fallback if the Jami Studio-managed provider keeps failing.`;
   }
 }
 
@@ -923,7 +923,7 @@ async function generateWithManualImageProvider(
       builderConnectUrl: "/_agent-native/builder/connect",
       byokDocsUrl: "https://aistudio.google.com/apikey",
       message:
-        "Restyle and edit runs need Builder-managed image generation or a Gemini API key because the OpenAI fallback cannot attach source images in this pipeline yet.",
+        "Restyle and edit runs need Jami Studio-managed image generation or a Gemini API key because the OpenAI fallback cannot attach source images in this pipeline yet.",
     });
   }
   return generateWithOpenAI(input);

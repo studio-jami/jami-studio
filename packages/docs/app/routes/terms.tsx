@@ -39,7 +39,7 @@ export const meta = () =>
     {
       property: "og:description",
       content:
-        "The terms that apply when Builder.io operates Agent-Native hosted applications and app services.",
+        "The terms that apply when Jami Studio operates Agent-Native hosted applications and app services.",
     },
   ]);
 

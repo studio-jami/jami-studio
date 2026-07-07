@@ -247,9 +247,9 @@ export const builderTextBlockConfig: BlockSpec<BuilderTextData> =
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "inline",
-    label: "Builder Text",
+    label: "Jami Studio Text",
     description:
-      "Builder Text block backed by a raw sidecar so text edits preserve Builder metadata.",
+      "Jami Studio Text block backed by a raw sidecar so text edits preserve Jami Studio metadata.",
   });
 
 export const builderCodeBlockConfig: BlockSpec<BuilderCodeBlockData> =
@@ -260,9 +260,9 @@ export const builderCodeBlockConfig: BlockSpec<BuilderCodeBlockData> =
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "panel",
-    label: "Builder Code Block",
+    label: "Jami Studio Code Block",
     description:
-      "Builder docs/blog code block with editable code props and raw sidecar preservation.",
+      "Jami Studio docs/blog code block with editable code props and raw sidecar preservation.",
   });
 
 export const builderCodeSnippetsV2BlockConfig: BlockSpec<BuilderCodeSnippetsV2Data> =
@@ -273,9 +273,9 @@ export const builderCodeSnippetsV2BlockConfig: BlockSpec<BuilderCodeSnippetsV2Da
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "panel",
-    label: "Builder CodeSnippetsV2",
+    label: "Jami Studio CodeSnippetsV2",
     description:
-      "Builder.io docs CodeSnippetsV2 component with schema-based prop editing.",
+      "Jami Studio docs CodeSnippetsV2 component with schema-based prop editing.",
   });
 
 export const builderTabbedContentBlockConfig: BlockSpec<BuilderTabbedContentData> =
@@ -286,9 +286,9 @@ export const builderTabbedContentBlockConfig: BlockSpec<BuilderTabbedContentData
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "panel",
-    label: "Builder Tabbed Content",
+    label: "Jami Studio Tabbed Content",
     description:
-      "Builder.io docs Tabbed Content component with markdown tab bodies and raw sidecar preservation.",
+      "Jami Studio docs Tabbed Content component with markdown tab bodies and raw sidecar preservation.",
   });
 
 export const builderSymbolBlockConfig: BlockSpec<BuilderSymbolData> =
@@ -299,9 +299,9 @@ export const builderSymbolBlockConfig: BlockSpec<BuilderSymbolData> =
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "panel",
-    label: "Builder Symbol",
+    label: "Jami Studio Symbol",
     description:
-      "Builder Symbol reference. The symbol stays linked by default instead of being detached.",
+      "Jami Studio Symbol reference. The symbol stays linked by default instead of being detached.",
   });
 
 export const builderRawBlockConfig: BlockSpec<BuilderRawBlockData> =
@@ -312,9 +312,9 @@ export const builderRawBlockConfig: BlockSpec<BuilderRawBlockData> =
     Read: ServerReadStub,
     placement: ["block"],
     editSurface: "none",
-    label: "Builder Raw Block",
+    label: "Jami Studio Raw Block",
     description:
-      "Unmodeled Builder block stored in a hash-checked raw JSON sidecar.",
+      "Unmodeled Jami Studio block stored in a hash-checked raw JSON sidecar.",
   });
 
 export const builderDocsBlockConfigs: BlockSpec<any>[] = [

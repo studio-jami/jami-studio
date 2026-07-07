@@ -2,11 +2,11 @@
 
 Visual feedback and annotation tool for web applications. Users select UI elements, add feedback, and send structured context to any AI agent.
 
-Works standalone, with [Builder.io](https://builder.io), or with any agent runtime that speaks the agent-native protocol (Builder.io, Claude Code, Codex, Gemini CLI, Cursor, etc.).
+Works standalone, with [Jami Studio](https://builder.io), or with any agent runtime that speaks the agent-native protocol (Jami Studio, Claude Code, Codex, Gemini CLI, Cursor, etc.).
 
 ## AI Agent Setup Guide
 
-Instructions for an AI agent (Builder.io, Claude Code, Codex, Cursor, etc.) to add Pinpoint to an agent-native repository.
+Instructions for an AI agent (Jami Studio, Claude Code, Codex, Cursor, etc.) to add Pinpoint to an agent-native repository.
 
 ### Step 1: Install
 
@@ -386,15 +386,15 @@ const { tools, handleTool } = createPinpointMCPTools(); // MCP tool handlers
 | `RestClient`  | Browser with server   | Server-side via REST API      |
 | `FileStore`   | Server-side           | `data/pins/{uuid}.json`       |
 
-## Builder.io Integration
+## Jami Studio Integration
 
-Inside [Builder.io's Fusion](https://builder.io), annotations are sent via `sendToAgentChat()` from `@agent-native/core`:
+Inside [Jami Studio's Fusion](https://builder.io), annotations are sent via `sendToAgentChat()` from `@agent-native/core`:
 
 ```tsx
-<Pinpoint author="Builder User" autoSubmit outputFormat="standard" />
+<Pinpoint author="Jami Studio User" autoSubmit outputFormat="standard" />
 ```
 
-No additional configuration needed when running inside a Builder.io project.
+No additional configuration needed when running inside a Jami Studio project.
 
 Hosts with their own chat implementation can pass `sendToAgent` to reuse Pinpoint's pin,
 draw, queue, and prompt UI while delivering `{ message, context, submit }` themselves.

@@ -14,7 +14,7 @@ import { serializeDatabase } from "./_property-utils.js";
 
 export default defineAction({
   description:
-    "Refresh the local read-only source status envelope for a content database. Mock-local and Builder CMS fixture sources resync field mappings and row identity without external API calls or provider writes.",
+    "Refresh the local read-only source status envelope for a content database. Mock-local and Jami Studio CMS fixture sources resync field mappings and row identity without external API calls or provider writes.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),

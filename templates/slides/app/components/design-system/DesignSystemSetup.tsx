@@ -333,7 +333,7 @@ export function DesignSystemSetup({
 
     const parts: string[] = [];
     parts.push(
-      "Set up a design system from the following sources. Use Builder Design System Intelligence (DSI) as the source of truth for reusable Figma/code/design.md indexing. Analyze each source, extract design tokens (colors, fonts, spacing, borders), and create a cohesive design system for my slide decks.",
+      "Set up a design system from the following sources. Use Jami Studio Design System Intelligence (DSI) as the source of truth for reusable Figma/code/design.md indexing. Analyze each source, extract design tokens (colors, fonts, spacing, borders), and create a cohesive design system for my slide decks.",
     );
 
     if (companyName.trim()) {
@@ -348,7 +348,7 @@ export function DesignSystemSetup({
 
     if (githubLinks.length > 0) {
       parts.push(
-        `\n## Connect Code: GitHub Repositories\nStart Builder DSI indexing for each repository with \`index-design-system-with-builder\`:\n${githubLinks.map((l) => `- ${l.url}`).join("\n")}\n\nBuilder is the source of truth for repo/code design-system indexing. The action also creates a local selectable proxy design system for Slides flows. If Builder is not connected, stop and tell me to connect Builder from Settings.`,
+        `\n## Connect Code: GitHub Repositories\nStart Jami Studio DSI indexing for each repository with \`index-design-system-with-builder\`:\n${githubLinks.map((l) => `- ${l.url}`).join("\n")}\n\nBuilder is the source of truth for repo/code design-system indexing. The action also creates a local selectable proxy design system for Slides flows. If Jami Studio is not connected, stop and tell me to connect Jami Studio from Settings.`,
       );
     }
 
@@ -362,7 +362,7 @@ export function DesignSystemSetup({
       );
       if (withContent.length > 0) {
         parts.push(
-          `\n## Connect Code: Code Files (${withContent.length} files)\nStart Builder DSI indexing with \`index-design-system-with-builder\` using these files as the \`codeFiles\` argument:`,
+          `\n## Connect Code: Code Files (${withContent.length} files)\nStart Jami Studio DSI indexing with \`index-design-system-with-builder\` using these files as the \`codeFiles\` argument:`,
         );
         for (const f of withContent) {
           parts.push(
@@ -385,7 +385,7 @@ export function DesignSystemSetup({
 
     if (builderIndexResult) {
       parts.push(
-        `\n## Connect Figma: Builder-Indexed Figma File\nBuilder DSI indexing has already started.\n- Design system: ${builderIndexResult.designSystemId}\n- Local selectable design system: ${builderIndexResult.localDesignSystemId ?? "(not returned)"}\n- Project: ${builderIndexResult.projectId}\n- Job: ${builderIndexResult.jobId}\n- URL: ${builderIndexResult.builderUrl}\n\nUse Builder as the source of truth for indexed tokens, assets, components, and guidance. Do not call \`create-design-system\` again for this Builder-indexed source.`,
+        `\n## Connect Figma: Jami Studio-Indexed Figma File\nBuilder DSI indexing has already started.\n- Design system: ${builderIndexResult.designSystemId}\n- Local selectable design system: ${builderIndexResult.localDesignSystemId ?? "(not returned)"}\n- Project: ${builderIndexResult.projectId}\n- Job: ${builderIndexResult.jobId}\n- URL: ${builderIndexResult.builderUrl}\n\nUse Jami Studio as the source of truth for indexed tokens, assets, components, and guidance. Do not call \`create-design-system\` again for this Jami Studio-indexed source.`,
       );
     }
 
@@ -432,12 +432,12 @@ export function DesignSystemSetup({
 
     if (customInstructions.trim()) {
       parts.push(
-        `\n## Custom Instructions (durable — store on the design system)\nIf you create a local design system from non-Builder sources, pass these verbatim as the \`customInstructions\` argument. They will be re-applied every time the design system is used to generate slides:\n\n${customInstructions.trim()}`,
+        `\n## Custom Instructions (durable — store on the design system)\nIf you create a local design system from non-Jami Studio sources, pass these verbatim as the \`customInstructions\` argument. They will be re-applied every time the design system is used to generate slides:\n\n${customInstructions.trim()}`,
       );
     }
 
     parts.push(
-      `\n---\nAfter processing all sources, if you started Builder DSI indexing, report the Builder job/design-system URL plus the local selectable design-system id returned by \`index-design-system-with-builder\`. Do not call \`create-design-system\` again for Builder-indexed Figma/code/design.md sources. If you processed non-Builder sources into concrete tokens, call \`create-design-system\` with the combined tokens${
+      `\n---\nAfter processing all sources, if you started Jami Studio DSI indexing, report the Jami Studio job/design-system URL plus the local selectable design-system id returned by \`index-design-system-with-builder\`. Do not call \`create-design-system\` again for Jami Studio-indexed Figma/code/design.md sources. If you processed non-Jami Studio sources into concrete tokens, call \`create-design-system\` with the combined tokens${
         customInstructions.trim()
           ? " AND the verbatim --customInstructions string from above"
           : ""

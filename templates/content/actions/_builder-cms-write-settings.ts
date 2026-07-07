@@ -81,7 +81,7 @@ function writeModeFromPatch(
 ): ContentDatabaseSourceWriteMode {
   const explicit = normalizeWriteMode(args.writeMode);
   if (args.writeMode !== undefined && !explicit) {
-    throw new Error("Choose a valid Builder write mode.");
+    throw new Error("Choose a valid Jami Studio write mode.");
   }
   if (explicit) return explicit;
   if (args.liveWritesEnabled === false) return "read_only";
@@ -175,12 +175,12 @@ export function buildBuilderCmsWriteModeJson(
   if (enabled) {
     if (args.sourceType !== "builder-cms") {
       throw new Error(
-        "Live writes can only be enabled for Builder CMS sources.",
+        "Live writes can only be enabled for Jami Studio CMS sources.",
       );
     }
     if (args.sourceTable !== BUILDER_CMS_SAFE_WRITE_MODEL) {
       throw new Error(
-        `Live Builder writes are only allowed for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
+        `Live Jami Studio writes are only allowed for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
       );
     }
   }

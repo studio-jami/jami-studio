@@ -899,9 +899,9 @@ const messages = {
     continue: "繼續生成",
     title: "設定您的設計系統",
     description:
-      "透過 Builder DSI 連接 Figma、程式碼和選用的 design.md 指引。脈絡越多，代理得到的系統越準確。",
-    figmaParsingTitle: "正在啟動 Builder DSI 索引...",
-    figmaParsingDescription: "Builder 會擷取權杖、元件、資產和使用指引",
+      "透過 Jami Studio DSI 連接 Figma、程式碼和選用的 design.md 指引。脈絡越多，代理得到的系統越準確。",
+    figmaParsingTitle: "正在啟動 Jami Studio DSI 索引...",
+    figmaParsingDescription: "Jami Studio 會擷取權杖、元件、資產和使用指引",
     uploadFig: "連接 Figma .fig 檔案",
     figmaSaveLocalCopy: "上傳 Figma 本機副本：File -> Save local copy",
     websiteUrl: "網站 URL",
@@ -943,7 +943,7 @@ const messages = {
     figmaThumbnailAlt: "Figma 檔案縮略圖",
     errors: {
       chooseFig: "請選取一個.fig 檔案（在 Figma 中：檔案 -> 儲存本機副本）。",
-      parseFig: "無法為該 Figma 檔案啟動 Builder 索引。",
+      parseFig: "無法為該 Figma 檔案啟動 Jami Studio 索引。",
       enterWebsite: "新增前輸入網站 URL。",
       websiteProtocol: "網站 URLs 必須以 http:// 或 https:// 開頭。",
       enterGithub: "在新增之前輸入 GitHub 儲存庫 URL。",
@@ -955,7 +955,7 @@ const messages = {
       figma: {
         title: "連接 Figma",
         description:
-          "上傳 .fig，Builder DSI 會將權杖、元件、資產和品牌指引索引成可重用的設計系統。",
+          "上傳 .fig，Jami Studio DSI 會將權杖、元件、資產和品牌指引索引成可重用的設計系統。",
       },
       company: {
         title: "公司/品牌",
@@ -964,11 +964,11 @@ const messages = {
       code: {
         title: "連接程式碼",
         description:
-          "GitHub 儲存庫、本機程式碼檔案或 design.md 會交給 Builder DSI 索引。",
+          "GitHub 儲存庫、本機程式碼檔案或 design.md 會交給 Jami Studio DSI 索引。",
       },
       designFiles: {
         title: "參考檔案",
-        description: "文件、截圖和品牌資產會補充 Builder DSI 的索引脈絡",
+        description: "文件、截圖和品牌資產會補充 Jami Studio DSI 的索引脈絡",
       },
       importExisting: {
         title: "從現有的匯入",

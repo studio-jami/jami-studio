@@ -1221,11 +1221,11 @@ const ptBR = {
       eyebrow: "Política de Privacidade",
       title: "Agent-Native aplicativos hospedados",
       intro:
-        "Esta política explica como Builder.io coleta, usa, compartilha e retém dados quando opera aplicativos hospedados Agent-Native, modelos hospedados, demonstrações e extensões oficiais de navegador.",
+        "Esta política explica como Jami Studio coleta, usa, compartilha e retém dados quando opera aplicativos hospedados Agent-Native, modelos hospedados, demonstrações e extensões oficiais de navegador.",
       scopeCards: {
         hosted: {
           title: "Aplicativos hospedados",
-          body: "Coberto quando Builder.io opera o serviço Agent-Native ou modelo hospedado para você.",
+          body: "Coberto quando Jami Studio opera o serviço Agent-Native ou modelo hospedado para você.",
         },
         openSource: {
           title: "Código aberto",
@@ -1249,9 +1249,9 @@ const ptBR = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native é de código aberto e o código-fonte está disponível sob a licença MIT. Esta política se aplica apenas a aplicativos e serviços hospedados operados por Builder.io para usuários Agent-Native. Ele não se aplica ao uso do código por outra pessoa, incluindo bifurcações, modelos personalizados, implantações privadas ou versões auto-hospedadas. Se você operar sua própria implantação, será responsável por suas próprias práticas de dados e política de privacidade.",
+          "Agent-Native é de código aberto e o código-fonte está disponível sob a licença MIT. Esta política se aplica apenas a aplicativos e serviços hospedados operados por Jami Studio para usuários Agent-Native. Ele não se aplica ao uso do código por outra pessoa, incluindo bifurcações, modelos personalizados, implantações privadas ou versões auto-hospedadas. Se você operar sua própria implantação, será responsável por suas próprias práticas de dados e política de privacidade.",
         scope2Prefix:
-          "Esta política destina-se a complementar a visão mais ampla de Builder.io",
+          "Esta política destina-se a complementar a visão mais ampla de Jami Studio",
         scope2Suffix:
           "para comportamento do aplicativo hospedado Agent-Native.",
         clips1:
@@ -1275,7 +1275,7 @@ const ptBR = {
         changes1:
           "Poderemos atualizar esta política à medida que os aplicativos hospedados em Agent-Native mudarem. A data atualizada na parte superior da página mostra quando a política foi revisada pela última vez.",
         changes2Prefix:
-          "Para solicitações ou dúvidas sobre privacidade, entre em contato com Builder.io através dos canais de suporte e privacidade listados no",
+          "Para solicitações ou dúvidas sobre privacidade, entre em contato com Jami Studio através dos canais de suporte e privacidade listados no",
       },
       dataCategories: {
         account: {
@@ -1307,18 +1307,18 @@ const ptBR = {
       },
       links: {
         builderPrivacy: "Política de Privacidade",
-        builderPrivacyFull: "Builder.io Política de Privacidade",
+        builderPrivacyFull: "Jami Studio Política de Privacidade",
       },
     },
     terms: {
       eyebrow: "Termos de Serviço",
       title: "Agent-Native aplicativos hospedados",
       intro:
-        "Estes termos se aplicam quando Builder.io opera aplicativos hospedados Agent-Native, modelos hospedados, demonstrações e serviços hospedados oficiais para você.",
+        "Estes termos se aplicam quando Jami Studio opera aplicativos hospedados Agent-Native, modelos hospedados, demonstrações e serviços hospedados oficiais para você.",
       scopeCards: {
         hosted: {
           title: "Aplicativos hospedados",
-          body: "Coberto quando você usa um aplicativo ou modelo Agent-Native operado por Builder.io.",
+          body: "Coberto quando você usa um aplicativo ou modelo Agent-Native operado por Jami Studio.",
         },
         openSource: {
           title: "Código aberto",
@@ -1326,7 +1326,7 @@ const ptBR = {
         },
         selfHosted: {
           title: "Auto-hospedado",
-          body: "Implantações separadas operadas por você ou por outra pessoa não são serviços hospedados Builder.io.",
+          body: "Implantações separadas operadas por você ou por outra pessoa não são serviços hospedados Jami Studio.",
         },
       },
       sections: {
@@ -1343,20 +1343,20 @@ const ptBR = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native é de código aberto e seu código-fonte está disponível sob a licença MIT. Estes termos se aplicam apenas a aplicativos e serviços hospedados operados por Builder.io para usuários Agent-Native. Eles não regem forks, modelos personalizados, implantações privadas ou versões auto-hospedadas operadas fora de Builder.io.",
+          "Agent-Native é de código aberto e seu código-fonte está disponível sob a licença MIT. Estes termos se aplicam apenas a aplicativos e serviços hospedados operados por Jami Studio para usuários Agent-Native. Eles não regem forks, modelos personalizados, implantações privadas ou versões auto-hospedadas operadas fora de Jami Studio.",
         scope2Prefix:
-          "Estes termos complementam a visão mais ampla de Builder.io",
+          "Estes termos complementam a visão mais ampla de Jami Studio",
         scope2Middle: "e o Agent-Native",
         scope2Suffix:
           "Se você usar um aplicativo Agent-Native hospedado em nome de uma empresa ou organização, você declara ter autoridade para aceitar estes termos para essa organização.",
         hostedService:
-          "Builder.io pode fornecer aplicativos Agent-Native hospedados, modelos, demonstrações, espaços de trabalho compartilhados, extensões de navegador e fluxos de trabalho de agentes relacionados. O serviço hospedado pode ser atualizado, limitado, suspenso ou descontinuado à medida que o produto evolui.",
+          "Jami Studio pode fornecer aplicativos Agent-Native hospedados, modelos, demonstrações, espaços de trabalho compartilhados, extensões de navegador e fluxos de trabalho de agentes relacionados. O serviço hospedado pode ser atualizado, limitado, suspenso ou descontinuado à medida que o produto evolui.",
         accounts1:
           "Você é responsável pela precisão das informações da conta, pelas atividades em sua conta e por manter as credenciais seguras. Os aplicativos Agent-Native hospedados podem incluir recursos de organização, convites, recursos compartilhados, integrações conectadas e controles de acesso específicos do aplicativo. Convide apenas usuários e conecte serviços que você está autorizado a usar.",
         accounts2:
-          "Se você acredita que uma conta, espaço de trabalho, integração ou recurso compartilhado foi comprometido ou utilizado indevidamente, entre em contato com o suporte Builder.io imediatamente.",
+          "Se você acredita que uma conta, espaço de trabalho, integração ou recurso compartilhado foi comprometido ou utilizado indevidamente, entre em contato com o suporte Jami Studio imediatamente.",
         content1:
-          "Você retém a propriedade do conteúdo que cria, carrega, grava, importa ou conecta a aplicativos Agent-Native hospedados. Você concede a Builder.io a permissão limitada necessária para hospedar, processar, transmitir, exibir, transformar, analisar e armazenar esse conteúdo para que o aplicativo hospedado e seus fluxos de trabalho de agente possam operar.",
+          "Você retém a propriedade do conteúdo que cria, carrega, grava, importa ou conecta a aplicativos Agent-Native hospedados. Você concede a Jami Studio a permissão limitada necessária para hospedar, processar, transmitir, exibir, transformar, analisar e armazenar esse conteúdo para que o aplicativo hospedado e seus fluxos de trabalho de agente possam operar.",
         content2:
           "Você é responsável por ter os direitos e permissões necessários para conteúdo, gravações, prompts, arquivos, credenciais e dados de integração conectados que você fornece ao serviço.",
         agents1:
@@ -1366,17 +1366,17 @@ const ptBR = {
         openSource:
           "Estes termos não alteram a licença de código aberto do código Agent-Native. Se você baixar, bifurcar, modificar ou auto-hospedar Agent-Native, a licença MIT e os termos que você definiu para sua própria implantação regerão esse uso. Você é responsável pela segurança, privacidade, conformidade, operações e suporte ao usuário para implantações que você opera.",
         suspensionPrefix:
-          "Builder.io pode suspender ou restringir o acesso aos serviços hospedados Agent-Native quando necessário para proteger os usuários, cumprir a lei, prevenir abusos, lidar com riscos de segurança ou operar o serviço. Você pode parar de usar o serviço hospedado a qualquer momento. Alguns dados podem permanecer em backups, logs ou registros de auditoria por um período limitado, conforme descrito no",
+          "Jami Studio pode suspender ou restringir o acesso aos serviços hospedados Agent-Native quando necessário para proteger os usuários, cumprir a lei, prevenir abusos, lidar com riscos de segurança ou operar o serviço. Você pode parar de usar o serviço hospedado a qualquer momento. Alguns dados podem permanecer em backups, logs ou registros de auditoria por um período limitado, conforme descrito no",
         disclaimers1:
-          "Os serviços hospedados Agent-Native são fornecidos no estado em que se encontram e conforme disponíveis, sujeitos à lei aplicável e a qualquer acordo escrito separado que você tenha com Builder.io. Builder.io não garante que aplicativos hospedados, integrações, automações ou saídas AI serão ininterruptos, livres de erros ou atenderão a todos os requisitos.",
+          "Os serviços hospedados Agent-Native são fornecidos no estado em que se encontram e conforme disponíveis, sujeitos à lei aplicável e a qualquer acordo escrito separado que você tenha com Jami Studio. Jami Studio não garante que aplicativos hospedados, integrações, automações ou saídas AI serão ininterruptos, livres de erros ou atenderão a todos os requisitos.",
         disclaimers2Prefix:
-          "Na extensão máxima permitida por lei, a responsabilidade de Builder.io pelos serviços Agent-Native hospedados é limitada conforme descrito no documento mais amplo de Builder.io",
+          "Na extensão máxima permitida por lei, a responsabilidade de Jami Studio pelos serviços Agent-Native hospedados é limitada conforme descrito no documento mais amplo de Jami Studio",
         disclaimers2Suffix:
           "ou outro acordo por escrito que se aplique ao seu uso.",
         changes1:
           "Podemos atualizar estes termos à medida que os aplicativos hospedados em Agent-Native mudam. A data atualizada no topo da página mostra quando os termos foram revisados ​​pela última vez.",
         changes2Prefix:
-          "Para dúvidas sobre estes termos, entre em contato com Builder.io através dos canais de suporte listados em Builder.io",
+          "Para dúvidas sobre estes termos, entre em contato com Jami Studio através dos canais de suporte listados em Jami Studio",
       },
       hostedServicePoints: {
         create:

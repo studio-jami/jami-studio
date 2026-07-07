@@ -180,5 +180,5 @@ Do NOT attempt to edit files directly in production. Instead:
 3. If it says branch creation is not available, relay that plainly. Do not tell the user there is a setting they can enable.
 
 Example response after calling the tool:
-"I've queued that change with Builder branch creation. You can track and accept it here: <url>"`,
+"I've queued that change with Jami Studio branch creation. You can track and accept it here: <url>"`,
 });

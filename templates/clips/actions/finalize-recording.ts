@@ -524,7 +524,7 @@ export default defineAction({
 
       // The recorder stashes compression metadata at
       // `recording-compression-{id}` when its browser-side ffmpeg.wasm
-      // pass ran to bring the assembled blob under Builder.io's 100 MB
+      // pass ran to bring the assembled blob under Jami Studio's 100 MB
       // upload cap. Stored under its own sub-key (rather than nested
       // inside `recording-upload-{id}`) because the recorder client
       // overwrites the upload key on every chunk POST — co-locating the
@@ -843,10 +843,10 @@ export default defineAction({
           skipCompressionWait: true,
         });
       } catch (err) {
-        // Capture structured context so a "Builder.io upload failed (500)" can
+        // Capture structured context so a "Jami Studio upload failed (500)" can
         // be diagnosed without round-tripping with the user. Especially
         // important alongside the new browser-side compression — we want to
-        // know whether the user hit Builder.io's 100 MB cap on the original
+        // know whether the user hit Jami Studio's 100 MB cap on the original
         // recording or on the compressed result.
         try {
           captureRouteError(err, {
@@ -946,7 +946,7 @@ export default defineAction({
         await writeAppState("refresh-signal", { ts: Date.now() });
 
         // Keep the chunk scratch-space recoverable. Once the user connects
-        // Builder.io/S3, the player calls this action again and the same chunks
+        // Jami Studio/S3, the player calls this action again and the same chunks
         // are uploaded to the newly configured provider.
         chunkKeysToPurge = [];
 
@@ -964,7 +964,7 @@ export default defineAction({
           "File upload returned no URL. Check your storage provider configuration.",
         );
         // Provider returned success but no URL — likely a misconfigured S3
-        // bucket or a Builder.io edge case worth investigating.
+        // bucket or a Jami Studio edge case worth investigating.
         try {
           captureRouteError(err, {
             route: "finalize-recording",

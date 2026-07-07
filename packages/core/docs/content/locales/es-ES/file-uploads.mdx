@@ -1,6 +1,6 @@
 ---
 title: "Carga de archivos"
-description: "Configurar el almacenamiento de carga de archivos: respaldo SQL para desarrolladores, Builder.io o proveedores personalizados para producción."
+description: "Configurar el almacenamiento de carga de archivos: respaldo SQL para desarrolladores, Jami Studio o proveedores personalizados para producción."
 ---
 
 # Carga de archivos
@@ -14,7 +14,7 @@ Las solicitudes de carga van a `POST /_agent-native/file-upload`, que las envía
 El orden de resolución del proveedor es:
 
 1. **Proveedores registrados por el usuario**: proveedores personalizados registrados a través de `registerFileUploadProvider()`
-2. **Proveedor Builder.io**: integrado, se activa automáticamente cuando se conecta Builder.io
+2. **Proveedor Jami Studio**: integrado, se activa automáticamente cuando se conecta Jami Studio
 3. **SQL reserva**: almacena archivos como base64 en la base de datos (está bien para desarrollo, no para producción)
 
 <Diagram id="doc-block-12sluna" title={"Orden de resolución del proveedor"} summary={"uploadFile() elige el primer proveedor configurado en orden. El respaldo SQL siempre existe, por lo que las cargas funcionan sin configuración."}>
@@ -39,7 +39,7 @@ El orden de resolución del proveedor es:
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >automático al conectar — servido por CDN</small
         >
       </div>
@@ -100,9 +100,9 @@ Cuando no se configura ningún proveedor, los archivos se almacenan como datos b
 
 Se registra una advertencia única cuando se utiliza el respaldo.
 
-## Alojamiento Builder.io {#builder-hosting}
+## Alojamiento Jami Studio {#builder-hosting}
 
-Cuando su aplicación está conectada a Builder.io, las cargas de archivos se enrutan automáticamente al alojamiento de activos de Builder. Los archivos se sirven desde un CDN sin necesidad de configuración. Esta es la configuración de producción recomendada.
+Cuando su aplicación está conectada a Jami Studio, las cargas de archivos se enrutan automáticamente al alojamiento de activos de Jami Studio. Los archivos se sirven desde un CDN sin necesidad de configuración. Esta es la configuración de producción recomendada.
 
 ## Proveedores personalizados {#custom-providers}
 

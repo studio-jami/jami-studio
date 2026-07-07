@@ -160,7 +160,7 @@ export default defineAction({
 ```
 
 `completeText()` runs through the same configured engine layer as the agent
-chat, including Builder, Anthropic, AI SDK providers, user/app model defaults,
+chat, including Jami Studio, Anthropic, AI SDK providers, user/app model defaults,
 request-scoped secrets, and engine-normalized errors. It is server-only; do not
 call model providers from client code. If the operation is user-facing, wrap it
 in an action so the UI and agent share the same capability.

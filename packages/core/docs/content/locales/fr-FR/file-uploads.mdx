@@ -1,6 +1,6 @@
 ---
 title: "Téléchargements de fichiers"
-description: "Configurer le stockage de téléchargement de fichiers : solution de secours SQL pour le développement, Builder.io ou fournisseurs personnalisés pour la production."
+description: "Configurer le stockage de téléchargement de fichiers : solution de secours SQL pour le développement, Jami Studio ou fournisseurs personnalisés pour la production."
 ---
 
 # Téléchargements de fichiers
@@ -14,7 +14,7 @@ Les requêtes de téléchargement sont envoyées à `POST /_agent-native/file-up
 L'ordre de résolution du fournisseur est :
 
 1. **Fournisseurs enregistrés par l'utilisateur** : fournisseurs personnalisés enregistrés via `registerFileUploadProvider()`
-2. **Fournisseur Builder.io** — intégré, s'active automatiquement lorsque Builder.io est connecté
+2. **Fournisseur Jami Studio** — intégré, s'active automatiquement lorsque Jami Studio est connecté
 3. **secours SQL** — stocke les fichiers en base64 dans la base de données (bien pour le développement, pas pour la production)
 
 <Diagram id="doc-block-1msczw9" title={"Ordre de résolution du fournisseur"} summary={"uploadFile() sélectionne le premier fournisseur configuré dans l'ordre. La solution de secours SQL existe toujours, donc les téléchargements fonctionnent sans configuration."}>
@@ -39,7 +39,7 @@ L'ordre de résolution du fournisseur est :
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >automatique une fois connecté — servi par CDN</small
         >
       </div>
@@ -100,9 +100,9 @@ Lorsqu'aucun fournisseur n'est configuré, les fichiers sont stockés sous forme
 
 Un avertissement unique est enregistré lorsque la solution de secours est utilisée.
 
-## Hébergement Builder.io {#builder-hosting}
+## Hébergement Jami Studio {#builder-hosting}
 
-Lorsque votre application est connectée à Builder.io, les téléchargements de fichiers sont automatiquement acheminés vers l'hébergement d'actifs de Builder. Les fichiers sont servis à partir d'un CDN sans aucune configuration nécessaire. Il s'agit de la configuration de production recommandée.
+Lorsque votre application est connectée à Jami Studio, les téléchargements de fichiers sont automatiquement acheminés vers l'hébergement d'actifs de Jami Studio. Les fichiers sont servis à partir d'un CDN sans aucune configuration nécessaire. Il s'agit de la configuration de production recommandée.
 
 ## Fournisseurs personnalisés {#custom-providers}
 

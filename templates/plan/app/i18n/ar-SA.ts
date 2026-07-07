@@ -591,7 +591,7 @@ const messages = {
       },
       autoWithLabel: "تلقائي: {{label}}",
       agentMissing:
-        "قم بتوصيل الوكيل للتشغيل - أضف مفتاح API أو استخدم Builder.",
+        "قم بتوصيل الوكيل للتشغيل - أضف مفتاح API أو استخدم Jami Studio.",
       describeFirst: "يرجى وصف الخطة أولا.",
       sent: "تم الإرسال إلى وكيل Plan",
       title: "اسمح للوكيل بإنشاء الخطة",

@@ -176,11 +176,11 @@ export const LEGACY_FRAMEWORK_EVENTS_ROUTE = `${FRAMEWORK_ROUTE_PREFIX}/poll-eve
 
 export function getFrameworkEnvKeys(): EnvKeyConfig[] {
   return [
-    { key: "ENABLE_BUILDER", label: "Enable Builder.io features" },
+    { key: "ENABLE_BUILDER", label: "Enable Jami Studio features" },
     {
       key: "AGENT_ENGINE_PREFER_BYO_KEY",
       label:
-        "Prefer BYO LLM key over Builder gateway (default: false — gateway wins)",
+        "Prefer BYO LLM key over Jami Studio gateway (default: false — gateway wins)",
     },
     {
       key: "RESEND_API_KEY",
@@ -369,7 +369,7 @@ export function resolveBuilderWaitlistFormTargetForRequest(
     envFormsOrigin || DEFAULT_BUILDER_WAITLIST_FORMS_ORIGIN,
   );
   if (!formsOrigin) {
-    throw new Error("Invalid Builder waitlist Forms origin");
+    throw new Error("Invalid Jami Studio waitlist Forms origin");
   }
 
   return { formId, formsOrigin };
@@ -704,7 +704,7 @@ export function getFrameworkRouteRequestUrl(event: H3Event): URL {
   if (url.search) return url;
 
   // In some mounted Nitro/H3 paths, `event.url` is normalized while the raw
-  // Node request URL still has the query string. Builder callbacks carry the
+  // Node request URL still has the query string. Jami Studio callbacks carry the
   // signed `_an_state` there, so preserve it before validating the flow.
   const rawUrl =
     event.node?.req?.url ??
@@ -765,7 +765,7 @@ export interface CoreRoutesPluginOptions {
   envKeys?: EnvKeyConfig[];
   /**
    * Optional owner resolver for narrowly-scoped public routes. Used by public
-   * pages that let anonymous viewers connect Builder credentials for their
+   * pages that let anonymous viewers connect Jami Studio credentials for their
    * own browser-scoped agent session.
    */
   anonymousOwner?: BuilderAnonymousOwnerResolver;
@@ -814,7 +814,7 @@ export function createCoreRoutesPlugin(
 
       // Legacy cleanup: key saves now go to scoped app_secrets rows. Do not
       // rehydrate the old deployment-global `persisted-env-vars` row into
-      // process.env; keep only the Builder scrub so stale leaked keys self-heal.
+      // process.env; keep only the Jami Studio scrub so stale leaked keys self-heal.
       try {
         const persisted = (await getSetting("persisted-env-vars")) as Record<
           string,
@@ -848,13 +848,13 @@ export function createCoreRoutesPlugin(
         // DB not ready yet — skip
       }
 
-      // Honor Builder disconnect. Nitro's dev env-runner preserves
+      // Honor Jami Studio disconnect. Nitro's dev env-runner preserves
       // `process.env` across `.env` file reloads inside the same worker, so
       // deleting BUILDER_PRIVATE_KEY in the disconnect handler can bleed
       // back through an env-runner restart. We persist a
       // `builder-disconnected` flag in SQL and scrub BUILDER_* on every
       // plugin init while the flag is set. The flag is cleared by the
-      // Builder cli-auth callback when the user re-connects.
+      // Jami Studio cli-auth callback when the user re-connects.
       try {
         const disconnected = (await getSetting("builder-disconnected")) as {
           at?: number;
@@ -1337,7 +1337,7 @@ export function createCoreRoutesPlugin(
               ),
             } as T & { cliAuthUrl?: string };
             // Direct cli-auth only works when the callback lands on the same
-            // deployment that minted the signed state. Builder/Fusion previews
+            // deployment that minted the signed state. Jami Studio/Fusion previews
             // often need a gateway callback origin; in that case use the
             // /builder/connect trampoline so it can write the pending-connect
             // row that the gateway callback validates against.
@@ -1422,9 +1422,9 @@ export function createCoreRoutesPlugin(
                 // settings store unavailable — fall through
               }
 
-              // Read request-scoped Builder credentials first; deploy env is only
+              // Read request-scoped Jami Studio credentials first; deploy env is only
               // the fallback. This keeps a root/local BUILDER_PRIVATE_KEY from
-              // blocking a user from connecting their own Builder account.
+              // blocking a user from connecting their own Jami Studio account.
               try {
                 const {
                   resolveBuilderCredentials,
@@ -1455,7 +1455,7 @@ export function createCoreRoutesPlugin(
                     // Surface durable credential rejection separately from
                     // one-shot cli-auth callback failures. The reconnect UI keeps
                     // polling through authError while the user chooses a new
-                    // Builder space; connectError means the active callback itself
+                    // Jami Studio space; connectError means the active callback itself
                     // failed and should stop the flow.
                     authError: {
                       message: authFailure.message,
@@ -1464,7 +1464,7 @@ export function createCoreRoutesPlugin(
                   });
                 }
                 if (creds.privateKey && creds.publicKey) {
-                  // Best-effort: surface the real space name(s) from Builder's
+                  // Best-effort: surface the real space name(s) from Jami Studio's
                   // Admin API. Stay NON-BLOCKING — return whatever is cached now
                   // and refresh in the background for the next poll. Falls back
                   // to orgName until the cache warms.
@@ -1561,7 +1561,7 @@ export function createCoreRoutesPlugin(
       );
 
       // How long a pending-connect row is valid. Must be long enough for
-      // the user to complete the Builder CLI-auth flow, but short enough
+      // the user to complete the Jami Studio CLI-auth flow, but short enough
       // that a stale row from an abandoned attempt doesn't accept a new
       // callback minutes later.
       const BUILDER_CONNECT_PENDING_TTL_MS = 10 * 60 * 1000; // 10 min
@@ -1599,7 +1599,7 @@ export function createCoreRoutesPlugin(
         return true;
       }
 
-      // Lightweight 302 to the Builder CLI-auth URL. Lets clients do
+      // Lightweight 302 to the Jami Studio CLI-auth URL. Lets clients do
       // `window.open('/_agent-native/builder/connect', '_blank')` synchronously
       // inside a click handler, avoiding the popup-blocker downgrade that
       // happens when an await sits before window.open.
@@ -1657,8 +1657,8 @@ export function createCoreRoutesPlugin(
           // local desktop popups stamped as same-site/cross-site by the browser.
           if (!isSameOriginConnect(event) && !hasValidConnectToken) {
             const crossOriginMessage = connectToken
-              ? "This Builder connect link is expired or belongs to a different deployment. Close this popup and click Connect account again."
-              : "Builder connect opened without a fresh signed link. Close this popup and click Connect account again.";
+              ? "This Jami Studio connect link is expired or belongs to a different deployment. Close this popup and click Connect account again."
+              : "Jami Studio connect opened without a fresh signed link. Close this popup and click Connect account again.";
             await trackBuilderLifecycle(
               event,
               "builder connect failed",
@@ -1690,7 +1690,7 @@ export function createCoreRoutesPlugin(
               "text/html; charset=utf-8",
             );
             return createBuilderBrowserCallbackErrorPage(crossOriginMessage, {
-              title: "Couldn't start Builder connection",
+              title: "Couldn't start Jami Studio connection",
               body: "The connect popup did not include a valid signed link for this app.",
               closeHint:
                 "Close this popup, refresh the app, and try Connect account again.",
@@ -1728,7 +1728,7 @@ export function createCoreRoutesPlugin(
               },
             );
             const msg =
-              "Could not initiate Builder connect — storage unavailable. Try again.";
+              "Could not initiate Jami Studio connect — storage unavailable. Try again.";
             console.error(
               "[builder] Could not store pending-connect state:",
               (err as Error)?.message ?? err,
@@ -1761,9 +1761,9 @@ export function createCoreRoutesPlugin(
             },
           );
           setBuilderConnectOwnerCookie(event, ownerEmail);
-          // The primary UI now opens the signed Builder /cli-auth URL directly
+          // The primary UI now opens the signed Jami Studio /cli-auth URL directly
           // from /builder/status. Keep this legacy trampoline working for older
-          // clients, but still send it to Builder immediately and include signed
+          // clients, but still send it to Jami Studio immediately and include signed
           // callback state so the callback does not depend on popup cookies.
           const cliAuthUrl = buildBuilderCliAuthUrl(
             getBuilderCliAuthCallbackOriginForEvent(event),
@@ -1810,8 +1810,8 @@ export function createCoreRoutesPlugin(
           // Wrap in runWithRequestContext so resolveBuilderCredential() inside
           // runBuilderAgent() resolves per-user app_secrets rather than falling
           // through to process.env — the same pattern the /builder/status endpoint
-          // uses. Without this, per-user Builder keys stored in app_secrets are
-          // invisible to the run path and the call throws "Builder keys are not
+          // uses. Without this, per-user Jami Studio keys stored in app_secrets are
+          // invisible to the run path and the call throws "Jami Studio keys are not
           // configured" even though the status endpoint correctly reports configured=true.
           return runWithRequestContext(
             { userEmail, orgId: orgId ?? undefined },
@@ -1821,7 +1821,7 @@ export function createCoreRoutesPlugin(
                 setResponseStatus(event, 403);
                 return {
                   error:
-                    "Builder branch creation is not available for this organization yet.",
+                    "Jami Studio branch creation is not available for this organization yet.",
                 };
               }
 
@@ -1830,7 +1830,7 @@ export function createCoreRoutesPlugin(
               const builderUserId =
                 (await resolveBuilderCred("BUILDER_USER_ID")) || undefined;
               // Server-controlled projectId — don't let clients target arbitrary
-              // Builder projects with our private key. When this feature graduates
+              // Jami Studio projects with our private key. When this feature graduates
               // past the hardcoded preview, the projectId will come from
               // workspace/org config, still resolved server-side.
               try {
@@ -1848,7 +1848,8 @@ export function createCoreRoutesPlugin(
               } catch (e) {
                 setResponseStatus(event, 500);
                 return {
-                  error: e instanceof Error ? e.message : "Builder run failed",
+                  error:
+                    e instanceof Error ? e.message : "Jami Studio run failed",
                 };
               }
             },
@@ -1857,8 +1858,8 @@ export function createCoreRoutesPlugin(
       );
 
       // Branch-creation waitlist signup. Used by ConnectBuilderCard when the
-      // current request has no Builder branch project configured. Hosted
-      // Agent Native deployments submit into the Builder-org Forms waitlist;
+      // current request has no Jami Studio branch project configured. Hosted
+      // Agent Native deployments submit into the Jami Studio-org Forms waitlist;
       // local/self-hosted deployments keep the analytics signal without
       // sending private workspace data to Agent Native.
       getH3App(nitroApp).use(
@@ -1973,9 +1974,9 @@ export function createCoreRoutesPlugin(
           // origin, in priority order:
           //   1. `_an_opener` — written into the callback URL's query by
           //      buildBuilderCliAuthUrl when cli-auth's allow-list forced
-          //      preview_url onto the gateway. Survives Builder's redirect
-          //      verbatim (Builder preserves redirect_url's query string).
-          //   2. `preview-url` — Builder echoes the top-level preview_url back
+          //      preview_url onto the gateway. Survives Jami Studio's redirect
+          //      verbatim (Jami Studio preserves redirect_url's query string).
+          //   2. `preview-url` — Jami Studio echoes the top-level preview_url back
           //      as a query param on the callback. Reflects the gateway on
           //      the fallback path, but matches the opener on the happy path.
           //   3. The event's own origin — last-resort fallback.
@@ -2107,7 +2108,7 @@ export function createCoreRoutesPlugin(
               },
             );
             const msg =
-              "No active connect flow found. Restart the Builder connect flow from Settings.";
+              "No active connect flow found. Restart the Jami Studio connect flow from Settings.";
             // Write an error signal so the polling loop in the parent tab
             // terminates quickly instead of waiting 5 minutes for the timeout.
             try {
@@ -2148,7 +2149,7 @@ export function createCoreRoutesPlugin(
             // immediately via BroadcastChannel rather than hanging until the
             // 5-minute timeout.
             const msg =
-              "Builder didn't return credentials. Restart the connect flow from settings.";
+              "Jami Studio didn't return credentials. Restart the connect flow from settings.";
             await putSetting(`builder-connect-error:${ownerEmail}`, {
               message: msg,
               at: Date.now(),
@@ -2179,7 +2180,7 @@ export function createCoreRoutesPlugin(
             requestUrl.searchParams.get("is-free-account"),
           );
 
-          // Store per-user in app_secrets so each user's Builder connection
+          // Store per-user in app_secrets so each user's Jami Studio connection
           // is independent. No more shared env vars that the last connector
           // overwrites.
           //
@@ -2234,7 +2235,7 @@ export function createCoreRoutesPlugin(
           } catch (err) {
             writeError = (err as Error)?.message ?? String(err);
             console.error(
-              "[builder] Failed to persist Builder credentials:",
+              "[builder] Failed to persist Jami Studio credentials:",
               writeError,
             );
           }
@@ -2313,7 +2314,7 @@ export function createCoreRoutesPlugin(
           // The parent (opener) is the original preview surface that started the
           // connect flow, NOT the callback server's own origin — when the
           // env-configured gateway is used as the callback fallback (because
-          // Builder rejects the preview host), the callback server and the
+          // Jami Studio rejects the preview host), the callback server and the
           // opener live on different origins, and postMessage to the gateway
           // origin would be dropped by the preview opener. callbackParentOrigin
           // is the precomputed best-available opener origin (`_an_opener` →
@@ -2325,7 +2326,7 @@ export function createCoreRoutesPlugin(
       );
 
       // POST /_agent-native/builder/disconnect — revoke the user's per-user
-      // or org-scoped Builder credentials in app_secrets. Deploy-level env
+      // or org-scoped Jami Studio credentials in app_secrets. Deploy-level env
       // credentials are never mutated here; if env is configured it remains as
       // the fallback after request-scoped credentials are removed.
       getH3App(nitroApp).use(
@@ -2376,7 +2377,7 @@ export function createCoreRoutesPlugin(
             return {
               ok: false,
               error:
-                "Could not remove Builder credentials — your connection is unchanged. Please retry.",
+                "Could not remove Jami Studio credentials — your connection is unchanged. Please retry.",
               cause: err instanceof Error ? err.message : String(err),
             };
           }
@@ -2390,7 +2391,7 @@ export function createCoreRoutesPlugin(
         }),
       );
 
-      // Proxy to Builder's agents-run API for background code changes.
+      // Proxy to Jami Studio's agents-run API for background code changes.
       getH3App(nitroApp).use(
         `${P}/builder/agents-run`,
         defineEventHandler(async (event: H3Event) => {
@@ -2415,7 +2416,7 @@ export function createCoreRoutesPlugin(
                 setResponseStatus(event, 400);
                 return {
                   error:
-                    "Builder not connected. Connect Builder in Setup to use background agent.",
+                    "Jami Studio not connected. Connect Jami Studio in Setup to use background agent.",
                 };
               }
               const body = (await readBody(event)) as {
@@ -2461,7 +2462,8 @@ export function createCoreRoutesPlugin(
                 setResponseStatus(event, 500);
                 return {
                   error: redactValues(
-                    err?.message || "Failed to reach Builder agents-run API",
+                    err?.message ||
+                      "Failed to reach Jami Studio agents-run API",
                     [creds.privateKey, creds.publicKey],
                   ),
                 };
@@ -2630,10 +2632,10 @@ export function createCoreRoutesPlugin(
                 openAiBaseUrlConfigured,
               };
             }
-            // Per-user app_secrets — a user who connected Builder (or pasted
+            // Per-user app_secrets — a user who connected Jami Studio (or pasted
             // their own provider key) may not have any deploy-level env vars
             // set. Stored provider selections are checked first so saving a
-            // BYOK engine can override an existing Builder connection.
+            // BYOK engine can override an existing Jami Studio connection.
             const detectedFromUser = await runWithRequestContext(
               { userEmail, orgId },
               () => detectEngineFromUserSecrets(),
@@ -2953,12 +2955,12 @@ export function createCoreRoutesPlugin(
               : !!active || builderConfigured;
             const activeProvider = isBuilderEnvActive
               ? builderConfigured
-                ? { id: "builder", name: "Builder.io" }
+                ? { id: "builder", name: "Jami Studio" }
                 : null
               : active
                 ? { id: active.id, name: active.name }
                 : builderConfigured
-                  ? { id: "builder", name: "Builder.io" }
+                  ? { id: "builder", name: "Jami Studio" }
                   : null;
 
             return {
@@ -3033,7 +3035,7 @@ export function createCoreRoutesPlugin(
           setResponseStatus(event, 503);
           return {
             error:
-              "No file upload provider configured. Connect Builder.io in Settings → File uploads, or register a provider.",
+              "No file upload provider configured. Connect Jami Studio in Settings → File uploads, or register a provider.",
           };
         }),
       );

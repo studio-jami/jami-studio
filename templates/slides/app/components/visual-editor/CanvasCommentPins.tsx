@@ -257,8 +257,8 @@ export function CanvasCommentPins({
     lines.push(text);
     try {
       // Use `sendToAgentChat` (not the shared `agentChat.submit`) so the
-      // request routes correctly when slides is embedded in Builder/Frame
-      // (the Builder parent ignores `agentNative.submitChat` — the wrapped
+      // request routes correctly when slides is embedded in Jami Studio/Frame
+      // (the Jami Studio parent ignores `agentNative.submitChat` — the wrapped
       // helper falls back to posting to self in that case) and so the agent
       // sidebar is reliably opened via the `agent-panel:open` custom event
       // even if the user has it collapsed.

@@ -10,7 +10,9 @@ import { withTemplateSocialImage } from "../seo";
 export const meta = () =>
   withTemplateSocialImage(
     [
-      { title: "Agent-Native Slides — Open Source AI Presentation Builder" },
+      {
+        title: "Agent-Native Slides — Open Source AI Presentation Jami Studio",
+      },
       {
         name: "description",
         content:
@@ -18,7 +20,8 @@ export const meta = () =>
       },
       {
         property: "og:title",
-        content: "Agent-Native Slides — Open Source AI Presentation Builder",
+        content:
+          "Agent-Native Slides — Open Source AI Presentation Jami Studio",
       },
       {
         property: "og:description",

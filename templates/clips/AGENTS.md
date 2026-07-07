@@ -9,7 +9,7 @@ Detailed media, meeting, dictation, editing, and sharing rules live in
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use actions for recording metadata, transcripts, cleanup, summaries, chapters,
   comments, spaces/folders, meetings, and sharing. Do not bypass access helpers.
 - Use `move-recording` for both single and bulk folder moves. Pass `id` for one
@@ -35,8 +35,8 @@ Detailed media, meeting, dictation, editing, and sharing rules live in
   app context, learned vocabulary, user notes, or AGENTS.md preferences are
   available.
 - Cloud transcription is fallback-only for Clips recordings and should use the
-  configured Builder/Gemini or Groq paths, not OpenAI.
-- AI setup must be visible and paid-account-backed: lead with Builder.io Connect
+  configured Jami Studio/Gemini or Groq paths, not OpenAI.
+- AI setup must be visible and paid-account-backed: lead with Jami Studio Connect
   for managed credits, object storage, uploads, and transcription. BYOK belongs
   in the agent sidebar's API Keys & Connections panel; template settings may
   signpost that panel but should not create a second credential vault.
@@ -44,7 +44,7 @@ Detailed media, meeting, dictation, editing, and sharing rules live in
   meeting notes; Groq powers backup speech-to-text.
 - Hosted/shared recording uploads require configured storage. Do not preserve
   video bytes in SQL as a production fallback; only local SQLite/dev flows may
-  keep scratch chunks while a user connects Builder.io or S3-compatible storage.
+  keep scratch chunks while a user connects Jami Studio or S3-compatible storage.
 - Use `view-screen` when the active recording, transcript segment, meeting, or
   share context is unclear.
 - Calendar-sourced meeting actions are shortcuts, but do not add raw
@@ -65,11 +65,11 @@ Detailed media, meeting, dictation, editing, and sharing rules live in
   `"pending"`, wait 15-30 seconds and retry the context/transcript URL a few
   times, especially for long recordings. Do not pivot straight to frames or tell
   the user there is no transcript until the retry budget is exhausted.
-- If transcription failed because Builder transcription credits are exhausted,
-  tell the user that clearly and point them to Builder.io credits/upgrade or a
+- If transcription failed because Jami Studio transcription credits are exhausted,
+  tell the user that clearly and point them to Jami Studio credits/upgrade or a
   Groq key for backup speech-to-text. Generic OpenAI or Anthropic chat keys do
   not transcribe Clips recordings.
-- Use `get-builder-credit-status` when the user asks whether Builder.io credit
+- Use `get-builder-credit-status` when the user asks whether Jami Studio credit
   limits are pausing backup transcription, transcript cleanup, summaries, or AI
   title generation. Treat an exhausted status as an FYI/upgrade path, not an app
   error.

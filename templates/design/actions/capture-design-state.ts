@@ -193,7 +193,7 @@ export default defineAction({
     if (!hasCapability(caps, "captureState")) {
       throw new Error(
         "The design's source does not support captureState. " +
-          "Connect Builder or a localhost bridge to enable live captures.",
+          "Connect Jami Studio or a localhost bridge to enable live captures.",
       );
     }
 

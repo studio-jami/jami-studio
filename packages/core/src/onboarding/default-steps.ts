@@ -81,13 +81,14 @@ const llmStep: OnboardingStep = {
   order: 10,
   required: true,
   title: "Connect an AI engine",
-  description: "Use Builder's managed gateway, or bring your own provider key.",
+  description:
+    "Use Jami Studio's managed gateway, or bring your own provider key.",
   methods: [
     {
       id: "builder",
       kind: "builder-cli-auth",
-      label: "Connect Builder",
-      description: "Builder.io's free tier includes AI credits.",
+      label: "Connect Jami Studio",
+      description: "Jami Studio's free tier includes AI credits.",
       primary: true,
       badge: "free",
       payload: {
@@ -123,7 +124,7 @@ const llmStep: OnboardingStep = {
       if (await resolveHasCompleteBuilderConnection()) return true;
     } catch {
       // Credential storage may be unavailable during early boot. Do not fall
-      // back to deployment-level Builder env here; the scoped resolver owns the
+      // back to deployment-level Jami Studio env here; the scoped resolver owns the
       // policy for when that is safe.
     }
     try {

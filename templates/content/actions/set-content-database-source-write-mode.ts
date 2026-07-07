@@ -38,7 +38,7 @@ function executableWriteModes(
 
 export default defineAction({
   description:
-    "Set the tiered Builder CMS write mode for one source. Writes stay off by default and can only be enabled for the safe Builder test collection.",
+    "Set the tiered Jami Studio CMS write mode for one source. Writes stay off by default and can only be enabled for the safe Jami Studio test collection.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -49,10 +49,12 @@ export default defineAction({
     liveWritesEnabled: z
       .boolean()
       .optional()
-      .describe("Whether this source may execute guarded live Builder writes"),
+      .describe(
+        "Whether this source may execute guarded live Jami Studio writes",
+      ),
     writeMode: sourceWriteModeSchema
       .optional()
-      .describe("Tiered Builder write mode for this source"),
+      .describe("Tiered Jami Studio write mode for this source"),
     allowPublicationTransitions: z
       .boolean()
       .optional()
@@ -62,7 +64,7 @@ export default defineAction({
     allowedWriteModes: z
       .array(legacyWriteModeSchema)
       .optional()
-      .describe("Legacy Builder write modes allowed for this source"),
+      .describe("Legacy Jami Studio write modes allowed for this source"),
     allowDraftWrites: z
       .boolean()
       .optional()
@@ -85,12 +87,12 @@ export default defineAction({
     const source = await getExistingSourceForWrite(database.id, args.sourceId);
     if (!source) {
       throw new Error(
-        "Attach a Builder CMS source before changing write mode.",
+        "Attach a Jami Studio CMS source before changing write mode.",
       );
     }
     if (source.sourceType !== "builder-cms") {
       throw new Error(
-        "Live writes can only be configured for Builder CMS sources.",
+        "Live writes can only be configured for Jami Studio CMS sources.",
       );
     }
 

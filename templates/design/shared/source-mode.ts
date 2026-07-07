@@ -207,7 +207,7 @@ export interface FusionDesignSource {
   revision?: string;
   metadata?: Record<string, unknown>;
   /**
-   * Whether Builder credentials are configured and a branch project is set for
+   * Whether Jami Studio credentials are configured and a branch project is set for
    * this fusion source.
    *
    * When `true`, `resolveDescriptorCapabilities()` returns
@@ -217,7 +217,7 @@ export interface FusionDesignSource {
    * When `false` or absent, returns `FUSION_DISCONNECTED_CAPABILITIES`
    * (preview-only — no real-app write or branch operations).
    *
-   * Set this field after verifying Builder connection status via
+   * Set this field after verifying Jami Studio connection status via
    * `resolveIsBuilderBranchingEnabled()` from `@agent-native/core/server`.
    * Callers that need the capability map without a descriptor can use
    * `resolveFusionCapabilities(connected)` from `capability-resolver.ts`.
@@ -231,7 +231,7 @@ export interface FusionDesignSource {
    * "use the connection-aware tier defaults from
    * `resolveDescriptorCapabilities()`".
    *
-   * Populated once the Builder-hosted bridge has proven additional capabilities
+   * Populated once the Jami Studio-hosted bridge has proven additional capabilities
    * beyond the defaults (e.g. specific `writeFile` or `applyEdit` readiness).
    */
   capabilities?: DesignSourceCapabilities;
@@ -475,7 +475,7 @@ export function resolveDescriptorCapabilities(
       // - `connected === false` or absent → `FUSION_DISCONNECTED_CAPABILITIES`:
       //     preview-only; no real-app write or branch operations.
       //
-      // Callers should set `source.connected` after verifying Builder status
+      // Callers should set `source.connected` after verifying Jami Studio status
       // via `resolveIsBuilderBranchingEnabled()`.  When the status is unknown
       // (e.g. a stale descriptor without the field), the conservative
       // disconnected default is returned.

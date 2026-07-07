@@ -30,17 +30,17 @@ const CODE_AGENT_PROVIDER_FIELDSETS: Array<{
 }> = [
   {
     id: "builder",
-    label: "Builder.io",
+    label: "Jami Studio",
     fields: [
       {
         key: "BUILDER_PRIVATE_KEY",
         label: "Private key",
-        placeholder: "Paste Builder private key",
+        placeholder: "Paste Jami Studio private key",
       },
       {
         key: "BUILDER_PUBLIC_KEY",
         label: "Public key",
-        placeholder: "Paste Builder public key",
+        placeholder: "Paste Jami Studio public key",
       },
     ],
   },
@@ -119,13 +119,13 @@ function providerStatusCopy(provider: CodeAgentProviderStatus | undefined): {
 function builderConnectErrorMessage(err: unknown): string {
   const message = err instanceof Error ? err.message : String(err);
   if (message.includes("ERR_ABORTED") || message.includes("loading 'http")) {
-    return "Builder.io connect was opened. Finish the browser flow to continue.";
+    return "Jami Studio connect was opened. Finish the browser flow to continue.";
   }
   if (
     message.includes("No handler registered") ||
     message.includes("code-agents:provider-builder:connect")
   ) {
-    return "Restart Agent Native Desktop to finish enabling Builder connect.";
+    return "Restart Agent Native Desktop to finish enabling Jami Studio connect.";
   }
   return message;
 }
@@ -223,13 +223,13 @@ export function CodeProviderSettings({
           return;
         }
         setProviderMessage(
-          "Restart Agent Native Desktop to finish enabling Builder connect.",
+          "Restart Agent Native Desktop to finish enabling Jami Studio connect.",
         );
         return;
       }
       setBuilderConnecting(true);
       setProviderMessage(
-        "Opened Builder.io in your browser. Finish the flow there to continue.",
+        "Opened Jami Studio in your browser. Finish the flow there to continue.",
       );
       try {
         const result = await api.connectBuilderProvider();
@@ -328,7 +328,7 @@ export function CodeProviderSettings({
           <span className="settings-mode-card-status">
             {settings.configured
               ? `${settings.configuredProviders.join(", ")} ready`
-              : "Connect Builder.io, run codex login, or add an API key before chatting."}
+              : "Connect Jami Studio, run codex login, or add an API key before chatting."}
           </span>
         </div>
       </div>
@@ -339,7 +339,7 @@ export function CodeProviderSettings({
         }`}
       >
         <div className="settings-builder-connect-copy">
-          <span className="settings-builder-title">Builder.io</span>
+          <span className="settings-builder-title">Jami Studio</span>
           <span className="settings-builder-description">
             {builderConnected
               ? builderProvider?.source === "environment"
@@ -365,7 +365,7 @@ export function CodeProviderSettings({
               </>
             ) : (
               <>
-                {builderConnected ? "Reconnect" : "Connect Builder.io"}
+                {builderConnected ? "Reconnect" : "Connect Jami Studio"}
                 <IconExternalLink size={13} />
               </>
             )}

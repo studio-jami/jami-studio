@@ -80,7 +80,7 @@ const ImportLoomRecordingSchema = z.object({
 });
 
 const LOOM_STORAGE_SETUP_REQUIRED_REASON =
-  "Video storage is not connected yet. Connect Builder.io or configure S3-compatible storage, then retry this Loom import.";
+  "Video storage is not connected yet. Connect Jami Studio or configure S3-compatible storage, then retry this Loom import.";
 
 function recordingDeepLink(recordingId: string): string {
   return buildDeepLink({

@@ -8,8 +8,8 @@
  * no native transcript exists.
  *
  * Cloud fallback provider selection:
- *   1. Builder.io transcription (Gemini 3.1 Flash-Lite behind the Builder
- *      proxy) when Builder is connected.
+ *   1. Jami Studio transcription (Gemini 3.1 Flash-Lite behind the Jami Studio
+ *      proxy) when Jami Studio is connected.
  *   2. `GROQ_API_KEY` → Groq's fast speech-to-text fallback.
  *   3. Neither → keep any native transcript or fail with a clear reason.
  *
@@ -852,7 +852,7 @@ async function resolveKey(
 async function pickProvider(
   userEmail: string | null,
 ): Promise<TranscriptionProvider | null> {
-  // Prefer Groq when Builder/native are unavailable — it is the fast
+  // Prefer Groq when Jami Studio/native are unavailable — it is the fast
   // Whisper-compatible speech-to-text fallback. Clips no longer falls back
   // to OpenAI for recording transcription.
   const groqKey = await resolveKey("GROQ_API_KEY", userEmail);
@@ -996,9 +996,9 @@ const requestTranscriptAction = defineAction({
       };
     }
 
-    // ── Builder transcription (cloud fallback) ────────────────────────
-    // Builder proxy is available when the current user has connected
-    // Builder via OAuth (per-user app_secrets) OR when BUILDER_PRIVATE_KEY
+    // ── Jami Studio transcription (cloud fallback) ────────────────────────
+    // Jami Studio proxy is available when the current user has connected
+    // Jami Studio via OAuth (per-user app_secrets) OR when BUILDER_PRIVATE_KEY
     // is set at the deployment level. Use the per-user-aware resolver so
     // a sidebar OAuth connection actually wires through to transcription.
     if (await resolveHasBuilderPrivateKey()) {
@@ -1103,7 +1103,7 @@ const requestTranscriptAction = defineAction({
             db,
             recordingId: args.recordingId,
             ownerEmail,
-            providerName: "Builder",
+            providerName: "Jami Studio",
             now,
           });
         }
@@ -1163,16 +1163,16 @@ const requestTranscriptAction = defineAction({
           });
           builderError = reason;
           console.warn(
-            `[clips] Builder credits exhausted for ${args.recordingId}; preserving native transcript if present and falling back to Groq if configured.`,
+            `[clips] Jami Studio credits exhausted for ${args.recordingId}; preserving native transcript if present and falling back to Groq if configured.`,
           );
         } else {
           builderError = reason;
           console.warn(
-            `[clips] Builder transcription failed for ${args.recordingId}: ${summarizeError(err)}. Preserving native transcript if present and falling back to Groq if configured.`,
+            `[clips] Jami Studio transcription failed for ${args.recordingId}: ${summarizeError(err)}. Preserving native transcript if present and falling back to Groq if configured.`,
           );
           if (verboseTranscriptErrors()) {
             console.warn(
-              "[clips] Builder transcription error details",
+              "[clips] Jami Studio transcription error details",
               serializeError(err, { includeStack: true }),
             );
           }
@@ -1373,7 +1373,7 @@ const requestTranscriptAction = defineAction({
       // Auto-title. The clip was just born with the default title and we now
       // have a transcript to reason over. `regenerate-title` tries the fast
       // media-pipeline path and only queues an agent fallback when appropriate,
-      // so Builder credit pauses stay paused instead of spawning another AI job.
+      // so Jami Studio credit pauses stay paused instead of spawning another AI job.
       // We intentionally skip this when the user (or agent) has already renamed
       // the clip so we never clobber a human-authored title.
       if (isAutoTitleReplaceable(rec.title, rec.titleSource)) {

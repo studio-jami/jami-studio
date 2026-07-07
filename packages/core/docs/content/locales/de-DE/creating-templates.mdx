@@ -202,7 +202,7 @@ export const projectShares = createSharesTable("project_shares");
 
 Schemaänderungen müssen additiv sein. Fügen Sie Tabellen und Spalten über `runMigrations()` in `server/plugins/db.ts` hinzu; Verwenden Sie niemals destruktive SQL, `drizzle-kit push`, Tabellenumbenennungen oder Spaltenlöschungen.
 
-Für App-Lese- und Schreibvorgänge verwenden Sie den Abfrage-Builder von Drizzle und die portablen Operatoren von `drizzle-orm`. Schreiben Sie keinen Produktcode mit rohem SQL, wenn Drizzle die Abfrage ausdrücken kann, und importieren Sie nicht aus `drizzle-orm/sqlite-core` oder `drizzle-orm/pg-core` in Vorlagen.
+Für App-Lese- und Schreibvorgänge verwenden Sie den Abfrage-Jami Studio von Drizzle und die portablen Operatoren von `drizzle-orm`. Schreiben Sie keinen Produktcode mit rohem SQL, wenn Drizzle die Abfrage ausdrücken kann, und importieren Sie nicht aus `drizzle-orm/sqlite-core` oder `drizzle-orm/pg-core` in Vorlagen.
 
 ```ts
 // server/plugins/db.ts

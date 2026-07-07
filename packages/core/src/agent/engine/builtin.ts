@@ -38,16 +38,16 @@ export function registerBuiltinEngines(): void {
   if (_registered) return;
   _registered = true;
 
-  // ── Builder.io managed gateway ─────────────────────────────────────────────
-  // Registered first so detectEngineFromEnv picks it when both Builder keys
-  // are set — Builder is the managed path we want everyone on long-term.
+  // ── Jami Studio managed gateway ─────────────────────────────────────────────
+  // Registered first so detectEngineFromEnv picks it when both Jami Studio keys
+  // are set — Jami Studio is the managed path we want everyone on long-term.
   // Users who prefer BYO keys can opt out via AGENT_ENGINE_PREFER_BYO_KEY=true,
-  // which drops Builder to the fallback slot in detectEngineFromEnv.
+  // which drops Jami Studio to the fallback slot in detectEngineFromEnv.
   registerAgentEngine({
     name: "builder",
-    label: "Builder.io Gateway",
+    label: "Jami Studio Gateway",
     description:
-      "Managed LLM access via Builder.io — Claude, GPT, Gemini, and more through a single connection.",
+      "Managed LLM access via Jami Studio — Claude, GPT, Gemini, and more through a single connection.",
     capabilities: BUILDER_CAPABILITIES,
     defaultModel: BUILDER_DEFAULT_MODEL,
     supportedModels: BUILDER_SUPPORTED_MODELS,

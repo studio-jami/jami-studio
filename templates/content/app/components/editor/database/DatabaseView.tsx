@@ -1152,8 +1152,8 @@ function DatabaseTable({
       setBuilderReviewCheckedAt(new Date().toISOString());
       toast.success(
         nextReview.result.status === "succeeded"
-          ? "Builder update pushed"
-          : "Builder update checked",
+          ? "Jami Studio update pushed"
+          : "Jami Studio update checked",
         {
           description: nextReview.result.message,
         },
@@ -1351,12 +1351,12 @@ function DatabaseTable({
             size="sm"
             aria-label={
               builderReviewChangeSets.length > 0
-                ? `Database settings, ${builderReviewChangeSets.length} Builder update pending`
+                ? `Database settings, ${builderReviewChangeSets.length} Jami Studio update pending`
                 : "Database settings"
             }
             title={
               builderReviewChangeSets.length > 0
-                ? `${builderReviewChangeSets.length} Builder update pending`
+                ? `${builderReviewChangeSets.length} Jami Studio update pending`
                 : "Database settings"
             }
             className={cn(
@@ -1762,8 +1762,8 @@ function DatabaseTable({
               onSuccess: () => {
                 toast.success(
                   enabled
-                    ? "Builder live writes enabled"
-                    : "Builder live writes disabled",
+                    ? "Jami Studio live writes enabled"
+                    : "Jami Studio live writes disabled",
                   {
                     description: enabled
                       ? "Only autosave writes to the Agent Native test collection can run."

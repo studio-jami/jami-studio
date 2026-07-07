@@ -9,7 +9,7 @@ Detailed deck, slide-editing, image, design-system, and export workflows live in
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use actions for deck lifecycle, slide edits, imports, exports, images, design
   systems, and sharing. Do not write deck/slide rows directly.
 - In dev, call actions with `pnpm action <name>`; in production, use native
@@ -20,11 +20,11 @@ Detailed deck, slide-editing, image, design-system, and export workflows live in
   regenerating whole decks unless requested.
 - Follow linked design-system tokens and custom instructions.
 - For reusable design-system setup from Figma, connected code/GitHub, local
-  code/design files, or optional `design.md`, use Builder-backed DSI indexing
+  code/design files, or optional `design.md`, use Jami Studio-backed DSI indexing
   through `index-design-system-with-builder` or `import-file --format fig`.
   Pass readable `design.md` content as `designMd`, use the returned local design
   system id in Slides flows, and call `get-design-system` before generation to
-  hydrate Builder docs/tokens when available. Do not create a duplicate local
+  hydrate Jami Studio docs/tokens when available. Do not create a duplicate local
   design system from raw Figma/code sources.
 - Treat import/export actions as shortcuts, not capability limits. When the
   exact Google Drive endpoint, file metadata field, export format, pagination

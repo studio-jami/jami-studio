@@ -26,7 +26,7 @@ export type VoiceMode = "push-to-talk" | "toggle";
 /**
  * Which transcription backend to use. The desktop app surfaces this in
  * Settings → Voice transcription as three modes: native on-device,
- * Builder.io cleanup, or bring-your-own-key cleanup. Legacy "auto" still
+ * Jami Studio cleanup, or bring-your-own-key cleanup. Legacy "auto" still
  * picks a configured server-side provider, falling through to macOS native
  * dictation or the browser's Web Speech API if nothing is set up.
  */
@@ -413,7 +413,7 @@ async function transcribe(
       : "webm";
   form.append("audio", audioBlob, `voice.${ext}`);
   // Tells the server which provider to use. "auto" matches the existing
-  // server default (Builder Gemini → Gemini → Groq fallback chain),
+  // server default (Jami Studio Gemini → Gemini → Groq fallback chain),
   // anything else pins to that one provider with no fallback.
   form.append("provider", providerPref);
   const trimmedInstructions = instructions?.trim();

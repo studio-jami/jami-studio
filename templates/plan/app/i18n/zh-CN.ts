@@ -279,7 +279,7 @@ const messages = {
     },
     create: {
       advanced: "先进的",
-      agentMissing: "连接代理以运行 - 添加 API 密钥或使用 Builder。",
+      agentMissing: "连接代理以运行 - 添加 API 密钥或使用 Jami Studio。",
       assessment: {
         ui: "自动检测 UI 状态或流程；代理将制定线框优先计划。",
         visual: "汽车将要求代理商提供丰富的技术计划，包括图表和实施细节。",

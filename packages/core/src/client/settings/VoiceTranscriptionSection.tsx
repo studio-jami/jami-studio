@@ -144,7 +144,7 @@ export function VoiceTranscriptionSection() {
   const googleRealtimeReady =
     !!googleRealtimeConfigured && builderRealtimeReady;
 
-  // Read cleanup pref (default: true if Builder is connected).
+  // Read cleanup pref (default: true if Jami Studio is connected).
   useEffect(() => {
     let cancelled = false;
     fetch(CLEANUP_PREFS_URL)
@@ -407,7 +407,7 @@ export function VoiceTranscriptionSection() {
               googleRealtimeReady
                 ? "BYOK only for v1. Streams live partials and finals through Google Speech-to-Text."
                 : googleRealtimeConfigured
-                  ? "Google credentials are set. Connect Builder completely to mint the managed realtime session."
+                  ? "Google credentials are set. Connect Jami Studio completely to mint the managed realtime session."
                   : "BYOK only for v1. Configure Google service account before selecting this source."
             }
             rightSlot={
@@ -425,7 +425,7 @@ export function VoiceTranscriptionSection() {
                   }}
                   className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:bg-accent/40 hover:text-foreground"
                 >
-                  Connect Builder.io
+                  Connect Jami Studio
                   <IconExternalLink size={10} />
                 </button>
               ) : (
@@ -449,7 +449,7 @@ export function VoiceTranscriptionSection() {
             selected={transcriptionMode === "batch"}
             onSelect={() => chooseSource("batch")}
             title="Batch"
-            subtitle="Universal fallback. Sends audio after recording stops through Builder Gemini, Gemini, Groq, then OpenAI."
+            subtitle="Universal fallback. Sends audio after recording stops through Jami Studio Gemini, Gemini, Groq, then OpenAI."
           />
           <SystemAudioStatus />
         </div>
@@ -462,7 +462,7 @@ export function VoiceTranscriptionSection() {
           </div>
           <p className="text-[10px] text-muted-foreground mt-0.5">
             Polish punctuation, casing, filler words, titles, and summaries
-            after capture. Builder Gemini is tried first; BYOK Gemini is the
+            after capture. Jami Studio Gemini is tried first; BYOK Gemini is the
             fallback.
           </p>
         </div>
@@ -488,7 +488,7 @@ export function VoiceTranscriptionSection() {
           {cleanupEnabled && (
             <span className="text-[10px] text-muted-foreground">
               {builderStatus?.configured
-                ? "Builder ready"
+                ? "Jami Studio ready"
                 : geminiConfigured
                   ? "Gemini key set"
                   : "Needs key"}
@@ -526,7 +526,7 @@ export function VoiceTranscriptionSection() {
               title="Google Speech-to-Text service account"
               subtitle={
                 googleRealtimeConfigured
-                  ? "Service-account JSON is set. Connect Builder to mint the managed realtime WebSocket session."
+                  ? "Service-account JSON is set. Connect Jami Studio to mint the managed realtime WebSocket session."
                   : "Service-account JSON for the dedicated realtime WebSocket to Google StreamingRecognize."
               }
               rightSlot={
@@ -545,7 +545,7 @@ export function VoiceTranscriptionSection() {
                     }}
                     className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:text-foreground hover:bg-accent/40"
                   >
-                    Connect Builder.io
+                    Connect Jami Studio
                     <IconExternalLink size={10} />
                   </button>
                 ) : (
@@ -569,7 +569,7 @@ export function VoiceTranscriptionSection() {
               selected={transcriptionMode === "batch" && provider === "auto"}
               onSelect={() => chooseBatchProvider("auto")}
               title="Automatic batch fallback"
-              subtitle="Keep the current Clips fallback chain: Builder Gemini, Gemini, Groq, then OpenAI."
+              subtitle="Keep the current Clips fallback chain: Jami Studio Gemini, Gemini, Groq, then OpenAI."
             />
 
             <ProviderOption
@@ -579,10 +579,10 @@ export function VoiceTranscriptionSection() {
               }
               onSelect={() => chooseBatchProvider("builder-gemini")}
               disabled={!builderStatus?.configured}
-              title="Builder.io Connect"
+              title="Jami Studio Connect"
               subtitle={
                 builderStatus?.configured
-                  ? "Use Builder-hosted Gemini Flash-Lite for batch transcription and cleanup."
+                  ? "Use Jami Studio-hosted Gemini Flash-Lite for batch transcription and cleanup."
                   : "One-click connect for Gemini Flash-Lite cleanup and batch transcription. No Google key needed."
               }
               rightSlot={
@@ -600,7 +600,7 @@ export function VoiceTranscriptionSection() {
                     }}
                     className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:text-foreground hover:bg-accent/40"
                   >
-                    Connect Builder.io
+                    Connect Jami Studio
                     <IconExternalLink size={10} />
                   </button>
                 )

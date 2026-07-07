@@ -6,19 +6,19 @@
  * - **Capability gate (server-side):** re-checks `deployPreview` capability.
  *   When `unavailable` (inline/localhost), returns a `ctaRequired` response with a
  *   "Make it real" CTA — never fakes a deploy call.
- * - **Builder gate:** if `resolveIsBuilderBranchingEnabled()` returns false,
+ * - **Jami Studio gate:** if `resolveIsBuilderBranchingEnabled()` returns false,
  *   returns a `connectRequired` CTA.
  * - **Branch requirement:** a branch must already exist on the design (created
  *   via `create-design-branch`).  If no branch is found, returns a clear
  *   `branchRequired` message rather than silently failing.
  * - **Deploy trigger:** calls `runBuilderAgent()` with a scoped "deploy preview"
- *   prompt asking the Builder cloud agent to build and publish a preview URL for
- *   the named branch.  Builder returns `{ branchName, url, status }`.
+ *   prompt asking the Jami Studio cloud agent to build and publish a preview URL for
+ *   the named branch.  Jami Studio returns `{ branchName, url, status }`.
  * - **Persistence:** updates the matching branch entry in the design's `data`
  *   JSON blob with `previewUrl` and `deployStatus`.
  *
- * The preview URL is the Builder-hosted ephemeral preview (not a permanent
- * production deploy — use the Builder Visual Editor's Publish flow for that).
+ * The preview URL is the Jami Studio-hosted ephemeral preview (not a permanent
+ * production deploy — use the Jami Studio Visual Editor's Publish flow for that).
  *
  * Per DESIGN-STUDIO-PLAN.md §5, `deploy` (production) is the separate step;
  * `deployPreview` is the lighter "preview build" step exposed here.
@@ -87,7 +87,7 @@ function parseBranches(
   );
 }
 
-/** Build a concise deploy-preview prompt for the Builder cloud agent. */
+/** Build a concise deploy-preview prompt for the Jami Studio cloud agent. */
 function buildDeployPrompt(
   designTitle: string,
   branchName: string,
@@ -107,14 +107,14 @@ export default defineAction({
   description:
     "Trigger a preview deploy for a fusion-backed design branch. " +
     "Requires the design's source to advertise the 'deployPreview' capability " +
-    "(fusion tier) AND Builder.io to be connected. " +
+    "(fusion tier) AND Jami Studio to be connected. " +
     "For inline/localhost designs, returns ctaRequired=true with a Make-it-real " +
     "CTA — never fakes a deploy call. " +
     "A branch must already exist (created via create-design-branch). " +
     "On success, persists previewUrl and deployStatus into the design's branch " +
     "metadata and returns the preview URL. " +
     "Note: this triggers a *preview* deploy, not a production publish. " +
-    "Use the Builder Visual Editor's Publish flow for production deploys.",
+    "Use the Jami Studio Visual Editor's Publish flow for production deploys.",
   schema: z.object({
     designId: z.string().describe("Design project ID to deploy a preview for"),
     branchName: z
@@ -143,9 +143,9 @@ export default defineAction({
     const sourceType =
       normalizeDesignSourceType(designData["sourceType"]) ?? "inline";
 
-    // For fusion sources, resolve the Builder connection status first so that
+    // For fusion sources, resolve the Jami Studio connection status first so that
     // resolveFusionCapabilities returns the CONNECTED map (with deployPreview
-    // available) when Builder is actually wired up.  For inline/localhost the
+    // available) when Jami Studio is actually wired up.  For inline/localhost the
     // generic resolver is sufficient — those sources never have deployPreview.
     const builderEnabled =
       sourceType === "fusion"
@@ -167,8 +167,8 @@ export default defineAction({
           ? ("connect-builder" as const)
           : ("make-it-real" as const),
         ctaMessage: isFusion
-          ? "Builder is not yet connected. Connect Builder.io to trigger preview deploys."
-          : "Preview deploys require a Builder-hosted app. Use 'Make it real' to upgrade " +
+          ? "Jami Studio is not yet connected. Connect Jami Studio to trigger preview deploys."
+          : "Preview deploys require a Jami Studio-hosted app. Use 'Make it real' to upgrade " +
             "this inline design to a real-app source, then deploy previews.",
         previewUrl: null,
         deployStatus: null,
@@ -177,8 +177,8 @@ export default defineAction({
     }
 
     // At this point sourceType === "fusion" and builderEnabled === true,
-    // so no separate Builder gate is needed — the capability check above
-    // already required a connected Builder to set deployPreview=available.
+    // so no separate Jami Studio gate is needed — the capability check above
+    // already required a connected Jami Studio to set deployPreview=available.
 
     // ── Resolve branch entry ─────────────────────────────────────────────────
     const branches = parseBranches(designData);
@@ -209,7 +209,7 @@ export default defineAction({
       };
     }
 
-    // ── Trigger the preview deploy via the Builder cloud agent ───────────────
+    // ── Trigger the preview deploy via the Jami Studio cloud agent ───────────────
     const projectId = await resolveBuilderBranchProjectId();
     const userEmail = getRequestUserEmail();
     if (!userEmail) throw new Error("No authenticated user");
@@ -267,9 +267,9 @@ export default defineAction({
         lastDeployedAt: now,
       },
       note:
-        "Preview deploy triggered. The Builder cloud agent is building the branch. " +
+        "Preview deploy triggered. The Jami Studio cloud agent is building the branch. " +
         "Visit the previewUrl once status is 'ready' to review the deployed design. " +
-        "For production deploys, use the Builder Visual Editor's Publish flow.",
+        "For production deploys, use the Jami Studio Visual Editor's Publish flow.",
     };
   },
 });

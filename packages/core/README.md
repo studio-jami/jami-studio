@@ -18,7 +18,7 @@ The agent and the UI are equal citizens of the same system. Every action works b
 - **Reusable integrations** — Connect a provider once in Dispatch, keep secret values in the vault, then grant apps like Brain, Analytics, Mail, and Dispatch access to the shared account metadata and credential refs.
 - **Apps that improve themselves** — Your apps get better on their own. The agent can add features, fix bugs, and refine the UI over time.
 - **Any database, any host** — Any SQL database Drizzle supports. Any hosting target Nitro supports. No lock-in.
-- **Any AI agent** — Claude Code, Codex, Cursor, Pi, OpenCode, GitHub Copilot / VS Code, or Builder.io. Use whichever agent you prefer.
+- **Any AI agent** — Claude Code, Codex, Cursor, Pi, OpenCode, GitHub Copilot / VS Code, or Jami Studio. Use whichever agent you prefer.
 
 ## Try it with a skill
 

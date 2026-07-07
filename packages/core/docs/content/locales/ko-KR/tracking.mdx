@@ -15,7 +15,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "order.completed",
   { total: 49.99, items: 3 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -101,7 +101,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "meal.logged",
   { mealName: "Salad", calories: 350 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -112,7 +112,7 @@ track(
 ```ts
 import { identify } from "@agent-native/core/tracking";
 
-identify("steve@builder.io", { plan: "pro", company: "Builder.io" });
+identify("steve@jami.studio", { plan: "pro", company: "Jami Studio" });
 ```
 
 사용자 정의 백엔드, 공급자 레지스트리 API 또는 일괄 처리/싱글톤 내부가 필요합니까? 마지막에 있는 [Advanced: custom providers & internals](#advanced)를 참조하세요.
@@ -342,7 +342,7 @@ interface TrackingEvent {
 - `llm_connection_source` — `app_secrets`, `settings` 또는 `env`
 - `llm_connection_configured` — LLM 연결 사용 가능 여부
 
-프레임워크는 Connect Builder CTA에서 `builder connect clicked`도 추적하고, 서버측 Builder 연결 경로는 시작/성공/실패한 수명 주기 이벤트를 추적합니다. `configureTracking()`는 프레임워크에 의해 자동으로 호출됩니다. 자신의 템플릿 코드에서 호출할 필요가 없습니다.
+프레임워크는 Connect Jami Studio CTA에서 `builder connect clicked`도 추적하고, 서버측 Jami Studio 연결 경로는 시작/성공/실패한 수명 주기 이벤트를 추적합니다. `configureTracking()`는 프레임워크에 의해 자동으로 호출됩니다. 자신의 템플릿 코드에서 호출할 필요가 없습니다.
 
 </details>
 

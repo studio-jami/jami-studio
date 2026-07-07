@@ -15,7 +15,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "order.completed",
   { total: 49.99, items: 3 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -101,7 +101,7 @@ import { track } from "@agent-native/core/tracking";
 track(
   "meal.logged",
   { mealName: "Salad", calories: 350 },
-  { userId: "steve@builder.io" },
+  { userId: "steve@jami.studio" },
 );
 ```
 
@@ -112,7 +112,7 @@ track(
 ```ts
 import { identify } from "@agent-native/core/tracking";
 
-identify("steve@builder.io", { plan: "pro", company: "Builder.io" });
+identify("steve@jami.studio", { plan: "pro", company: "Jami Studio" });
 ```
 
 カスタム バックエンド、プロバイダー レジストリ API、またはバッチ処理/シングルトン内部が必要ですか?末尾の [Advanced: custom providers & internals](#advanced) を参照してください。
@@ -342,7 +342,7 @@ interface TrackingEvent {
 - `llm_connection_source` — `app_secrets`、`settings`、または `env`
 - `llm_connection_configured` — LLM 接続が利用可能かどうか
 
-フレームワークは、Connect Builder CTA からの `builder connect clicked` も追跡し、サーバー側の Builder 接続ルートは開始/成功/失敗したライフサイクル イベントを追跡します。 `configureTracking()` はフレームワークによって自動的に呼び出されます。独自のテンプレート コードで呼び出す必要はありません。
+フレームワークは、Connect Jami Studio CTA からの `builder connect clicked` も追跡し、サーバー側の Jami Studio 接続ルートは開始/成功/失敗したライフサイクル イベントを追跡します。 `configureTracking()` はフレームワークによって自動的に呼び出されます。独自のテンプレート コードで呼び出す必要はありません。
 
 </details>
 

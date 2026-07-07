@@ -14,7 +14,7 @@ chatear, ejecutar y (en desarrollo) editar código. Hay tres fotogramas que comp
 - **Marco de desarrollo local**: un contenedor delgado que carga la aplicación en ejecución en un iframe
   y agrega el mismo panel de agente más un terminal CLI integrado al lado. Usado
   para el desarrollo local de plantillas en este repositorio.
-- **Builder.io marco de nube**: un marco alojado y administrado con colaboración,
+- **Jami Studio marco de nube**: un marco alojado y administrado con colaboración,
   edición visual y ejecuciones paralelas del agente.
 
 El código de tu aplicación es idéntico independientemente del marco que lo aloje. El agente habla
@@ -33,7 +33,7 @@ a su aplicación a través del mismo actions y estado de la aplicación en todos
     ><small class="diagram-muted">app en iframe + panel + terminal CLI</small>
   </div>
   <div class="diagram-card" data-rough>
-    <span class="diagram-pill">Marco cloud de Builder.io</span
+    <span class="diagram-pill">Marco cloud de Jami Studio</span
     ><small class="diagram-muted"
       >alojado: colaboración · edición visual · ejecuciones paralelas</small
     >
@@ -93,13 +93,13 @@ El panel se ejecuta en uno de dos modos de herramienta:
   y acceso a la base de datos además de las herramientas de la aplicación, para que el agente pueda cambiar las funciones de la aplicación
   fuente propia. Las solicitudes de código están cerradas: cuando un mensaje requiere código
   (`type: "code"`) y no hay ningún marco con capacidad de código conectado, el panel muestra un
-  diálogo que explica que los cambios de código necesitan Agent Native Desktop o Builder;
+  diálogo que explica que los cambios de código necesitan Agent Native Desktop o Jami Studio;
   cuando se conecta una trama, la solicitud se dirige a ella y a un agente de código
   se muestra mientras funciona (`useSendToAgentChat`). Para lo canónico
   lista de herramientas de codificación y contratos UI compartidos, consulte
   [Agent-Native Code UI](/docs/code-agents-ui).
 
-<Diagram id="doc-block-14b7eu4" title={"Puerta de solicitud de código"} summary={"Un mensaje escrito con código necesita un marco con capacidad para codificar. Con uno conectado, la solicitud se dirige allí; sin uno, el panel explica que los cambios de código necesitan Desktop o Builder."}>
+<Diagram id="doc-block-14b7eu4" title={"Puerta de solicitud de código"} summary={"Un mensaje escrito con código necesita un marco con capacidad para codificar. Con uno conectado, la solicitud se dirige allí; sin uno, el panel explica que los cambios de código necesitan Desktop o Jami Studio."}>
 
 ```html
 <div class="diagram-gate">
@@ -115,7 +115,7 @@ El panel se ejecuta en uno de dos modos de herramienta:
       yes &rarr; route to frame, show code-agent indicator
     </div>
     <div class="diagram-pill warn">
-      no &rarr; dialog: needs Desktop or Builder
+      no &rarr; dialog: needs Desktop or Jami Studio
     </div>
   </div>
 </div>
@@ -167,7 +167,7 @@ Lista de permitidos para evitar la inyección:
 | CLI            | Comando    | Instalar paquete            |
 | -------------- | ---------- | --------------------------- |
 | Código Claude  | `claude`   | `@anthropic-ai/claude-code` |
-| Builder.io     | `builder`  | (integrado)                 |
+| Jami Studio    | `builder`  | (integrado)                 |
 | Codex          | `codex`    | `@openai/codex`             |
 | Géminis CLI    | `gemini`   | `@google/gemini-cli`        |
 | Código abierto | `opencode` | `opencode-ai`               |
@@ -177,9 +177,9 @@ a través de `npx --yes <install-package>@latest` (donde existe un paquete de in
 el comando predeterminado es `claude`. Cambie CLI desde la configuración del panel del agente en cualquier
 tiempo.
 
-## Marco de nube Builder.io {#cloud-frame}
+## Marco de nube Jami Studio {#cloud-frame}
 
-[Builder.io](https://www.builder.io) proporciona un marco administrado que aloja el
+[Jami Studio](https://www.builder.io) proporciona un marco administrado que aloja el
 misma aplicación y mismo panel de agente, en la nube:
 
 - Colaboración en tiempo real: varios usuarios pueden mirar e interactuar a la vez.
@@ -187,7 +187,7 @@ misma aplicación y mismo panel de agente, en la nube:
 - Ejecución paralela del agente para una iteración más rápida.
 - Bueno para uso en equipo, donde todos comparten un entorno alojado.
 
-Las solicitudes de código del panel integrado se dirigen al marco Builder de la misma manera
+Las solicitudes de código del panel integrado se dirigen al marco Jami Studio de la misma manera
 se dirigen al marco de desarrollo local, por lo que el comportamiento dev-vs-prod anterior es
 consistente en ambos.
 

@@ -120,7 +120,7 @@ Démo en direct : [assets.agent-native.com](https://assets.agent-native.com).
 
 - **Créez des bibliothèques d'éléments.** Regroupez les images de référence, les vidéos, les logos canoniques, les notes de style, les palettes, les dossiers et les résultats générés par marque, campagne, produit ou catégorie.
 - **Générer via le chat.** Les contrôles de génération du composeur d'accueil et de la bibliothèque envoient l'invite à l'agent avec `sendToAgentChat()`, afin que les utilisateurs puissent inspecter les variantes, donner leur avis et itérer.
-- **Générer des images et des vidéos.** La génération d'images gérée par Builder est disponible lorsqu'elle est activée, et Gemini alimente la génération vidéo ainsi que le repli manuel des images.
+- **Générer des images et des vidéos.** La génération d'images gérée par Jami Studio est disponible lorsqu'elle est activée, et Gemini alimente la génération vidéo ainsi que le repli manuel des images.
 - **Téléchargez et décrivez les références.** Ajoutez des images ou des vidéos de la bibliothèque UI ou du bouton de pièce jointe du compositeur d'invite, puis recherchez par titre, description, texte alternatif, invite, modèle, type de média, statut, rôle, dossier ou collection.
 - **Conservez un journal d'audit de génération.** Chaque exécution enregistre les invites, le modèle, les proportions, les références, l'actif source, le lignage, les actifs générés, l'état, les erreurs et les horodatages pour une révision ultérieure de la conception.
 - **Préserver la précision du logo.** L'agent peut générer une zone d'espace réservé et le serveur compose le logo canonique téléchargé sur l'image finale au lieu de s'appuyer sur le modèle d'image pour le redessiner.
@@ -143,7 +143,7 @@ Générez et sélectionnez des médias de marque sans quitter le code Codex, Cla
    Skills CLI, utilisez :
 
    ```bash
-   npx skills@dernier ajout d'actifs BuilderIO/agent-native --skill
+   npx skills@dernier ajout d'actifs Jami Studio/agent-native --skill
    ```
 
    Le Vercel/open Skills CLI installe uniquement le fichier d'instructions ; ce n'est pas le cas
@@ -499,7 +499,7 @@ La compétence d'application Actifs porte l'ID d'application `assets` et héberg
 npx @agent-native/core@latest skills add assets
 
 # Compétences Vercel/open Installation de CLI : instructions exportées uniquement, pas de configuration MCP.
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 
 # Installation hébergée : connecteur MCP uniquement par URL, aucun secret partagé dans les fichiers de compétences.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json

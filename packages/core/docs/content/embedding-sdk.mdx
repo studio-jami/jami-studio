@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -465,7 +465,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -667,6 +667,6 @@ The helper intentionally returns plain `{ name, description, parameters, execute
 
 ## Recommended Product Shape
 
-Start iframe-first. It works for Builder.io, customer SaaS apps, and internal admin tools without coupling release cycles or CSS/runtime assumptions.
+Start iframe-first. It works for Jami Studio, customer SaaS apps, and internal admin tools without coupling release cycles or CSS/runtime assumptions.
 
 The sidecar itself should still be an Agent-Native app/template: actions are the backend API surface, SQL-backed app state is the agent's memory, and integrations such as Slack or Telegram can route into the same durable chat. The embedding SDK supplies the live membrane between that sidecar and the current host page.

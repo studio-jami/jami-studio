@@ -26,7 +26,7 @@ const messages = {
     description: "資產生成、儲存和品牌套件存取。",
     connections: "連線",
     connectionsDescription:
-      "讓 Assets 隨時可生成、儲存並共用品牌安全媒體。Builder 是最簡單的路徑；需要時也可使用手動金鑰。",
+      "讓 Assets 隨時可生成、儲存並共用品牌安全媒體。Jami Studio 是最簡單的路徑；需要時也可使用手動金鑰。",
     languageTitle: "語言",
     languageDescription: "選取此 Assets 工作區的介面語言。",
     languageLabel: "介面語言",
@@ -63,11 +63,11 @@ const messages = {
     saveKey: "儲存金鑰",
     saving: "Saving",
     noManualOptions: "該專案沒有可用的手動設定選項。",
-    builderManaged: "Builder 正在處理託管圖片產生。",
+    builderManaged: "Jami Studio 正在處理託管圖片產生。",
     providerConfigured: "已設定 {{providers}}。",
     addGeminiOrOpenAI: "在生成新資產之前新增 Gemini 或 OpenAI。",
     addBuilderGeminiOrOpenAI:
-      "在生成新資產之前新增 Builder、Gemini 或 OpenAI。",
+      "在生成新資產之前新增 Jami Studio、Gemini 或 OpenAI。",
     enterValueFirst: "首先輸入一個值。",
     saveFailed: "儲存失敗",
   },

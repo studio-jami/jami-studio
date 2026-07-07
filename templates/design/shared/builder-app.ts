@@ -1,23 +1,23 @@
 /**
- * Builder app helpers for the Design Studio.
+ * Jami Studio app helpers for the Design Studio.
  *
  * Provides two capabilities:
  *
- * 1. **Connection status** — resolve whether Builder is configured for the
- *    current request (credentials + project ID), without duplicating Builder
+ * 1. **Connection status** — resolve whether Jami Studio is configured for the
+ *    current request (credentials + project ID), without duplicating Jami Studio
  *    auth logic.  Delegates entirely to the core `resolveBuilderCredentials` /
  *    `resolveIsBuilderBranchingEnabled` helpers; no credential values are
  *    surfaced in return types.
  *
- * 2. **Migration seed** — build the prompt seed handed to the Builder cloud
+ * 2. **Migration seed** — build the prompt seed handed to the Jami Studio cloud
  *    agent when migrating an inline Alpine/HTML design to a real React + Tailwind
  *    app.  The seed carries:
  *      - The design's semantic HTML (up to `MAX_HTML_BYTES` per file).
  *      - The `:root` CSS custom-property block extracted from each file.
  *      - Any Brand Kit token summary from the linked design system.
- *      - Human-readable migration instructions for the Builder cloud agent.
+ *      - Human-readable migration instructions for the Jami Studio cloud agent.
  *
- * Nothing in this module calls the Builder API directly.  API calls happen in
+ * Nothing in this module calls the Jami Studio API directly.  API calls happen in
  * `migrate-inline-design-to-app.ts` (action) via `runBuilderAgent`.
  *
  * Security note: credential values are never included in return types or seed
@@ -37,13 +37,13 @@ import { getRequestUserEmail } from "@agent-native/core/server/request-context";
 // ---------------------------------------------------------------------------
 
 export interface BuilderConnectionStatus {
-  /** True when Builder credentials are configured and valid. */
+  /** True when Jami Studio credentials are configured and valid. */
   connected: boolean;
-  /** True when a Builder branch project is also configured (= agents can run). */
+  /** True when a Jami Studio branch project is also configured (= agents can run). */
   builderEnabled: boolean;
-  /** The resolved Builder branch project ID, empty string when not configured. */
+  /** The resolved Jami Studio branch project ID, empty string when not configured. */
   branchProjectId: string;
-  /** The email of the currently authenticated user (for routing the Builder job). */
+  /** The email of the currently authenticated user (for routing the Jami Studio job). */
   ownerEmail: string | null;
 }
 
@@ -51,7 +51,7 @@ export interface MigrationSeed {
   /**
    * The full migration prompt to hand to `runBuilderAgent`.
    * Contains the design HTML, extracted CSS vars, token summary, and
-   * detailed instructions for the Builder cloud agent.
+   * detailed instructions for the Jami Studio cloud agent.
    */
   prompt: string;
   /**
@@ -71,7 +71,7 @@ export interface MigrationSeed {
 
 /**
  * Maximum number of files to include in the migration seed.
- * Inline designs rarely exceed this; the cap keeps the Builder prompt
+ * Inline designs rarely exceed this; the cap keeps the Jami Studio prompt
  * within a safe token budget.
  */
 const MAX_SEED_FILES = 10;
@@ -79,7 +79,7 @@ const MAX_SEED_FILES = 10;
 /**
  * Maximum bytes per HTML file included in the migration seed.
  * Files larger than this are truncated with an ellipsis notice so the
- * Builder agent still sees the overall structure without exceeding its
+ * Jami Studio agent still sees the overall structure without exceeding its
  * prompt limit.
  */
 const MAX_HTML_BYTES_PER_FILE = 80_000;
@@ -89,7 +89,7 @@ const MAX_HTML_BYTES_PER_FILE = 80_000;
 // ---------------------------------------------------------------------------
 
 /**
- * Return the Builder connection status for the current request context.
+ * Return the Jami Studio connection status for the current request context.
  *
  * Delegates to core helpers (`resolveHasCompleteBuilderConnection`,
  * `resolveIsBuilderBranchingEnabled`, `resolveBuilderBranchProjectId`) so
@@ -153,7 +153,7 @@ function extractRootCssVars(html: string): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Build the migration seed prompt for the Builder cloud agent.
+ * Build the migration seed prompt for the Jami Studio cloud agent.
  *
  * @param params.title - Human-readable design title (used in the prompt header).
  * @param params.files - Current design files (id + filename + content + fileType).
@@ -252,7 +252,7 @@ export function buildMigrationSeed(params: {
   const prompt = [
     `# Migrate inline design to React app: "${title}"`,
     "",
-    "You are a Builder cloud agent. The user has an inline Alpine.js / Tailwind HTML prototype",
+    "You are a Jami Studio cloud agent. The user has an inline Alpine.js / Tailwind HTML prototype",
     "that they want to migrate to a real React + TypeScript + Tailwind app.",
     "",
     "## Your task",

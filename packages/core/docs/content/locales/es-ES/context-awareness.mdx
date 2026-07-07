@@ -323,7 +323,7 @@ Utilice los campos deliberadamente:
 | `newTab: true`      | Iniciar un hilo de chat independiente para una tarea de creación más grande                                |
 | `type: "code"`      | Ruta al marco de edición de código cuando la solicitud trata sobre cambiar la fuente de la aplicación      |
 
-`sendToAgentChat()` es el contenedor del navegador compatible para la ruta del chat enviado que a veces se ve internamente como `agentNative.submitChat`. La aplicación UI debe llamar al contenedor en lugar de publicar `agentNative.submitChat` directamente porque el contenedor maneja las barras laterales locales, el enrutamiento Builder/Frame, el enrutamiento del host de la aplicación MCP, los ID de pestañas y el enrutamiento de solicitud de código.
+`sendToAgentChat()` es el contenedor del navegador compatible para la ruta del chat enviado que a veces se ve internamente como `agentNative.submitChat`. La aplicación UI debe llamar al contenedor en lugar de publicar `agentNative.submitChat` directamente porque el contenedor maneja las barras laterales locales, el enrutamiento Jami Studio/Frame, el enrutamiento del host de la aplicación MCP, los ID de pestañas y el enrutamiento de solicitud de código.
 
 Utilice `agentChat.submit()` o `agentChat.prefill()` para contextos de nodo/script donde no hay barra lateral del navegador. El servidor actions generalmente no debería llamar al `sendToAgentChat()` solo del navegador; Si una acción necesita el UI abierto para preguntarle algo al agente, escriba una pequeña solicitud en `application_state` y deje que un puente UI la envíe desde el navegador.
 

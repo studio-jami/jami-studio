@@ -210,7 +210,7 @@ Der Vercel/open Skills CLI-Pfad ist auch verfügbar, wenn Sie nur portabel möch
 Anweisungen:
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 Der rohe `skills` CLI installiert nur `SKILL.md`-Dateien; lokale MCP-Clients noch
@@ -483,7 +483,7 @@ Für schnelle ChatGPT/Claude-Übergaben ist der ideale Pfad direkt: Rufen Sie di
 
 ### Tour pro App {#tour}
 
-Jede Vorlage auf der Zulassungsliste, die eine navigierbare Ressource erstellt oder auflistet, liefert einen `link`-Builder, und die aufnahmeintensiven Vorlagen liefern eine GET + `publicAgent`-Aktion, damit ein verbundener Agent den Live-Status abrufen kann:
+Jede Vorlage auf der Zulassungsliste, die eine navigierbare Ressource erstellt oder auflistet, liefert einen `link`-Jami Studio, und die aufnahmeintensiven Vorlagen liefern eine GET + `publicAgent`-Aktion, damit ein verbundener Agent den Live-Status abrufen kann:
 
 - **Mail** – `manage-draft` gibt einen `compose`-codierten Deep Link zurück; Wenn Sie darauf klicken, wird der Posteingang mit dem wiederhergestellten Entwurf in einem `compose-<id>` geöffnet. `list-emails` / `search-emails` zeigen auf eine gefilterte Posteingangsansicht.
 - **Kalender** – `manage-event-draft` gibt einen `calendarDraft` + `eventDraftId` Deep Link zurück; Wenn Sie darauf klicken, wird im Kalender ein sichtbarer Entwurfsplatzhalter mit dem nativen Ereigniseditor zum Überprüfen/Versenden geöffnet. `create-event` gibt immer noch `buildDeepLink({ app: "calendar", view: "calendar", params: { eventId, date } })` zurück; Der Klick landet im Kalender, wobei sich das Ereignis auf sein Datum konzentriert.
@@ -494,11 +494,11 @@ Jede Vorlage auf der Zulassungsliste, die eine navigierbare Ressource erstellt o
 
 ## Authoring (für Vorlagenautoren) {#authoring}
 
-Alles oben Genannte gilt für **Endbenutzer**, die eine App verbinden und verwenden. Der Rest dieser Seite richtet sich an **Vorlagenautoren**, die eine App zu einem guten externen Agenten verknüpfen: den `link`-Builder, die optionalen MCP-Apps UI, die `/_agent-native/open`-Routeninterna und die Aufnahme von actions.
+Alles oben Genannte gilt für **Endbenutzer**, die eine App verbinden und verwenden. Der Rest dieser Seite richtet sich an **Vorlagenautoren**, die eine App zu einem guten externen Agenten verknüpfen: den `link`-Jami Studio, die optionalen MCP-Apps UI, die `/_agent-native/open`-Routeninterna und die Aufnahme von actions.
 
-### Der `link`-Builder {#link-builder}
+### Der `link`-Jami Studio {#link-builder}
 
-`defineAction` akzeptiert einen optionalen `link`-Builder. Wenn diese Option festgelegt ist, fügt jedes MCP/A2A-Ergebnis für dieses Tool automatisch einen Markdown-`[label →](absoluteUrl)`-Block und einen strukturierten `_meta["agent-native/openLink"] = { label, view, webUrl, desktopUrl, vscodeUrl }` hinzu. `tools/list` fügt `annotations["agent-native/producesOpenLink"]` und ein Beschreibungssuffix hinzu, damit der externe Agent weiß, dass das Tool einen öffenbaren Link liefert und ihn anzeigen sollte.
+`defineAction` akzeptiert einen optionalen `link`-Jami Studio. Wenn diese Option festgelegt ist, fügt jedes MCP/A2A-Ergebnis für dieses Tool automatisch einen Markdown-`[label →](absoluteUrl)`-Block und einen strukturierten `_meta["agent-native/openLink"] = { label, view, webUrl, desktopUrl, vscodeUrl }` hinzu. `tools/list` fügt `annotations["agent-native/producesOpenLink"]` und ein Beschreibungssuffix hinzu, damit der externe Agent weiß, dass das Tool einen öffenbaren Link liefert und ihn anzeigen sollte.
 
 Erstellen Sie URL mit `buildDeepLink(...)` – es ist die einzige Quelle der Wahrheit für das Open-Route-Format. Formatieren Sie den `/_agent-native/open` URL niemals von Hand.
 
@@ -535,13 +535,13 @@ Liste/Suche actions zeigt auf die gleiche Weise auf eine datensatzorientierte An
 
 ### Optionale MCP Apps UI {#mcp-apps}
 
-Actions kann eine Inline-UI-Ressource mit `mcpApp` für Hosts ankündigen, die die MCP Apps-Erweiterung unterstützen. Verwenden Sie `embedRoute({ title, openLabel, path })` als praktischen Wrapper oder weisen Sie `embedApp(...)` direkt `mcpApp.resource` zu. Jede MCP-App ist eine echte React-Route und kein separates einfaches HTML-Widget. Behalten Sie immer den `link`-Builder bei – Nur-CLI-Hosts, ältere Clients und Nicht-MCP-Apps-Hosts verwenden ihn als Fallback.
+Actions kann eine Inline-UI-Ressource mit `mcpApp` für Hosts ankündigen, die die MCP Apps-Erweiterung unterstützen. Verwenden Sie `embedRoute({ title, openLabel, path })` als praktischen Wrapper oder weisen Sie `embedApp(...)` direkt `mcpApp.resource` zu. Jede MCP-App ist eine echte React-Route und kein separates einfaches HTML-Widget. Behalten Sie immer den `link`-Jami Studio bei – Nur-CLI-Hosts, ältere Clients und Nicht-MCP-Apps-Hosts verwenden ihn als Fallback.
 
 Siehe [MCP Apps](/docs/mcp-apps) für den vollständigen Authoring-Leitfaden – `embedRoute` vs. `embedApp`, die `mcpApp`-Konfigurationsform, CSP, Höhe, den `sendToAgentChat()`-Einbettungspfad und Host-Bridge-Client-Helfer.
 
 ### Der `link`-Vertrag {#link-contract}
 
-Der `link`-Builder ist **rein und synchron – keine E/A, keine Wartezeiten**. Es läuft nach besten Kräften: Ein Wurf, `null` oder `undefined` wird verschluckt und der Tool-Aufruf schlägt **niemals** fehl. Es werden nur die Werte `args` und `result` des Anrufs gelesen. Es darf nicht die Datenbank abfragen, den App-Status lesen oder andere actions aufrufen. Geben Sie `null` zurück, wenn nichts zu öffnen ist.
+Der `link`-Jami Studio ist **rein und synchron – keine E/A, keine Wartezeiten**. Es läuft nach besten Kräften: Ein Wurf, `null` oder `undefined` wird verschluckt und der Tool-Aufruf schlägt **niemals** fehl. Es werden nur die Werte `args` und `result` des Anrufs gelesen. Es darf nicht die Datenbank abfragen, den App-Status lesen oder andere actions aufrufen. Geben Sie `null` zurück, wenn nichts zu öffnen ist.
 
 `buildDeepLink({ app, view, params?, to?, compose? })` gibt den App-relativen Pfad `/_agent-native/open?app=…&view=…&<recordId>=…` zurück. Die MCP-Ebene verwandelt dies in einen absoluten Web-URL (`toAbsoluteOpenUrl`, unter Verwendung des Anforderungsursprungs), einen Desktop-`agentnative://open?…` URL (`toDesktopOpenUrl`) und eine VS-Code-Erweiterung URL (`toVsCodeOpenUrl`) für `vscode://builder.agent-native/open?url=…`; Der Markdown-Link verwendet den Desktop URL, wenn der Client `target: "desktop"` signalisiert.
 
@@ -705,7 +705,7 @@ Wenn `connect dev` Ihre lokale Eigentümeridentität nicht aus einem vorhandenen
 
 Der Standard-OAuth-Pfad stellt niemals Token für MCP-Apps bereit: Der Host speichert OAuth-Zugriffs-/Aktualisierungstoken und vermittelt Toolaufrufe und `resources/read` über die authentifizierte MCP-Verbindung. Eingebettete Iframes empfangen App-Daten und Tool-Ergebnisse, keine Trägergeheimnisse.
 
-Vollständige App-Einbettungen vermeiden außerdem die Übergabe des MCP-Bearer-Tokens an den Browser. Der MCP-Anrufer prägt ein einmaliges Einbettungsticket in SQL; Die Iframe-Startroute verbraucht es und setzt ein kurzlebiges, iframe-sicheres Browser-Sitzungscookie. Der Ziel-URL trägt einen temporären `__an_embed_token`-Abfrageparameter nur so lange, dass der Client ihn erfassen, aus der Adressleiste entfernen und an `fetch`-Aufrufe gleichen Ursprungs anhängen kann, wenn Cookies von Drittanbietern blockiert sind. Einbettungssitzungen sind routenbezogen; App-Abrufe umfassen das aktuelle eingebettete Ziel und der Server lehnt die Wiederverwendung von Token außerhalb der geprägten Route ab. App-Seiten geben absichtlich kein `X-Frame-Options` oder CSP `frame-ancestors` aus, sodass Builder-, Design- und MCP-App-Hosts sie iframen können. Browser-Iframe-Navigationen aktivieren bei Bedarf auch COEP/CORP für isolierte Cross-Origin-Hosts.
+Vollständige App-Einbettungen vermeiden außerdem die Übergabe des MCP-Bearer-Tokens an den Browser. Der MCP-Anrufer prägt ein einmaliges Einbettungsticket in SQL; Die Iframe-Startroute verbraucht es und setzt ein kurzlebiges, iframe-sicheres Browser-Sitzungscookie. Der Ziel-URL trägt einen temporären `__an_embed_token`-Abfrageparameter nur so lange, dass der Client ihn erfassen, aus der Adressleiste entfernen und an `fetch`-Aufrufe gleichen Ursprungs anhängen kann, wenn Cookies von Drittanbietern blockiert sind. Einbettungssitzungen sind routenbezogen; App-Abrufe umfassen das aktuelle eingebettete Ziel und der Server lehnt die Wiederverwendung von Token außerhalb der geprägten Route ab. App-Seiten geben absichtlich kein `X-Frame-Options` oder CSP `frame-ancestors` aus, sodass Jami Studio-, Design- und MCP-App-Hosts sie iframen können. Browser-Iframe-Navigationen aktivieren bei Bedarf auch COEP/CORP für isolierte Cross-Origin-Hosts.
 
 Der als Fallback gehostete `connect`-Fluss kopiert niemals das gemeinsame Geheimnis der Bereitstellung. Stattdessen:
 
@@ -719,7 +719,7 @@ Der als Fallback gehostete `connect`-Fluss kopiert niemals das gemeinsame Geheim
 **Tun**
 
 - Verbinden Sie Ihren eigenen Agenten mit Dispatch mit `npx @agent-native/core@latest connect https://dispatch.agent-native.com`; Verwenden Sie eine direkte App URL nur, wenn Sie eine isolierte App wünschen.
-- Fügen Sie einen `link`-Builder zu jeder Aktion hinzu, die eine navigierbare Ressource (Entwurf, Ereignis, Dashboard, Dokument) erstellt oder auflistet.
+- Fügen Sie einen `link`-Jami Studio zu jeder Aktion hinzu, die eine navigierbare Ressource (Entwurf, Ereignis, Dashboard, Dokument) erstellt oder auflistet.
 - Erstellen Sie den URL mit `buildDeepLink(...)` – der Single Source of Truth für das Open-Route-Format.
 - `link` rein und synchron halten; Geben Sie `null` zurück, wenn nichts zu öffnen ist.
 - Führen Sie die Aufnahme von actions GET + `readOnly` + `publicAgent` durch den externen Agent durch und lesen Sie den Live-Status (Yjs), nicht die veraltete DB-Spalte.

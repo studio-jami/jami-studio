@@ -581,7 +581,7 @@ const messages = {
         visual: "自动会让代理创建包含图表和实现细节的丰富技术计划。",
       },
       autoWithLabel: "自动：{{label}}",
-      agentMissing: "连接代理以运行 - 添加 API 密钥或使用 Builder。",
+      agentMissing: "连接代理以运行 - 添加 API 密钥或使用 Jami Studio。",
       describeFirst: "请先描述计划。",
       sent: "已发送给 Plan 代理",
       title: "让代理创建计划",

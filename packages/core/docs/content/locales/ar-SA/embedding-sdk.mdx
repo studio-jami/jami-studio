@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -465,7 +465,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -667,6 +667,6 @@ export function CustomerSidebar({ customer, userExtensions }) {
 
 ## شكل المنتج الموصى به
 
-بدء تشغيل iframe أولاً. وهو يعمل مع Builder.io وتطبيقات SaaS للعملاء وأدوات الإدارة الداخلية دون اقتران دورات الإصدار أو افتراضات CSS/وقت التشغيل.
+بدء تشغيل iframe أولاً. وهو يعمل مع Jami Studio وتطبيقات SaaS للعملاء وأدوات الإدارة الداخلية دون اقتران دورات الإصدار أو افتراضات CSS/وقت التشغيل.
 
 يجب أن تظل السيارة الجانبية نفسها عبارة عن تطبيق/قالب Agent-Native: actions هي سطح API الخلفي، وحالة التطبيق المدعومة من SQL هي ذاكرة الوكيل، ويمكن لعمليات التكامل مثل Slack أو Telegram التوجيه إلى نفس الدردشة الدائمة. يوفر تضمين SDK الغشاء المباشر بين تلك السيارة الجانبية وصفحة المضيف الحالية.

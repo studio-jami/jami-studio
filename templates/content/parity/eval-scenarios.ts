@@ -44,7 +44,7 @@ export const parityEvalScenarios: ParityEvalScenario[] = [
     successSignals: [
       "Uses action-backed database/source operations instead of raw SQL.",
       "Reports source scope and provenance explicitly.",
-      "Does not require private Builder credentials.",
+      "Does not require private Jami Studio credentials.",
       "States that no live external write occurred unless a gated write action was explicitly run.",
     ],
     expectedTools: [
@@ -96,18 +96,18 @@ export const parityEvalScenarios: ParityEvalScenario[] = [
   },
   {
     id: "builder-source-review-readonly",
-    title: "Builder source review without live write",
+    title: "Jami Studio source review without live write",
     capabilityIds: ["source-sync.builder-cms-review-and-write-gates"],
     gateEnv: "CONTENT_PARITY_EVALS",
     defaultState: "skipped",
     requiresPrivateCredentials: false,
     prompt:
-      "Using mocked Builder CMS fixture data only, prepare or review a Builder source change set, summarize the staged changes and write gates, and explicitly state that no live Builder write was executed.",
+      "Using mocked Jami Studio CMS fixture data only, prepare or review a Jami Studio source change set, summarize the staged changes and write gates, and explicitly state that no live Jami Studio write was executed.",
     successSignals: [
-      "Uses Builder source review or validation actions.",
+      "Uses Jami Studio source review or validation actions.",
       "Reports staged changes or gate state.",
-      "States that no live Builder write occurred.",
-      "Does not require private Builder credentials.",
+      "States that no live Jami Studio write occurred.",
+      "Does not require private Jami Studio credentials.",
     ],
     expectedTools: [
       "prepare-builder-source-review",

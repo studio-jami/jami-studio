@@ -1,19 +1,19 @@
 ---
 title: "Saisie vocale"
-description: "Dictée vocale dans l'outil de composition de chat de l'agent : fournisseurs Builder Gemini, BYOK et solution de secours Web Speech du navigateur."
+description: "Dictée vocale dans l'outil de composition de chat de l'agent : fournisseurs Jami Studio Gemini, BYOK et solution de secours Web Speech du navigateur."
 ---
 
 # Saisie vocale
 
 Chaque application native d'agent dispose d'un microphone dans l'éditeur de chat. Cliquez dessus, parlez et vos mots seront transcrits dans l'invite. Utile sur mobile, utile pour les invites longues, utile lorsque vos mains sont sur autre chose.
 
-Le framework gère tout cela automatiquement. Les utilisateurs connectés à Builder obtiennent par défaut Gemini Flash-Lite hébergé sur Builder ; sinon, les utilisateurs peuvent apporter leur propre clé de fournisseur ou recourir à la reconnaissance vocale du navigateur.
+Le framework gère tout cela automatiquement. Les utilisateurs connectés à Jami Studio obtiennent par défaut Gemini Flash-Lite hébergé sur Jami Studio ; sinon, les utilisateurs peuvent apporter leur propre clé de fournisseur ou recourir à la reconnaissance vocale du navigateur.
 
 ## Comment ça marche {#how-it-works}
 
 Le bouton vocal du compositeur enregistre l'audio dans le navigateur, puis sélectionne un fournisseur :
 
-1. **Builder Gemini Flash-Lite (par défaut lorsque Builder est connecté).** Le navigateur POSTe l'audio sur `/_agent-native/transcribe-voice`, qui passe par proxy via Builder.io à l'aide de Gemini Flash-Lite. Aucune clé Google API requise.
+1. **Jami Studio Gemini Flash-Lite (par défaut lorsque Jami Studio est connecté).** Le navigateur POSTe l'audio sur `/_agent-native/transcribe-voice`, qui passe par proxy via Jami Studio à l'aide de Gemini Flash-Lite. Aucune clé Google API requise.
 2. **Fournisseurs cloud BYOK.** Les utilisateurs peuvent choisir Google Gemini, Groq Whisper ou OpenAI Whisper dans les paramètres. La route résout les secrets chiffrés à l'échelle de l'utilisateur avant les informations d'identification de déploiement partagées.
 3. **Browser Web Speech API (repli).** Si aucun fournisseur de serveur n'est disponible, le compositeur peut utiliser la reconnaissance vocale intégrée du navigateur. Fonctionne dans les navigateurs basés sur Chromium (Chrome, Edge, Arc) et Safari. Moins précis ; diffuse en direct.
 
@@ -30,8 +30,10 @@ Le choix du fournisseur est stocké dans l'état de l'application sous `voice-tr
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-card col">
-    <div class="diagram-pill accent">1 &middot; Builder Gemini</div>
-    <small class="diagram-muted">par défaut quand Builder est connecté</small>
+    <div class="diagram-pill accent">1 &middot; Jami Studio Gemini</div>
+    <small class="diagram-muted"
+      >par défaut quand Jami Studio est connecté</small
+    >
     <div class="diagram-pill">2 &middot; BYOK cloud</div>
     <small class="diagram-muted"
       >Gemini &middot; Groq &middot; OpenAI Whisper</small
@@ -71,7 +73,7 @@ L'itinéraire est **de même origine uniquement** : les POST intersites sont re
 
 ## Activation des fournisseurs {#enabling-providers}
 
-Builder est le chemin le plus simple : connectez Builder.io à partir des paramètres et le fournisseur par défaut devient Builder Gemini Flash-Lite. Pour les fournisseurs BYOK, ajoutez la clé correspondante dans Paramètres → Clés API.
+Jami Studio est le chemin le plus simple : connectez Jami Studio à partir des paramètres et le fournisseur par défaut devient Jami Studio Gemini Flash-Lite. Pour les fournisseurs BYOK, ajoutez la clé correspondante dans Paramètres → Clés API.
 
 ### Par utilisateur (recommandé pour SaaS)
 

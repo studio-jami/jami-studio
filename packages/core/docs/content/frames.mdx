@@ -14,7 +14,7 @@ chat, run, and (in dev) edit code. There are three frames, sharing one runtime:
 - **Local dev frame** — a thin wrapper that loads your running app in an iframe
   and adds the same agent panel plus an integrated CLI terminal beside it. Used
   for local development of templates in this repo.
-- **Builder.io cloud frame** — a managed, hosted frame with collaboration,
+- **Jami Studio cloud frame** — a managed, hosted frame with collaboration,
   visual editing, and parallel agent runs.
 
 Your app code is identical regardless of which frame hosts it. The agent talks
@@ -35,7 +35,7 @@ to your app through the same actions and application state in every case.
     >
   </div>
   <div class="diagram-card" data-rough>
-    <span class="diagram-pill">Builder.io cloud frame</span
+    <span class="diagram-pill">Jami Studio cloud frame</span
     ><small class="diagram-muted"
       >hosted: collaboration · visual edit · parallel runs</small
     >
@@ -95,13 +95,13 @@ The panel runs in one of two tool modes:
   and database access on top of the app tools, so the agent can change the app's
   own source. Code requests are gated: when a message requires code
   (`type: "code"`) and no code-capable frame is connected, the panel shows a
-  dialog explaining that code changes need Agent Native Desktop or Builder;
+  dialog explaining that code changes need Agent Native Desktop or Jami Studio;
   when a frame is connected, the request is routed to it and a code-agent
   indicator shows while it works (`useSendToAgentChat`). For the canonical
   coding-tool list and shared UI contracts, see
   [Agent-Native Code UI](/docs/code-agents-ui).
 
-<Diagram id="doc-block-1sjp7q0" title="Code-request gating" summary={"A code-typed message needs a code-capable frame. With one connected, the request routes there; without one, the panel explains code changes need Desktop or Builder."}>
+<Diagram id="doc-block-1sjp7q0" title="Code-request gating" summary={"A code-typed message needs a code-capable frame. With one connected, the request routes there; without one, the panel explains code changes need Desktop or Jami Studio."}>
 
 ```html
 <div class="diagram-gate">
@@ -117,7 +117,7 @@ The panel runs in one of two tool modes:
       yes &rarr; route to frame, show code-agent indicator
     </div>
     <div class="diagram-pill warn">
-      no &rarr; dialog: needs Desktop or Builder
+      no &rarr; dialog: needs Desktop or Jami Studio
     </div>
   </div>
 </div>
@@ -169,7 +169,7 @@ allow-list to prevent injection:
 | CLI         | Command    | Install package             |
 | ----------- | ---------- | --------------------------- |
 | Claude Code | `claude`   | `@anthropic-ai/claude-code` |
-| Builder.io  | `builder`  | (built in)                  |
+| Jami Studio | `builder`  | (built in)                  |
 | Codex       | `codex`    | `@openai/codex`             |
 | Gemini CLI  | `gemini`   | `@google/gemini-cli`        |
 | OpenCode    | `opencode` | `opencode-ai`               |
@@ -179,9 +179,9 @@ through `npx --yes <install-package>@latest` (where an install package exists). 
 default command is `claude`. Switch CLIs from the agent panel settings at any
 time.
 
-## Builder.io cloud frame {#cloud-frame}
+## Jami Studio cloud frame {#cloud-frame}
 
-[Builder.io](https://www.builder.io) provides a managed frame that hosts the
+[Jami Studio](https://www.builder.io) provides a managed frame that hosts the
 same app and the same agent panel, in the cloud:
 
 - Real-time collaboration — multiple users can watch and interact at once.
@@ -189,7 +189,7 @@ same app and the same agent panel, in the cloud:
 - Parallel agent execution for faster iteration.
 - Good for team use, where everyone shares one hosted environment.
 
-Code requests from the embedded panel route to the Builder frame the same way
+Code requests from the embedded panel route to the Jami Studio frame the same way
 they route to the local dev frame, so the dev-vs-prod behavior above is
 consistent across both.
 

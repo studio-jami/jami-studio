@@ -4,7 +4,7 @@ registerRequiredSecret({
   key: "GEMINI_API_KEY",
   label: "Gemini API Key",
   description:
-    "Required for video generation and optional as a manual image-generation fallback when Builder-managed generation is not connected.",
+    "Required for video generation and optional as a manual image-generation fallback when Jami Studio-managed generation is not connected.",
   docsUrl: "https://aistudio.google.com/apikey",
   scope: "user",
   kind: "api-key",
@@ -32,7 +32,7 @@ registerRequiredSecret({
   key: "OPENAI_API_KEY",
   label: "OpenAI API Key",
   description:
-    "Optional manual image-generation fallback when Builder-managed generation is not connected.",
+    "Optional manual image-generation fallback when Jami Studio-managed generation is not connected.",
   docsUrl: "https://platform.openai.com/api-keys",
   scope: "user",
   kind: "api-key",

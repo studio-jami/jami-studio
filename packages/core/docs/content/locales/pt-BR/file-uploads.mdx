@@ -1,6 +1,6 @@
 ---
 title: "Uploads de arquivos"
-description: "Configurar armazenamento de upload de arquivo — substituto SQL para dev, Builder.io ou provedores personalizados para produção."
+description: "Configurar armazenamento de upload de arquivo — substituto SQL para dev, Jami Studio ou provedores personalizados para produção."
 ---
 
 # Uploads de arquivos
@@ -14,7 +14,7 @@ As solicitações de upload vão para `POST /_agent-native/file-upload`, que é 
 A ordem de resolução do provedor é:
 
 1. **Provedores registrados pelo usuário** — provedores personalizados registrados via `registerFileUploadProvider()`
-2. **Provedor Builder.io** — integrado, ativado automaticamente quando Builder.io é conectado
+2. **Provedor Jami Studio** — integrado, ativado automaticamente quando Jami Studio é conectado
 3. **SQL substituto** — armazena arquivos como base64 no banco de dados (ótimo para desenvolvimento, não para produção)
 
 <Diagram id="doc-block-1t5oj8a" title={"Ordem de resolução do provedor"} summary={"uploadFile() escolhe o primeiro provedor configurado na ordem. O substituto SQL sempre existe, então os uploads funcionam sem configuração."}>
@@ -39,7 +39,7 @@ A ordem de resolução do provedor é:
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >automático ao conectar — servido por CDN</small
         >
       </div>
@@ -100,9 +100,9 @@ Quando nenhum provedor está configurado, os arquivos são armazenados como dado
 
 Um aviso único é registrado quando o substituto é usado.
 
-## Hospedagem Builder.io {#builder-hosting}
+## Hospedagem Jami Studio {#builder-hosting}
 
-Quando seu aplicativo está conectado ao Builder.io, os uploads de arquivos são automaticamente roteados para a hospedagem de ativos do Builder. Os arquivos são servidos a partir de um CDN sem necessidade de configuração. Esta é a configuração de produção recomendada.
+Quando seu aplicativo está conectado ao Jami Studio, os uploads de arquivos são automaticamente roteados para a hospedagem de ativos do Jami Studio. Os arquivos são servidos a partir de um CDN sem necessidade de configuração. Esta é a configuração de produção recomendada.
 
 ## Provedores personalizados {#custom-providers}
 

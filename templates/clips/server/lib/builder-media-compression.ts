@@ -366,14 +366,14 @@ async function probeCompressedMedia(
     compressedUrl,
     { method: "HEAD" },
     timeoutMs,
-    "Builder compressed-media probe",
+    "Jami Studio compressed-media probe",
   );
   if (res.status === 405) {
     res = await fetchWithTimeout(
       compressedUrl,
       { method: "GET", headers: { Range: "bytes=0-0" } },
       timeoutMs,
-      "Builder compressed-media probe",
+      "Jami Studio compressed-media probe",
     );
   }
   if (
@@ -392,7 +392,7 @@ async function triggerBuilderCompression(
 ): Promise<string | null> {
   const privateKey = await resolveBuilderPrivateKey();
   if (!privateKey) {
-    throw new Error("Builder private key is not configured");
+    throw new Error("Jami Studio private key is not configured");
   }
 
   const url = new URL(
@@ -406,12 +406,12 @@ async function triggerBuilderCompression(
     url.toString(),
     { headers: { authorization: `Bearer ${privateKey}` } },
     triggerTimeoutMs(),
-    "Builder media compression trigger",
+    "Jami Studio media compression trigger",
   );
   if (!res.ok) {
     const body = await responseSnippet(res);
     throw new Error(
-      `Builder media compression trigger failed (${res.status}): ${body || res.statusText}`,
+      `Jami Studio media compression trigger failed (${res.status}): ${body || res.statusText}`,
     );
   }
   const json = (await res.json().catch(() => null)) as { url?: string } | null;
@@ -691,7 +691,7 @@ async function processCompressionState(
     if (attempts >= MAX_TRIGGER_ATTEMPTS) {
       return markCompressionFailed(
         { ...state, attempts },
-        `Builder media compression did not finish after ${attempts} attempts: ${detail}`,
+        `Jami Studio media compression did not finish after ${attempts} attempts: ${detail}`,
       );
     }
     if (isTimeoutError(err)) {

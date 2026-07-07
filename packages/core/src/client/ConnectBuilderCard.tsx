@@ -9,7 +9,7 @@ import { cn } from "./utils.js";
 
 const DESKTOP_DOWNLOAD_URL = "https://www.agent-native.com/download";
 const CODE_CHANGE_FALLBACK_DETAIL =
-  "Edit locally or use Builder.io to edit this code in the cloud and continue customizing the app any way you like.";
+  "Edit locally or use Jami Studio to edit this code in the cloud and continue customizing the app any way you like.";
 const CODE_CHANGE_FALLBACK_TEXT = `This requires a code change. ${CODE_CHANGE_FALLBACK_DETAIL}`;
 
 function isLocalBrowserOutsideDesktop() {
@@ -25,15 +25,15 @@ function isLocalBrowserOutsideDesktop() {
 export interface ConnectBuilderCardProps {
   configured: boolean;
   /**
-   * True when the server has a Builder branch project configured for this
+   * True when the server has a Jami Studio branch project configured for this
    * request. When false, the card shows a waitlist CTA instead of a Send
    * button — the /builder/run endpoint would 403 anyway.
    */
   builderEnabled?: boolean;
   connectUrl: string;
   orgName?: string | null;
-  /** The user's feature/change request, forwarded to Builder's cloud agent
-   *  when they click Send. Empty for generic "connect Builder" prompts. */
+  /** The user's feature/change request, forwarded to Jami Studio's cloud agent
+   *  when they click Send. Empty for generic "connect Jami Studio" prompts. */
   prompt?: string;
 }
 
@@ -46,7 +46,7 @@ interface BuilderRunResult {
 
 /**
  * Rich inline card rendered for the `connect-builder` tool call. Shows a
- * prominent Connect button that opens the Builder CLI auth flow and polls
+ * prominent Connect button that opens the Jami Studio CLI auth flow and polls
  * /_agent-native/builder/status until credentials land.
  */
 export function ConnectBuilderCard({
@@ -87,10 +87,10 @@ export function ConnectBuilderCard({
   const [sendErr, setSendErr] = useState<string | null>(null);
   const [localBrowser, setLocalBrowser] = useState(false);
   const mountedRef = useRef(true);
-  // Tracks whether the user clicked "Connect Builder" *this session*. When
+  // Tracks whether the user clicked "Connect Jami Studio" *this session*. When
   // the connect-then-poll round-trip lands `configured=true`, we use this
   // flag to decide whether to retry the user's pending prompt automatically
-  // — the alternative is making them click "Send to Builder" a second time
+  // — the alternative is making them click "Send to Jami Studio" a second time
   // even though the agent had already captured their original ask. We do
   // NOT auto-send when the card mounts already-connected (e.g. user
   // revisits an old thread) — only when the connect just succeeded.
@@ -184,7 +184,7 @@ export function ConnectBuilderCard({
 
   // Auto-send the user's pending prompt the moment connecting finishes
   // successfully. Without this, the connect popup closing leaves the user
-  // staring at a "Send to Builder" button — feels like they have to
+  // staring at a "Send to Jami Studio" button — feels like they have to
   // re-submit even though the prompt is right there in the card.
   useEffect(() => {
     if (flow.connecting) {
@@ -209,7 +209,7 @@ export function ConnectBuilderCard({
   let title: string;
   let subtitle: React.ReactNode;
   if (runResult) {
-    title = "Builder is working on it";
+    title = "Jami Studio is working on it";
     subtitle = (
       <>
         Working on branch{" "}
@@ -237,19 +237,19 @@ export function ConnectBuilderCard({
       </>
     );
   } else if (canSend) {
-    title = "Send this to Builder";
+    title = "Send this to Jami Studio";
     subtitle = (
       <>
-        Builder's cloud coding agent will make this code change on a fresh
+        Jami Studio's cloud coding agent will make this code change on a fresh
         branch.
       </>
     );
   } else if (configured) {
-    title = "Builder.io connected";
+    title = "Jami Studio connected";
     subtitle = flow.envManaged ? (
       <>
-        Managed by this deployment — every user of this app uses the same
-        Builder identity. {connectedCapabilityText}
+        Managed by this deployment — every user of this app uses the same Jami
+        Studio identity. {connectedCapabilityText}
       </>
     ) : orgName ? (
       <>
@@ -261,8 +261,8 @@ export function ConnectBuilderCard({
       <>{connectedCapabilityText}</>
     );
   } else {
-    title = "Connect Builder.io";
-    subtitle = <>Builder.io's free tier includes AI credits.</>;
+    title = "Connect Jami Studio";
+    subtitle = <>Jami Studio's free tier includes AI credits.</>;
   }
 
   return (
@@ -315,7 +315,7 @@ export function ConnectBuilderCard({
                   "bg-foreground text-background hover:bg-foreground/90",
                 )}
               >
-                Open branch in Builder
+                Open branch in Jami Studio
                 <IconExternalLink className="h-3.5 w-3.5" />
               </a>
             ) : canSend ? (
@@ -332,10 +332,10 @@ export function ConnectBuilderCard({
                 {sending ? (
                   <>
                     <IconLoader2 className="h-3.5 w-3.5 animate-spin" />
-                    Sending to Builder…
+                    Sending to Jami Studio…
                   </>
                 ) : (
-                  <>Send to Builder</>
+                  <>Send to Jami Studio</>
                 )}
               </button>
             ) : showWaitlist && !waitlistJoined ? (
@@ -372,11 +372,11 @@ export function ConnectBuilderCard({
                 {connecting ? (
                   <>
                     <IconLoader2 className="h-3.5 w-3.5 animate-spin" />
-                    Waiting for Builder…
+                    Waiting for Jami Studio…
                   </>
                 ) : (
                   <>
-                    Connect Builder
+                    Connect Jami Studio
                     <IconExternalLink className="h-3.5 w-3.5" />
                   </>
                 )}

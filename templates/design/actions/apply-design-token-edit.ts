@@ -190,7 +190,7 @@ export default defineAction({
         ? null
         : "Token source write-back is not yet available for this source tier. " +
           "The value is persisted in the design's tweakSelections and reflected " +
-          "live via the CSS-var bridge. Connect Builder to unlock real write-back.",
+          "live via the CSS-var bridge. Connect Jami Studio to unlock real write-back.",
       /** Resolved CSS var map — pass directly to the tweak-values postMessage. */
       resolvedCssVars,
       deepLink: designDeepLink(designId),

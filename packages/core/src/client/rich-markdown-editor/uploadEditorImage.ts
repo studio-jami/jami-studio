@@ -61,7 +61,7 @@ export const uploadEditorImage: ImageUploadFn = async (file: File) => {
   if (!result || typeof result.url !== "string" || !result.url) {
     throw new Error(
       result?.error ||
-        "Image upload failed. Connect Builder.io in Settings → File uploads, then try again.",
+        "Image upload failed. Connect Jami Studio in Settings → File uploads, then try again.",
     );
   }
 

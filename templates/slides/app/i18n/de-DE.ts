@@ -499,7 +499,7 @@ const messages = {
       "Bitte wähle eine .fig-Datei (in Figma: File > Save local copy).",
     figFileTooLarge: "Datei zu groß (max. {{maxSize}}).",
     figParseFailed:
-      "Die Builder-Indizierung für diese Figma-Datei konnte nicht gestartet werden.",
+      "Die Jami Studio-Indizierung für diese Figma-Datei konnte nicht gestartet werden.",
     updated: "Designsystem aktualisiert",
     updateFailed: "Aktualisierung fehlgeschlagen",
     generationStarted: "Generierung des Designsystems gestartet",
@@ -509,19 +509,20 @@ const messages = {
     newTitle: "Neues Designsystem",
     editDescription: "Aktualisiere deine Markenidentität.",
     newDescription:
-      "Verbinde Figma, Code und optionale design.md-Anweisungen über Builder DSI.",
+      "Verbinde Figma, Code und optionale design.md-Anweisungen über Jami Studio DSI.",
     companyBrand: "Unternehmen / Marke",
     companyBrandPlaceholder:
       "Acme Inc. — Wir entwickeln Tools für Entwickler...",
     figmaFile: "Figma verbinden",
-    parsingFigmaFile: "Builder-DSI-Indizierung wird gestartet...",
-    uploadFigDescription: "Lade eine lokale .fig-Kopie für Builder DSI hoch",
-    builderIndexingStarted: "Builder-Indizierung gestartet",
+    parsingFigmaFile: "Jami Studio-DSI-Indizierung wird gestartet...",
+    uploadFigDescription:
+      "Lade eine lokale .fig-Kopie für Jami Studio DSI hoch",
+    builderIndexingStarted: "Jami Studio-Indizierung gestartet",
     builderIndexingDescription:
-      "Builder is indexing {{title}} into a reusable design system.",
+      "Jami Studio is indexing {{title}} into a reusable design system.",
     builderDesignSystemId: "Designsystem",
     builderJobId: "Job",
-    openInBuilder: "In Builder öffnen",
+    openInBuilder: "In Jami Studio öffnen",
     websiteUrl: "Website-URL",
     websitePlaceholder: "example.com oder Nike",
     add: "Hinzufügen",

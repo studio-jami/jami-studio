@@ -438,7 +438,7 @@ export function buildCodingHandoffPrompt({
   }
   lines.push(
     "",
-    `The bundle contains ${fileCount} file${fileCount === 1 ? "" : "s"} with the exact HTML/CSS/JSX source from the Design app. Use it as the source of truth for layout, typography, colors, spacing, responsive behavior, copy, and interactions. Convert it into the target project stack or Builder.io page/component while preserving the visual intent. If multiple screens are included, implement the primary page first and map the rest to routes, sections, or components as appropriate.`,
+    `The bundle contains ${fileCount} file${fileCount === 1 ? "" : "s"} with the exact HTML/CSS/JSX source from the Design app. Use it as the source of truth for layout, typography, colors, spacing, responsive behavior, copy, and interactions. Convert it into the target project stack or Jami Studio page/component while preserving the visual intent. If multiple screens are included, implement the primary page first and map the rest to routes, sections, or components as appropriate.`,
   );
   return lines.join("\n");
 }

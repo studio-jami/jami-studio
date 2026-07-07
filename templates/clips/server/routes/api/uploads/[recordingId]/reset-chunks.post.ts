@@ -10,7 +10,7 @@
  * `recording-upload-{id}`) so:
  *   1. `finalize-recording` can include it in `captureRouteError` extras
  *      (so Sentry tells us originalBytes / compressedBytes / ratio if the
- *      Builder.io upload still fails after compression).
+ *      Jami Studio upload still fails after compression).
  *   2. The library card can show "Compressed from XXX MB" if we want to
  *      surface that in the UI later.
  *

@@ -271,7 +271,7 @@ export function NewWorkspaceAppFlow({
     try {
       if (isInBuilderFrame()) {
         sendToAgentChat({ message, submit: true, type: "code" });
-        setStatusMessage("Sent to Builder chat.");
+        setStatusMessage("Sent to Jami Studio chat.");
       } else if (isDevMode) {
         sendToAgentChat({ message, submit: true, type: "code", newTab: true });
         setStatusMessage("Sent to the local agent.");
@@ -291,11 +291,11 @@ export function NewWorkspaceAppFlow({
         );
         if (result?.mode === "builder") {
           setBranchUrl(result?.url || null);
-          setStatusMessage("Builder branch created.");
+          setStatusMessage("Jami Studio branch created.");
         } else {
           setStatusMessage(
             result?.message ||
-              "This requires a code change. Edit locally or use Builder.io to edit this code in the cloud and continue customizing the app any way you like.",
+              "This requires a code change. Edit locally or use Jami Studio to edit this code in the cloud and continue customizing the app any way you like.",
           );
         }
       }

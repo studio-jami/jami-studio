@@ -21,7 +21,7 @@ Las automatizaciones amplían [recurring jobs](/docs/recurring-jobs) con **activ
   <div class="diagram-card">
     <span class="diagram-pill">Condition</span
     ><small class="diagram-muted"
-      >Haiku checks: &ldquo;email ends with @builder.io&rdquo;</small
+      >Haiku checks: &ldquo;email ends with @jami.studio&rdquo;</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -68,7 +68,7 @@ Los desencadenantes de eventos pueden incluir un `condition`, una cadena en leng
 
 ### Preguntando al agente
 
-> "Cuando alguien reserva una reunión con un correo electrónico @builder.io, envíame un mensaje en Slack."
+> "Cuando alguien reserva una reunión con un correo electrónico @jami.studio, envíame un mensaje en Slack."
 
 El agente descubre eventos disponibles, confirma el plan y escribe la automatización por usted.
 
@@ -84,7 +84,7 @@ La tercera ruta (escribir el archivo `jobs/<name>.md` a mano mediante `resourceP
   filename="jobs/slack-on-builder-booking.md"
   language="markdown"
   code={
-    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @builder.io"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
+    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @jami.studio"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
   }
   annotations={[
     {
@@ -172,7 +172,7 @@ emit(
     customerEmail: "jane@example.com",
     total: 49.99,
   },
-  { owner: "steve@builder.io" },
+  { owner: "steve@jami.studio" },
 );
 ```
 
@@ -189,7 +189,7 @@ Las condiciones son cadenas de lenguaje natural evaluadas por Claude Haiku frent
 
 Ejemplos de condiciones:
 
-- `"attendee email ends with @builder.io"`
+- `"attendee email ends with @jami.studio"`
 - `"the order total is greater than $100"`
 - `"the message contains the word 'urgent'"`
 
@@ -336,7 +336,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
 
 ## Ejemplo {#example}
 
-**Usuario:** "Cuando alguien reserva con un correo electrónico @builder.io, envíame un mensaje en Slack."
+**Usuario:** "Cuando alguien reserva con un correo electrónico @jami.studio, envíame un mensaje en Slack."
 
 **Flujo de agentes:**
 
@@ -346,7 +346,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
    - `name`: `slack-on-builder-booking`
    - `trigger_type`: `event`
    - `event`: `calendar.booking.created`
-   - `condition`: `attendee email ends with @builder.io`
+   - `condition`: `attendee email ends with @jami.studio`
    - `mode`: `agentic`
    - `domain`: `calendar`
    - `body`: `Send a Slack message to #sales with the booking details. Use the web-request tool to POST to ${keys.SLACK_WEBHOOK}.`

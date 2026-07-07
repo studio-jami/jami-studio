@@ -93,7 +93,7 @@ function buildWriteResult(args: {
     responseBody,
     error: args.ok
       ? undefined
-      : `Builder write request failed with HTTP ${args.status}.`,
+      : `Jami Studio write request failed with HTTP ${args.status}.`,
   };
 }
 
@@ -150,7 +150,7 @@ export async function executeBuilderCmsWrite(args: {
       ok: false,
       status: 0,
       responseBody: null,
-      error: "Builder private key is not configured.",
+      error: "Jami Studio private key is not configured.",
     };
   }
 
@@ -201,8 +201,8 @@ export async function executeBuilderCmsWrite(args: {
       responseBody: null,
       error:
         error instanceof Error
-          ? `Builder write request failed: ${error.message}`
-          : "Builder write request failed.",
+          ? `Jami Studio write request failed: ${error.message}`
+          : "Jami Studio write request failed.",
     };
   }
 }

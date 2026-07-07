@@ -943,10 +943,10 @@ const enUS = {
     continue: "Continue to generation",
     title: "Set up your design system",
     description:
-      "Connect Figma, code, and optional design.md guidance through Builder DSI. More context gives the agent a more accurate system.",
-    figmaParsingTitle: "Starting Builder DSI indexing...",
+      "Connect Figma, code, and optional design.md guidance through Jami Studio DSI. More context gives the agent a more accurate system.",
+    figmaParsingTitle: "Starting Jami Studio DSI indexing...",
     figmaParsingDescription:
-      "Builder will extract tokens, components, assets, and usage guidance",
+      "Jami Studio will extract tokens, components, assets, and usage guidance",
     uploadFig: "Connect Figma with a .fig file",
     figmaSaveLocalCopy:
       "Upload a local copy from Figma: File -> Save local copy",
@@ -994,7 +994,7 @@ const enUS = {
     errors: {
       chooseFig:
         "Please choose a .fig file (in Figma: File -> Save local copy).",
-      parseFig: "Could not start Builder indexing for that Figma file.",
+      parseFig: "Could not start Jami Studio indexing for that Figma file.",
       enterWebsite: "Enter a website URL before adding it.",
       websiteProtocol: "Website URLs must start with http:// or https://.",
       enterGithub: "Enter a GitHub repository URL before adding it.",
@@ -1006,7 +1006,7 @@ const enUS = {
       figma: {
         title: "Connect Figma",
         description:
-          "Upload a .fig local copy and Builder DSI will index tokens, components, assets, and guidance into a reusable design system.",
+          "Upload a .fig local copy and Jami Studio DSI will index tokens, components, assets, and guidance into a reusable design system.",
       },
       company: {
         title: "Company / Brand",
@@ -1015,7 +1015,7 @@ const enUS = {
       code: {
         title: "Connect Code",
         description:
-          "GitHub repos, local source files, and optional design.md guidance for Builder DSI",
+          "GitHub repos, local source files, and optional design.md guidance for Jami Studio DSI",
       },
       designFiles: {
         title: "Reference files",
@@ -1357,9 +1357,9 @@ const designLocaleOverrides = {
       continue: "继续生成",
       title: "设置您的设计系统",
       description:
-        "通过 Builder DSI 连接 Figma、代码和可选的 design.md 指引。上下文越多，代理得到的系统越准确。",
-      figmaParsingTitle: "正在启动 Builder DSI 索引...",
-      figmaParsingDescription: "Builder 会提取令牌、组件、资产和使用指引",
+        "通过 Jami Studio DSI 连接 Figma、代码和可选的 design.md 指引。上下文越多，代理得到的系统越准确。",
+      figmaParsingTitle: "正在启动 Jami Studio DSI 索引...",
+      figmaParsingDescription: "Jami Studio 会提取令牌、组件、资产和使用指引",
       uploadFig: "连接 Figma .fig 文件",
       figmaSaveLocalCopy: "上传 Figma 本地副本：File -> Save local copy",
       websiteUrl: "网站URL",
@@ -1400,7 +1400,7 @@ const designLocaleOverrides = {
       figmaThumbnailAlt: "Figma 文件缩略图",
       errors: {
         chooseFig: "请选择一个.fig 文件（在 Figma 中：文件 -> 保存本地副本）。",
-        parseFig: "无法为该 Figma 文件启动 Builder 索引。",
+        parseFig: "无法为该 Figma 文件启动 Jami Studio 索引。",
         enterWebsite: "添加前输入网站 URL。",
         websiteProtocol: "网站 URLs 必须以 http:// 或 https:// 开头。",
         enterGithub: "在添加之前输入 GitHub 存储库 URL。",
@@ -1412,7 +1412,7 @@ const designLocaleOverrides = {
         figma: {
           title: "连接 Figma",
           description:
-            "上传 .fig，Builder DSI 会将令牌、组件、资产和品牌指引索引成可重用的设计系统。",
+            "上传 .fig，Jami Studio DSI 会将令牌、组件、资产和品牌指引索引成可重用的设计系统。",
         },
         company: {
           title: "公司/品牌",
@@ -1421,11 +1421,12 @@ const designLocaleOverrides = {
         code: {
           title: "连接代码",
           description:
-            "GitHub 存储库、本地代码文件或 design.md 会交给 Builder DSI 索引。",
+            "GitHub 存储库、本地代码文件或 design.md 会交给 Jami Studio DSI 索引。",
         },
         designFiles: {
           title: "参考文件",
-          description: "文档、截图和品牌资产会补充 Builder DSI 的索引上下文",
+          description:
+            "文档、截图和品牌资产会补充 Jami Studio DSI 的索引上下文",
         },
         importExisting: {
           title: "从现有的导入",
@@ -1718,10 +1719,10 @@ const designLocaleOverrides = {
       continue: "continuar con la generación",
       title: "Configure su sistema de diseño",
       description:
-        "Conecta Figma, código y guía opcional de design.md mediante Builder DSI. Más contexto le da al agente un sistema más preciso.",
-      figmaParsingTitle: "Iniciando indexación de Builder DSI...",
+        "Conecta Figma, código y guía opcional de design.md mediante Jami Studio DSI. Más contexto le da al agente un sistema más preciso.",
+      figmaParsingTitle: "Iniciando indexación de Jami Studio DSI...",
       figmaParsingDescription:
-        "Builder extraerá tokens, componentes, recursos y guía de uso.",
+        "Jami Studio extraerá tokens, componentes, recursos y guía de uso.",
       uploadFig: "Conectar Figma con un archivo .fig",
       figmaSaveLocalCopy:
         "Sube una copia local de Figma: File -> Save local copy",
@@ -1770,7 +1771,7 @@ const designLocaleOverrides = {
         chooseFig:
           "Elija un archivo.fig (en Figma: Archivo -> Guardar copia local).",
         parseFig:
-          "No se pudo iniciar la indexación de Builder para ese archivo Figma.",
+          "No se pudo iniciar la indexación de Jami Studio para ese archivo Figma.",
         enterWebsite: "Ingrese un sitio web URL antes de agregarlo.",
         websiteProtocol:
           "El sitio web URLs debe comenzar con http:// o https://.",
@@ -1784,7 +1785,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Conectar Figma",
           description:
-            "Sube un .fig y Builder DSI indexará tokens, componentes, recursos y guía de marca en un sistema de diseño reutilizable.",
+            "Sube un .fig y Jami Studio DSI indexará tokens, componentes, recursos y guía de marca en un sistema de diseño reutilizable.",
         },
         company: {
           title: "Empresa / Marca",
@@ -1793,12 +1794,12 @@ const designLocaleOverrides = {
         code: {
           title: "Conectar código",
           description:
-            "Repositorios de GitHub, archivos de código locales o design.md se indexan con Builder DSI.",
+            "Repositorios de GitHub, archivos de código locales o design.md se indexan con Jami Studio DSI.",
         },
         designFiles: {
           title: "Archivos de referencia",
           description:
-            "Documentos, capturas de pantalla y recursos de marca complementan el contexto de Builder DSI.",
+            "Documentos, capturas de pantalla y recursos de marca complementan el contexto de Jami Studio DSI.",
         },
         importExisting: {
           title: "Importar desde existente",
@@ -2101,10 +2102,10 @@ const designLocaleOverrides = {
       continue: "Continuer jusqu'à la génération",
       title: "Configurez votre système de conception",
       description:
-        "Connectez Figma, le code et les consignes design.md facultatives via Builder DSI. Plus le contexte est riche, plus le système de l’agent est précis.",
-      figmaParsingTitle: "Démarrage de l’indexation Builder DSI...",
+        "Connectez Figma, le code et les consignes design.md facultatives via Jami Studio DSI. Plus le contexte est riche, plus le système de l’agent est précis.",
+      figmaParsingTitle: "Démarrage de l’indexation Jami Studio DSI...",
       figmaParsingDescription:
-        "Builder extraira les jetons, composants, ressources et consignes d’utilisation",
+        "Jami Studio extraira les jetons, composants, ressources et consignes d’utilisation",
       uploadFig: "Connecter Figma avec un fichier .fig",
       figmaSaveLocalCopy:
         "Importez une copie locale Figma : File -> Save local copy",
@@ -2153,7 +2154,7 @@ const designLocaleOverrides = {
         chooseFig:
           "Veuillez choisir un fichier.fig (dans Figma: Fichier -> Enregistrer la copie locale).",
         parseFig:
-          "Impossible de lancer l’indexation Builder pour ce fichier Figma.",
+          "Impossible de lancer l’indexation Jami Studio pour ce fichier Figma.",
         enterWebsite: "Entrez un site Web URL avant de l'ajouter.",
         websiteProtocol:
           "Le site Web URLs doit commencer par http:// ou https://.",
@@ -2167,7 +2168,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Connecter Figma",
           description:
-            "Importez un .fig et Builder DSI indexera les jetons, composants, ressources et consignes de marque dans un système de design réutilisable.",
+            "Importez un .fig et Jami Studio DSI indexera les jetons, composants, ressources et consignes de marque dans un système de design réutilisable.",
         },
         company: {
           title: "Entreprise / Marque",
@@ -2176,12 +2177,12 @@ const designLocaleOverrides = {
         code: {
           title: "Connecter le code",
           description:
-            "Les dépôts GitHub, fichiers de code locaux ou design.md sont indexés par Builder DSI.",
+            "Les dépôts GitHub, fichiers de code locaux ou design.md sont indexés par Jami Studio DSI.",
         },
         designFiles: {
           title: "Fichiers de référence",
           description:
-            "Documents, captures d’écran et ressources de marque enrichissent le contexte Builder DSI",
+            "Documents, captures d’écran et ressources de marque enrichissent le contexte Jami Studio DSI",
         },
         importExisting: {
           title: "Importer depuis un existant",
@@ -2484,10 +2485,10 @@ const designLocaleOverrides = {
       continue: "Weiter zur Generation",
       title: "Richten Sie Ihr Designsystem ein",
       description:
-        "Verbinde Figma, Code und optionale design.md-Anweisungen über Builder DSI. Mehr Kontext gibt dem Agenten ein genaueres System.",
-      figmaParsingTitle: "Builder-DSI-Indizierung wird gestartet...",
+        "Verbinde Figma, Code und optionale design.md-Anweisungen über Jami Studio DSI. Mehr Kontext gibt dem Agenten ein genaueres System.",
+      figmaParsingTitle: "Jami Studio-DSI-Indizierung wird gestartet...",
       figmaParsingDescription:
-        "Builder extrahiert Tokens, Komponenten, Assets und Nutzungsanweisungen",
+        "Jami Studio extrahiert Tokens, Komponenten, Assets und Nutzungsanweisungen",
       uploadFig: "Figma mit einer .fig-Datei verbinden",
       figmaSaveLocalCopy:
         "Lade eine lokale Figma-Kopie hoch: File -> Save local copy",
@@ -2536,7 +2537,7 @@ const designLocaleOverrides = {
         chooseFig:
           "Bitte wählen Sie eine.fig-Datei (in Figma: Datei -> Lokale Kopie speichern).",
         parseFig:
-          "Die Builder-Indizierung für diese Figma-Datei konnte nicht gestartet werden.",
+          "Die Jami Studio-Indizierung für diese Figma-Datei konnte nicht gestartet werden.",
         enterWebsite:
           "Geben Sie eine Website URL ein, bevor Sie sie hinzufügen.",
         websiteProtocol:
@@ -2552,7 +2553,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Figma verbinden",
           description:
-            "Lade eine .fig hoch und Builder DSI indexiert Tokens, Komponenten, Assets und Markenanweisungen als wiederverwendbares Designsystem.",
+            "Lade eine .fig hoch und Jami Studio DSI indexiert Tokens, Komponenten, Assets und Markenanweisungen als wiederverwendbares Designsystem.",
         },
         company: {
           title: "Unternehmen / Marke",
@@ -2561,12 +2562,12 @@ const designLocaleOverrides = {
         code: {
           title: "Code verbinden",
           description:
-            "GitHub-Repositories, lokale Code-Dateien oder design.md werden mit Builder DSI indexiert.",
+            "GitHub-Repositories, lokale Code-Dateien oder design.md werden mit Jami Studio DSI indexiert.",
         },
         designFiles: {
           title: "Referenzdateien",
           description:
-            "Dokumente, Screenshots und Markenassets ergänzen den Builder-DSI-Kontext",
+            "Dokumente, Screenshots und Markenassets ergänzen den Jami Studio-DSI-Kontext",
         },
         importExisting: {
           title: "Aus vorhandenem importieren",
@@ -2867,10 +2868,11 @@ const designLocaleOverrides = {
       continue: "世代を継続する",
       title: "デザインシステムをセットアップする",
       description:
-        "Figma、コード、任意の design.md ガイドを Builder DSI で接続します。コンテキストが多いほど、エージェントのシステムは正確になります。",
-      figmaParsingTitle: "Builder DSI のインデックス作成を開始しています...",
+        "Figma、コード、任意の design.md ガイドを Jami Studio DSI で接続します。コンテキストが多いほど、エージェントのシステムは正確になります。",
+      figmaParsingTitle:
+        "Jami Studio DSI のインデックス作成を開始しています...",
       figmaParsingDescription:
-        "Builder がトークン、コンポーネント、アセット、利用ガイドを抽出します",
+        "Jami Studio がトークン、コンポーネント、アセット、利用ガイドを抽出します",
       uploadFig: "Figma .fig ファイルを接続",
       figmaSaveLocalCopy:
         "Figma のローカルコピーをアップロード: File -> Save local copy",
@@ -2919,7 +2921,7 @@ const designLocaleOverrides = {
         chooseFig:
           ".fig ファイルを選択してください (Figma の場合: [ファイル] -> [ローカル コピーを保存])。",
         parseFig:
-          "その Figma ファイルの Builder インデックス作成を開始できませんでした。",
+          "その Figma ファイルの Jami Studio インデックス作成を開始できませんでした。",
         enterWebsite: "追加する前に、Web サイト URL を入力してください。",
         websiteProtocol:
           "ウェブサイト URLs は http:// または https:// で始まる必要があります。",
@@ -2933,7 +2935,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Figma を接続",
           description:
-            ".fig をアップロードすると、Builder DSI がトークン、コンポーネント、アセット、ブランドガイドを再利用可能なデザインシステムにインデックス化します。",
+            ".fig をアップロードすると、Jami Studio DSI がトークン、コンポーネント、アセット、ブランドガイドを再利用可能なデザインシステムにインデックス化します。",
         },
         company: {
           title: "会社・ブランド",
@@ -2942,12 +2944,12 @@ const designLocaleOverrides = {
         code: {
           title: "コードを接続",
           description:
-            "GitHub リポジトリ、ローカルコードファイル、design.md は Builder DSI でインデックス化されます。",
+            "GitHub リポジトリ、ローカルコードファイル、design.md は Jami Studio DSI でインデックス化されます。",
         },
         designFiles: {
           title: "参照ファイル",
           description:
-            "ドキュメント、スクリーンショット、ブランドアセットが Builder DSI のコンテキストを補足します",
+            "ドキュメント、スクリーンショット、ブランドアセットが Jami Studio DSI のコンテキストを補足します",
         },
         importExisting: {
           title: "既存からインポート",
@@ -3245,10 +3247,10 @@ const designLocaleOverrides = {
       continue: "세대를 이어가다",
       title: "디자인 시스템 설정",
       description:
-        "Figma, 코드, 선택적 design.md 지침을 Builder DSI로 연결하세요. 맥락이 많을수록 에이전트의 시스템이 더 정확해집니다.",
-      figmaParsingTitle: "Builder DSI 색인 생성을 시작하는 중...",
+        "Figma, 코드, 선택적 design.md 지침을 Jami Studio DSI로 연결하세요. 맥락이 많을수록 에이전트의 시스템이 더 정확해집니다.",
+      figmaParsingTitle: "Jami Studio DSI 색인 생성을 시작하는 중...",
       figmaParsingDescription:
-        "Builder가 토큰, 컴포넌트, 자산, 사용 지침을 추출합니다",
+        "Jami Studio가 토큰, 컴포넌트, 자산, 사용 지침을 추출합니다",
       uploadFig: "Figma .fig 파일 연결",
       figmaSaveLocalCopy: "Figma 로컬 사본 업로드: File -> Save local copy",
       websiteUrl: "웹사이트 URL",
@@ -3293,7 +3295,7 @@ const designLocaleOverrides = {
       figmaThumbnailAlt: "Figma 파일 썸네일",
       errors: {
         chooseFig: ".fig 파일을 선택하십시오(Figma: 파일 -> 로컬 복사본 저장).",
-        parseFig: "해당 Figma 파일의 Builder 인덱싱을 시작할 수 없습니다.",
+        parseFig: "해당 Figma 파일의 Jami Studio 인덱싱을 시작할 수 없습니다.",
         enterWebsite: "추가하기 전에 웹사이트 URL를 입력하세요.",
         websiteProtocol:
           "웹사이트 URLs는 http:// 또는 https://로 시작해야 합니다.",
@@ -3306,7 +3308,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Figma 연결",
           description:
-            ".fig를 업로드하면 Builder DSI가 토큰, 컴포넌트, 자산, 브랜드 지침을 재사용 가능한 디자인 시스템으로 색인화합니다.",
+            ".fig를 업로드하면 Jami Studio DSI가 토큰, 컴포넌트, 자산, 브랜드 지침을 재사용 가능한 디자인 시스템으로 색인화합니다.",
         },
         company: {
           title: "회사/브랜드",
@@ -3315,12 +3317,12 @@ const designLocaleOverrides = {
         code: {
           title: "코드 연결",
           description:
-            "GitHub 저장소, 로컬 코드 파일 또는 design.md가 Builder DSI로 색인화됩니다.",
+            "GitHub 저장소, 로컬 코드 파일 또는 design.md가 Jami Studio DSI로 색인화됩니다.",
         },
         designFiles: {
           title: "참조 파일",
           description:
-            "문서, 스크린샷, 브랜드 자산이 Builder DSI 맥락을 보강합니다",
+            "문서, 스크린샷, 브랜드 자산이 Jami Studio DSI 맥락을 보강합니다",
         },
         importExisting: {
           title: "기존에서 가져오기",
@@ -3617,10 +3619,10 @@ const designLocaleOverrides = {
       continue: "Continuar para a geração",
       title: "Configure seu sistema de design",
       description:
-        "Conecte Figma, código e orientações opcionais de design.md pelo Builder DSI. Mais contexto dá ao agente um sistema mais preciso.",
-      figmaParsingTitle: "Iniciando indexação do Builder DSI...",
+        "Conecte Figma, código e orientações opcionais de design.md pelo Jami Studio DSI. Mais contexto dá ao agente um sistema mais preciso.",
+      figmaParsingTitle: "Iniciando indexação do Jami Studio DSI...",
       figmaParsingDescription:
-        "Builder extrairá tokens, componentes, recursos e orientações de uso",
+        "Jami Studio extrairá tokens, componentes, recursos e orientações de uso",
       uploadFig: "Conectar Figma com um arquivo .fig",
       figmaSaveLocalCopy:
         "Envie uma cópia local do Figma: File -> Save local copy",
@@ -3669,7 +3671,7 @@ const designLocaleOverrides = {
         chooseFig:
           "Escolha um arquivo.fig (em Figma: Arquivo -> Salvar cópia local).",
         parseFig:
-          "Não foi possível iniciar a indexação do Builder para esse arquivo Figma.",
+          "Não foi possível iniciar a indexação do Jami Studio para esse arquivo Figma.",
         enterWebsite: "Insira um site URL antes de adicioná-lo.",
         websiteProtocol: "O site URLs deve começar com http:// ou https://.",
         enterGithub: "Insira um repositório GitHub URL antes de adicioná-lo.",
@@ -3682,7 +3684,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Conectar Figma",
           description:
-            "Envie um .fig e o Builder DSI indexará tokens, componentes, recursos e orientações de marca em um sistema de design reutilizável.",
+            "Envie um .fig e o Jami Studio DSI indexará tokens, componentes, recursos e orientações de marca em um sistema de design reutilizável.",
         },
         company: {
           title: "Empresa / Marca",
@@ -3691,12 +3693,12 @@ const designLocaleOverrides = {
         code: {
           title: "Conectar código",
           description:
-            "Repositórios GitHub, arquivos de código locais ou design.md são indexados com Builder DSI.",
+            "Repositórios GitHub, arquivos de código locais ou design.md são indexados com Jami Studio DSI.",
         },
         designFiles: {
           title: "Arquivos de referência",
           description:
-            "Documentos, capturas de tela e recursos de marca complementam o contexto do Builder DSI",
+            "Documentos, capturas de tela e recursos de marca complementam o contexto do Jami Studio DSI",
         },
         importExisting: {
           title: "Importar de existente",
@@ -3995,10 +3997,10 @@ const designLocaleOverrides = {
       continue: "पीढ़ी तक जारी रखें",
       title: "अपना डिज़ाइन सिस्टम सेट करें",
       description:
-        "Figma, कोड और वैकल्पिक design.md मार्गदर्शन को Builder DSI से कनेक्ट करें. अधिक संदर्भ एजेंट को अधिक सटीक सिस्टम देता है.",
-      figmaParsingTitle: "Builder DSI indexing शुरू की जा रही है...",
+        "Figma, कोड और वैकल्पिक design.md मार्गदर्शन को Jami Studio DSI से कनेक्ट करें. अधिक संदर्भ एजेंट को अधिक सटीक सिस्टम देता है.",
+      figmaParsingTitle: "Jami Studio DSI indexing शुरू की जा रही है...",
       figmaParsingDescription:
-        "Builder टोकन, कंपोनेंट, एसेट और उपयोग मार्गदर्शन निकालेगा",
+        "Jami Studio टोकन, कंपोनेंट, एसेट और उपयोग मार्गदर्शन निकालेगा",
       uploadFig: "Figma .fig फ़ाइल कनेक्ट करें",
       figmaSaveLocalCopy: "Figma स्थानीय कॉपी अपलोड करें: File -> Save local copy",
       websiteUrl: "वेबसाइट URL",
@@ -4042,7 +4044,7 @@ const designLocaleOverrides = {
       errors: {
         chooseFig:
           "कृपया एक.fig फ़ाइल चुनें (Figma में: फ़ाइल -> स्थानीय प्रतिलिपि सहेजें)।",
-        parseFig: "उस Figma file के लिए Builder indexing शुरू नहीं हो सकी।",
+        parseFig: "उस Figma file के लिए Jami Studio indexing शुरू नहीं हो सकी।",
         enterWebsite: "इसे जोड़ने से पहले एक वेबसाइट URL दर्ज करें।",
         websiteProtocol: "वेबसाइट URLs http:// या https:// से शुरू होनी चाहिए।",
         enterGithub: "इसे जोड़ने से पहले एक GitHub रिपॉजिटरी URL दर्ज करें।",
@@ -4054,7 +4056,7 @@ const designLocaleOverrides = {
         figma: {
           title: "Figma कनेक्ट करें",
           description:
-            ".fig अपलोड करें और Builder DSI टोकन, कंपोनेंट, एसेट और ब्रांड मार्गदर्शन को पुन: उपयोग योग्य डिज़ाइन सिस्टम में index करेगा.",
+            ".fig अपलोड करें और Jami Studio DSI टोकन, कंपोनेंट, एसेट और ब्रांड मार्गदर्शन को पुन: उपयोग योग्य डिज़ाइन सिस्टम में index करेगा.",
         },
         company: {
           title: "कंपनी/ब्रांड",
@@ -4063,12 +4065,12 @@ const designLocaleOverrides = {
         code: {
           title: "कोड कनेक्ट करें",
           description:
-            "GitHub रिपॉज़िटरी, स्थानीय कोड फ़ाइलें या design.md Builder DSI से index होते हैं.",
+            "GitHub रिपॉज़िटरी, स्थानीय कोड फ़ाइलें या design.md Jami Studio DSI से index होते हैं.",
         },
         designFiles: {
           title: "संदर्भ फ़ाइलें",
           description:
-            "दस्तावेज़, स्क्रीनशॉट और ब्रांड एसेट Builder DSI संदर्भ को मजबूत करते हैं",
+            "दस्तावेज़, स्क्रीनशॉट और ब्रांड एसेट Jami Studio DSI संदर्भ को मजबूत करते हैं",
         },
         importExisting: {
           title: "मौजूदा से आयात करें",
@@ -4363,10 +4365,10 @@ const designLocaleOverrides = {
       continue: "الاستمرار في الجيل",
       title: "قم بإعداد نظام التصميم الخاص بك",
       description:
-        "اربط Figma والكود وإرشادات design.md الاختيارية عبر Builder DSI. كلما زاد السياق، حصل الوكيل على نظام أدق.",
-      figmaParsingTitle: "جارٍ بدء فهرسة Builder DSI...",
+        "اربط Figma والكود وإرشادات design.md الاختيارية عبر Jami Studio DSI. كلما زاد السياق، حصل الوكيل على نظام أدق.",
+      figmaParsingTitle: "جارٍ بدء فهرسة Jami Studio DSI...",
       figmaParsingDescription:
-        "سيستخرج Builder الرموز والمكونات والأصول وإرشادات الاستخدام",
+        "سيستخرج Jami Studio الرموز والمكونات والأصول وإرشادات الاستخدام",
       uploadFig: "ربط Figma بملف .fig",
       figmaSaveLocalCopy: "حمّل نسخة Figma محلية: File -> Save local copy",
       websiteUrl: "موقع URL",
@@ -4412,7 +4414,7 @@ const designLocaleOverrides = {
       errors: {
         chooseFig:
           "الرجاء اختيار ملف.fig (في Figma: ملف -> حفظ النسخة المحلية).",
-        parseFig: "تعذر بدء فهرسة Builder لملف Figma هذا.",
+        parseFig: "تعذر بدء فهرسة Jami Studio لملف Figma هذا.",
         enterWebsite: "أدخل موقع URL قبل إضافته.",
         websiteProtocol: "يجب أن يبدأ موقع الويب URLs بـ http:// أو https://.",
         enterGithub: "أدخل مستودع GitHub URL قبل إضافته.",
@@ -4424,7 +4426,7 @@ const designLocaleOverrides = {
         figma: {
           title: "ربط Figma",
           description:
-            "حمّل .fig وسيقوم Builder DSI بفهرسة الرموز والمكونات والأصول وإرشادات العلامة في نظام تصميم قابل لإعادة الاستخدام.",
+            "حمّل .fig وسيقوم Jami Studio DSI بفهرسة الرموز والمكونات والأصول وإرشادات العلامة في نظام تصميم قابل لإعادة الاستخدام.",
         },
         company: {
           title: "الشركة / العلامة التجارية",
@@ -4433,12 +4435,12 @@ const designLocaleOverrides = {
         code: {
           title: "ربط الكود",
           description:
-            "تتم فهرسة مستودعات GitHub أو ملفات الكود المحلية أو design.md عبر Builder DSI.",
+            "تتم فهرسة مستودعات GitHub أو ملفات الكود المحلية أو design.md عبر Jami Studio DSI.",
         },
         designFiles: {
           title: "ملفات مرجعية",
           description:
-            "تضيف المستندات ولقطات الشاشة وأصول العلامة سياقًا لفهرسة Builder DSI",
+            "تضيف المستندات ولقطات الشاشة وأصول العلامة سياقًا لفهرسة Jami Studio DSI",
         },
         importExisting: {
           title: "الاستيراد من الموجود",

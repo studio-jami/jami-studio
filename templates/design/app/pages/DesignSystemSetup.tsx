@@ -110,7 +110,7 @@ export default function DesignSystemSetup() {
   const existingProjects = designsData?.designs ?? [];
   const existingSystems = designSystemsData?.designSystems ?? [];
 
-  // --- Figma .fig import (Builder design-system indexing) -----------------
+  // --- Figma .fig import (Jami Studio design-system indexing) -----------------
   const realFigInputRef = useRef<HTMLInputElement>(null);
   const [builderIndexing, setBuilderIndexing] = useState(false);
   const [builderIndexResult, setBuilderIndexResult] =
@@ -371,7 +371,7 @@ export default function DesignSystemSetup() {
 
     const parts: string[] = [];
     parts.push(
-      "Set up a design system from the following sources. Use Builder Design System Intelligence (DSI) as the source of truth for reusable Figma/code/design.md indexing. Analyze each source, extract design tokens (colors, fonts, spacing, borders), and create a cohesive design system.",
+      "Set up a design system from the following sources. Use Jami Studio Design System Intelligence (DSI) as the source of truth for reusable Figma/code/design.md indexing. Analyze each source, extract design tokens (colors, fonts, spacing, borders), and create a cohesive design system.",
     );
 
     if (companyInfo.trim()) {
@@ -380,20 +380,20 @@ export default function DesignSystemSetup() {
 
     if (normalizedWebsiteUrls.length > 0) {
       parts.push(
-        `\n## Website URLs\nExtract design tokens from these websites:\n${normalizedWebsiteUrls.map((u) => `- ${u}`).join("\n")}\n\n**Best approach:** Call \`activate-browser\` first, then use chrome-devtools MCP tools to navigate each URL and extract computed styles (colors, fonts, spacing, CSS custom properties) via \`evaluate_script\`. This captures the real rendered design — including JS-injected styles, CSS-in-JS, and SPA content that plain HTML fetch misses. Take a screenshot too for visual reference. If Builder is not connected, fall back to \`import-from-url\` for each URL (limited to static HTML parsing).`,
+        `\n## Website URLs\nExtract design tokens from these websites:\n${normalizedWebsiteUrls.map((u) => `- ${u}`).join("\n")}\n\n**Best approach:** Call \`activate-browser\` first, then use chrome-devtools MCP tools to navigate each URL and extract computed styles (colors, fonts, spacing, CSS custom properties) via \`evaluate_script\`. This captures the real rendered design — including JS-injected styles, CSS-in-JS, and SPA content that plain HTML fetch misses. Take a screenshot too for visual reference. If Jami Studio is not connected, fall back to \`import-from-url\` for each URL (limited to static HTML parsing).`,
       );
     }
 
     if (normalizedGithubLinks.length > 0) {
       parts.push(
-        `\n## Connect Code: GitHub Repositories\nStart Builder DSI indexing for each repository with \`index-design-system-with-builder\`:\n${normalizedGithubLinks.map((l) => `- ${l.url}`).join("\n")}\n\nBuilder is the source of truth for repo/code design-system indexing. The action also creates a local selectable proxy design system for Design flows. If Builder is not connected, stop and tell me to connect Builder from Settings instead of asking me to paste repository credentials into chat.`,
+        `\n## Connect Code: GitHub Repositories\nStart Jami Studio DSI indexing for each repository with \`index-design-system-with-builder\`:\n${normalizedGithubLinks.map((l) => `- ${l.url}`).join("\n")}\n\nBuilder is the source of truth for repo/code design-system indexing. The action also creates a local selectable proxy design system for Design flows. If Jami Studio is not connected, stop and tell me to connect Jami Studio from Settings instead of asking me to paste repository credentials into chat.`,
       );
     }
 
     if (codeFiles.length > 0) {
       if (builderCodeFiles.length > 0) {
         parts.push(
-          `\n## Connect Code: Code Files (${builderCodeFiles.length} files with content)\nStart Builder DSI indexing with \`index-design-system-with-builder\` using these files as the \`codeFiles\` argument:`,
+          `\n## Connect Code: Code Files (${builderCodeFiles.length} files with content)\nStart Jami Studio DSI indexing with \`index-design-system-with-builder\` using these files as the \`codeFiles\` argument:`,
         );
         for (const f of builderCodeFiles) {
           parts.push(
@@ -420,7 +420,7 @@ export default function DesignSystemSetup() {
 
     if (builderIndexResult) {
       parts.push(
-        `\n## Connect Figma: Builder-Indexed Figma File\nBuilder DSI indexing has already started.\n- Design system: ${builderIndexResult.designSystemId}\n- Local selectable design system: ${builderIndexResult.localDesignSystemId ?? "(not returned)"}\n- Project: ${builderIndexResult.projectId}\n- Job: ${builderIndexResult.jobId}\n- URL: ${builderIndexResult.builderUrl}\n\nUse Builder as the source of truth for indexed tokens, assets, components, and guidance. Do not call \`create-design-system\` again for this Builder-indexed source.`,
+        `\n## Connect Figma: Jami Studio-Indexed Figma File\nBuilder DSI indexing has already started.\n- Design system: ${builderIndexResult.designSystemId}\n- Local selectable design system: ${builderIndexResult.localDesignSystemId ?? "(not returned)"}\n- Project: ${builderIndexResult.projectId}\n- Job: ${builderIndexResult.jobId}\n- URL: ${builderIndexResult.builderUrl}\n\nUse Jami Studio as the source of truth for indexed tokens, assets, components, and guidance. Do not call \`create-design-system\` again for this Jami Studio-indexed source.`,
       );
     }
 
@@ -462,12 +462,12 @@ export default function DesignSystemSetup() {
 
     if (customInstructions.trim()) {
       parts.push(
-        `\n## Custom Instructions (durable — store on the design system)\nIf you create a local design system from non-Builder sources, pass these verbatim as the \`customInstructions\` argument. They will be re-applied every time the design system is used to generate a design:\n\n${customInstructions.trim()}`,
+        `\n## Custom Instructions (durable — store on the design system)\nIf you create a local design system from non-Jami Studio sources, pass these verbatim as the \`customInstructions\` argument. They will be re-applied every time the design system is used to generate a design:\n\n${customInstructions.trim()}`,
       );
     }
 
     parts.push(
-      `\n---\nAfter processing all sources, if you started Builder DSI indexing, report the Builder job/design-system URL plus the local selectable design-system id returned by \`index-design-system-with-builder\`. Do not call \`create-design-system\` again for Builder-indexed Figma/code/design.md sources. If you processed non-Builder sources into concrete tokens, call \`create-design-system\` with the combined tokens${
+      `\n---\nAfter processing all sources, if you started Jami Studio DSI indexing, report the Jami Studio job/design-system URL plus the local selectable design-system id returned by \`index-design-system-with-builder\`. Do not call \`create-design-system\` again for Jami Studio-indexed Figma/code/design.md sources. If you processed non-Jami Studio sources into concrete tokens, call \`create-design-system\` with the combined tokens${
         customInstructions.trim()
           ? " AND the verbatim --customInstructions string from above"
           : ""
@@ -551,7 +551,7 @@ export default function DesignSystemSetup() {
           )}
 
           <div className="space-y-8">
-            {/* Start from a Figma file via Builder DSI. */}
+            {/* Start from a Figma file via Jami Studio DSI. */}
             <Section
               title={t("designSystemSetup.sections.figma.title")}
               description={t("designSystemSetup.sections.figma.description")}
@@ -1096,7 +1096,7 @@ function BuilderIndexPreview({
           </h3>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             {
-              "Builder is indexing this Figma file into a reusable design system." /* i18n-ignore Builder indexing status */
+              "Jami Studio is indexing this Figma file into a reusable design system." /* i18n-ignore Jami Studio indexing status */
             }
           </p>
         </div>
@@ -1104,23 +1104,23 @@ function BuilderIndexPreview({
 
       <dl className="grid grid-cols-[112px_minmax(0,1fr)] gap-x-3 gap-y-2 rounded-lg border border-border bg-muted/25 p-3 text-xs">
         <dt className="text-muted-foreground">
-          {"Status" /* i18n-ignore Builder indexing field */}
+          {"Status" /* i18n-ignore Jami Studio indexing field */}
         </dt>
         <dd className="font-medium text-foreground">{result.status}</dd>
         <dt className="text-muted-foreground">
-          {"Project" /* i18n-ignore Builder indexing field */}
+          {"Project" /* i18n-ignore Jami Studio indexing field */}
         </dt>
         <dd className="truncate font-mono !text-[11px] text-foreground/80">
           {result.projectId}
         </dd>
         <dt className="text-muted-foreground">
-          {"Job" /* i18n-ignore Builder indexing field */}
+          {"Job" /* i18n-ignore Jami Studio indexing field */}
         </dt>
         <dd className="truncate font-mono !text-[11px] text-foreground/80">
           {result.jobId}
         </dd>
         <dt className="text-muted-foreground">
-          {"Design system" /* i18n-ignore Builder indexing field */}
+          {"Design system" /* i18n-ignore Jami Studio indexing field */}
         </dt>
         <dd className="truncate font-mono !text-[11px] text-foreground/80">
           {result.designSystemId}
@@ -1132,7 +1132,7 @@ function BuilderIndexPreview({
           <Button asChild className="cursor-pointer">
             <a href={result.builderUrl} target="_blank" rel="noreferrer">
               <IconExternalLink className="size-4" />
-              {"Open in Builder" /* i18n-ignore Builder link action */}
+              {"Open in Jami Studio" /* i18n-ignore Jami Studio link action */}
             </a>
           </Button>
         ) : null}

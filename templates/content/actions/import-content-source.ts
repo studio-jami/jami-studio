@@ -171,7 +171,7 @@ export default defineAction({
     );
     if (builderPaths.length > 0) {
       throw new Error(
-        `Builder .builder.mdx files must use the Builder doc actions so raw sidecars and hashes are preserved: ${builderPaths.join(
+        `Jami Studio .builder.mdx files must use the Jami Studio doc actions so raw sidecars and hashes are preserved: ${builderPaths.join(
           ", ",
         )}.`,
       );

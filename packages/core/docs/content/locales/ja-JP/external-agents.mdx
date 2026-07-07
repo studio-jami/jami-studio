@@ -210,7 +210,7 @@ npx @agent-native/core@latest skills add assets              # alias: image-gene
 手順:
 
 ```bash
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 生の `skills` CLI は、`SKILL.md` ファイルのみをインストールします。ローカル MCP クライアントはまだ
@@ -705,7 +705,7 @@ npx @agent-native/core@latest connect prod --apps mail,calendar,analytics --clie
 
 標準の OAuth パスは、トークンを MCP アプリに公開することはありません。ホストは、OAuth アクセス/リフレッシュ トークンを保存し、認証された MCP 接続を介してツール呼び出しと `resources/read` を仲介します。埋め込み iframe は、ベアラー シークレットではなく、アプリ データとツールの結果を受け取ります。
 
-フルアプリの埋め込みでは、MCP ベアラー トークンをブラウザーに渡すことも回避されます。 MCP 呼び出し元は、SQL に 1 回限りの埋め込みチケットを作成します。 iframe 起動ルートはそれを消費し、有効期間が短い iframe セーフなブラウザ セッション Cookie を設定します。ランディング URL は、サードパーティ Cookie がブロックされている場合に、クライアントがそれをキャプチャし、アドレス バーから削除し、同じオリジンの `fetch` 呼び出しに添付するのに十分な長さの一時的な `__an_embed_token` クエリ パラメーターを伝送します。埋め込みセッションはルートスコープです。アプリのフェッチには現在の埋め込みターゲットが含まれており、サーバーはミントされたルート外でのトークンの再利用を拒否します。アプリ ページは意図的に `X-Frame-Options` または CSP `frame-ancestors` を出力しないため、Builder、デザイン、および MCP アプリ ホストはそれらを iframe できます。ブラウザ iframe ナビゲーションは、クロスオリジン分離ホストに必要な場合、COEP/CORP もオプトインします。
+フルアプリの埋め込みでは、MCP ベアラー トークンをブラウザーに渡すことも回避されます。 MCP 呼び出し元は、SQL に 1 回限りの埋め込みチケットを作成します。 iframe 起動ルートはそれを消費し、有効期間が短い iframe セーフなブラウザ セッション Cookie を設定します。ランディング URL は、サードパーティ Cookie がブロックされている場合に、クライアントがそれをキャプチャし、アドレス バーから削除し、同じオリジンの `fetch` 呼び出しに添付するのに十分な長さの一時的な `__an_embed_token` クエリ パラメーターを伝送します。埋め込みセッションはルートスコープです。アプリのフェッチには現在の埋め込みターゲットが含まれており、サーバーはミントされたルート外でのトークンの再利用を拒否します。アプリ ページは意図的に `X-Frame-Options` または CSP `frame-ancestors` を出力しないため、Jami Studio、デザイン、および MCP アプリ ホストはそれらを iframe できます。ブラウザ iframe ナビゲーションは、クロスオリジン分離ホストに必要な場合、COEP/CORP もオプトインします。
 
 フォールバック ホスト型 `connect` フローは、展開の共有秘密をコピーしません。代わりに:
 

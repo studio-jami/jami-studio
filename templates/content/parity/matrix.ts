@@ -339,16 +339,16 @@ export const parityMatrix: ParityRow[] = [
   {
     id: "source-sync.builder-cms-review-and-write-gates",
     surface: "source-sync",
-    label: "Review, stage, validate, and execute Builder CMS source writes",
+    label: "Review, stage, validate, and execute Jami Studio CMS source writes",
     uiEntrypoints: [
       "app/components/editor/DocumentDatabase.tsx",
       "app/components/editor/database/DatabaseView.tsx",
       "app/components/editor/database-sources/BuilderSourceReviewDialog.tsx",
     ],
     durableEffect:
-      "Builder source write mode, staged reviews, validation records, and bounded execution records are created through guarded actions.",
+      "Jami Studio source write mode, staged reviews, validation records, and bounded execution records are created through guarded actions.",
     uiImplementation:
-      "Builder source dialogs call review, write-mode, validation, staging, and execution actions.",
+      "Jami Studio source dialogs call review, write-mode, validation, staging, and execution actions.",
     status: "action-backed",
     actions: [
       "execute-builder-source-batch",
@@ -374,14 +374,14 @@ export const parityMatrix: ParityRow[] = [
   {
     id: "source-sync.builder-body-hydration-worker",
     surface: "source-sync",
-    label: "Process queued Builder CMS body hydration work",
+    label: "Process queued Jami Studio CMS body hydration work",
     uiEntrypoints: [
       "app/components/editor/DocumentEditor.tsx",
       "app/components/editor/database/DatabaseView.tsx",
       "app/hooks/use-content-database.ts",
     ],
     durableEffect:
-      "Queued Builder body hydration entries are processed into readable Content document/database body state.",
+      "Queued Jami Studio body hydration entries are processed into readable Content document/database body state.",
     uiImplementation:
       "Editor and database views trigger bounded queue processing through the shared action surface after source sync exposes hydration work.",
     status: "action-backed",
@@ -397,7 +397,7 @@ export const parityMatrix: ParityRow[] = [
   {
     id: "source-sync.builder-documents",
     surface: "source-sync",
-    label: "List, pull, check, and push Builder docs/blog MDX documents",
+    label: "List, pull, check, and push Jami Studio docs/blog MDX documents",
     uiEntrypoints: [
       "actions/list-builder-docs.ts",
       "actions/pull-builder-doc.ts",
@@ -405,7 +405,7 @@ export const parityMatrix: ParityRow[] = [
       "actions/push-builder-doc.ts",
     ],
     durableEffect:
-      "Builder docs/blog entries can be read into Content, checked locally, and pushed through guarded Builder document actions.",
+      "Jami Studio docs/blog entries can be read into Content, checked locally, and pushed through guarded Jami Studio document actions.",
     uiImplementation:
       "Currently agent/action-facing rather than a primary visible UI surface.",
     status: "action-backed",

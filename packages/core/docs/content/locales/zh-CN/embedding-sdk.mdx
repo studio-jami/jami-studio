@@ -105,7 +105,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -124,7 +124,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -326,7 +326,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -463,7 +463,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -665,6 +665,6 @@ iframe 内的可用全局变量：
 
 ## 推荐产品形状
 
-首先启动 iframe。它适用于 Builder.io、客户 SaaS 应用程序和内部管理工具，无需耦合发布周期或 CSS/运行时假设。
+首先启动 iframe。它适用于 Jami Studio、客户 SaaS 应用程序和内部管理工具，无需耦合发布周期或 CSS/运行时假设。
 
 sidecar 本身应该仍然是 Agent-Native 应用程序/模板：actions 是后端 API 表面，SQL 支持的应用程序状态是代理的内存，并且 Slack 或 Telegram 等集成可以路由到相同的持久聊天。嵌入的 SDK 在该 sidecar 和当前主机页面之间提供活动膜。

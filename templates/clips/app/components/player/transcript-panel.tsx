@@ -122,7 +122,7 @@ export function TranscriptPanel(props: TranscriptPanelProps) {
 
   // Surface the setup card when transcription failed due to a provider
   // configuration issue — missing key, quota error, rejected key, etc.
-  // Builder connection is the recommended fix in all these cases.
+  // Jami Studio connection is the recommended fix in all these cases.
   const noSpeechFailure = isNoSpeechTranscriptFailure(failureReason);
   const builderCreditsPaused = isBuilderCreditsExhaustedMessage(failureReason);
   const needsSetup =
@@ -417,7 +417,7 @@ function BuilderCreditsPausedNotice({
 /**
  * Returns true when the transcription failure is due to a provider
  * configuration problem — missing key, quota exceeded, key rejected,
- * no provider at all. Builder connection fixes all of these.
+ * no provider at all. Jami Studio connection fixes all of these.
  */
 function isTranscriptionSetupNeeded(
   reason: string | null | undefined,
@@ -516,9 +516,9 @@ function friendlyCleanupFailure(
 /**
  * Inline card shown when transcription needs a provider set up.
  *
- * Builder.io is the primary/recommended path — free, one-click, no separate
+ * Jami Studio is the primary/recommended path — free, one-click, no separate
  * API key required (uses BUILDER_PRIVATE_KEY once the user connects).
- * BYOK Groq is the secondary speech-to-text option when native/Builder cannot
+ * BYOK Groq is the secondary speech-to-text option when native/Jami Studio cannot
  * produce a transcript. Clips does not route recording transcription to OpenAI.
  */
 function TranscriptSetupCard({
@@ -679,7 +679,7 @@ function TranscriptSetupCard({
           </p>
         </div>
 
-        {/* Builder — primary recommended option */}
+        {/* Jami Studio — primary recommended option */}
         <div
           className={cn(
             "rounded-md border p-3 transition-colors",
@@ -695,8 +695,8 @@ function TranscriptSetupCard({
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <p className="text-xs font-semibold">
                     {builderConfigured
-                      ? "Builder.io connected"
-                      : "Use Builder.io (free)"}
+                      ? "Jami Studio connected"
+                      : "Use Jami Studio (free)"}
                   </p>
                   {!builderConfigured && (
                     <span className="rounded-sm bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
@@ -756,7 +756,7 @@ function TranscriptSetupCard({
         </div>
 
         {/* BYOK — secondary option, collapsed by default. Shown even when
-            Builder is connected so users can fall back if Builder
+            Jami Studio is connected so users can fall back if Jami Studio
             transcription itself fails (quota / outage / unsupported audio
             format) — the failure message tells them to add a key, so the
             input must be reachable. */}

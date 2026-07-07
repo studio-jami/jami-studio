@@ -32,6 +32,6 @@ pnpm install
 pnpm dev
 ```
 
-Clips needs a video storage backend (Builder.io or an S3-compatible bucket)
+Clips needs a video storage backend (Jami Studio or an S3-compatible bucket)
 before recordings can upload — see the docs for setup.
 Full docs: [agent-native.com/docs/template-clips](https://agent-native.com/docs/template-clips).

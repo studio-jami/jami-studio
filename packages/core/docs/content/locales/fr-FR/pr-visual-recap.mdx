@@ -214,7 +214,7 @@ Cela signifie également que vous pouvez fusionner le fichier de workflow **avan
 
 Si vous souhaitez générer des récapitulatifs pour les fork PR, un deuxième fichier de workflow est disponible : `.github/workflows/pr-visual-recap-fork.yml`. Il utilise `pull_request_target` (qui s'exécute avec les secrets du dépôt de base) mais n'extrait ni n'exécute jamais de code fork. Les auteurs de fork de confiance avec l'association d'auteurs GitHub `OWNER`, `MEMBER` ou `COLLABORATOR` s'exécutent automatiquement. Les PR de fork externes nécessitent un **opt-in explicite du responsable par tête** via un nouvel événement d'étiquette `recap` avant l'exécution de l'agent de récapitulation.
 
-Pour l'installer, copiez le fichier de [BuilderIO/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) dans le répertoire `.github/workflows/` de votre dépôt aux côtés du `pr-visual-recap.yml` existant. Les mêmes secrets (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) s'appliquent.
+Pour l'installer, copiez le fichier de [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) dans le répertoire `.github/workflows/` de votre dépôt aux côtés du `pr-visual-recap.yml` existant. Les mêmes secrets (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) s'appliquent.
 
 <Diagram id="doc-block-sqtdd5" title="Porte de consentement Fork PR" summary={"Les PR de Fork n'ont aucun secret par défaut ; les auteurs de confiance s'exécutent automatiquement et les contributeurs externes nécessitent une nouvelle étiquette récapitulative du responsable."}>
 
@@ -329,7 +329,7 @@ L'étape `gate` ignore entièrement le récapitulatif lorsqu'un PR touche l'un d
 | `**/AGENTS.md`                             | Instructions de l'agent que le coureur charge      |
 | `**/.mcp.json`                             | Configuration du serveur MCP que le coureur charge |
 
-Dans le monorepo `BuilderIO/agent-native`, le workflow exécute le récapitulatif CLI à partir d'une source de branche de base fiable au lieu de la source de tête PR. Cela permet de conserver les modifications normales du package, y compris `packages/core/**`, éligibles aux récapitulatifs sans exécuter le code CLI modifié par PR.
+Dans le monorepo `Jami Studio/agent-native`, le workflow exécute le récapitulatif CLI à partir d'une source de branche de base fiable au lieu de la source de tête PR. Cela permet de conserver les modifications normales du package, y compris `packages/core/**`, éligibles aux récapitulatifs sans exécuter le code CLI modifié par PR.
 
 ## Mode de confidentialité des fichiers locaux
 
@@ -417,7 +417,7 @@ La liste blanche n'est consultée que par la porte secrète-scan. Cela n'affecte
 
 Le programme d'installation par défaut copie le flux de travail complet d'environ 360 lignes YAML dans votre dépôt (l'option **copier**). C'est le bon choix pour les dépôts à air isolé ou les dépôts qui doivent auditer chaque ligne de ce qui s'exécute. L'inconvénient est que les corrections de bogues et les améliorations ne vous parviennent jamais : vous devez réexécuter `npx @agent-native/core@latest recap setup` manuellement après chaque version.
 
-L'option **réutilisable** écrit à la place un appelant mince d'environ 20 lignes. Il délègue à `BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml` via `uses:`. Chaque appelant récupère automatiquement la dernière logique lors de l'exécution du workflow, sans qu'aucune mise à jour locale ne soit nécessaire.
+L'option **réutilisable** écrit à la place un appelant mince d'environ 20 lignes. Il délègue à `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` via `uses:`. Chaque appelant récupère automatiquement la dernière logique lors de l'exécution du workflow, sans qu'aucune mise à jour locale ne soit nécessaire.
 
 |                                         | Copier (par défaut)                | Réutilisable                         |
 | --------------------------------------- | ---------------------------------- | ------------------------------------ |
@@ -433,7 +433,7 @@ Voici ce qu'écrit `npx @agent-native/core@latest recap setup --reusable` (ou vo
 ```yaml
 name: PR Visual Recap
 
-# Appelant léger : la logique complète du flux de travail réside dans BuilderIO/agent-native.
+# Appelant léger : la logique complète du flux de travail réside dans Jami Studio/agent-native.
 # Les correctifs et améliorations atteignent ce dépôt automatiquement à chaque exécution.
 # Pour épingler une version spécifique à des fins de reproductibilité, remplacez « @main » par un
 # tag ou SHA, par ex. '@v1.2.3' ou '@abc1234'.
@@ -450,7 +450,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -485,7 +485,7 @@ Après l'écriture, exécutez `npx @agent-native/core@latest recap doctor` comme
 Par défaut, l'appelant fait référence à `@main`, qui utilise toujours la dernière version publiée du workflow réutilisable. Pour les dépôts de production nécessitant un CI reproductible, épinglez-le à une balise ou à SHA :
 
 ```yaml
-uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 L'entrée `cli-version` contrôle quelle version de `@agent-native/core` CLI s'exécute dans le flux de travail : laissez-la sur `"latest"` pour suivre la version la plus récente, ou épinglez-la à une chaîne de version (par exemple, `"1.5.0"`) pour une reproductibilité totale.

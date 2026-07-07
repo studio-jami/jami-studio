@@ -1,18 +1,18 @@
 /**
- * connect-builder-app — return the Builder connection state / CTA payload for
+ * connect-builder-app — return the Jami Studio connection state / CTA payload for
  * a design so the UI can render the appropriate inline card.
  *
  * This action intentionally does NOT start the OAuth / cli-auth flow; the
  * existing `connect-builder` agent-chat tool owns that flow and renders the
  * interactive card in chat.  What this action does instead:
  *
- * 1. Check whether Builder is currently configured (credentials + project ID)
+ * 1. Check whether Jami Studio is currently configured (credentials + project ID)
  *    via the shared `resolveBuilderStatus` helper (no credential values leak).
  * 2. Return a structured payload the UI can use to decide whether to render
  *    an "already connected" summary, a "connect to unlock" CTA, or a
- *    "Builder enabled — ready to migrate" state.
+ *    "Jami Studio enabled — ready to migrate" state.
  *
- * The `connectUrl` field is the pre-built URL that opens the Builder cli-auth
+ * The `connectUrl` field is the pre-built URL that opens the Jami Studio cli-auth
  * popup from the current app origin (same shape the agent-chat plugin returns
  * in the `kind: "connect-builder-card"` tool result).  The UI should open this
  * in a popup and poll `/builder/status` for completion, matching the existing
@@ -35,10 +35,10 @@ import { resolveBuilderStatus } from "../shared/builder-app.js";
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** The default Builder app host — mirrors the constant in builder-browser.ts. */
+/** The default Jami Studio app host — mirrors the constant in builder-browser.ts. */
 const DEFAULT_BUILDER_APP_HOST = "https://builder.io";
 
-/** Resolve the Builder app host from env, matching core builder-browser.ts. */
+/** Resolve the Jami Studio app host from env, matching core builder-browser.ts. */
 function resolveBuilderAppHost(): string {
   return (
     process.env.BUILDER_APP_HOST ||
@@ -63,24 +63,24 @@ function buildConnectUrl(origin: string): string {
 
 export default defineAction({
   description:
-    "Return the Builder connection state and CTA payload for a design. " +
-    "Use this to check whether Builder is configured before offering the " +
+    "Return the Jami Studio connection state and CTA payload for a design. " +
+    "Use this to check whether Jami Studio is configured before offering the " +
     "'Make it real' upgrade flow. Returns { connected, builderEnabled, " +
     "connectUrl, appHost, branchProjectId } so the UI can render the correct " +
     "inline card without making a separate status fetch. " +
     "When connected is false, direct the user to the connectUrl to start the " +
-    "Builder OAuth flow. When builderEnabled is true, the Builder cloud agent " +
+    "Jami Studio OAuth flow. When builderEnabled is true, the Jami Studio cloud agent " +
     "can accept a migration job via migrate-inline-design-to-app.",
   schema: z.object({
     designId: z
       .string()
-      .describe("Design project ID to check Builder connection for"),
+      .describe("Design project ID to check Jami Studio connection for"),
   }),
   readOnly: true,
   http: { method: "GET" },
   run: async ({ designId }) => {
     // Require at least viewer access so unauthenticated callers cannot
-    // probe Builder connection state.
+    // probe Jami Studio connection state.
     const access = await resolveAccess("design", designId);
     if (!access) {
       throw new Error("Design not found");
@@ -112,13 +112,13 @@ export default defineAction({
           kind: "connect-builder" as const,
           label: "Make this a real app",
           description:
-            "Connect Builder.io to unlock React components, live props, " +
+            "Connect Jami Studio to unlock React components, live props, " +
             "data states, branches, and one-click deploys.",
-          primaryAction: "Connect Builder.io",
+          primaryAction: "Connect Jami Studio",
           connectUrl,
         },
         message:
-          "Builder is not connected. Open connectUrl to start the OAuth flow.",
+          "Jami Studio is not connected. Open connectUrl to start the OAuth flow.",
       };
     }
 
@@ -131,17 +131,17 @@ export default defineAction({
         branchProjectId,
         cta: {
           kind: "configure-project" as const,
-          label: "Configure Builder project",
+          label: "Configure Jami Studio project",
           description:
-            "Builder credentials are present but no branch project is " +
+            "Jami Studio credentials are present but no branch project is " +
             "configured. Set DISPATCH_BUILDER_PROJECT_ID, " +
             "BUILDER_BRANCH_PROJECT_ID, or BUILDER_PROJECT_ID to enable " +
             "the cloud agent.",
-          primaryAction: "Open Builder settings",
+          primaryAction: "Open Jami Studio settings",
           connectUrl: `${appHost}/account-settings`,
         },
         message:
-          "Builder credentials are configured but no branch project ID is set. " +
+          "Jami Studio credentials are configured but no branch project ID is set. " +
           "Set DISPATCH_BUILDER_PROJECT_ID to enable cloud agent migration.",
       };
     }
@@ -155,7 +155,7 @@ export default defineAction({
       branchProjectId,
       cta: null,
       message:
-        "Builder is connected and cloud agents are available. " +
+        "Jami Studio is connected and cloud agents are available. " +
         "Call migrate-inline-design-to-app to generate a real React app branch.",
     };
   },

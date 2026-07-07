@@ -842,7 +842,7 @@ export function FormBuilderPage() {
 }
 
 // ---------------------------------------------------------------------------
-// Builder content (form editor + properties panel)
+// Jami Studio content (form editor + properties panel)
 // ---------------------------------------------------------------------------
 
 function BuilderContent({

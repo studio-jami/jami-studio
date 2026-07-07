@@ -20,16 +20,16 @@ const messages = {
     gotIt: "حسنًا",
   },
   builderCredits: {
-    pausedTitle: "تم إيقاف أرصدة Builder.io مؤقتًا",
+    pausedTitle: "تم إيقاف أرصدة Jami Studio مؤقتًا",
     transcriptionDescription:
-      "قم بترقية Builder.io لاستئناف النسخ الاحتياطي. ستبقى النصوص الأصلية الحالية ظاهرة.",
+      "قم بترقية Jami Studio لاستئناف النسخ الاحتياطي. ستبقى النصوص الأصلية الحالية ظاهرة.",
     cleanupDescription:
-      "قم بترقية Builder.io لاستئناف تنظيف النصوص والملخصات وعناوين الذكاء الاصطناعي. تم الاحتفاظ بالنص الأصلي.",
+      "قم بترقية Jami Studio لاستئناف تنظيف النصوص والملخصات وعناوين الذكاء الاصطناعي. تم الاحتفاظ بالنص الأصلي.",
     settingsDescription:
-      "قم بترقية Builder.io لاستئناف النسخ الاحتياطي وتنظيف النصوص والملخصات وعناوين الذكاء الاصطناعي. ستبقى النصوص الأصلية الحالية ظاهرة.",
+      "قم بترقية Jami Studio لاستئناف النسخ الاحتياطي وتنظيف النصوص والملخصات وعناوين الذكاء الاصطناعي. ستبقى النصوص الأصلية الحالية ظاهرة.",
     titleDescription:
       "تم إيقاف إنشاء عناوين الذكاء الاصطناعي مؤقتًا. سيظل النص يعمل.",
-    upgrade: "ترقية Builder.io",
+    upgrade: "ترقية Jami Studio",
     retryAfterUpgrade: "أعد المحاولة بعد الترقية",
     openAiSetup: "إعداد الذكاء الاصطناعي",
     featureBackupTranscription: "النسخ الاحتياطي",
@@ -138,7 +138,7 @@ const messages = {
     backToLibrary: "العودة إلى المكتبة",
     storageStillDisconnected: "وحدة التخزين لا تزال غير متصلة",
     finishBuilderOrS3:
-      "قم بإنهاء النافذة المنبثقة Builder.io أو قم بتكوين مساحة تخزين S3، ثم حاول مرة أخرى.",
+      "قم بإنهاء النافذة المنبثقة Jami Studio أو قم بتكوين مساحة تخزين S3، ثم حاول مرة أخرى.",
     loomImportResumed: "تم استئناف استيراد Loom",
     clipUploadResumed: "تم استئناف تحميل المقطع",
     couldNotRetryLoom: "تعذرت إعادة محاولة استيراد Loom",
@@ -172,9 +172,9 @@ const messages = {
     savingWentWrong: "حدث خطأ ما أثناء حفظ هذا المقطع.",
     finishingClip: "جارٍ الانتهاء من المقطع الخاص بك...",
     loomSourcePreserved:
-      "يتم الحفاظ على رابط المصدر Loom. قم بتوصيل وحدة تخزين Builder.io أو S3 وسيقوم Clips بإعادة محاولة حفظ نسخته الخاصة.",
+      "يتم الحفاظ على رابط المصدر Loom. قم بتوصيل وحدة تخزين Jami Studio أو S3 وسيقوم Clips بإعادة محاولة حفظ نسخته الخاصة.",
     clipDataPreserved:
-      "لا تزال بيانات المقطع الخاص بك محفوظة. قم بتوصيل وحدة تخزين Builder.io أو S3 وسيقوم Clips بتحميله تلقائيًا.",
+      "لا تزال بيانات المقطع الخاص بك محفوظة. قم بتوصيل وحدة تخزين Jami Studio أو S3 وسيقوم Clips بتحميله تلقائيًا.",
     details: "تفاصيل",
     importingLoom: "جارٍ استيراد Loom...",
     uploadingSavedClip: "جارٍ تحميل المقطع المحفوظ…",
@@ -251,13 +251,13 @@ const messages = {
     savingWentWrong: "حدث خطأ ما أثناء حفظ هذا المقطع.",
     finishingClip: "الانتهاء من هذا المقطع...",
     loomPreservedManage:
-      "يتم الحفاظ على رابط المصدر Loom. قم بتوصيل وحدة تخزين Builder.io أو S3، ثم أعد محاولة الاستيراد.",
+      "يتم الحفاظ على رابط المصدر Loom. قم بتوصيل وحدة تخزين Jami Studio أو S3، ثم أعد محاولة الاستيراد.",
     videoPreservedManage:
-      "الفيديو محفوظ. قم بتوصيل وحدة تخزين Builder.io أو S3 وسينتهي Clips من تحميله.",
+      "الفيديو محفوظ. قم بتوصيل وحدة تخزين Jami Studio أو S3 وسينتهي Clips من تحميله.",
     creatorNeedsStorage:
-      "يحتاج المنشئ إلى توصيل وحدة تخزين Builder.io أو S3 قبل انتهاء هذا المقطع.",
+      "يحتاج المنشئ إلى توصيل وحدة تخزين Jami Studio أو S3 قبل انتهاء هذا المقطع.",
     signInStorage:
-      "إذا كان هذا هو المقطع الخاص بك، فقم بتسجيل الدخول هنا لتوصيل مساحة تخزين Builder.io أو S3 وإنهاء التحميل.",
+      "إذا كان هذا هو المقطع الخاص بك، فقم بتسجيل الدخول هنا لتوصيل مساحة تخزين Jami Studio أو S3 وإنهاء التحميل.",
     uploadNotCompleteSession:
       "لم يكتمل التحميل بعد. افتح لوحة التحكم لهذا المقطع أو اطلب من منشئ المحتوى التحقق من مساحة التخزين.",
     uploadNotCompleteSignIn:
@@ -366,7 +366,7 @@ const messages = {
     transcriptUnavailableTitle: "النص غير متوفر",
     providerNeedsAttention: "يحتاج المزوّد إلى اهتمام",
     providerNeedsAttentionDescription:
-      "أوقف المزوّد الحالي هذا الطلب مؤقتًا. انتقل إلى Builder.io أو حدّث المفتاح، ثم أعد المحاولة.",
+      "أوقف المزوّد الحالي هذا الطلب مؤقتًا. انتقل إلى Jami Studio أو حدّث المفتاح، ثم أعد المحاولة.",
     enableTranscriptionTitle: "تفعيل النسخ",
     enableTranscriptionDescription:
       "فعّل التسميات التوضيحية والبحث في النصوص والملخصات لهذا المقطع.",
@@ -382,11 +382,11 @@ const messages = {
     backupNotSetup: "لم يتم التقاط أي كلام محليًا، ولم يتم إعداد النسخ الاحتياطي.",
     cleanupKept: "تعذر إنهاء عملية التنظيف. تم الاحتفاظ بالنص الأصلي.",
     cleanupBuilderFailed:
-      "تعذر إنهاء عملية التنظيف على الرغم من اتصال Builder.io. تم الاحتفاظ بالنص الأصلي.",
+      "تعذر إنهاء عملية التنظيف على الرغم من اتصال Jami Studio. تم الاحتفاظ بالنص الأصلي.",
     cleanupPaused:
-      "التنظيف متوقف مؤقتًا. صِل الذكاء الاصطناعي من الإعدادات: Builder.io (أرصدة مجانية) أو مفتاح LLM الخاص بك.",
+      "التنظيف متوقف مؤقتًا. صِل الذكاء الاصطناعي من الإعدادات: Jami Studio (أرصدة مجانية) أو مفتاح LLM الخاص بك.",
     builderNoResponse:
-      "لم أتلق ردًا من Builder. اسمح بالنوافذ المنبثقة وحاول مرة أخرى.",
+      "لم أتلق ردًا من Jami Studio. اسمح بالنوافذ المنبثقة وحاول مرة أخرى.",
     saveFailed: "فشل الحفظ ({{status}})",
     savedRetrying: "أنقذ. جارٍ إعادة محاولة تحويل الصوت إلى نص...",
     getGroqKey: "احصل على مفتاح Groq",
@@ -630,25 +630,25 @@ const messages = {
       "احصل على بريد إلكتروني عندما يعلّق شخص أو يتفاعل أو يشارك تسجيلًا معك.",
     saved: "تم حفظ الإعدادات",
     saveFailed: "فشل الحفظ",
-    builderConnectedToast: "تم اتصال Builder.io",
+    builderConnectedToast: "تم اتصال Jami Studio",
     videoStorage: "تخزين الفيديو",
     videoStorageDescription:
-      "Builder.io هو مسار التخزين الأساسي لعمليات رفع Clips. يتوفر S3 عندما تحتاج إلى استخدام حاويتك الخاصة.",
-    checkingBuilder: "جار فحص Builder.io",
-    builderConnected: "Builder.io متصل",
-    connectBuilder: "استخدام Builder.io (مجاني)",
-    builderConnectedFor: "يتم استخدام Builder.io لـ {{orgName}}.",
-    builderConnectedGeneric: "تستخدم المقاطع الجديدة مزود Builder.io المتصل.",
+      "Jami Studio هو مسار التخزين الأساسي لعمليات رفع Clips. يتوفر S3 عندما تحتاج إلى استخدام حاويتك الخاصة.",
+    checkingBuilder: "جار فحص Jami Studio",
+    builderConnected: "Jami Studio متصل",
+    connectBuilder: "استخدام Jami Studio (مجاني)",
+    builderConnectedFor: "يتم استخدام Jami Studio لـ {{orgName}}.",
+    builderConnectedGeneric: "تستخدم المقاطع الجديدة مزود Jami Studio المتصل.",
     builderIncludes:
       "يتضمن تخزين الكائنات والرفع والنسخ المُدار للمقاطع الجديدة.",
     s3Title: "تخزين متوافق مع S3",
     secondary: "ثانوي",
     active: "نشط",
     s3BuilderConnectedDescription:
-      "استخدم هذا فقط إذا كان يجب على هذه المساحة الرفع إلى حاويتك الخاصة بدلًا من Builder.io.",
+      "استخدم هذا فقط إذا كان يجب على هذه المساحة الرفع إلى حاويتك الخاصة بدلًا من Jami Studio.",
     s3CurrentProvider: "يتم حاليًا استخدام {{providerName}}.",
     s3OwnBucketDescription:
-      "استخدم حاويتك الخاصة إذا كنت لا تريد تخزين Builder.io.",
+      "استخدم حاويتك الخاصة إذا كنت لا تريد تخزين Jami Studio.",
     configureS3: "إعداد S3",
     hideS3: "إخفاء S3",
     saveStorage: "حفظ التخزين",
@@ -667,12 +667,12 @@ const messages = {
     s3RegionInvalid: 'يجب أن تكون منطقة صالحة (مثال: us-east-1) أو "auto"',
     apiSetup: "إعداد الذكاء الاصطناعي",
     apiSetupDescription:
-      "صِل الذكاء الاصطناعي باستخدام أرصدة Builder.io المجانية أو مفاتيح LLM الخاصة بك.",
-    builderEasySetup: "أرصدة Builder.io مجانية",
+      "صِل الذكاء الاصطناعي باستخدام أرصدة Jami Studio المجانية أو مفاتيح LLM الخاصة بك.",
+    builderEasySetup: "أرصدة Jami Studio مجانية",
     builderAiAvailable:
       "تتوفر اعتمادات الذكاء الاصطناعي المضمنة والنسخ المُدار لـ Clips.",
     builderAiDescription:
-      "استخدم Builder.io أولًا لاعتمادات الذكاء الاصطناعي المضمنة وتخزين الكائنات والرفع والنسخ المُدار.",
+      "استخدم Jami Studio أولًا لاعتمادات الذكاء الاصطناعي المضمنة وتخزين الكائنات والرفع والنسخ المُدار.",
     providerKeyTitle: "استخدام مفتاح مزود خاص بك",
     providerKeyDescription:
       "أضف مفاتيح Anthropic أو OpenAI أو Gemini أو Groq أو OpenRouter للاستخدام المفوتر من المزود.",
@@ -828,7 +828,7 @@ const messages = {
     pickAtLeastTwo: "اختر تسجيلين على الأقل لدمجهما",
     videoUrlMissing: "واحد أو أكثر من التسجيلات لا يحتوي بعد على رابط فيديو جاهز",
     connectStorage:
-      "صِل التخزين قبل دمج التسجيلات: Builder.io (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3.",
+      "صِل التخزين قبل دمج التسجيلات: Jami Studio (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3.",
     created: "تم إنشاء التسجيل المدمج",
     failed: "فشل دمج التسجيلات",
     noOtherRecordings: "لا توجد تسجيلات أخرى متاحة.",
@@ -1064,15 +1064,15 @@ const messages = {
   },
   storageSetup: {
     builderTimeout:
-      "لم يصل رد من Builder خلال 5 دقائق. تحقق من النافذة المنبثقة وحاول مرة أخرى.",
-    builderConnected: "Builder.io متصل",
-    waitingForBuilder: "بانتظار Builder...",
-    connectBuilder: "استخدام Builder.io (مجاني)",
+      "لم يصل رد من Jami Studio خلال 5 دقائق. تحقق من النافذة المنبثقة وحاول مرة أخرى.",
+    builderConnected: "Jami Studio متصل",
+    waitingForBuilder: "بانتظار Jami Studio...",
+    connectBuilder: "استخدام Jami Studio (مجاني)",
     free: "مجاني",
     configureS3: "تكوين تخزين متوافق مع S3",
     whyPrompt: "لماذا أرى هذا؟",
     whyDescription:
-      "Clips تطبيق مجاني ومفتوح المصدر 100%، لذلك تحتاج إلى توصيل طريقة لتخزين المقاطع. صِل التخزين عبر Builder.io لتخزين وذكاء اصطناعي ضمن الخطة المجانية، أو استخدم تخزين كائنات متوافقًا مع S3 ومفاتيح LLM الخاصة بك.",
+      "Clips تطبيق مجاني ومفتوح المصدر 100%، لذلك تحتاج إلى توصيل طريقة لتخزين المقاطع. صِل التخزين عبر Jami Studio لتخزين وذكاء اصطناعي ضمن الخطة المجانية، أو استخدم تخزين كائنات متوافقًا مع S3 ومفاتيح LLM الخاصة بك.",
   },
   captureInstall: {
     title: "Choose your recorder (مترجم)",
@@ -1275,9 +1275,9 @@ const messages = {
     downloadRecording: "Download recording (مترجم)",
     openRecorderInTab: "Open recorder in tab (مترجم)",
     connectStorageToFinish:
-      "صِل التخزين في الشاشة التالية: Builder.io (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3. سيكمل Clips الحفظ.",
+      "صِل التخزين في الشاشة التالية: Jami Studio (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3. سيكمل Clips الحفظ.",
     connectStorageToRetryLoom:
-      "صِل التخزين في الشاشة التالية: Builder.io (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3. سيعيد Clips محاولة الاستيراد.",
+      "صِل التخزين في الشاشة التالية: Jami Studio (تخزين + ذكاء اصطناعي في الخطة المجانية) أو تخزين متوافق مع S3. سيعيد Clips محاولة الاستيراد.",
   },
   dictateRoute: {
     pageTitle: "Dictate · Clips (مترجم)",

@@ -12,9 +12,9 @@ import { isObjectStorageConfigured } from "../server/lib/storage.js";
 
 /**
  * Surface the server-side `BUILDER_IMAGE_GENERATION_ENABLED` env flag so
- * the settings UI can decide whether to offer the "Connect Builder.io"
+ * the settings UI can decide whether to offer the "Connect Jami Studio"
  * path. With the flag set to `"false"` the generation pipeline refuses
- * Builder-managed runs (see `generateWithManagedImageProvider` in
+ * Jami Studio-managed runs (see `generateWithManagedImageProvider` in
  * `generation.ts:217`), so the settings page would otherwise lead users
  * down a setup path that can't succeed.
  *

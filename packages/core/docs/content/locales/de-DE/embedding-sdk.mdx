@@ -107,7 +107,7 @@ export default createAgentNativeEmbeddedPlugin({
   agentChat: {
     appId: "builder",
     systemPrompt:
-      "You are Builder's embedded agent. Use Builder actions for durable work.",
+      "You are Jami Studio's embedded agent. Use Jami Studio actions for durable work.",
   },
 });
 ```
@@ -126,7 +126,7 @@ export function BuilderAppShell({ children, content, editor }) {
       defaultOpen
       session={{
         id: browserTabId(),
-        label: "Builder editor",
+        label: "Jami Studio editor",
       }}
       getContext={() => ({
         route: {
@@ -213,7 +213,7 @@ pnpm add @agent-native/embedding
 
 Verwenden Sie `@agent-native/embedding`, wenn das Hostprodukt eine vollständige Ausführung starten möchte
 Agent-Native-App als fokussierte Iframe-Oberfläche: Asset-Auswahl, Asset-Generator,
-Formular-Builder, Kalender-Slot-Auswahl, Genehmigungspanel oder andere aufgabenspezifische Elemente
+Formular-Jami Studio, Kalender-Slot-Auswahl, Genehmigungspanel oder andere aufgabenspezifische Elemente
 Workflow. Dies ist absichtlich kleiner als die Sidecar-Host-Brücke unten: die
 iframe kündigt die Bereitschaft an, der Host kann benannte Nachrichten senden und die eingebetteten
 App kann Domänenereignisse wie `chooseAsset` oder `close` ausgeben.
@@ -328,7 +328,7 @@ export function AssistantDock({ customer, sessionToken }) {
       actions={[
         defineClientAction<{ contentId: string }, { published: true }>({
           name: "publish-content",
-          description: "Publish a Builder content entry",
+          description: "Publish a Jami Studio content entry",
           schema: {
             type: "object",
             properties: { contentId: { type: "string" } },
@@ -467,7 +467,7 @@ export function SidecarRuntime() {
   useEffect(() => {
     const bridge = startAgentNativeBrowserSessionBridge({
       hostOrigin: "https://app.example.com",
-      label: "Builder editor",
+      label: "Jami Studio editor",
     });
     return () => bridge.stop();
   }, []);
@@ -669,6 +669,6 @@ Der Helfer gibt absichtlich einfache `{ name, description, parameters, execute }
 
 ## Empfohlene Produktform
 
-Starten Sie zuerst iframe. Es funktioniert für Builder.io, Kunden-SaaS-Apps und interne Verwaltungstools, ohne Release-Zyklen oder CSS/Laufzeitannahmen zu koppeln.
+Starten Sie zuerst iframe. Es funktioniert für Jami Studio, Kunden-SaaS-Apps und interne Verwaltungstools, ohne Release-Zyklen oder CSS/Laufzeitannahmen zu koppeln.
 
 Der Sidecar selbst sollte weiterhin eine Agent-Native-App/-Vorlage sein: actions ist die Backend-API-Oberfläche, der von SQL unterstützte App-Status ist der Speicher des Agenten und Integrationen wie Slack oder Telegram können in denselben dauerhaften Chat weitergeleitet werden. Der einbettende SDK stellt die Live-Membran zwischen diesem Sidecar und der aktuellen Hostseite bereit.

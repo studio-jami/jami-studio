@@ -14,7 +14,7 @@ import { notify } from "@agent-native/core/notifications";
 
 await notify(
   { severity: "info", title: "Booking confirmed", body: "Jane at 3pm" },
-  { owner: "steve@builder.io" },
+  { owner: "steve@jami.studio" },
 );
 ```
 
@@ -234,14 +234,14 @@ import {
   deleteNotification,
 } from "@agent-native/core/notifications";
 
-const rows = await listNotifications("steve@builder.io", {
+const rows = await listNotifications("steve@jami.studio", {
   unreadOnly: true,
   limit: 50,
 });
-const unread = await countUnread("steve@builder.io");
-await markNotificationRead(rows[0].id, "steve@builder.io");
-await markAllNotificationsRead("steve@builder.io");
-await deleteNotification(rows[0].id, "steve@builder.io");
+const unread = await countUnread("steve@jami.studio");
+await markNotificationRead(rows[0].id, "steve@jami.studio");
+await markAllNotificationsRead("steve@jami.studio");
+await deleteNotification(rows[0].id, "steve@jami.studio");
 ```
 
 每個函式都是所有者範圍的 - 沒有跨使用者讀取，沒有跨使用者寫入。

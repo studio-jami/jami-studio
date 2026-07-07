@@ -325,7 +325,7 @@ Use os campos deliberadamente:
 | `newTab: true`      | Inicie um tópico de bate-papo separado para uma tarefa de criação maior                                   |
 | `type: "code"`      | Rotear para o quadro de edição de código quando a solicitação for sobre alteração da origem do aplicativo |
 
-`sendToAgentChat()` é o wrapper de navegador compatível para o caminho do bate-papo enviado, às vezes visto internamente como `agentNative.submitChat`. O aplicativo UI deve chamar o wrapper em vez de postar `agentNative.submitChat` diretamente porque o wrapper lida com barras laterais locais, roteamento Builder/Frame, roteamento de host do aplicativo MCP, IDs de guias e roteamento de solicitação de código.
+`sendToAgentChat()` é o wrapper de navegador compatível para o caminho do bate-papo enviado, às vezes visto internamente como `agentNative.submitChat`. O aplicativo UI deve chamar o wrapper em vez de postar `agentNative.submitChat` diretamente porque o wrapper lida com barras laterais locais, roteamento Jami Studio/Frame, roteamento de host do aplicativo MCP, IDs de guias e roteamento de solicitação de código.
 
 Use `agentChat.submit()` ou `agentChat.prefill()` para contextos de nó/script onde não há barra lateral do navegador. O servidor actions geralmente não deve chamar `sendToAgentChat()` somente no navegador; se uma ação precisar do UI aberto para perguntar algo ao agente, escreva uma pequena solicitação em `application_state` e deixe uma ponte UI enviá-la do navegador.
 

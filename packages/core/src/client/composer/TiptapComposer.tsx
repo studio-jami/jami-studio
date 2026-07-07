@@ -584,7 +584,7 @@ export interface TiptapComposerProps {
   providerConnectStatusEnabled?: boolean;
   /**
    * Override the Builder.io connect action in the model picker. When provided,
-   * clicking "Connect Builder.io" calls this instead of opening a browser popup.
+   * clicking "Connect Jami Studio" calls this instead of opening a browser popup.
    * Used by the Electron desktop app to route through the native IPC handler.
    */
   onConnectProvider?: () => void;
@@ -1032,8 +1032,8 @@ function ModelSelector({
               <span className="flex-1 min-w-0">
                 <span className="block text-[12px] font-medium text-foreground">
                   {!onConnectProvider && builderFlow.connecting
-                    ? "Connecting Builder.io…"
-                    : "Connect Builder.io"}
+                    ? "Connecting Jami Studio…"
+                    : "Connect Jami Studio"}
                 </span>
                 <span className="block text-[11px] text-muted-foreground">
                   Free credits for Claude, OpenAI &amp; Gemini

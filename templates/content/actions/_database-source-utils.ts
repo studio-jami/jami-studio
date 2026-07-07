@@ -530,7 +530,7 @@ function builderBodyHasLegacyPreservedComponentPlaceholders(
   content: string | null | undefined,
 ) {
   const value = content ?? "";
-  return /^>\s*Builder .+ component preserved from source\.$/m.test(value);
+  return /^>\s*Jami Studio .+ component preserved from source\.$/m.test(value);
 }
 
 function builderBodyWithoutSourceComponentMarkers(
@@ -828,7 +828,7 @@ async function processBuilderBodyHydrationJob(
     .where(eq(schema.contentDatabaseItems.id, row.databaseItemId));
 
   const entry = parseHydrationEntry(row);
-  if (!entry) throw new Error("Builder body hydration entry is missing.");
+  if (!entry) throw new Error("Jami Studio body hydration entry is missing.");
   const entryWithBody = await refreshBuilderBodySourceValuesFromStoredLossless(
     await withBuilderBodySourceValues(entry),
   );
@@ -896,7 +896,7 @@ async function processBuilderBodyHydrationJob(
           bodyHydrationStatus: "pending",
           bodyHydrationAttemptedAt: now,
           bodyHydrationError:
-            "Skipped Builder body hydration because the document changed during sync.",
+            "Skipped Jami Studio body hydration because the document changed during sync.",
           updatedAt: now,
         })
         .where(eq(schema.contentDatabaseItems.id, row.databaseItemId));
@@ -904,7 +904,7 @@ async function processBuilderBodyHydrationJob(
         .update(schema.contentDatabaseBodyHydrationQueue)
         .set({
           lastError:
-            "Skipped Builder body hydration because the document changed during sync.",
+            "Skipped Jami Studio body hydration because the document changed during sync.",
           updatedAt: now,
         })
         .where(
@@ -1238,7 +1238,7 @@ async function builderBodyChangeForLocalContent(args: {
 
   try {
     const proposed =
-      losslessContent && !localContent.includes("<Builder")
+      losslessContent && !localContent.includes("<Jami Studio")
         ? await builderReadableBodyToBuilderBlocks({
             localContent,
             losslessContent,
@@ -1250,7 +1250,8 @@ async function builderBodyChangeForLocalContent(args: {
           };
     if (!proposed.blocks) {
       return {
-        summary: "Builder body blocks changed, but need attention before push.",
+        summary:
+          "Jami Studio body blocks changed, but need attention before push.",
         currentExcerpt: bodyExcerpt(currentContent),
         proposedExcerpt: bodyExcerpt(localContent),
         currentHash,
@@ -1265,7 +1266,7 @@ async function builderBodyChangeForLocalContent(args: {
     const proposedHash = builderBlocksHash(proposedBlocks);
     if (currentHash && proposedHash === currentHash) return null;
     return {
-      summary: "Builder body blocks changed.",
+      summary: "Jami Studio body blocks changed.",
       currentExcerpt: bodyExcerpt(currentContent),
       proposedExcerpt: bodyExcerpt(localContent),
       currentHash,
@@ -1279,9 +1280,10 @@ async function builderBodyChangeForLocalContent(args: {
     const message =
       error instanceof Error
         ? error.message
-        : "Builder body could not be converted.";
+        : "Jami Studio body could not be converted.";
     return {
-      summary: "Builder body blocks changed, but need attention before push.",
+      summary:
+        "Jami Studio body blocks changed, but need attention before push.",
       currentExcerpt: bodyExcerpt(currentContent),
       proposedExcerpt: bodyExcerpt(localContent),
       currentHash,
@@ -1421,11 +1423,11 @@ export function buildBuilderLocalOutboundChangeSets(args: {
       localOnly: true,
       summary:
         bodyChange && fieldChanges.length === 0
-          ? `Pending local Builder CMS body change for "${displayTitle}".`
+          ? `Pending local Jami Studio CMS body change for "${displayTitle}".`
           : fieldChanges.length === 1 &&
               fieldChanges[0]?.localFieldKey === "title"
-            ? `Pending local Builder CMS title change for "${localTitle}".`
-            : `Pending local Builder CMS changes for "${displayTitle}".`,
+            ? `Pending local Jami Studio CMS title change for "${localTitle}".`
+            : `Pending local Jami Studio CMS changes for "${displayTitle}".`,
       fieldChanges,
       bodyChange,
       riskLevel: "low",
@@ -1438,7 +1440,7 @@ export function buildBuilderLocalOutboundChangeSets(args: {
     });
   }
 
-  // New-row creates: a local database item NOT linked to a Builder entry (no
+  // New-row creates: a local database item NOT linked to a Jami Studio entry (no
   // source row) and with a non-empty title becomes a create_draft change-set.
   // No baseline comparison here — we send the local values; the create_draft
   // effect (derived from a null target entryId) writes the entry as a draft.
@@ -1511,13 +1513,13 @@ export function buildBuilderLocalOutboundChangeSets(args: {
         state: "pending_push",
         pushMode: "autosave",
         localOnly: true,
-        summary: `Pending new Builder entry "${title}".`,
+        summary: `Pending new Jami Studio entry "${title}".`,
         fieldChanges,
         bodyChange,
         riskLevel: "low",
         riskReasons: bodyChange
-          ? ["new Builder entry (create as draft)", "body diff"]
-          : ["new Builder entry (create as draft)"],
+          ? ["new Jami Studio entry (create as draft)", "body diff"]
+          : ["new Jami Studio entry (create as draft)"],
         conflictState: "none",
         reviewEvents: [],
         executions: [],
@@ -1724,7 +1726,7 @@ async function loadSourceSnapshot(
   }
   const isBuilderSource =
     normalizeSourceType(source.sourceType) === "builder-cms";
-  // For Builder sources, load ALL database items (not just synced source rows)
+  // For Jami Studio sources, load ALL database items (not just synced source rows)
   // so brand-new local rows (no source link) can become create_draft change-sets.
   const databaseItemRows = isBuilderSource
     ? await db
@@ -1808,7 +1810,7 @@ async function loadSourceSnapshot(
       sourceFieldKey: row.sourceFieldKey,
       sourceFieldLabel: row.sourceFieldLabel,
     }));
-  // Row-union ownership scoping (Builder only). Determine which documents belong
+  // Row-union ownership scoping (Jami Studio only). Determine which documents belong
   // to OTHER sources and whether this source is the primary (oldest), so the
   // create-candidate logic never claims another collection's rows and unsourced
   // "Local" rows only create against the primary. Single-source: no other
@@ -2172,7 +2174,7 @@ function builderCmsModelFieldLabel(name: string) {
       .replace(/[_-]+/g, " ")
       .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
       .replace(/\s+/g, " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase()) || "Builder field"
+      .replace(/\b\w/g, (letter) => letter.toUpperCase()) || "Jami Studio field"
   );
 }
 
@@ -2227,12 +2229,12 @@ export async function seedMockSourceFields(args: {
             propertyId: null,
             localFieldKey: "builder_url",
             sourceFieldKey: "data.url",
-            sourceFieldLabel: "Builder URL",
+            sourceFieldLabel: "Jami Studio URL",
             sourceFieldType: "url",
             mappingType: "system",
             writeOwner: "source",
             readOnly: 1,
-            provenance: "Builder natural key",
+            provenance: "Jami Studio natural key",
             freshness: "fresh",
             lastSyncedAt: args.now,
             createdAt: args.now,
@@ -2277,13 +2279,13 @@ export async function seedMockSourceFields(args: {
       updatedAt: args.now,
     },
     // The auto-created "Source" property is internal row-tagging (which
-    // collection a row belongs to). It must NEVER become a writable Builder
+    // collection a row belongs to). It must NEVER become a writable Jami Studio
     // source field — otherwise its local option-id value diffs against an
     // absent baseline and every row shows a phantom pending change, and a push
-    // would try to write the internal tag to Builder. Match the SAME shape
+    // would try to write the internal tag to Jami Studio. Match the SAME shape
     // ensureDatabaseSourceProperty uses to identify it (a `select` named
-    // "Source") and only for Builder sources, so a user's own field happening
-    // to be named "Source" — or any non-Builder/local-table source — is left
+    // "Source") and only for Jami Studio sources, so a user's own field happening
+    // to be named "Source" — or any non-Jami Studio/local-table source — is left
     // untouched.
     ...args.properties
       .filter(
@@ -2359,7 +2361,7 @@ export async function seedMockSourceFields(args: {
         mappingType: "property",
         writeOwner: "source",
         readOnly: 0,
-        provenance: "Builder model field",
+        provenance: "Jami Studio model field",
         freshness: "fresh",
         lastSyncedAt: args.now,
         createdAt: args.now,
@@ -2394,7 +2396,7 @@ export async function seedMockSourceFields(args: {
           mappingType: "property",
           writeOwner: "source",
           readOnly: 0,
-          provenance: "Builder content field",
+          provenance: "Jami Studio content field",
           freshness: "fresh",
           lastSyncedAt: args.now,
           createdAt: args.now,
@@ -2466,7 +2468,7 @@ export async function seedMockSourceRows(args: {
         provenance:
           args.sourceType === "builder-cms"
             ? args.builderEntriesByDocumentId?.has(item.document.id)
-              ? "Builder CMS read adapter"
+              ? "Jami Studio CMS read adapter"
               : BUILDER_CMS_FIXTURE_ROW_PROVENANCE
             : "mock source row",
         syncState: "linked",

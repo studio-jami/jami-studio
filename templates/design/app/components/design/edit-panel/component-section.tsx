@@ -65,8 +65,8 @@ interface ConnectBuilderAppResult {
  * `connect-builder-app` to determine the current connection state, then
  * offers the appropriate CTA:
  *
- *   - Not connected → "Connect Builder.io" button (opens connectUrl)
- *   - Connected, no project → "Open Builder settings" (configure project ID)
+ *   - Not connected → "Connect Jami Studio" button (opens connectUrl)
+ *   - Connected, no project → "Open Jami Studio settings" (configure project ID)
  *   - Fully enabled → "Make it real" button (calls migrate-inline-design-to-app)
  *
  * The card is progressively disclosed: it only mounts when a gated control is
@@ -121,7 +121,7 @@ function MakeItRealCard({
   // "Make it real" primary action: open the connect URL or migrate.
   const handlePrimary = () => {
     if (cta.kind === "connect-builder") {
-      // Open the Builder OAuth connect flow in a new tab.  The user completes
+      // Open the Jami Studio OAuth connect flow in a new tab.  The user completes
       // it there and comes back; the card will re-query on next render.
       window.open(cta.connectUrl, "_blank", "noopener,noreferrer");
       return;
@@ -169,8 +169,8 @@ function MakeItRealCard({
 
   const summary =
     cta.kind === "configure-project"
-      ? `Choose a Builder project to enable ${featureLabel}.`
-      : `Connect Builder to enable ${featureLabel}.`;
+      ? `Choose a Jami Studio project to enable ${featureLabel}.`
+      : `Connect Jami Studio to enable ${featureLabel}.`;
   const primaryLabel =
     cta.kind === "configure-project"
       ? "Choose" /* i18n-ignore make-it-real card */
@@ -200,7 +200,7 @@ function MakeItRealCard({
           <IconArrowRight className="size-2.5" />
         </Button>
 
-        {/* When Builder is fully connected, also offer direct migration */}
+        {/* When Jami Studio is fully connected, also offer direct migration */}
         {data.connected && data.builderEnabled && (
           <Button
             type="button"
@@ -269,7 +269,7 @@ interface ComponentDetailsResult {
  * prop values, variant/size/state controls from `get-component-details`, and
  * an "Edit component source" action.  Real-app features are gated by the
  * capabilities returned by the action; Alpine gets a lightweight read-only
- * view plus a Connect-Builder CTA.
+ * view plus a Connect-Jami Studio CTA.
  *
  * Matches the workbench artboard spec in DESIGN-STUDIO-PLAN.md §6.1.
  */
@@ -750,7 +750,7 @@ export function ComponentSection({
           </div>
         )}
 
-        {/* Connect-Builder CTA (only when prop editing is actually gated). */}
+        {/* Connect-Jami Studio CTA (only when prop editing is actually gated). */}
         {capabilities.ctaRequired && !editingEnabled && (
           <MakeItRealCard
             designId={designId}

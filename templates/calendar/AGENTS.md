@@ -9,7 +9,7 @@ Detailed event, availability, booking, storage, and UI rules live in
 
 ## Core Rules
 
-- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Builder/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
+- Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use actions for events, availability, booking links, settings, navigation,
   Google Calendar connection, and sharing. Do not bypass app access checks.
 - Use `connect-google-calendar` when the user asks to connect or reconnect

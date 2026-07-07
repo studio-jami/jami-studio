@@ -59,7 +59,7 @@ export function sitemapPlugin(): Plugin {
     agentWeb: pkg["agent-native"]?.workspaceApp?.agentWeb,
     outputDirs: ["build/client", "dist", "dist/client", "dist/server/public"],
     organization: {
-      name: "Builder.io",
+      name: "Jami Studio",
       url: "https://builder.io",
       sameAs: ["https://github.com/BuilderIO/agent-native"],
     },

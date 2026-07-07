@@ -21,7 +21,7 @@ description: "具有自然語言條件的事件觸發和計畫自動化"
   <div class="diagram-card">
     <span class="diagram-pill">Condition</span
     ><small class="diagram-muted"
-      >Haiku checks: &ldquo;email ends with @builder.io&rdquo;</small
+      >Haiku checks: &ldquo;email ends with @jami.studio&rdquo;</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -68,7 +68,7 @@ description: "具有自然語言條件的事件觸發和計畫自動化"
 
 ### 透過詢問代理
 
-> “當有人使用 @builder.io 電子郵件預訂會議時，請透過 Slack 向我傳送訊息。”
+> “當有人使用 @jami.studio 電子郵件預訂會議時，請透過 Slack 向我傳送訊息。”
 
 代理發現可用事件，確認計畫，並為您編寫自動化。
 
@@ -84,7 +84,7 @@ description: "具有自然語言條件的事件觸發和計畫自動化"
   filename="jobs/slack-on-builder-booking.md"
   language="markdown"
   code={
-    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @builder.io"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
+    '---\nschedule: ""\nenabled: true\ntriggerType: event\nevent: calendar.booking.created\ncondition: "attendee email ends with @jami.studio"\nmode: agentic\ndomain: calendar\nrunAs: creator\n---\nSend a Slack message to #sales with the booking details.\nUse the web-request tool to POST to ${keys.SLACK_WEBHOOK}.'
   }
   annotations={[
     {
@@ -172,7 +172,7 @@ emit(
     customerEmail: "jane@example.com",
     total: 49.99,
   },
-  { owner: "steve@builder.io" },
+  { owner: "steve@jami.studio" },
 );
 ```
 
@@ -189,7 +189,7 @@ emit(
 
 條件範例：
 
-- `"attendee email ends with @builder.io"`
+- `"attendee email ends with @jami.studio"`
 - `"the order total is greater than $100"`
 - `"the message contains the word 'urgent'"`
 
@@ -336,7 +336,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
 
 ## 範例 {#example}
 
-**使用者：**“當有人使用 @builder.io 電子郵件預訂時，請在 Slack 中給我發訊息。”
+**使用者：**“當有人使用 @jami.studio 電子郵件預訂時，請在 Slack 中給我發訊息。”
 
 **代理流程：**
 
@@ -346,7 +346,7 @@ Confirm an automation's wiring and condition without waiting for a real provider
    - `name`: `slack-on-builder-booking`
    - `trigger_type`: `event`
    - `event`: `calendar.booking.created`
-   - `condition`: `attendee email ends with @builder.io`
+   - `condition`: `attendee email ends with @jami.studio`
    - `mode`: `agentic`
    - `domain`: `calendar`
    - `body`: `Send a Slack message to #sales with the booking details. Use the web-request tool to POST to ${keys.SLACK_WEBHOOK}.`

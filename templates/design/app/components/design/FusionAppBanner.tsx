@@ -315,7 +315,7 @@ export function FusionAppBanner({
                 <a href={editorUrl} target="_blank" rel="noreferrer">
                   <IconExternalLink className="me-2 size-3.5" />
                   {
-                    "Open in Builder" /* i18n-ignore fusion app banner, flag-gated feature */
+                    "Open in Jami Studio" /* i18n-ignore fusion app banner, flag-gated feature */
                   }
                 </a>
               </DropdownMenuItem>

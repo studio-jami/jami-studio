@@ -87,7 +87,7 @@ async function requireBuilderDocsPrivateKey() {
   const privateKey = await readBuilderPrivateKey();
   if (!privateKey) {
     throw new Error(
-      "Builder docs MDX sync requires a Builder private credential scoped to the current user/org.",
+      "Jami Studio docs MDX sync requires a Jami Studio private credential scoped to the current user/org.",
     );
   }
   return privateKey;
@@ -187,7 +187,9 @@ async function postBuilderMcp(args: {
   });
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(`Builder MCP request failed with HTTP ${response.status}.`);
+    throw new Error(
+      `Jami Studio MCP request failed with HTTP ${response.status}.`,
+    );
   }
   return {
     json: JSON.parse(text) as Record<string, unknown>,
@@ -262,7 +264,7 @@ async function readBuilderDocsPublishedEntries(args: {
       entries: [],
       fetchedAt,
       message:
-        "Builder docs list skipped because BUILDER_PUBLIC_KEY is not configured.",
+        "Jami Studio docs list skipped because BUILDER_PUBLIC_KEY is not configured.",
     };
   }
 
@@ -287,8 +289,8 @@ async function readBuilderDocsPublishedEntries(args: {
       fetchedAt,
       message:
         error instanceof Error
-          ? `Builder docs list failed: ${error.message}`
-          : "Builder docs list failed.",
+          ? `Jami Studio docs list failed: ${error.message}`
+          : "Jami Studio docs list failed.",
     };
   }
 
@@ -297,7 +299,7 @@ async function readBuilderDocsPublishedEntries(args: {
       state: "error",
       entries: [],
       fetchedAt,
-      message: `Builder docs list failed with HTTP ${response.status}.`,
+      message: `Jami Studio docs list failed with HTTP ${response.status}.`,
     };
   }
 
@@ -349,7 +351,7 @@ async function readFullBuilderDocsEntryViaMcp(args: {
   const entry = fullEntryFromToolResponse(contentJson, args.model);
   if (!entry) {
     throw new Error(
-      `Builder entry ${args.model}/${args.entryId} was not found.`,
+      `Jami Studio entry ${args.model}/${args.entryId} was not found.`,
     );
   }
   return entry;
@@ -574,7 +576,9 @@ function singleBuilderMdxPath(
 ) {
   if (explicit) {
     if (!Object.prototype.hasOwnProperty.call(files, explicit)) {
-      throw new Error(`Builder MDX file not found in files map: ${explicit}`);
+      throw new Error(
+        `Jami Studio MDX file not found in files map: ${explicit}`,
+      );
     }
     return explicit;
   }
@@ -696,7 +700,7 @@ async function readBuilderDocumentSidecars(documentId: string) {
     const actualHash = stableHash(row.content);
     if (actualHash !== row.contentHash) {
       throw new Error(
-        `Builder raw sidecar cache hash mismatch for ${row.path}: expected ${row.contentHash}, got ${actualHash}.`,
+        `Jami Studio raw sidecar cache hash mismatch for ${row.path}: expected ${row.contentHash}, got ${actualHash}.`,
       );
     }
     sidecars[row.path] = row.content;
@@ -730,18 +734,20 @@ async function getDocumentMdxSource(
     sourceUpdatedAt?: string | null;
   };
   if (document.sourceMode !== BUILDER_DOCS_MDX_SOURCE_MODE) {
-    throw new Error(`Document "${documentId}" is not a Builder MDX document.`);
+    throw new Error(
+      `Document "${documentId}" is not a Jami Studio MDX document.`,
+    );
   }
   const model = modelFromBuilderSourceKind(document.sourceKind);
   const sourceRoot = parseBuilderSourceRootPath(document.sourceRootPath);
   if (!model || !sourceRoot) {
     throw new Error(
-      `Document "${documentId}" is missing Builder source metadata.`,
+      `Document "${documentId}" is missing Jami Studio source metadata.`,
     );
   }
   if (!sourceRoot.blocksHash) {
     throw new Error(
-      `Document "${documentId}" is missing Builder blocksHash metadata. Pull the Builder entry again before checking or pushing.`,
+      `Document "${documentId}" is missing Jami Studio blocksHash metadata. Pull the Jami Studio entry again before checking or pushing.`,
     );
   }
   const sourceHash = sourceRoot.sourceHash;
@@ -813,7 +819,9 @@ export async function checkBuilderDocsSource(args: {
     localBlocksHash = local.blocksHash;
   } catch (error) {
     blockers.push(
-      error instanceof Error ? error.message : "Could not parse Builder MDX.",
+      error instanceof Error
+        ? error.message
+        : "Could not parse Jami Studio MDX.",
     );
   }
 
@@ -832,24 +840,24 @@ export async function checkBuilderDocsSource(args: {
     resolved.mdx.metadata.lastUpdated !== remoteLastUpdated
   ) {
     blockers.push(
-      `Remote Builder entry changed since pull (${resolved.mdx.metadata.lastUpdated} -> ${remoteLastUpdated}). Pull again before pushing.`,
+      `Remote Jami Studio entry changed since pull (${resolved.mdx.metadata.lastUpdated} -> ${remoteLastUpdated}). Pull again before pushing.`,
     );
   } else if (
     resolved.mdx.metadata.sourceHash &&
     remoteSourceHash !== resolved.mdx.metadata.sourceHash
   ) {
-    blockers.push("Remote Builder source hash changed since pull.");
+    blockers.push("Remote Jami Studio source hash changed since pull.");
   }
   if (
     resolved.mdx.metadata.blocksHash &&
     remoteBlocksHash !== resolved.mdx.metadata.blocksHash
   ) {
-    blockers.push("Remote Builder blocks changed since pull.");
+    blockers.push("Remote Jami Studio blocks changed since pull.");
   }
 
   if (Object.keys(resolved.sidecars).length === 0) {
     warnings.push(
-      "No raw sidecars were available; push will be blocked for existing Builder blocks.",
+      "No raw sidecars were available; push will be blocked for existing Jami Studio blocks.",
     );
   }
 
@@ -876,7 +884,7 @@ export async function pushBuilderDocsSource(args: {
   const resolved = await resolveBuilderDocsSource(args);
   if (resolved.mdx.metadata.model !== BUILDER_CMS_SAFE_WRITE_MODEL) {
     check.blockers.push(
-      `Live Builder docs pushes are currently allowed only for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
+      `Live Jami Studio docs pushes are currently allowed only for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
     );
   }
   if (check.blockers.length > 0) {

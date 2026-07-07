@@ -384,7 +384,7 @@ function showBuilderConnectPopupPlaceholder(opened: Window) {
   // settings tab that the popup completed. We still hold the WindowProxy so the
   // parent can navigate the blank popup after refreshing the signed connect URL.
   try {
-    opened.document.title = "Opening Builder.io";
+    opened.document.title = "Opening Jami Studio";
     opened.document.body.style.margin = "0";
     opened.document.body.style.background = "#111";
     opened.document.body.style.color = "#ddd";
@@ -394,7 +394,7 @@ function showBuilderConnectPopupPlaceholder(opened: Window) {
     opened.document.body.style.alignItems = "center";
     opened.document.body.style.justifyContent = "center";
     opened.document.body.style.height = "100vh";
-    opened.document.body.textContent = "Opening Builder.io...";
+    opened.document.body.textContent = "Opening Jami Studio...";
   } catch {
     // Popup may already be cross-origin or browser may block document writes.
   }
@@ -733,7 +733,7 @@ export function useBuilderConnectFlow(
           if (!isEmbeddedWindow()) {
             connectStartedAtRef.current = null;
             setConnecting(false);
-            setError("Couldn't open Builder. Allow popups and try again.");
+            setError("Couldn't open Jami Studio. Allow popups and try again.");
             return;
           }
 
@@ -766,7 +766,7 @@ export function useBuilderConnectFlow(
             connectStartedAtRef.current = null;
             setConnecting(false);
             setError(
-              "Couldn't open Builder from this chat host. Open this app in a browser tab and try Connect Builder again.",
+              "Couldn't open Jami Studio from this chat host. Open this app in a browser tab and try Connect Jami Studio again.",
             );
           })();
         } else {
@@ -815,7 +815,7 @@ export function useBuilderConnectFlow(
               connectStartedAtRef.current = null;
               setConnecting(false);
               setError(
-                "Couldn't start Builder connect. Refresh this page and try again.",
+                "Couldn't start Jami Studio connect. Refresh this page and try again.",
               );
               return;
             }
@@ -828,7 +828,7 @@ export function useBuilderConnectFlow(
               connectStartedAtRef.current = null;
               setConnecting(false);
               setError(
-                "Couldn't navigate the Builder popup. Allow popups and try again.",
+                "Couldn't navigate the Jami Studio popup. Allow popups and try again.",
               );
             }
           })();
@@ -868,7 +868,7 @@ export function useBuilderConnectFlow(
           connectStartedAtRef.current = null;
           setConnecting(false);
           setError(
-            `Couldn't save Builder credentials: ${s.connectError.message}. Try again or contact support.`,
+            `Couldn't save Jami Studio credentials: ${s.connectError.message}. Try again or contact support.`,
           );
         } else if (Date.now() - started > POLL_TIMEOUT_MS) {
           stopPoll();
@@ -884,7 +884,7 @@ export function useBuilderConnectFlow(
               inferBuilderConnectTrackingFlow(clickTrackingSource),
           });
           setError(
-            "Didn't hear back from Builder in 5 minutes. Allow popups and try again.",
+            "Didn't hear back from Jami Studio in 5 minutes. Allow popups and try again.",
           );
         }
       }, POLL_INTERVAL_MS);
@@ -914,7 +914,7 @@ export function useBuilderConnectFlow(
       stopPoll();
       connectStartedAtRef.current = null;
       setConnecting(false);
-      setError(`Couldn't save Builder credentials: ${message}.`);
+      setError(`Couldn't save Jami Studio credentials: ${message}.`);
     };
     const handleSuccess = async () => {
       let s: Awaited<ReturnType<typeof fetchStatus>> = null;
@@ -954,7 +954,7 @@ export function useBuilderConnectFlow(
           connectStartedAtRef.current = null;
           setConnecting(false);
           setError(
-            `Couldn't save Builder credentials: ${connectError.message}. Try again or contact support.`,
+            `Couldn't save Jami Studio credentials: ${connectError.message}. Try again or contact support.`,
           );
         }
         return;

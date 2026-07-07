@@ -47,6 +47,7 @@ HTTP · MCP · A2A
 iframe / MCP App
 isAvailable · execute
 JWT
+Jami Studio
 libSQL / Turso
 list-emails · get-thread · manage-draft · send
 list-events · check-availability · create-event

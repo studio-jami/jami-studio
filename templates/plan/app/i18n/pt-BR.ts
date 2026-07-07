@@ -598,7 +598,7 @@ const messages = {
       },
       autoWithLabel: "Automático: {{label}}",
       agentMissing:
-        "Conecte o agente para executar - adicione a chave API ou use Builder.",
+        "Conecte o agente para executar - adicione a chave API ou use Jami Studio.",
       describeFirst: "Por favor, descreva o plano primeiro.",
       sent: "Enviado para agente Plan",
       title: "Deixe o agente criar o plano",

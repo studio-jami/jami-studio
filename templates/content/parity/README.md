@@ -46,7 +46,7 @@ With the gate set, the eval files run the four PR 2.2 scenarios:
 - `builder-source-review-readonly`
 
 The scenarios use fake or fixture data only. They must not require private
-Builder, Notion, customer, or workspace credentials. The Builder scenario is
+Jami Studio, Notion, customer, or workspace credentials. The Jami Studio scenario is
 readonly/mocked by default and must not execute a live write.
 
 ## CI Posture

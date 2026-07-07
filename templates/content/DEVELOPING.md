@@ -89,11 +89,11 @@ pnpm test         # Run Vitest tests
 pnpm action <name> [--args]  # Run an action
 ```
 
-## Builder CMS credentials (local dev)
+## Jami Studio CMS credentials (local dev)
 
-Builder CMS source reads/writes need credentials. There are two ways to provide them:
+Jami Studio CMS source reads/writes need credentials. There are two ways to provide them:
 
-1. **Connect per user (the real path):** a signed-in user connects their Builder
+1. **Connect per user (the real path):** a signed-in user connects their Jami Studio
    account, which stores user-scoped credentials in the `app_secrets` store. The
    credential gate honors these for any runtime. This is what production uses.
 2. **Local dogfooding escape hatch:** to run the app locally without connecting
@@ -106,7 +106,7 @@ Builder CMS source reads/writes need credentials. There are two ways to provide 
    BUILDER_PUBLIC_KEY=...
    AGENT_NATIVE_LOCAL_BUILDER_ENV=1   # opt in to env-key fallback for a signed-in user
    ```
-   Without `AGENT_NATIVE_LOCAL_BUILDER_ENV`, env-level Builder keys are
+   Without `AGENT_NATIVE_LOCAL_BUILDER_ENV`, env-level Jami Studio keys are
    intentionally **not** used for a signed-in user under the workspace runtime
    (so a deploy key can't impersonate a user across tenants). The flag is a
    non-production-only escape hatch; it has no effect when `NODE_ENV=production`.

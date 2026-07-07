@@ -274,7 +274,7 @@ const messages = {
       failedToSendEmail: "傳送郵件失敗",
       failedToScheduleEmailDraftKeptOpen: "定時傳送失敗 - 草稿仍保持開啟",
       pleaseAddRecipient: "請至少新增一個收件人",
-      aiEngineRequired: "使用生成前，請先連線 Builder 或其他 AI 引擎。",
+      aiEngineRequired: "使用生成前，請先連線 Jami Studio 或其他 AI 引擎。",
       couldNotUnsubscribe: "無法取消訂閱",
       unsubscribeSent: "取消訂閱請求已傳送",
       draftQueued: "草稿已排隊。",

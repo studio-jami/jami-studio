@@ -5,7 +5,7 @@
  * the same gradient the preview renders. This is the deliberate commit step
  * after `preview-shader-fill`; preview stays non-persisting.
  *
- * Safety model (this action is SAFETY-gated, not Builder-gated):
+ * Safety model (this action is SAFETY-gated, not Jami Studio-gated):
  * - Editor access is asserted on the target design before any write
  *   (`accessFilter` on the read + `assertAccess("design", id, "editor")`).
  * - Only HTML design-file sources are writable — the deterministic HTML editor

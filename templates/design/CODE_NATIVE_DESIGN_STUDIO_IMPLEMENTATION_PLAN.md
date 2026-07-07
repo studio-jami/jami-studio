@@ -45,7 +45,7 @@ Design already has three source types:
 - `localhost`
 - `fusion`
 
-Do not add a new `builder-app` source type. Builder-backed hosted work should
+Do not add a new `builder-app` source type. Jami Studio-backed hosted work should
 fill in the existing `fusion` source mode.
 
 The product model has two capability tiers:
@@ -68,7 +68,7 @@ This is the full-fidelity tier. A design is backed by a real React/TypeScript ap
 through either:
 
 - `localhost`: a local dev server connected through `design connect`
-- `fusion`: a future hosted/Builder-backed source using the existing source mode
+- `fusion`: a future hosted/Jami Studio-backed source using the existing source mode
 
 Real app mode supports features that need:
 
@@ -82,7 +82,7 @@ Real app mode supports features that need:
 - deploy previews
 - source-file writes
 
-The current repo has Builder handoff and branch creation paths through
+The current repo has Jami Studio handoff and branch creation paths through
 `connect-builder` / `runBuilderAgent()`. It does not currently have first-party
 durable container infra for this feature. Treat "our own container infra" as a
 future option, not an implementation dependency for the first real-app lane.
@@ -141,18 +141,18 @@ The CTA should appear only at the moment of need:
 
 ### Make-It-Real Flow
 
-1. Connect Builder, using the existing `connect-builder` card/tooling.
+1. Connect Jami Studio, using the existing `connect-builder` card/tooling.
 2. Generate or migrate the inline design into a real React app.
 3. Preserve the original inline design as a version/snapshot.
-4. Use `fusion` as the hosted source descriptor for Builder-backed work.
+4. Use `fusion` as the hosted source descriptor for Jami Studio-backed work.
 5. Point the editor at the running real app source.
 6. Unlock real-app capabilities based on explicit source capabilities.
 7. Let the user review code/visual diffs and deploy through the real-app path.
 
 Important grounding:
 
-- Builder credentials belong in Vault/scoped credential storage.
-- Builder branch/cloud-agent paths exist through `runBuilderAgent()`.
+- Jami Studio credentials belong in Vault/scoped credential storage.
+- Jami Studio branch/cloud-agent paths exist through `runBuilderAgent()`.
 - Internal Docker/durable container sandboxing is currently a blueprint/TODO,
   not a prerequisite for this plan.
 
@@ -546,10 +546,10 @@ REST routes for normal app operations.
 - `create-design-review-snapshot`
   - optional durable snapshot
 
-### Make It Real / Builder / Branches
+### Make It Real / Jami Studio / Branches
 
 - `connect-builder-app`
-  - wrapper or app-specific flow around existing Builder connect surfaces
+  - wrapper or app-specific flow around existing Jami Studio connect surfaces
 - `migrate-inline-design-to-fusion`
   - generates/migrates inline design into a hosted real app source
 - `get-design-branch-diff`
@@ -558,7 +558,7 @@ REST routes for normal app operations.
   - real app only
 
 Do not depend on first-party internal container infra in early implementation.
-Use existing Builder-hosted branch/cloud-agent paths first.
+Use existing Jami Studio-hosted branch/cloud-agent paths first.
 
 ### Extensions, Assets, Shaders
 
@@ -650,7 +650,7 @@ Update `templates/design/AGENTS.md` with:
 - screenshot visual acceptance criteria
 - motion preview/apply discipline
 - shader gating
-- `fusion` as the hosted/Builder-backed future source mode
+- `fusion` as the hosted/Jami Studio-backed future source mode
 
 Consider a dedicated skill:
 
@@ -725,9 +725,9 @@ Goal: teach the product boundary early.
 Work:
 
 - show CTA cards in gated real-app controls
-- connect CTA to existing Builder connect/handoff surfaces
+- connect CTA to existing Jami Studio connect/handoff surfaces
 - preserve original inline design/version before any migration
-- use `fusion` for hosted/Builder-backed source descriptors
+- use `fusion` for hosted/Jami Studio-backed source descriptors
 
 Exit criteria:
 
@@ -842,7 +842,7 @@ Goal: connect visual editing to real app shipping.
 
 Work:
 
-- Builder-hosted branch workflow first
+- Jami Studio-hosted branch workflow first
 - branch diff
 - preview deploy
 - deploy
@@ -884,7 +884,7 @@ Run these in parallel when implementation starts:
 2. Capability gates and app-state/view-screen updates.
 3. Tier-A tokens on Tweaks/CSS vars.
 4. Inline CSS-first motion dock.
-5. Make-it-real CTA and Builder/fusion handoff.
+5. Make-it-real CTA and Jami Studio/fusion handoff.
 6. Real-app component index.
 7. Real-app source-write hardening.
 8. States/captures.
@@ -942,7 +942,7 @@ Verify the agent can:
 
 When real-app support lands:
 
-- connect Builder or localhost
+- connect Jami Studio or localhost
 - index a React component
 - select instance on canvas
 - show props and source
@@ -1045,7 +1045,7 @@ This proves the thesis cheaply:
 1. Capability gates and screenshot-aligned UI primitives.
 2. Tier-A Tokens panel on existing Tweaks/CSS-var path.
 3. Tier-A CSS-first Motion dock and inline managed keyframes.
-4. Make-it-real CTAs and Builder/fusion handoff framing.
+4. Make-it-real CTAs and Jami Studio/fusion handoff framing.
 5. Real-app component indexing and component inspector.
 6. Real-app source-write hardening for tokens and motion.
 7. States, responsive contexts, and captures.

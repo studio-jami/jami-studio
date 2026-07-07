@@ -14,7 +14,7 @@ Chatten, ausführen und (im Entwickler) Code bearbeiten. Es gibt drei Frames, di
 - **Local Dev Frame** – ein Thin Wrapper, der Ihre laufende App in einen Iframe lädt
   und fügt das gleiche Agentenpanel sowie daneben ein integriertes CLI-Terminal hinzu. Gebraucht
   für die lokale Entwicklung von Vorlagen in diesem Repo.
-- **Builder.io Cloud Frame** – ein verwalteter, gehosteter Frame mit Zusammenarbeit,
+- **Jami Studio Cloud Frame** – ein verwalteter, gehosteter Frame mit Zusammenarbeit,
   visuelle Bearbeitung und parallele Agentenausführungen.
 
 Ihr App-Code ist identisch, unabhängig davon, welcher Frame ihn hostet. Der Agent spricht
@@ -33,7 +33,7 @@ zu Ihrer App in jedem Fall über denselben actions und Anwendungsstatus.
     ><small class="diagram-muted">App in iframe + Panel + CLI-Terminal</small>
   </div>
   <div class="diagram-card" data-rough>
-    <span class="diagram-pill">Builder.io-Cloud-Frame</span
+    <span class="diagram-pill">Jami Studio-Cloud-Frame</span
     ><small class="diagram-muted"
       >gehostet: Zusammenarbeit · visuelle Bearbeitung · parallele Läufe</small
     >
@@ -93,13 +93,13 @@ Das Panel läuft in einem von zwei Werkzeugmodi:
   und Datenbankzugriff zusätzlich zu den App-Tools, damit der Agent die App ändern kann
   eigene Quelle. Codeanfragen werden blockiert: wenn eine Nachricht Code erfordert
   (`type: "code"`) und kein codefähiger Rahmen angeschlossen ist, zeigt das Panel ein
-  Dialog, der erklärt, dass Codeänderungen Agent Native Desktop oder Builder erfordern;
+  Dialog, der erklärt, dass Codeänderungen Agent Native Desktop oder Jami Studio erfordern;
   Wenn ein Frame verbunden ist, wird die Anfrage an ihn und einen Code-Agenten weitergeleitet
   -Anzeige wird angezeigt, während es funktioniert (`useSendToAgentChat`). Für das Kanonische
   Coding-Tool-Liste und gemeinsame UI-Verträge, siehe
   [Agent-Native Code UI](/docs/code-agents-ui).
 
-<Diagram id="doc-block-he07jv" title="Code-Anfrage-Gating" summary={"Eine codetypisierte Nachricht benötigt einen codefähigen Rahmen. Wenn einer verbunden ist, wird die Anfrage dorthin weitergeleitet. Ohne eins erklärt das Panel, dass Codeänderungen Desktop oder Builder erfordern."}>
+<Diagram id="doc-block-he07jv" title="Code-Anfrage-Gating" summary={"Eine codetypisierte Nachricht benötigt einen codefähigen Rahmen. Wenn einer verbunden ist, wird die Anfrage dorthin weitergeleitet. Ohne eins erklärt das Panel, dass Codeänderungen Desktop oder Jami Studio erfordern."}>
 
 ```html
 <div class="diagram-gate">
@@ -115,7 +115,7 @@ Das Panel läuft in einem von zwei Werkzeugmodi:
       yes &rarr; route to frame, show code-agent indicator
     </div>
     <div class="diagram-pill warn">
-      no &rarr; dialog: needs Desktop or Builder
+      no &rarr; dialog: needs Desktop or Jami Studio
     </div>
   </div>
 </div>
@@ -167,7 +167,7 @@ Zulassungsliste zur Verhinderung der Injektion:
 | CLI           | Befehl     | Paket installieren          |
 | ------------- | ---------- | --------------------------- |
 | Claude-Code   | `claude`   | `@anthropic-ai/claude-code` |
-| Builder.io    | `builder`  | (integriert)                |
+| Jami Studio   | `builder`  | (integriert)                |
 | Codex         | `codex`    | `@openai/codex`             |
 | Zwillinge CLI | `gemini`   | `@google/gemini-cli`        |
 | OpenCode      | `opencode` | `opencode-ai`               |
@@ -177,9 +177,9 @@ bis `npx --yes <install-package>@latest` (wo ein Installationspaket vorhanden is
 Standardbefehl ist `claude`. Wechseln Sie CLIs jederzeit in den Agent-Panel-Einstellungen
 Zeit.
 
-## Builder.io Wolkenrahmen {#cloud-frame}
+## Jami Studio Wolkenrahmen {#cloud-frame}
 
-[Builder.io](https://www.builder.io) stellt einen verwalteten Frame bereit, der das hostet
+[Jami Studio](https://www.builder.io) stellt einen verwalteten Frame bereit, der das hostet
 gleiche App und dasselbe Agentenpanel in der Cloud:
 
 - Zusammenarbeit in Echtzeit – mehrere Benutzer können gleichzeitig zuschauen und interagieren.
@@ -187,7 +187,7 @@ gleiche App und dasselbe Agentenpanel in der Cloud:
 - Parallele Agentenausführung für schnellere Iteration.
 - Gut für den Teamgebrauch, bei dem sich jeder eine gehostete Umgebung teilt.
 
-Codeanfragen vom eingebetteten Panel werden auf die gleiche Weise an den Builder-Frame weitergeleitet
+Codeanfragen vom eingebetteten Panel werden auf die gleiche Weise an den Jami Studio-Frame weitergeleitet
 Sie leiten an den lokalen Dev-Frame weiter, daher ist das obige Verhalten von dev-vs-prod wie folgt
 über beide hinweg konsistent.
 

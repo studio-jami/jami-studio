@@ -162,7 +162,7 @@ const DASHBOARD_WAU_BASE_RANGE_FILTER = dashboardLookbackTimeRangeFilter(
   6,
 );
 const DASHBOARD_EMAIL_FILTER =
-  "('{{emailFilter}}' IN ('', 'all') OR ('{{emailFilter}}' = 'exclude_builder' AND lower(coalesce(user_id, '')) NOT LIKE '%@builder.io') OR ('{{emailFilter}}' = 'only_builder' AND lower(coalesce(user_id, '')) LIKE '%@builder.io'))";
+  "('{{emailFilter}}' IN ('', 'all') OR ('{{emailFilter}}' = 'exclude_builder' AND lower(coalesce(user_id, '')) NOT LIKE '%@jami.studio') OR ('{{emailFilter}}' = 'only_builder' AND lower(coalesce(user_id, '')) LIKE '%@jami.studio'))";
 const SIGNED_IN_ACTIVITY_KEY_SQL = USER_KEY_SQL;
 const SIGNED_IN_ACTIVITY_FILTER = `event_name = 'session status' AND signed_in = 'true' AND ${SIGNED_IN_ACTIVITY_KEY_SQL} IS NOT NULL`;
 const SIGNED_IN_PRODUCT_ACTIVITY_FILTER = `${SIGNED_IN_ACTIVITY_FILTER} AND ${PRODUCT_ACTIVITY_TEMPLATE_FILTER}`;
@@ -172,7 +172,7 @@ const REPLAY_TIME_RANGE_FILTER = dashboardTimeRangeFilter(
 );
 const REPLAY_VISITOR_EMAIL_SQL =
   "COALESCE(NULLIF(CASE WHEN lower(coalesce(user_id, '')) LIKE '%@%' THEN user_id ELSE '' END, ''), NULLIF(CASE WHEN lower(coalesce(user_key, '')) LIKE '%@%' THEN user_key ELSE '' END, ''))";
-const REPLAY_EMAIL_FILTER = `('{{emailFilter}}' IN ('', 'all') OR ('{{emailFilter}}' = 'exclude_builder' AND lower(coalesce(${REPLAY_VISITOR_EMAIL_SQL}, '')) NOT LIKE '%@builder.io') OR ('{{emailFilter}}' = 'only_builder' AND lower(coalesce(${REPLAY_VISITOR_EMAIL_SQL}, '')) LIKE '%@builder.io'))`;
+const REPLAY_EMAIL_FILTER = `('{{emailFilter}}' IN ('', 'all') OR ('{{emailFilter}}' = 'exclude_builder' AND lower(coalesce(${REPLAY_VISITOR_EMAIL_SQL}, '')) NOT LIKE '%@jami.studio') OR ('{{emailFilter}}' = 'only_builder' AND lower(coalesce(${REPLAY_VISITOR_EMAIL_SQL}, '')) LIKE '%@jami.studio'))`;
 const REPLAY_RECORDING_FILTER = `chunk_count > 0 AND event_count > 0 AND ${REPLAY_VISITOR_EMAIL_SQL} IS NOT NULL AND ${REPLAY_TIME_RANGE_FILTER} AND ${REPLAY_EMAIL_FILTER}`;
 const REPLAY_SESSIONS_SQL = `SELECT COUNT(*) AS count FROM session_recordings WHERE ${REPLAY_RECORDING_FILTER}`;
 const REPLAY_CHUNKS_OVER_TIME_SQL = `SELECT ${REPLAY_RECORDING_DATE_SQL} AS date, SUM(chunk_count) AS count FROM session_recordings WHERE ${REPLAY_RECORDING_FILTER} GROUP BY ${REPLAY_RECORDING_DATE_SQL} ORDER BY date`;
@@ -199,8 +199,8 @@ export const FIRST_PARTY_DASHBOARD_FILTERS: FirstPartyDashboardFilter[] = [
     default: "all",
     options: [
       { value: "all", label: "All users" },
-      { value: "exclude_builder", label: "Exclude @builder.io" },
-      { value: "only_builder", label: "Only @builder.io" },
+      { value: "exclude_builder", label: "Exclude @jami.studio" },
+      { value: "only_builder", label: "Only @jami.studio" },
     ],
   },
 ];

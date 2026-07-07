@@ -114,7 +114,7 @@ Live demo: [assets.agent-native.com](https://assets.agent-native.com).
 
 - **Create asset libraries.** Group reference images, videos, canonical logos, style notes, palettes, folders, and generated output by brand, campaign, product, or category.
 - **Generate through chat.** The home composer and library Generate controls send the prompt to the agent with `sendToAgentChat()`, so users can inspect variants, give feedback, and iterate.
-- **Generate images and videos.** Builder-managed image generation is available when enabled, and Gemini powers video generation plus the manual image fallback.
+- **Generate images and videos.** Jami Studio-managed image generation is available when enabled, and Gemini powers video generation plus the manual image fallback.
 - **Upload and describe references.** Add images or videos from the library UI or prompt composer attachment button, then search by title, description, alt text, prompt, model, media type, status, role, folder, or collection.
 - **Keep a generation audit log.** Every run records prompts, model, aspect ratio, references, source asset, lineage, generated assets, status, errors, and timestamps for later design review.
 - **Preserve logo accuracy.** The agent can generate a placeholder area and the server composites the uploaded canonical logo onto the final image instead of relying on the image model to redraw it.
@@ -137,7 +137,7 @@ Generate and pick brand media without leaving Codex, Claude Code, Claude, or Cha
    Skills CLI, use:
 
    ```bash
-   npx skills@latest add BuilderIO/agent-native --skill assets
+   npx skills@latest add Jami Studio/agent-native --skill assets
    ```
 
    The Vercel/open Skills CLI installs the instruction file only; it does not
@@ -493,7 +493,7 @@ The Assets app skill has app id `assets` and hosted MCP URL
 npx @agent-native/core@latest skills add assets
 
 # Vercel/open Skills CLI install: exported instructions only, no MCP config.
-npx skills@latest add BuilderIO/agent-native --skill assets
+npx skills@latest add Jami Studio/agent-native --skill assets
 
 # Hosted install: URL-only MCP connector, no shared secrets in skill files.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json

@@ -1,6 +1,6 @@
 ---
 title: "File Uploads"
-description: "Configure file upload storage — SQL fallback for dev, Builder.io or custom providers for production."
+description: "Configure file upload storage — SQL fallback for dev, Jami Studio or custom providers for production."
 ---
 
 # File Uploads
@@ -14,7 +14,7 @@ Upload requests go to `POST /_agent-native/file-upload`, which dispatches to the
 The provider resolution order is:
 
 1. **User-registered providers** — custom providers registered via `registerFileUploadProvider()`
-2. **Builder.io provider** — built-in, activates automatically when Builder.io is connected
+2. **Jami Studio provider** — built-in, activates automatically when Jami Studio is connected
 3. **SQL fallback** — stores files as base64 in the database (fine for dev, not for production)
 
 <Diagram id="doc-block-hq5uvx" title="Provider resolution order" summary="uploadFile() picks the first configured provider in order. The SQL fallback always exists so uploads work with zero setup.">
@@ -39,7 +39,7 @@ The provider resolution order is:
     <div class="diagram-step">
       <span class="diagram-pill">2</span>
       <div class="diagram-node">
-        Builder.io<br /><small class="diagram-muted"
+        Jami Studio<br /><small class="diagram-muted"
           >auto when connected — CDN-served</small
         >
       </div>
@@ -100,9 +100,9 @@ When no provider is configured, files are stored as base64 data in the SQL datab
 
 A one-time warning is logged when the fallback is used.
 
-## Builder.io Hosting {#builder-hosting}
+## Jami Studio Hosting {#builder-hosting}
 
-When your app is connected to Builder.io, file uploads are automatically routed to Builder's asset hosting. Files are served from a CDN with no configuration needed. This is the recommended production setup.
+When your app is connected to Jami Studio, file uploads are automatically routed to Jami Studio's asset hosting. Files are served from a CDN with no configuration needed. This is the recommended production setup.
 
 ## Custom Providers {#custom-providers}
 

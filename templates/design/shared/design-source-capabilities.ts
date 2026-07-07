@@ -36,7 +36,7 @@ import type { DesignBridgeOperationStatus } from "./source-mode";
  * - **previewMotion** — scrub/play keyframe animations without writing to DB.
  * - **writeMotion** — commit a motion timeline (managed `<style>` block or
  *   real CSS module, depending on tier).
- * - **branch** — create/manage a Builder-hosted branch (fusion tier only).
+ * - **branch** — create/manage a Jami Studio-hosted branch (fusion tier only).
  * - **deployPreview** — deploy a branch preview URL.
  * - **deploy** — merge/publish the branch to production.
  */
@@ -161,14 +161,16 @@ export const INLINE_DEFAULT_CAPABILITIES: DesignSourceCapabilities = {
   diffPatch: available(),
   captureSnapshot: available(),
   captureState: available(),
-  indexComponents: unavailable("Connect Builder to index real components"),
+  indexComponents: unavailable("Connect Jami Studio to index real components"),
   indexTokens: available(),
   writeTokens: unavailable("Token source write-back requires a real app"),
   previewMotion: available(),
   writeMotion: available(),
-  branch: unavailable("Branching requires a connected Builder app"),
-  deployPreview: unavailable("Deploy previews require a connected Builder app"),
-  deploy: unavailable("Deploy requires a connected Builder app"),
+  branch: unavailable("Branching requires a connected Jami Studio app"),
+  deployPreview: unavailable(
+    "Deploy previews require a connected Jami Studio app",
+  ),
+  deploy: unavailable("Deploy requires a connected Jami Studio app"),
 };
 
 /**
@@ -203,45 +205,49 @@ export const LOCALHOST_DEFAULT_CAPABILITIES: DesignSourceCapabilities = {
   writeTokens: planned("Token write-back lands with bridge hardening"),
   previewMotion: available(),
   writeMotion: available(),
-  branch: unavailable("Branching requires a connected Builder app"),
-  deployPreview: unavailable("Deploy previews require a connected Builder app"),
-  deploy: unavailable("Deploy requires a connected Builder app"),
+  branch: unavailable("Branching requires a connected Jami Studio app"),
+  deployPreview: unavailable(
+    "Deploy previews require a connected Jami Studio app",
+  ),
+  deploy: unavailable("Deploy requires a connected Jami Studio app"),
 };
 
 /**
- * Default capability map for a **fusion** (Builder-hosted) design where Builder
+ * Default capability map for a **fusion** (Jami Studio-hosted) design where Jami Studio
  * is **not yet connected** (no credentials / no branch project configured).
  *
  * Preview-only: the canvas can render and snapshot the remote app but no
  * real-app operations (`indexComponents`, `branch`, `deployPreview`, `deploy`,
- * write ops) are available until Builder credentials are confirmed.
+ * write ops) are available until Jami Studio credentials are confirmed.
  *
  * Use `FUSION_CONNECTED_CAPABILITIES` once `resolveHasCompleteBuilderConnection`
  * returns `true` and a branch project is configured.
  */
 export const FUSION_DISCONNECTED_CAPABILITIES: DesignSourceCapabilities = {
-  readFile: planned("Connect Builder to enable file reads on fusion sources"),
-  writeFile: unavailable("Connect Builder to enable source writes"),
-  applyEdit: unavailable("Connect Builder to enable source edits"),
+  readFile: planned(
+    "Connect Jami Studio to enable file reads on fusion sources",
+  ),
+  writeFile: unavailable("Connect Jami Studio to enable source writes"),
+  applyEdit: unavailable("Connect Jami Studio to enable source edits"),
   resolveNodeToFile: available(),
   previewPatch: available(),
   diffPatch: available(),
   captureSnapshot: available(),
   captureState: available(),
-  indexComponents: unavailable("Connect Builder to index real components"),
+  indexComponents: unavailable("Connect Jami Studio to index real components"),
   indexTokens: available(),
-  writeTokens: unavailable("Connect Builder to enable token write-back"),
+  writeTokens: unavailable("Connect Jami Studio to enable token write-back"),
   previewMotion: available(),
   writeMotion: planned(
     "Motion write-back to real source requires bridge hardening",
   ),
-  branch: unavailable("Connect Builder to create branches"),
-  deployPreview: unavailable("Connect Builder to deploy previews"),
-  deploy: unavailable("Connect Builder to deploy"),
+  branch: unavailable("Connect Jami Studio to create branches"),
+  deployPreview: unavailable("Connect Jami Studio to deploy previews"),
+  deploy: unavailable("Connect Jami Studio to deploy"),
 };
 
 /**
- * Capability map for a **fusion** (Builder-hosted) design where Builder **is
+ * Capability map for a **fusion** (Jami Studio-hosted) design where Jami Studio **is
  * connected** (credentials present + branch project configured).
  *
  * Per DESIGN-STUDIO-PLAN.md §5:
@@ -277,13 +283,13 @@ export const FUSION_CONNECTED_CAPABILITIES: DesignSourceCapabilities = {
 };
 
 /**
- * Default capability map for **fusion** (Builder-hosted) designs.
+ * Default capability map for **fusion** (Jami Studio-hosted) designs.
  *
  * This is the **conservative default** for when connection status is unknown.
  * It is equivalent to `FUSION_DISCONNECTED_CAPABILITIES` — preview-only with
  * no real-app write operations available.
  *
- * Callers that know the Builder connection is active should use
+ * Callers that know the Jami Studio connection is active should use
  * `FUSION_CONNECTED_CAPABILITIES` (or call `resolveFusionCapabilities(true)`
  * from `capability-resolver.ts`) to get the fuller capability set.
  *

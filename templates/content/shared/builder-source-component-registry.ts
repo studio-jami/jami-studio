@@ -40,9 +40,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "editable-markdown",
     mappingStatus: "mapped",
     sourceEditState: "safe-to-edit",
-    label: "Builder Text",
+    label: "Jami Studio Text",
     reason:
-      "Text maps to editable Markdown while Builder metadata stays in the raw sidecar.",
+      "Text maps to editable Markdown while Jami Studio metadata stays in the raw sidecar.",
   },
   {
     id: "builder-code-markdown",
@@ -50,9 +50,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "editable-markdown",
     mappingStatus: "mapped",
     sourceEditState: "safe-to-edit",
-    label: "Builder Code Block",
+    label: "Jami Studio Code Block",
     reason:
-      "Code maps to editable fenced Markdown while Builder metadata stays in the raw sidecar.",
+      "Code maps to editable fenced Markdown while Jami Studio metadata stays in the raw sidecar.",
   },
   {
     id: "builder-image-markdown",
@@ -60,9 +60,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "editable-markdown",
     mappingStatus: "mapped",
     sourceEditState: "safe-to-edit",
-    label: "Builder Image",
+    label: "Jami Studio Image",
     reason:
-      "Images map to editable Markdown image syntax while Builder metadata stays in the raw sidecar.",
+      "Images map to editable Markdown image syntax while Jami Studio metadata stays in the raw sidecar.",
   },
   {
     id: "builder-tabbed-content-markdown",
@@ -70,7 +70,7 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "editable-markdown",
     mappingStatus: "mapped",
     sourceEditState: "safe-to-edit",
-    label: "Builder Tabbed Content",
+    label: "Jami Studio Tabbed Content",
     reason:
       "Tabs map to editable heading-delimited Markdown while tab metadata stays in the raw sidecar.",
   },
@@ -80,9 +80,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "source-component",
     mappingStatus: "preserved",
     sourceEditState: "needs-review",
-    label: "Builder Symbol",
+    label: "Jami Studio Symbol",
     reason:
-      "Symbols stay linked to their Builder entry and need a dedicated review path before retargeting.",
+      "Symbols stay linked to their Jami Studio entry and need a dedicated review path before retargeting.",
   },
   {
     id: "builder-table-preserved",
@@ -90,9 +90,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "source-component",
     mappingStatus: "preserved",
     sourceEditState: "needs-review",
-    label: "Builder Table",
+    label: "Jami Studio Table",
     reason:
-      "Builder table-like components preserve their raw source and expose a preview until an editable table mapper is configured.",
+      "Jami Studio table-like components preserve their raw source and expose a preview until an editable table mapper is configured.",
   },
   {
     id: "builder-reference-preserved",
@@ -100,12 +100,12 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
       "Reference",
       "Reference Block",
       "Content Reference",
-      "Builder Reference",
+      "Jami Studio Reference",
     ],
     readableMode: "source-component",
     mappingStatus: "preserved",
     sourceEditState: "needs-review",
-    label: "Builder Reference",
+    label: "Jami Studio Reference",
     reason:
       "Reference blocks preserve their provider identity so they can round-trip without detaching the source relation.",
   },
@@ -115,7 +115,7 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "source-component",
     mappingStatus: "preserved",
     sourceEditState: "needs-review",
-    label: "Builder Embed",
+    label: "Jami Studio Embed",
     reason:
       "Embeds preserve provider-native configuration and expose a preview instead of editable markup.",
   },
@@ -125,9 +125,9 @@ export const builderSourceComponentMappings: BuilderSourceComponentMapping[] = [
     readableMode: "source-component",
     mappingStatus: "preserved",
     sourceEditState: "needs-review",
-    label: "Builder CodeSnippetsV2",
+    label: "Jami Studio CodeSnippetsV2",
     reason:
-      "CodeSnippetsV2 has structured Builder props and needs a dedicated mapper before safe readable editing.",
+      "CodeSnippetsV2 has structured Jami Studio props and needs a dedicated mapper before safe readable editing.",
   },
 ];
 
@@ -151,10 +151,12 @@ export function unknownBuilderSourceComponentMappingFor(
     readableMode: "source-component",
     mappingStatus: "unknown",
     sourceEditState: "preserved-only",
-    label: componentName ? `Builder ${componentName}` : "Builder component",
+    label: componentName
+      ? `Jami Studio ${componentName}`
+      : "Jami Studio component",
     reason: componentName
-      ? "No source-component mapper is registered for this Builder component yet, so Content preserves the raw block for review."
-      : "Builder returned a block without a component name, so Content preserves the raw block for review.",
+      ? "No source-component mapper is registered for this Jami Studio component yet, so Content preserves the raw block for review."
+      : "Jami Studio returned a block without a component name, so Content preserves the raw block for review.",
   };
 }
 

@@ -1667,7 +1667,7 @@ export class RecorderEngine {
       }
 
       if (compressedBytes > MAX_UPLOAD_BYTES) {
-        // Stop before we attempt the upload. Builder.io would 500 anyway and
+        // Stop before we attempt the upload. Jami Studio would 500 anyway and
         // leave the user with the same opaque error this PR is meant to fix.
         const detail = compression.compressed
           ? `${formatMb(compressedBytes)} after compression`
@@ -2094,7 +2094,7 @@ export class RecorderEngine {
       });
       // Capture rich context to Sentry BEFORE throwing — when this hits
       // production we want enough breadcrumbs in the event to debug a
-      // "Builder.io upload failed (500)" without re-running the upload.
+      // "Jami Studio upload failed (500)" without re-running the upload.
       // Wrapped in try/catch so a Sentry failure can never mask the real
       // upload error the caller is about to see.
       try {

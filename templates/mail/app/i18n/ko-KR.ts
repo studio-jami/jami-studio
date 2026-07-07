@@ -278,7 +278,7 @@ const messages = {
         "No se pudo programar el email - borrador abierto",
       pleaseAddRecipient: "Añade al menos un destinatario",
       aiEngineRequired:
-        "Conecta Builder u otro motor de IA antes de usar Generar.",
+        "Conecta Jami Studio u otro motor de IA antes de usar Generar.",
       couldNotUnsubscribe: "No se pudo cancelar la suscripción",
       unsubscribeSent: "Solicitud de baja enviada",
       draftQueued: "Borrador en cola.",

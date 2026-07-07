@@ -214,7 +214,7 @@ npx @agent-native/core@latest recap setup
 
 यदि आप फोर्क पीआर के लिए रीकैप्स जेनरेट करना चाहते हैं, तो एक दूसरी वर्कफ़्लो फ़ाइल उपलब्ध है: `.github/workflows/pr-visual-recap-fork.yml`। यह `pull_request_target` (जो बेस-रेपो रहस्यों के साथ चलता है) का उपयोग करता है लेकिन कभी भी फोर्क कोड की जांच या निष्पादन नहीं करता है। GitHub लेखक संघ `OWNER`, `MEMBER`, या `COLLABORATOR` के साथ विश्वसनीय कांटा लेखक स्वचालित रूप से चलते हैं। आउटसाइड फोर्क पीआर को रिकैप एजेंट चलने से पहले एक ताजा `recap` लेबल इवेंट के माध्यम से एक स्पष्ट **प्रति-हेड मेंटेनर ऑप्ट-इन** की आवश्यकता होती है।
 
-इसे स्थापित करने के लिए, फ़ाइल को [BuilderIO/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) से मौजूदा `pr-visual-recap.yml` के साथ अपने रेपो की `.github/workflows/` निर्देशिका में कॉपी करें। वही रहस्य (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) लागू होते हैं।
+इसे स्थापित करने के लिए, फ़ाइल को [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) से मौजूदा `pr-visual-recap.yml` के साथ अपने रेपो की `.github/workflows/` निर्देशिका में कॉपी करें। वही रहस्य (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`) लागू होते हैं।
 
 <Diagram id="doc-block-1ot51uz" title={"कांटा पीआर सहमति गेट"} summary={"फ़ोर्क पीआर को डिफ़ॉल्ट रूप से कोई रहस्य नहीं मिलता; विश्वसनीय लेखक स्वचालित रूप से चलते हैं, और बाहरी योगदानकर्ताओं को एक नए अनुरक्षक पुनर्कथन लेबल की आवश्यकता होती है।"}>
 
@@ -329,7 +329,7 @@ npx @agent-native/core@latest recap setup
 | `**/AGENTS.md`                             | एजेंट रनर को लोड करने का निर्देश देता है |
 | `**/.mcp.json`                             | MCP सर्वर कॉन्फिगरेशन रनर लोड            |
 
-`BuilderIO/agent-native` मोनोरेपो में, वर्कफ़्लो पीआर-हेड स्रोत के बजाय विश्वसनीय बेस-ब्रांच स्रोत से रिकैप CLI चलाता है। यह `packages/core/**` सहित सामान्य पैकेज परिवर्तनों को बनाए रखता है, जो PR-संशोधित CLI कोड को निष्पादित किए बिना पुनर्कथन के लिए पात्र है।
+`Jami Studio/agent-native` मोनोरेपो में, वर्कफ़्लो पीआर-हेड स्रोत के बजाय विश्वसनीय बेस-ब्रांच स्रोत से रिकैप CLI चलाता है। यह `packages/core/**` सहित सामान्य पैकेज परिवर्तनों को बनाए रखता है, जो PR-संशोधित CLI कोड को निष्पादित किए बिना पुनर्कथन के लिए पात्र है।
 
 ## स्थानीय-फ़ाइलें गोपनीयता मोड
 
@@ -417,7 +417,7 @@ EXAMPLE_API_KEY=placeholder-value
 
 डिफ़ॉल्ट इंस्टॉलर पूर्ण ~360-लाइन वर्कफ़्लो YAML को आपके रेपो (**कॉपी** विकल्प) में कॉपी करता है। यह एयर-गैप्ड रिपोज़ या रिपोज़ के लिए सही विकल्प है, जिन्हें चलने वाली प्रत्येक पंक्ति का ऑडिट करने की आवश्यकता होती है। नकारात्मक पक्ष यह है कि बग फिक्स और सुधार कभी भी आप तक नहीं पहुंचते हैं - आपको प्रत्येक रिलीज़ के बाद `npx @agent-native/core@latest recap setup` को मैन्युअल रूप से फिर से चलाने की आवश्यकता होती है।
 
-**पुन: प्रयोज्य** विकल्प इसके बजाय एक पतली ~20-लाइन कॉलर लिखता है। यह `uses:` के माध्यम से `BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml` को सौंपता है। जब वर्कफ़्लो चलता है तो प्रत्येक कॉलर स्वचालित रूप से नवीनतम तर्क उठाता है, बिना किसी स्थानीय अपडेट की आवश्यकता के।
+**पुन: प्रयोज्य** विकल्प इसके बजाय एक पतली ~20-लाइन कॉलर लिखता है। यह `uses:` के माध्यम से `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` को सौंपता है। जब वर्कफ़्लो चलता है तो प्रत्येक कॉलर स्वचालित रूप से नवीनतम तर्क उठाता है, बिना किसी स्थानीय अपडेट की आवश्यकता के।
 
 |                                        | कॉपी करें (डिफ़ॉल्ट)               | पुनः प्रयोज्य                        |
 | -------------------------------------- | ---------------------------------- | ------------------------------------ |
@@ -433,7 +433,7 @@ EXAMPLE_API_KEY=placeholder-value
 ```yaml
 name: PR Visual Recap
 
-# पतला कॉलर - पूर्ण वर्कफ़्लो तर्क BuilderIO/agent-native में रहता है।
+# पतला कॉलर - पूर्ण वर्कफ़्लो तर्क Jami Studio/agent-native में रहता है।
 # सुधार और सुधार प्रत्येक रन पर स्वचालित रूप से इस रेपो तक पहुंचते हैं।
 # पुनरुत्पादन योग्यता के लिए किसी विशिष्ट संस्करण को पिन करने हेतु '@main' को किसी
 # टैग या SHA से बदलें, जैसे '@v1.2.3' या '@abc1234'।
@@ -450,7 +450,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -485,7 +485,7 @@ npx @agent-native/core@latest recap setup --reusable --ref v1.2.3
 डिफ़ॉल्ट रूप से कॉलर `@main` का संदर्भ देता है, जो हमेशा पुन: प्रयोज्य वर्कफ़्लो के नवीनतम प्रकाशित संस्करण का उपयोग करता है। उत्पादन रेपो के लिए जिन्हें प्रतिलिपि प्रस्तुत करने योग्य सीआई की आवश्यकता है, एक टैग या SHA पर पिन करें:
 
 ```yaml
-uses: BuilderIO/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 `cli-version` इनपुट नियंत्रित करता है कि वर्कफ़्लो के अंदर कौन सा `@agent-native/core` CLI संस्करण चलता है - नवीनतम रिलीज़ को ट्रैक करने के लिए इसे `"latest"` पर छोड़ दें, या पूर्ण प्रतिलिपि प्रस्तुत करने योग्यता के लिए इसे संस्करण स्ट्रिंग (जैसे `"1.5.0"`) पर पिन करें।

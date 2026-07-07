@@ -117,12 +117,12 @@ function identityFederation(
 
 export default defineAction({
   description:
-    "Attach or replace a safe local source binding for a content database. Builder CMS bindings store source metadata, field mappings, row identity, provenance, freshness, capabilities, and local-only diff state without calling external APIs.",
+    "Attach or replace a safe local source binding for a content database. Jami Studio CMS bindings store source metadata, field mappings, row identity, provenance, freshness, capabilities, and local-only diff state without calling external APIs.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
     sourceType: sourceTypeSchema.describe(
-      "Source type. Defaults to mock-local. Builder CMS is local metadata only in this slice.",
+      "Source type. Defaults to mock-local. Jami Studio CMS is local metadata only in this slice.",
     ),
     sourceName: z
       .string()
@@ -162,7 +162,7 @@ export default defineAction({
       "mock-local") as ContentDatabaseSourceType;
     const sourceName =
       args.sourceName?.trim() ||
-      (sourceType === "builder-cms" ? "Builder CMS" : "Mock local source");
+      (sourceType === "builder-cms" ? "Jami Studio CMS" : "Mock local source");
     const sourceTable =
       args.sourceTable?.trim() ||
       (sourceType === "builder-cms" ? "blog_article" : "content_items");
@@ -250,7 +250,7 @@ export default defineAction({
       });
     }
 
-    // Adding an ADDITIONAL writable Builder source (row-union): insert a new
+    // Adding an ADDITIONAL writable Jami Studio source (row-union): insert a new
     // source and import its entries as their OWN rows, instead of replacing the
     // primary. No canonical-key join — each row belongs to exactly one source.
     if (
@@ -358,7 +358,7 @@ export default defineAction({
     }
 
     if (relationshipMode === "items" && existingSource) {
-      throw new Error("Only Builder sources can add more items right now.");
+      throw new Error("Only Jami Studio sources can add more items right now.");
     }
 
     const existingSourceRows = existingSource

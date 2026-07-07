@@ -331,7 +331,7 @@ export default function ContentTemplate() {
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                WordPress, Contentful, Builder, or any CMS
+                WordPress, Contentful, Jami Studio, or any CMS
               </li>
               <li className="flex items-start gap-2">
                 <svg

@@ -17,7 +17,7 @@ import { getContentDatabaseResponse } from "./_database-utils.js";
 
 export default defineAction({
   description:
-    "Prepare a local Builder CMS execution gate for an approved change set. This records the write plan and idempotency key, but never calls Builder APIs.",
+    "Prepare a local Jami Studio CMS execution gate for an approved change set. This records the write plan and idempotency key, but never calls Jami Studio APIs.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -52,7 +52,7 @@ export default defineAction({
     );
     if (!source || source.sourceType !== "builder-cms") {
       throw new Error(
-        "Attach a Builder CMS source before preparing execution.",
+        "Attach a Jami Studio CMS source before preparing execution.",
       );
     }
 

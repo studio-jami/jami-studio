@@ -1,5 +1,5 @@
 /**
- * BuilderEngine — HTTP client for the Builder.io managed LLM gateway.
+ * BuilderEngine — HTTP client for the Jami Studio managed LLM gateway.
  *
  * The gateway accepts an Anthropic-shaped request body and streams events as
  * JSONL. This engine translates the framework's EngineStreamOptions into the
@@ -9,7 +9,7 @@
  * the chat UI needs to prompt the user to upgrade.
  *
  * Credentials come from BUILDER_PRIVATE_KEY + BUILDER_PUBLIC_KEY (set via the
- * Builder CLI-auth onboarding flow). Base URL is overridable via
+ * Jami Studio CLI-auth onboarding flow). Base URL is overridable via
  * BUILDER_GATEWAY_BASE_URL.
  */
 
@@ -60,7 +60,7 @@ export const BUILDER_SUPPORTED_MODELS = BUILDER_MODEL_CONFIG.supportedModels;
 const DEFAULT_BUILDER_GATEWAY_TIMEOUT_MS = 45_000;
 const MAX_HOSTED_FOREGROUND_BUILDER_GATEWAY_TIMEOUT_MS = 45_000;
 /**
- * Netlify background functions have a 15-minute wall. Keep the Builder gateway
+ * Netlify background functions have a 15-minute wall. Keep the Jami Studio gateway
  * ceiling below that, but above the run-manager's 13-minute soft-timeout so
  * durable background runs checkpoint before this timer wins.
  */
@@ -99,10 +99,10 @@ function mapReasoningEffort(budgetTokens: number): ReasoningEffort {
  * We can't deep-link to a per-org billing page from `BUILDER_ORG_NAME` because
  * that field is the org's display name (e.g. "Nicholas kipchumba Space"), not
  * a URL-safe slug or id. URL-encoding the display name produces segments like
- * `/app/organizations/Nicholas%20kipchumba%20Space/billing` which Builder's
+ * `/app/organizations/Nicholas%20kipchumba%20Space/billing` which Jami Studio's
  * router treats as unknown and silently bounces to `/app/projects`. The
- * Builder CLI-auth callback doesn't expose the org slug/id today, so we route
- * to the org-agnostic subscription page. Agent Native attribution lets Builder
+ * Jami Studio CLI-auth callback doesn't expose the org slug/id today, so we route
+ * to the org-agnostic subscription page. Agent Native attribution lets Jami Studio
  * skip generic onboarding for new users who land there from an upgrade CTA.
  */
 async function buildUpgradeUrl(): Promise<string> {
@@ -126,7 +126,7 @@ interface GatewayErrorBody {
 
 class BuilderEngine implements AgentEngine {
   readonly name = "builder";
-  readonly label = "Builder.io Gateway";
+  readonly label = "Jami Studio Gateway";
   readonly defaultModel = BUILDER_DEFAULT_MODEL;
   readonly supportedModels = BUILDER_SUPPORTED_MODELS;
   readonly capabilities = BUILDER_CAPABILITIES;
@@ -302,7 +302,7 @@ class BuilderEngine implements AgentEngine {
         });
       } catch {
         // Marker clearing is best-effort; a stale marker just means the user
-        // sees "reconnect Builder" until the next successful call clears it.
+        // sees "reconnect Jami Studio" until the next successful call clears it.
       }
 
       const contentType = response.headers.get("content-type") ?? "";
@@ -322,7 +322,7 @@ class BuilderEngine implements AgentEngine {
         yield {
           type: "stop",
           reason: "error",
-          error: "Builder gateway response has no body",
+          error: "Jami Studio gateway response has no body",
         };
         return;
       }
@@ -356,7 +356,7 @@ async function* emitHttpError(response: Response): AsyncIterable<EngineEvent> {
     }
   }
   const code = errBody.code ?? `http_${status}`;
-  const message = errBody.message ?? `Builder gateway returned ${status}`;
+  const message = errBody.message ?? `Jami Studio gateway returned ${status}`;
 
   // Belt-and-suspenders: 402 without a structured `credits-limit` code
   // (e.g. bare proxy response) still means quota → show upgrade CTA.
@@ -384,7 +384,8 @@ async function* emitHttpError(response: Response): AsyncIterable<EngineEvent> {
     yield {
       type: "stop",
       reason: "error",
-      error: "Builder authentication failed. Reconnect Builder via Settings.",
+      error:
+        "Jami Studio authentication failed. Reconnect Jami Studio via Settings.",
       errorCode: "builder_auth_error",
     };
     return;
@@ -394,7 +395,8 @@ async function* emitHttpError(response: Response): AsyncIterable<EngineEvent> {
     yield {
       type: "stop",
       reason: "error",
-      error: "Builder authentication failed. Reconnect Builder via Settings.",
+      error:
+        "Jami Studio authentication failed. Reconnect Jami Studio via Settings.",
       errorCode: "builder_auth_error",
     };
     return;
@@ -515,7 +517,7 @@ async function* parseJsonlStream(
         yield {
           type: "stop",
           reason: "error",
-          error: `Builder gateway returned invalid JSONL: ${normalized.slice(
+          error: `Jami Studio gateway returned invalid JSONL: ${normalized.slice(
             0,
             240,
           )}`,
@@ -615,7 +617,7 @@ async function* parseJsonlStream(
             const errMsg =
               event.error ||
               event.message ||
-              "Builder gateway rejected the request as malformed.";
+              "Jami Studio gateway rejected the request as malformed.";
             const errCode =
               typeof event.errorCode === "string"
                 ? event.errorCode
@@ -711,7 +713,7 @@ async function* parseJsonlStream(
     yield {
       type: "stop",
       reason: "error",
-      error: "Builder gateway stream ended without a stop event",
+      error: "Jami Studio gateway stream ended without a stop event",
     };
   } catch (err) {
     const timedOut = captureContext.didGatewayTimeout?.() ?? false;
@@ -772,10 +774,10 @@ function normalizeGatewayErrorText(raw: string, status: number): string {
   const looksHtml = /<html[\s>]|<body[\s>]|<head[\s>]/i.test(text);
   const readable = looksHtml ? htmlToText(text) : text;
   if (/inactivity timeout/i.test(readable)) {
-    return `Builder gateway returned ${status}: Inactivity Timeout. The upstream connection was idle too long before sending data.`;
+    return `Jami Studio gateway returned ${status}: Inactivity Timeout. The upstream connection was idle too long before sending data.`;
   }
   if (looksHtml) {
-    return `Builder gateway returned ${status}: ${readable.slice(0, 240)}`;
+    return `Jami Studio gateway returned ${status}: ${readable.slice(0, 240)}`;
   }
   return readable;
 }
@@ -880,7 +882,7 @@ function createGatewayAbortSignal(
   const timeout = setTimeout(() => {
     timedOut = true;
     if (!controller.signal.aborted) {
-      controller.abort(new Error("Builder gateway request timed out"));
+      controller.abort(new Error("Jami Studio gateway request timed out"));
     }
   }, timeoutMs);
 
@@ -923,13 +925,13 @@ function normalizeBuilderGatewayFetchError(
   timeoutMs: number,
 ): string {
   if (timedOut) {
-    return `Builder gateway timed out after ${formatTimeoutMs(
+    return `Jami Studio gateway timed out after ${formatTimeoutMs(
       timeoutMs,
     )} before the hosting function limit. Please retry; if this keeps happening, reduce the prompt size or try again when the gateway is less busy.`;
   }
   const message = errorMessage(err);
   if (isBuilderGatewayNetworkError(err)) {
-    return `Builder gateway network error: ${message}`;
+    return `Jami Studio gateway network error: ${message}`;
   }
   return message;
 }
@@ -1037,7 +1039,7 @@ function captureBuilderGatewayTransportError(
 }
 
 /**
- * Capture a Builder-gateway no-detail stop event to Sentry with the request
+ * Capture a Jami Studio-gateway no-detail stop event to Sentry with the request
  * context the run-manager doesn't have. The gateway emits
  * `{type:"stop",reason:"error",requestId:"..."}` with no diagnostic — the
  * only way to debug it is from the gateway side, so we surface model,
@@ -1051,8 +1053,8 @@ function captureBuilderGatewayNoDetailError(context: {
 }): void {
   const err = new Error(
     context.requestId
-      ? `Builder gateway stop reason=error with no detail (requestId=${context.requestId})`
-      : "Builder gateway stop reason=error with no detail",
+      ? `Jami Studio gateway stop reason=error with no detail (requestId=${context.requestId})`
+      : "Jami Studio gateway stop reason=error with no detail",
   );
   err.name = "BuilderGatewayNoDetailError";
   captureError(err, {

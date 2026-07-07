@@ -290,7 +290,7 @@ const messages = {
   },
   responses: {
     failedLoad: "Failed to load responses",
-    backToBuilder: "Back to Builder",
+    backToBuilder: "Back to Jami Studio",
     filteredCount: "{{count}} of {{total}}",
     totalCount: "{{formattedCount}} responses",
     filterPlaceholder: "Filter responses...",

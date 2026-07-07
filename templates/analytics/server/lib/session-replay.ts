@@ -1409,7 +1409,7 @@ export async function recordSessionReplayChunks(
       // (and any S3 provider's scoped-secret lookup) would resolve nothing —
       // every chunk upload then 503s and recordings persist as empty shells.
       // Run the upload in the public key owner's user/org scope so the org's
-      // connected Builder (or S3) credential in `app_secrets` resolves. Mirrors
+      // connected Jami Studio (or S3) credential in `app_secrets` resolves. Mirrors
       // the resources upload precedent (core resources/handlers.ts).
       const chunk = await runWithRequestContext(
         { userEmail: key.ownerEmail, orgId: key.orgId ?? undefined },

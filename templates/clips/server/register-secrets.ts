@@ -64,7 +64,7 @@ registerRequiredSecret({
   key: "GOOGLE_APPLICATION_CREDENTIALS",
   label: "Google Speech-to-Text service account",
   description:
-    "Service-account JSON for future Google realtime Speech-to-Text streaming. Builder.io Connect does not proxy streaming audio. When configured as an environment variable, this may be a filesystem path supported by Google client libraries.",
+    "Service-account JSON for future Google realtime Speech-to-Text streaming. Jami Studio Connect does not proxy streaming audio. When configured as an environment variable, this may be a filesystem path supported by Google client libraries.",
   docsUrl:
     "https://cloud.google.com/speech-to-text/v2/docs/streaming-recognize",
   scope: "user",
@@ -112,7 +112,7 @@ registerRequiredSecret({
   key: "GROQ_API_KEY",
   label: "Groq API Key (recommended)",
   description:
-    "Fast speech-to-text fallback via Groq. Builder Gemini Flash-Lite is preferred when connected; Groq is used only when Builder/native transcription is unavailable.",
+    "Fast speech-to-text fallback via Groq. Jami Studio Gemini Flash-Lite is preferred when connected; Groq is used only when Jami Studio/native transcription is unavailable.",
   docsUrl: "https://console.groq.com/keys",
   scope: "user",
   kind: "api-key",
@@ -222,13 +222,13 @@ registerRequiredSecret({
 // ── Dark-launched media worker plumbing ──────────────────────────────
 // These are optional until the ai-services worker is deployed. When enabled,
 // Clips enqueues background video compression jobs there instead of using
-// Builder's existing compress-media endpoint.
+// Jami Studio's existing compress-media endpoint.
 
 registerRequiredSecret({
   key: "CLIPS_DISABLE_BUILDER_COMPRESSION",
-  label: "Disable Builder media compression",
+  label: "Disable Jami Studio media compression",
   description:
-    "Emergency kill switch for Clips background calls to Builder's compress-media endpoint.",
+    "Emergency kill switch for Clips background calls to Jami Studio's compress-media endpoint.",
   scope: "workspace",
   kind: "api-key",
   required: false,

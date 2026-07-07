@@ -8,12 +8,12 @@
  *   2. Tavily            (TAVILY_API_KEY)
  *   3. Exa               (EXA_API_KEY)
  *   4. Firecrawl         (FIRECRAWL_API_KEY)
- *   5. Builder.io        (connected Builder credentials)
+ *   5. Jami Studio        (connected Jami Studio credentials)
  *
  * The first configured backend wins. If none is configured, the tool
  * returns a helpful message telling the user which keys to add.
  *
- * Connect Builder.io or register BRAVE_SEARCH_API_KEY, TAVILY_API_KEY,
+ * Connect Jami Studio or register BRAVE_SEARCH_API_KEY, TAVILY_API_KEY,
  * EXA_API_KEY, or FIRECRAWL_API_KEY via app secrets settings or environment
  * variables.
  */
@@ -45,15 +45,15 @@ export interface WebSearchToolOptions {
    */
   getCredentialContext?: () => CredentialContext | null;
   /**
-   * Resolve connected Builder credentials for managed web search.
+   * Resolve connected Jami Studio credentials for managed web search.
    */
   resolveBuilderCredentials?: () => Promise<BuilderWebSearchCredentials>;
   /**
-   * Base URL for Builder-managed web search.
+   * Base URL for Jami Studio-managed web search.
    */
   getBuilderWebSearchBaseUrl?: () => string;
   /**
-   * Stable attribution headers for Builder-managed API calls.
+   * Stable attribution headers for Jami Studio-managed API calls.
    */
   getBuilderRequestHeaders?: () => Record<string, string>;
 }
@@ -110,7 +110,7 @@ async function resolveBuilderSearchCredentials(
     const creds = await opts.resolveBuilderCredentials();
     if (creds.privateKey && creds.publicKey) return creds;
   } catch {
-    // Builder credential lookup failures are non-fatal; BYOK backends or the
+    // Jami Studio credential lookup failures are non-fatal; BYOK backends or the
     // setup hint below can still handle the tool call.
   }
   return null;
@@ -296,7 +296,7 @@ async function searchBuilderManaged(
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(
-      `Builder web search error ${res.status}${text ? `: ${text.slice(0, 300)}` : ""}`,
+      `Jami Studio web search error ${res.status}${text ? `: ${text.slice(0, 300)}` : ""}`,
     );
   }
   const data = (await res.json()) as {
@@ -304,7 +304,7 @@ async function searchBuilderManaged(
   };
   const text = data.text?.trim();
   if (!text) {
-    throw new Error("Builder web search returned no text.");
+    throw new Error("Jami Studio web search returned no text.");
   }
   return text;
 }
@@ -323,7 +323,7 @@ export function createWebSearchToolEntry(
     "web-search": {
       tool: {
         description:
-          "Search the public web. Use to find API documentation, endpoints, current information, or any topic. Returns ranked results from BYOK providers or a grounded Builder-managed summary. Follow up with web-request or provider-api-docs using responseMode:'markdown' or responseMode:'matches' to fetch clean text, links, or compact snippets from promising URLs. Requires either Connect Builder.io or one of: BRAVE_SEARCH_API_KEY, TAVILY_API_KEY, EXA_API_KEY, or FIRECRAWL_API_KEY.",
+          "Search the public web. Use to find API documentation, endpoints, current information, or any topic. Returns ranked results from BYOK providers or a grounded Jami Studio-managed summary. Follow up with web-request or provider-api-docs using responseMode:'markdown' or responseMode:'matches' to fetch clean text, links, or compact snippets from promising URLs. Requires either Connect Jami Studio or one of: BRAVE_SEARCH_API_KEY, TAVILY_API_KEY, EXA_API_KEY, or FIRECRAWL_API_KEY.",
         parameters: {
           type: "object" as const,
           properties: {
@@ -382,11 +382,11 @@ export function createWebSearchToolEntry(
               opts,
             );
             results = [];
-            backend = "Builder.io";
+            backend = "Jami Studio";
           } else {
             return [
               "No web-search backend configured.",
-              "Connect Builder.io in Settings, or add one of the following keys via app settings or environment variables:",
+              "Connect Jami Studio in Settings, or add one of the following keys via app settings or environment variables:",
               "  • BRAVE_SEARCH_API_KEY  — https://brave.com/search/api/",
               "  • TAVILY_API_KEY        — https://tavily.com/",
               "  • EXA_API_KEY           — https://exa.ai/",

@@ -599,7 +599,7 @@ export async function processAutomationsForAccount(
   if (rules.length === 0) return result;
 
   // 2. Resolve model settings. Credentials are resolved by the selected engine
-  // under the owner's request context, so Builder-managed models work here too.
+  // under the owner's request context, so Jami Studio-managed models work here too.
   const modelSettings = await getAutomationModelSettings(ownerEmail);
   if (!(await canUseAutomationModel(ownerEmail, modelSettings))) {
     result.errors = 1;

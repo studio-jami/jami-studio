@@ -224,14 +224,14 @@ npx @agent-native/core@latest recap doctor
 エージェント クライアントをリロードして、新しい skills とツールをロードしてから実行します
 `/visual-plan`.
 
-> 注: ベア `npx skills@latest add BuilderIO/agent-native --skill visual-plan` (Vercel/open Skills CLI) は **手順のみ** をインストールします。MCP コネクタは登録されません。コネクタも配線したい場合は、上記の Agent-Native CLI を使用してください。
+> 注: ベア `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) は **手順のみ** をインストールします。MCP コネクタは登録されません。コネクタも配線したい場合は、上記の Agent-Native CLI を使用してください。
 
 ### Claude コード (プラグイン) {#claude-code}
 
-パブリック `BuilderIO/agent-native` リポジトリ自体は Claude コード プラグイン マーケットプレイスであるため、ビルド手順なしで直接追加します。 Claude コード内:
+パブリック `Jami Studio/agent-native` リポジトリ自体は Claude コード プラグイン マーケットプレイスであるため、ビルド手順なしで直接追加します。 Claude コード内:
 
 ```text
-/plugin marketplace add BuilderIO/agent-native
+/plugin marketplace add Jami Studio/agent-native
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ npx @agent-native/core@latest recap doctor
 同じリポジトリは Codex プラグイン マーケットプレイスです。それを追加し、プラグインをインストールして、コネクタを認証します。
 
 ```bash
-codex plugin marketplace add BuilderIO/agent-native
+codex plugin marketplace add Jami Studio/agent-native
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # ブラウザのOAuth
 ```
@@ -269,7 +269,7 @@ codex mcp login plan   # ブラウザのOAuth
 
 ## 何か提出する必要がありますか? {#submission}
 
-**これを配布またはインストールするには提出やレビューは必要ありません。** `BuilderIO/agent-native` は自己ホスト型のパブリック git マーケットプレイスであるため、ユーザーは **Claude コードと Codex の両方**に上記のコマンドを使用して直接追加します。申請や承認は必要ありません。ユニバーサル CLI ルートにはマーケットプレイスはまったく必要ありません。
+**これを配布またはインストールするには提出やレビューは必要ありません。** `Jami Studio/agent-native` は自己ホスト型のパブリック git マーケットプレイスであるため、ユーザーは **Claude コードと Codex の両方**に上記のコマンドを使用して直接追加します。申請や承認は必要ありません。ユニバーサル CLI ルートにはマーケットプレイスはまったく必要ありません。
 
 公開リストが必要な場合は、オプションの検出可能性:
 
