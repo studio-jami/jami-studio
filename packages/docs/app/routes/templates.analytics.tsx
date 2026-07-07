@@ -12,17 +12,17 @@ export const meta = () =>
     [
       {
         title:
-          "Agent-Native Analytics — Open Source Alternative to Amplitude & Mixpanel",
+          "Jami Studio Analytics — Open Source Alternative to Amplitude & Mixpanel",
       },
       {
         name: "description",
         content:
-          "Build AI-powered analytics dashboards you own. Open source alternative to Amplitude, Mixpanel, and Looker. Multiple data connectors, SQL query explorer, reusable dashboards, data dictionary, and natural language chart generation.",
+          "Connect your warehouse or production database, build dashboards in seconds, and track product metrics using natural language. Open source alternative to Amplitude, Mixpanel, and static BI tools.",
       },
       {
         property: "og:title",
         content:
-          "Agent-Native Analytics — Open Source Alternative to Amplitude & Mixpanel",
+          "Jami Studio Analytics — Open Source Alternative to Amplitude & Mixpanel",
       },
       {
         property: "og:description",
@@ -112,7 +112,7 @@ export default function AnalyticsTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -493,7 +493,7 @@ export default function AnalyticsTemplate() {
                   ChatGPT + CSV
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Analytics
+                  Jami Studio Analytics
                 </th>
               </tr>
             </thead>

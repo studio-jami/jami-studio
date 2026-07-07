@@ -12,7 +12,7 @@ export const meta = () =>
     [
       {
         title:
-          "Agent-Native Dispatch — Open Source Slack & Telegram Agent Router",
+          "Jami Studio Dispatch — Open Source Slack & Telegram Agent Router",
       },
       {
         name: "description",
@@ -22,7 +22,7 @@ export const meta = () =>
       {
         property: "og:title",
         content:
-          "Agent-Native Dispatch — Open Source Slack & Telegram Agent Router",
+          "Jami Studio Dispatch — Open Source Slack & Telegram Agent Router",
       },
       {
         property: "og:description",
@@ -112,7 +112,7 @@ export default function DispatchTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -537,7 +537,7 @@ export default function DispatchTemplate() {
                   {t("templateLanding.dispatch.s035")}
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Dispatch
+                  Jami Studio Dispatch
                 </th>
               </tr>
             </thead>

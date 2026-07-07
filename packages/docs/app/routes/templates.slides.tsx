@@ -11,7 +11,7 @@ export const meta = () =>
   withTemplateSocialImage(
     [
       {
-        title: "Agent-Native Slides — Open Source AI Presentation Jami Studio",
+        title: "Jami Studio Slides — Open Source AI Presentation Builder",
       },
       {
         name: "description",
@@ -21,7 +21,7 @@ export const meta = () =>
       {
         property: "og:title",
         content:
-          "Agent-Native Slides — Open Source AI Presentation Jami Studio",
+          "Jami Studio Slides — Open Source AI Presentation Builder",
       },
       {
         property: "og:description",
@@ -111,7 +111,7 @@ export default function SlidesTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -363,7 +363,7 @@ export default function SlidesTemplate() {
                   {t("templateLanding.slides.s036")}
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Slides
+                  Jami Studio Slides
                 </th>
               </tr>
             </thead>

@@ -6,8 +6,8 @@
     {
       "name": "conventions",
       "type": "registry:item",
-      "title": "Agent Native Conventions",
-      "description": "Agent instructions and core skills for building Agent Native apps.",
+      "title": "Jami Studio Conventions",
+      "description": "Agent instructions and core skills for building Jami Studio apps.",
       "categories": ["agent-native", "agents", "project-conventions"],
       "files": [
         {

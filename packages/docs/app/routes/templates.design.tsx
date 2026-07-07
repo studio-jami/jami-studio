@@ -11,7 +11,7 @@ export const meta = () =>
   withTemplateSocialImage(
     [
       {
-        title: "Agent-Native Design — Open Source AI HTML Prototyping Tool",
+        title: "Jami Studio Design — Open Source AI HTML Prototyping Tool",
       },
       {
         name: "description",
@@ -20,7 +20,7 @@ export const meta = () =>
       },
       {
         property: "og:title",
-        content: "Agent-Native Design — Open Source AI HTML Prototyping Tool",
+        content: "Jami Studio Design — Open Source AI HTML Prototyping Tool",
       },
       {
         property: "og:description",
@@ -110,7 +110,7 @@ export default function DesignTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -362,7 +362,7 @@ export default function DesignTemplate() {
                   {t("templateLanding.design.s036")}
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Design
+                  Jami Studio Design
                 </th>
               </tr>
             </thead>

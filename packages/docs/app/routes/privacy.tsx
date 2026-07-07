@@ -17,21 +17,21 @@ const USE_KEYS = ["provide", "transform", "auth", "support", "comply"] as const;
 export const meta = () =>
   withDefaultSocialImage([
     {
-      title: "Privacy Policy - Agent-Native hosted applications",
+      title: "Privacy Policy - Jami Studio hosted applications",
     },
     {
       name: "description",
       content:
-        "Privacy policy for Agent-Native hosted applications, apps, and browser extensions.",
+        "Privacy policy for Jami Studio hosted applications, apps, and browser extensions.",
     },
     {
       property: "og:title",
-      content: "Privacy Policy - Agent-Native hosted applications",
+      content: "Privacy Policy - Jami Studio hosted applications",
     },
     {
       property: "og:description",
       content:
-        "How Agent-Native hosted applications collect, use, share, and retain data.",
+        "How Jami Studio hosted applications collect, use, share, and retain data.",
     },
   ]);
 

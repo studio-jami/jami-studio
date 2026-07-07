@@ -11,7 +11,7 @@ export const meta = () =>
   withTemplateSocialImage(
     [
       {
-        title: "Agent-Native Clips — Open-Source Loom Alternative",
+        title: "Jami Studio Clips — Open-Source Loom Alternative",
       },
       {
         name: "description",
@@ -20,7 +20,7 @@ export const meta = () =>
       },
       {
         property: "og:title",
-        content: "Agent-Native Clips — Open-Source Loom Alternative",
+        content: "Jami Studio Clips — Open-Source Loom Alternative",
       },
       {
         property: "og:description",
@@ -110,7 +110,7 @@ export default function ClipsTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -554,7 +554,7 @@ export default function ClipsTemplate() {
                   Wisprflow
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Clips
+                  Jami Studio Clips
                 </th>
               </tr>
             </thead>

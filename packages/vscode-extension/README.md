@@ -1,6 +1,6 @@
-# Agent-Native for VS Code
+# Jami Studio for VS Code
 
-[Agent-Native](https://www.agent-native.com/docs) opens agent-native app surfaces
+[Jami Studio](https://www.agent-native.com/docs) opens Jami Studio app surfaces
 inside VS Code: visual plans, visual recaps, and Design canvases next to the
 files being changed. It also connects your workspace to Agent-Native MCP apps so
 agents like Claude Code, Codex, and GitHub Copilot can create and open those
@@ -39,7 +39,7 @@ viewed with the [Agent-Native Plans app](https://www.agent-native.com/docs/templ
 ## `/visual-edit`
 
 Open a running local app in
-[Agent-Native Design](https://www.agent-native.com/docs/template-design) as
+[Jami Studio Design](https://www.agent-native.com/docs/template-design) as
 URL-backed iframe screens for visual editing, route-state review, and flow
 comparison.
 
@@ -65,7 +65,7 @@ Without it, an agent's plan link opens in a separate browser tab. With it:
 ## Install
 
 Install
-[Agent-Native](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 from the Visual Studio Marketplace, or run:
 
 ```bash

@@ -12,7 +12,7 @@ export const meta = () =>
     [
       {
         title:
-          "Agent-Native Plans — Visual Planning for Codex, Claude Code & Coding Agents",
+          "Jami Studio Plans — Visual Planning for Codex, Claude Code & Coding Agents",
       },
       {
         name: "description",
@@ -22,7 +22,7 @@ export const meta = () =>
       {
         property: "og:title",
         content:
-          "Agent-Native Plans — Visual Planning for Codex, Claude Code & Coding Agents",
+          "Jami Studio Plans — Visual Planning for Codex, Claude Code & Coding Agents",
       },
       {
         property: "og:description",
@@ -502,7 +502,7 @@ export default function PlanTemplate() {
                   {t("templateLanding.plan.s073")}
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Plans
+                  Jami Studio Plans
                 </th>
               </tr>
             </thead>

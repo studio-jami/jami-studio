@@ -11,7 +11,7 @@ export const meta = () =>
   withTemplateSocialImage(
     [
       {
-        title: "Agent-Native Content — Open Source Obsidian for MDX",
+        title: "Jami Studio Content — Open Source Obsidian for MDX",
       },
       {
         name: "description",
@@ -20,7 +20,7 @@ export const meta = () =>
       },
       {
         property: "og:title",
-        content: "Agent-Native Content — Open Source Obsidian for MDX",
+        content: "Jami Studio Content — Open Source Obsidian for MDX",
       },
       {
         property: "og:description",
@@ -110,7 +110,7 @@ export default function ContentTemplate() {
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: template.color }}
               />
-              Agent-Native {template.name}
+              Jami Studio {template.name}
             </div>
 
             <h1 className="mb-4 text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl md:text-5xl">
@@ -434,7 +434,7 @@ export default function ContentTemplate() {
                   ChatGPT / Claude
                 </th>
                 <th className="px-5 py-3 text-left font-semibold text-[var(--docs-accent)]">
-                  Agent-Native Content
+                  Jami Studio Content
                 </th>
               </tr>
             </thead>

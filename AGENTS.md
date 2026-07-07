@@ -1,4 +1,4 @@
-# Agent-Native Framework
+# Jami Studio Framework
 
 This repository builds apps where the AI agent and UI are equal partners:
 everything the UI can do, the agent can do through the same SQL data and action

@@ -1,4 +1,4 @@
-# Agent Native App
+# Jami Studio App
 
 Agent Native apps treat the UI and the AI agent as equal partners. Anything the
 UI can do should be available through the same SQL data and action surface that

@@ -8,7 +8,7 @@ import {
 import type { MetaDescriptor } from "react-router";
 
 const SITE_URL = "https://www.agent-native.com";
-const DOCS_SOCIAL_IMAGE_ACCENT = "Agent-Native Docs";
+const DOCS_SOCIAL_IMAGE_ACCENT = "Jami Studio Docs";
 
 export const DEFAULT_SOCIAL_IMAGE = AGENT_NATIVE_DEFAULT_SOCIAL_IMAGE;
 
@@ -44,7 +44,7 @@ export function withTemplateSocialImage(
 ): MetaDescriptor[] {
   return withDefaultSocialImage(
     meta,
-    agentNativeSocialImageUrl(`Agent-Native ${templateName}`),
+    agentNativeSocialImageUrl(`Jami Studio ${templateName}`),
   );
 }
 

@@ -1,8 +1,8 @@
-# Agent-Native
+# Jami Studio
 
-## The framework for agent-native apps
+## The framework for Jami Studio apps
 
-Agent-Native is an open-source framework for apps where agents and UI share the same actions, state, and context.
+Jami Studio is an open-source framework for apps where agents and UI share the same actions, state, and context.
 
 ```ts
 // One action powers every app surface: UI, agent, HTTP, MCP, A2A, and CLI.
@@ -33,7 +33,7 @@ Fork a working app and let the agent evolve it. **You can customize everything.*
 
 <a href="https://agent-native.com/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800" alt="Clips app" width="100%" /></a>
 
-**Agent-Native Loom + Jam**
+**Jami Studio Loom + Jam**
 
 Record your screen with auto-transcripts and captured browser debug logs, share a link, and let an agent read the transcript, see timestamped frames, and fix the bug.
 
@@ -55,7 +55,7 @@ Install `/visual-plan` and `/visual-recap` so your coding agent can plan before 
 
 <a href="https://agent-native.com/templates/design"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800" alt="Design app" width="100%" /></a>
 
-**Agent-Native design prototyping**
+**Jami Studio design prototyping**
 
 Generate interactive HTML prototypes, compare variants, refine controls, and export the result.
 
@@ -79,7 +79,7 @@ Edit local Markdown/MDX files, generate rich interactive custom blocks, and draf
 
 <a href="https://agent-native.com/templates/slides"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800" alt="Slides app" width="100%" /></a>
 
-**Agent-Native Google Slides, Pitch**
+**Jami Studio Google Slides, Pitch**
 
 Generate and edit React-based presentations via prompt or point-and-click.
 
@@ -90,7 +90,7 @@ Generate and edit React-based presentations via prompt or point-and-click.
 
 <a href="https://agent-native.com/templates/analytics"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800" alt="Analytics app" width="100%" /></a>
 
-**Agent-Native Amplitude, Mixpanel**
+**Jami Studio Amplitude, Mixpanel**
 
 Connect analytics data sources, prompt for real charts, and build reusable dashboards.
 

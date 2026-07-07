@@ -25,21 +25,21 @@ const ACCEPTABLE_USE_KEYS = [
 export const meta = () =>
   withDefaultSocialImage([
     {
-      title: "Terms of Service - Agent-Native hosted applications",
+      title: "Terms of Service - Jami Studio hosted applications",
     },
     {
       name: "description",
       content:
-        "Terms of Service for Agent-Native hosted applications, apps, demos, and official hosted services.",
+        "Terms of Service for Jami Studio hosted applications, apps, demos, and official hosted services.",
     },
     {
       property: "og:title",
-      content: "Terms of Service - Agent-Native hosted applications",
+      content: "Terms of Service - Jami Studio hosted applications",
     },
     {
       property: "og:description",
       content:
-        "The terms that apply when Jami Studio operates Agent-Native hosted applications and app services.",
+        "The terms that apply when Jami Studio operates Jami Studio hosted applications and app services.",
     },
   ]);
 
