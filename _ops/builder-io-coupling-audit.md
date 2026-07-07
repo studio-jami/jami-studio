@@ -118,6 +118,37 @@ registration hooks, so the correct action is **config/registration**, not code r
 **Net:** none of Layer B should be deleted — every item is on a provider interface. The work is
 "point at ours / assume the role," which is largely env + registration + a few CTA/branding swaps.
 
+### Provider decoupling direction — leanings, NOT final (2026-07-07)
+
+**Guiding principle: agnostic adapters everywhere.** Cloudflare is the **initial** target (we have
+partner credit pools — incl. a 10k search pool), but every provider stays behind a portable interface
+so we can slot GCS / S3 / Algolia / etc. per project. Cloudflare-first, portable-always.
+
+- **LLM gateway — keep the layer, swap the impl (do NOT rip out wholesale).** Replace Builder's
+  gateway with **our own open-source, provider-agnostic model router/gateway** occupying the *same*
+  seam (`getBuilderGatewayBaseUrl` / `BUILDER_PROXY_ORIGIN` / `AIR_HOST` in
+  [credential-provider.ts](packages/core/src/server/credential-provider.ts), consumed by
+  [builder-engine.ts](packages/core/src/agent/engine/builder-engine.ts)). BYOK keys feed the router;
+  token cost/billing rides our own provider subs (no gateway margin). Preserves streaming, model-group
+  selection, and the engine contract — we change the *implementation behind the seam*, not the layer.
+- **Web search — Algolia as initial target (10k pool), behind an agnostic adapter** at the
+  `BUILDER_WEB_SEARCH_BASE_URL` seam ([web-search-tool.ts](packages/core/src/extensions/web-search-tool.ts)).
+  ⚠️ **Nuance to resolve:** Algolia is **index-based app/content search over our own data**, whereas
+  the Builder seam is **open-web** search for the agent. So Algolia slots cleanly for in-app / content
+  search; the agent's open-web tool may still want a web-search API (Brave / Serper / Tavily). Keep
+  the adapter agnostic so either — or both — plug in.
+- **Storage / CDN — Cloudflare initial, GCS/S3 first-class for portability.** Implement the
+  `registerFileUploadProvider()` interface with **Cloudflare R2 + Images + Stream** as the initial
+  target, but keep **GCS** (and S3) adapters as first-class — we'll build some products on this system
+  that use GCS. Match existing contracts: small direct upload + signed-URL large/video, the
+  `?format=webp&width=` transform scheme, and the Clips media-worker callback.
+- **Effort calibration:** `api.*` (LLM + voice) is mostly config — BYOK keys already exist
+  (`ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`; BYOK Gemini for voice), so decoupling is
+  supply-keys + our router at the seam. Web search = one adapter. `cdn.*` (R2/Images/Stream provider +
+  transform scheme + video worker) is the one real build. All incremental, per-service, per-app.
+
+> Status: leanings only, nothing in stone. Cloudflare-first, agnostic-always; revisit per project.
+
 ---
 
 ## Layer C — Hosted fleet endpoints (`*.agent-native.com`)
