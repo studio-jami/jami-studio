@@ -135,7 +135,7 @@ const PLATFORMS: PlatformInfo[] = [
       "Jami Studio discovers each agent's skills via A2A",
       "Chat with one agent that can trigger actions across all your apps",
     ],
-    docsUrl: "https://www.builder.io",
+    docsUrl: "https://www.jami.studio",
   },
 ];
 
@@ -564,7 +564,7 @@ export function IntegrationsPanel() {
           <div className="rounded-md border border-border bg-muted/30 px-2.5 py-2 text-[10px] text-muted-foreground">
             {t("integrations.dispatchEntrypoint")}{" "}
             <a
-              href="https://dispatch.agent-native.com"
+              href="https://dispatch.jami.studio"
               target="_blank"
               rel="noopener noreferrer"
               className="no-underline font-medium text-foreground hover:text-foreground/80"

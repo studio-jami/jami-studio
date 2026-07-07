@@ -958,7 +958,7 @@ function AgentPanelInner({
   const codeUnavailableCtaLabel =
     codeAccess?.unavailableCtaLabel ?? t("agentPanel.downloadDesktop");
   const codeUnavailableCtaHref =
-    codeAccess?.unavailableCtaHref ?? "https://www.agent-native.com/download";
+    codeAccess?.unavailableCtaHref ?? "https://www.jami.studio/download";
   const codeUnavailableSecondaryCtaLabel =
     codeAccess?.unavailableSecondaryCtaLabel ?? t("agentPanel.useBuilder");
   const codeUnavailableSecondaryCtaHref =

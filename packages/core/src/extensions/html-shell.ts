@@ -3,8 +3,8 @@ const EXTENSION_IFRAME_CSP_BASE =
 
 export const EXTENSION_FRAME_ANCESTORS = [
   "'self'",
-  "https://agent-native.com",
-  "https://*.agent-native.com",
+  "https://jami.studio",
+  "https://*.jami.studio",
   "http://localhost:*",
   "http://127.0.0.1:*",
   "https://*.claudemcpcontent.com",

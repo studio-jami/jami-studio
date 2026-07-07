@@ -254,9 +254,9 @@ function appSlugFromUrl(value: string | undefined): string | undefined {
       ? value
       : `https://${value}`;
     const hostname = new URL(raw).hostname.toLowerCase();
-    if (hostname.endsWith(".agent-native.com")) {
+    if (hostname.endsWith(".jami.studio")) {
       return normalizeTrackingSlug(
-        hostname.slice(0, -".agent-native.com".length),
+        hostname.slice(0, -".jami.studio".length),
       );
     }
     return normalizeTrackingSlug(hostname.split(".")[0]);
@@ -1071,7 +1071,7 @@ async function createBetterAuthInstance(
           }
         : {}),
       // When an effective shared cookie domain is set, share Better Auth's
-      // session cookie across that domain. First-party `*.agent-native.com`
+      // session cookie across that domain. First-party `*.jami.studio`
       // apps intentionally do not use this path because their auth DBs are
       // separate; Dispatch identity federation handles cross-app sign-in.
       ...(cookieNamespace.betterAuthCookieDomain

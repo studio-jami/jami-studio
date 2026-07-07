@@ -12,9 +12,9 @@ describe("resolveAppForSkill", () => {
     expect(app).toBeDefined();
     expect(app?.appId).toBe("visual-plans");
     expect(app?.serverName).toBe("plan");
-    expect(app?.mcpUrl).toBe("https://plan.agent-native.com/_agent-native/mcp");
+    expect(app?.mcpUrl).toBe("https://plan.jami.studio/_agent-native/mcp");
     expect(
-      app?.mcpUrl.endsWith("plan.agent-native.com/_agent-native/mcp"),
+      app?.mcpUrl.endsWith("plan.jami.studio/_agent-native/mcp"),
     ).toBe(true);
     expect(app?.aliases).toContain("agent-native-plans");
   });
@@ -25,7 +25,7 @@ describe("resolveAppForSkill", () => {
     expect(recapSkill).toBeDefined();
     expect(recapSkill?.serverName).toBe("plan");
     expect(
-      recapSkill?.mcpUrl.endsWith("plan.agent-native.com/_agent-native/mcp"),
+      recapSkill?.mcpUrl.endsWith("plan.jami.studio/_agent-native/mcp"),
     ).toBe(true);
     expect(recapSkill?.aliases).toContain("agent-native-plans");
     // Both skills resolve to the very same registry entry.
@@ -44,7 +44,7 @@ describe("resolveAppForSkill", () => {
     expect(app?.appId).toBe("content");
     expect(app?.serverName).toBe("agent-native-content");
     expect(app?.mcpUrl).toBe(
-      "https://content.agent-native.com/_agent-native/mcp",
+      "https://content.jami.studio/_agent-native/mcp",
     );
   });
 

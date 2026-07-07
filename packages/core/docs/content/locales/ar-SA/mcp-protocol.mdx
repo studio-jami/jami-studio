@@ -233,14 +233,14 @@ Auto-mounted on every app. Speaks the standard MCP handshake (`initialize` → `
 بالنسبة للمضيفين MCP القادرين على OAuth، قم بتكوين الخادم البعيد URL بدون رؤوس ثابتة:
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 يتلقى أول طلب MCP غير مصادق عليه:
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 اكتشاف نقاط النهاية:

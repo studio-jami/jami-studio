@@ -76,7 +76,7 @@ export interface AppWebviewHandle {
 /**
  * Determine the URL to load for this app.
  *
- * Production mode (default): load the production URL (e.g. https://mail.agent-native.com).
+ * Production mode (default): load the production URL (e.g. https://mail.jami.studio).
  * Dev mode: honor an explicit lazy gateway override or devUrl/port override;
  * otherwise first-party templates fall back to the local dev frame.
  */

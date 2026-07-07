@@ -44,7 +44,7 @@ agent the same way.
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-panel center">
     Plan MCP connector<br /><small class="diagram-muted"
-      >plan.agent-native.com</small
+      >plan.jami.studio</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -120,7 +120,7 @@ The command installs three commands: `/visual-plan`, `/visual-recap`, and
 
 If you are using a chat-based host that accepts MCP connector URLs directly
 (rather than a CLI-configured client), connect the hosted Plans connector at
-`https://plan.agent-native.com/_agent-native/mcp` — see [MCP Clients](/docs/mcp-clients) for client-specific setup.
+`https://plan.jami.studio/_agent-native/mcp` — see [MCP Clients](/docs/mcp-clients) for client-specific setup.
 
 Authentication is a one-time browser sign-in at setup — this is intended, and it
 is what lets the agent persist and share the plans it generates. What the auth
@@ -142,7 +142,7 @@ npx @agent-native/core@latest skills add visual-plan
 ```
 
 Pass `--no-connect` to register the connector without authenticating, then run
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 whenever you are ready, or choose a narrower `--client`:
 
 ```bash
@@ -259,7 +259,7 @@ Sharing and commenting are the workflows that need an account:
   cross-device or team review) requires signing in. Google sign-in appears when
   the standard Google OAuth env vars are configured.
 
-The hosted Plans connector lives at `https://plan.agent-native.com/_agent-native/mcp`.
+The hosted Plans connector lives at `https://plan.jami.studio/_agent-native/mcp`.
 Never put shared secrets in skill files.
 
 ## Local-files privacy mode {#local-files}
@@ -296,7 +296,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 ```
 
 The bridge URL looks like
-`https://plan.agent-native.com/local-plans/<slug>?bridge=http://127.0.0.1:...`.
+`https://plan.jami.studio/local-plans/<slug>?bridge=http://127.0.0.1:...`.
 The page is the normal Plan viewer, but the browser fetches `plan.mdx`,
 `canvas.mdx`, `prototype.mdx`, `.plan-state.json`, and local image assets from
 the localhost bridge. Plan content is not written to the hosted database and is
@@ -445,7 +445,7 @@ touch local files.
 
 If a Plans tool ever returns `needs auth`, `Unauthorized`, or `Session
 terminated`, do not keep retrying it. Authenticate the connector with
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`
 for Codex, or re-run `/mcp` → **Authenticate** in an OAuth-capable host. Start a
 new Codex thread or restart/reload the relevant client before expecting the tool
 registry to update.
@@ -466,8 +466,8 @@ pnpm dev
 
 The hosted app-backed skill uses:
 
-- App: `https://plan.agent-native.com`
-- MCP: `https://plan.agent-native.com/_agent-native/mcp`
+- App: `https://plan.jami.studio`
+- MCP: `https://plan.jami.studio/_agent-native/mcp`
 
 The local template is useful when you are developing Plans itself, testing local persistence, or running a fully self-hosted review surface.
 

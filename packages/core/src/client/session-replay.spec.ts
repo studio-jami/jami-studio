@@ -104,7 +104,7 @@ function setLocation(
 }
 
 function installBrowser(
-  url = "https://app.agent-native.com/inbox",
+  url = "https://app.jami.studio/inbox",
   session: Record<string, unknown> = { error: "not authenticated" },
 ) {
   const parsed = new URL(url);
@@ -235,7 +235,7 @@ describe("session replay", () => {
   });
 
   it("does not start auth-required replay for anonymous sessions", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       error: "not authenticated",
     });
     vi.resetModules();
@@ -257,7 +257,7 @@ describe("session replay", () => {
   });
 
   it("does not start auth-required replay without a session email", async () => {
-    installBrowser("https://app.agent-native.com/inbox", {
+    installBrowser("https://app.jami.studio/inbox", {
       userId: "auth-user-1",
       name: "Dev User",
       orgId: "org_123",
@@ -276,7 +276,7 @@ describe("session replay", () => {
   });
 
   it("starts auth-required replay after browser identity is provided", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       error: "not authenticated",
     });
     let recordOptions: any;
@@ -335,7 +335,7 @@ describe("session replay", () => {
 
   it("starts rrweb with privacy defaults and uploads scrubbed replay batches", async () => {
     const { fetchMock } = installBrowser(
-      "https://app.agent-native.com/inbox?code=secret&keep=1",
+      "https://app.jami.studio/inbox?code=secret&keep=1",
     );
     let recordOptions: any;
     const stop = vi.fn();
@@ -379,7 +379,7 @@ describe("session replay", () => {
       type: 3,
       timestamp: eventTimestamp,
       data: {
-        href: "https://app.agent-native.com/path?token=secret&ok=1",
+        href: "https://app.jami.studio/path?token=secret&ok=1",
         source: "/oauth/callback?code=private",
       },
     });
@@ -407,14 +407,14 @@ describe("session replay", () => {
       startedAt: expect.any(String),
       endedAt: new Date(eventTimestamp).toISOString(),
       durationMs: expect.any(Number),
-      url: "https://app.agent-native.com/inbox?code=%3Credacted%3E&keep=1",
+      url: "https://app.jami.studio/inbox?code=%3Credacted%3E&keep=1",
       properties: { route: "/inbox?token=%3Credacted%3E" },
     });
     expect(Date.parse(body.startedAt)).toBeLessThanOrEqual(
       Date.parse(body.endedAt),
     );
     expect(body.events[0].data.href).toBe(
-      "https://app.agent-native.com/path?token=%3Credacted%3E&ok=1",
+      "https://app.jami.studio/path?token=%3Credacted%3E&ok=1",
     );
     expect(body.events[0].data.source).toBe(
       "/oauth/callback?code=%3Credacted%3E",
@@ -425,7 +425,7 @@ describe("session replay", () => {
   });
 
   it("does not force keepalive for oversized cross-origin replay batches", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     let recordOptions: any;
     recordMock.mockImplementation((options) => {
       recordOptions = options;
@@ -457,7 +457,7 @@ describe("session replay", () => {
   });
 
   it("keeps gzip uploads for same-origin replay collectors", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     let recordOptions: any;
     recordMock.mockImplementation((options) => {
       recordOptions = options;
@@ -493,7 +493,7 @@ describe("session replay", () => {
   });
 
   it("deduplicates concurrent replay startup attempts", async () => {
-    installBrowser("https://app.agent-native.com/inbox");
+    installBrowser("https://app.jami.studio/inbox");
     const stop = vi.fn();
     const recordOptions: any[] = [];
     recordMock.mockImplementation((options) => {
@@ -528,7 +528,7 @@ describe("session replay", () => {
   });
 
   it("falls back to raw fetch uploads when gzip is unavailable", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     const sendBeacon = vi.fn(() => true);
     vi.stubGlobal("navigator", { sendBeacon });
     vi.stubGlobal("CompressionStream", undefined);
@@ -561,7 +561,7 @@ describe("session replay", () => {
   });
 
   it("does not use keepalive for large replay uploads", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     const sendBeacon = vi.fn(() => false);
     vi.stubGlobal("navigator", { sendBeacon });
     vi.stubGlobal("CompressionStream", undefined);
@@ -598,7 +598,7 @@ describe("session replay", () => {
   });
 
   it("flushes full snapshots immediately even below the normal batch byte cap", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubGlobal("CompressionStream", undefined);
     let recordOptions: any;
     recordMock.mockImplementation((options) => {
@@ -634,7 +634,7 @@ describe("session replay", () => {
   });
 
   it("flushes oversized snapshots queued behind an active upload", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubGlobal("CompressionStream", undefined);
     let recordOptions: any;
     recordMock.mockImplementation((options) => {
@@ -674,7 +674,7 @@ describe("session replay", () => {
   });
 
   it("retries failed batches without merging newly queued events", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubGlobal("CompressionStream", undefined);
     const firstUpload = deferred<Response>();
     let uploadCalls = 0;
@@ -736,7 +736,7 @@ describe("session replay", () => {
   });
 
   it("does not retry failed batches on every newly queued event", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubGlobal("CompressionStream", undefined);
     fetchMock
       .mockResolvedValueOnce(new Response("nope", { status: 500 }))
@@ -788,7 +788,7 @@ describe("session replay", () => {
 
   it("reserves the next sequence before unload keepalive uploads", async () => {
     const { fetchMock, storage } = installBrowser(
-      "https://app.agent-native.com/inbox",
+      "https://app.jami.studio/inbox",
     );
     vi.stubGlobal("CompressionStream", undefined);
     const upload = deferred<Response>();
@@ -833,7 +833,7 @@ describe("session replay", () => {
 
   it("reserves the next sequence before visibility-hidden keepalive uploads", async () => {
     const { fetchMock, storage } = installBrowser(
-      "https://app.agent-native.com/inbox",
+      "https://app.jami.studio/inbox",
     );
     vi.stubGlobal("CompressionStream", undefined);
     const upload = deferred<Response>();
@@ -878,7 +878,7 @@ describe("session replay", () => {
 
   it("rolls back and retries failed unload keepalive reservations", async () => {
     const { fetchMock, storage } = installBrowser(
-      "https://app.agent-native.com/inbox",
+      "https://app.jami.studio/inbox",
     );
     vi.stubGlobal("CompressionStream", undefined);
     fetchMock
@@ -929,7 +929,7 @@ describe("session replay", () => {
   });
 
   it("passes custom rrweb event sampling through to the recorder", async () => {
-    installBrowser("https://app.agent-native.com/inbox");
+    installBrowser("https://app.jami.studio/inbox");
     let recordOptions: any;
     recordMock.mockImplementation((options) => {
       recordOptions = options;
@@ -950,7 +950,7 @@ describe("session replay", () => {
   });
 
   it("continues replay sequence across reloads for the same replay id", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       email: "dev@example.com",
       userId: "auth-user-1",
       name: "Dev User",
@@ -998,7 +998,7 @@ describe("session replay", () => {
 
   it("retries failed replay uploads without advancing the sequence", async () => {
     const { fetchMock, storage } = installBrowser(
-      "https://app.agent-native.com/inbox",
+      "https://app.jami.studio/inbox",
     );
     fetchMock
       .mockResolvedValueOnce(new Response("nope", { status: 500 }))
@@ -1046,7 +1046,7 @@ describe("session replay", () => {
   });
 
   it("blocks disallowed URLs before importing the recorder", async () => {
-    installBrowser("https://app.agent-native.com/settings/billing");
+    installBrowser("https://app.jami.studio/settings/billing");
     const { startSessionReplay } = await freshSessionReplay();
 
     const result = await startSessionReplay({
@@ -1059,7 +1059,7 @@ describe("session replay", () => {
   });
 
   it("derives the replay endpoint from the first-party analytics endpoint env", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox");
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubEnv("VITE_AGENT_NATIVE_ANALYTICS_PUBLIC_KEY", "anpk_test");
     vi.stubEnv(
       "VITE_AGENT_NATIVE_ANALYTICS_ENDPOINT",
@@ -1086,7 +1086,7 @@ describe("session replay", () => {
   });
 
   it("derives replay defaults from configureTracking key and endpoint", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       email: "dev@example.com",
       userId: "auth-user-1",
       name: "Dev User",
@@ -1134,7 +1134,7 @@ describe("session replay", () => {
   });
 
   it("applies configureTracking default props to replay metadata", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       email: "dev@example.com",
       userId: "auth-user-1",
       name: "Dev User",
@@ -1186,7 +1186,7 @@ describe("session replay", () => {
   });
 
   it("attaches signed-in session identity to replay metadata", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       email: "dev@example.com",
       userId: "auth-user-1",
       name: "Dev User",
@@ -1239,7 +1239,7 @@ describe("session replay", () => {
   });
 
   it("flushes queued auth-required replay events when auth is cleared", async () => {
-    const { fetchMock } = installBrowser("https://app.agent-native.com/inbox", {
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox", {
       email: "dev@example.com",
       userId: "auth-user-1",
       name: "Dev User",

@@ -77,7 +77,7 @@ type FeedbackFormSchema = {
 };
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
-  clipsBaseUrl: "https://clips.agent-native.com",
+  clipsBaseUrl: "https://clips.jami.studio",
   captureSurface: "browser",
   includeCamera: true,
   includeMicrophone: true,
@@ -93,7 +93,7 @@ const SOURCE_LABELS: Record<Exclude<CaptureSurface, "camera">, string> = {
 };
 
 const FEEDBACK_URL =
-  "https://forms.agent-native.com/f/agent-native-feedback/_16ewV";
+  "https://forms.jami.studio/f/agent-native-feedback/_16ewV";
 const FEEDBACK_PLACEHOLDER = "Tell us what's on your mind...";
 const FEEDBACK_SUBMIT_TEXT = "Send feedback";
 const FEEDBACK_SUCCESS_MESSAGE = "Thanks for the feedback!";

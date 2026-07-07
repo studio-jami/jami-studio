@@ -20,7 +20,7 @@ export default createAuthPlugin({
       "npx @agent-native/core@latest create my-calendar-app --template calendar",
   },
   googleSignInNotice: {
-    host: "calendar.agent-native.com",
+    host: "calendar.jami.studio",
     title: "Google may show a warning",
     body: [
       "You'll see this screen because this demo uses Agent-Native's Google app, not a Google-reviewed public app.",

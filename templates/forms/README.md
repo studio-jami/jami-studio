@@ -4,7 +4,7 @@ An open-source, agent-native alternative to Typeform and Google Forms. Describe
 the form you want, refine it in the visual editor, and publish a public form that
 stores submissions in your own SQL database.
 
-**Live app: [forms.agent-native.com](https://forms.agent-native.com)**
+**Live app: [forms.jami.studio](https://forms.jami.studio)**
 
 Build forms conversationally or by hand — the agent updates the schema and the
 preview updates from SQL-backed state. Route new submissions wherever you need
@@ -31,4 +31,4 @@ pnpm install
 pnpm dev
 ```
 
-Full docs: [agent-native.com/docs/template-forms](https://agent-native.com/docs/template-forms).
+Full docs: [jami.studio/docs/template-forms](https://jami.studio/docs/template-forms).

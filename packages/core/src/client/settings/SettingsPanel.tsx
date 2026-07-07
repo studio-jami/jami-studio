@@ -2561,7 +2561,7 @@ function SettingsPanelContent({
             />
             <ManualSetupCard
               hint="Deploy manually to Netlify, Vercel, Cloudflare, or any Nitro-supported target."
-              docsUrl="https://www.builder.io/c/docs/agent-native-deployment"
+              docsUrl="https://www.jami.studio/c/docs/agent-native-deployment"
               dim={connected}
             />
           </div>
@@ -2591,7 +2591,7 @@ function SettingsPanelContent({
             />
             <ManualSetupCard
               hint="Set DATABASE_URL in your .env to connect Neon, Supabase, Turso, any Postgres/SQLite database, or local PGlite with pglite:./data/pglite."
-              docsUrl="https://www.builder.io/c/docs/agent-native-database"
+              docsUrl="https://www.jami.studio/c/docs/agent-native-database"
               dim={connected}
             />
           </div>
@@ -2621,7 +2621,7 @@ function SettingsPanelContent({
             />
             <ManualSetupCard
               hint="Without a provider, files are stored as base64 in your database. Fine for dev, not recommended for production."
-              docsUrl="https://www.builder.io/c/docs/agent-native-file-uploads"
+              docsUrl="https://www.jami.studio/c/docs/agent-native-file-uploads"
               dim={connected}
             />
           </div>
@@ -2651,7 +2651,7 @@ function SettingsPanelContent({
             />
             <ManualSetupCard
               hint="Configure Better Auth with BETTER_AUTH_SECRET and optional Google/GitHub OAuth providers."
-              docsUrl="https://www.builder.io/c/docs/agent-native-authentication"
+              docsUrl="https://www.jami.studio/c/docs/agent-native-authentication"
               dim={connected}
             />
           </div>

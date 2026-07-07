@@ -60,10 +60,10 @@ const publishAuth = {
 };
 vi.mock("../server/lib/plan-publish.js", () => ({
   resolvePlanHostedUrl: () =>
-    publishAuth.value?.url ?? "https://plan.agent-native.com",
+    publishAuth.value?.url ?? "https://plan.jami.studio",
   resolvePlanPublishAuth: () => publishAuth.value,
   planConnectCommand: (u: string) => `agent-native connect ${u}`,
-  DEFAULT_PLAN_HOSTED_URL: "https://plan.agent-native.com",
+  DEFAULT_PLAN_HOSTED_URL: "https://plan.jami.studio",
 }));
 
 type AnyAction = { run: (args: any) => Promise<any> };

@@ -642,7 +642,7 @@ describe("@agent-native/skills", () => {
     expect(promptGithubAction.mock.calls[0]?.[0]).toMatchObject({
       workflowPath: path.join(".github", "workflows", "pr-visual-recap.yml"),
       setupCommand: "npx @agent-native/core@latest recap setup",
-      docsUrl: "https://www.agent-native.com/docs/pr-visual-recap",
+      docsUrl: "https://www.jami.studio/docs/pr-visual-recap",
     });
     expect(
       fs.existsSync(

@@ -39,7 +39,7 @@ Codex، أو رمز Claude، أو Markdown، أو خطة التنفيذ المل
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-panel center">
     موصل Plan MCP<br /><small class="diagram-muted"
-      >plan.agent-native.com</small
+      >plan.jami.studio</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -114,7 +114,7 @@ npx @agent-native/core@latest skills add visual-plan
 
 إذا كنت تستخدم مضيفًا يستند إلى الدردشة ويقبل موصل MCP URLs مباشرةً
 (بدلاً من عميل تم تكوينه بواسطة CLI)، قم بتوصيل موصل الخطط المستضاف على
-`https://plan.agent-native.com/_agent-native/mcp` — راجع [MCP Clients](/docs/mcp-clients) للتعرف على الإعداد الخاص بالعميل.
+`https://plan.jami.studio/_agent-native/mcp` — راجع [MCP Clients](/docs/mcp-clients) للتعرف على الإعداد الخاص بالعميل.
 
 المصادقة عبارة عن تسجيل دخول إلى المتصفح لمرة واحدة عند الإعداد — وهذا هو المقصود، وهو كذلك
 هو ما يتيح للوكيل الاستمرار ومشاركة الخطط التي ينشئها. ما المصادقة
@@ -136,7 +136,7 @@ npx @agent-native/core@latest skills add visual-plan
 ```
 
 مرر `--no-connect` لتسجيل الموصل دون المصادقة، ثم قم بتشغيل
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 عندما تكون مستعدًا، أو اختر `--client` الأضيق:
 
 ```bash
@@ -253,7 +253,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
   المراجعة عبر الأجهزة أو الفريق) تسجيل الدخول. وسيظهر تسجيل الدخول إلى Google عندما
   تم تكوين vars env القياسي لـ Google OAuth.
 
-موصل الخطط المستضاف موجود في `https://plan.agent-native.com/_agent-native/mcp`.
+موصل الخطط المستضاف موجود في `https://plan.jami.studio/_agent-native/mcp`.
 لا تضع الأسرار المشتركة أبدًا في ملفات المهارات.
 
 ## وضع خصوصية الملفات المحلية {#local-files}
@@ -290,7 +290,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 ```
 
 يبدو شكل الجسر URL
-`https://plan.agent-native.com/local-plans/<slug>?bridge=http://127.0.0.1:...`.
+`https://plan.jami.studio/local-plans/<slug>?bridge=http://127.0.0.1:...`.
 الصفحة هي عارض الخطة العادي، لكن المتصفح يجلب `plan.mdx`،
 `canvas.mdx`، و`prototype.mdx`، و`.plan-state.json`، وأصول الصور المحلية من
 جسر المضيف المحلي. لا تتم كتابة محتوى الخطة في قاعدة البيانات المستضافة وهي
@@ -430,7 +430,7 @@ npx @agent-native/core@latest visualize-repo \
 
 إذا قامت أداة الخطط بإرجاع `needs auth` أو `Unauthorized` أو `Session
 تم إنهاؤه`، لا تستمر في إعادة المحاولة. قم بمصادقة الموصل باستخدام
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`
 لـ Codex، أو أعد تشغيل `/mcp` → **المصادقة** في مضيف قادر على OAuth. ابدأ
 سلسلة رسائل Codex جديدة أو إعادة تشغيل/إعادة تحميل العميل ذي الصلة قبل توقع الأداة
 التسجيل المراد تحديثه.
@@ -451,8 +451,8 @@ pnpm dev
 
 تستخدم المهارة المدعومة بالتطبيق المستضاف:
 
-- التطبيق: `https://plan.agent-native.com`
-- MCP: `https://plan.agent-native.com/_agent-native/mcp`
+- التطبيق: `https://plan.jami.studio`
+- MCP: `https://plan.jami.studio/_agent-native/mcp`
 
 يكون القالب المحلي مفيدًا عند تطوير الخطط نفسها، أو اختبار الثبات المحلي، أو تشغيل سطح مراجعة مستضاف ذاتيًا بالكامل.
 

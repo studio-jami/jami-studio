@@ -74,25 +74,25 @@ describe("buildSlackPayload page context", () => {
       buildSlackPayload(
         payload({
           submitterEmail:
-            "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+            "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
         }),
       ),
     );
 
-    expect(text).not.toContain("@agent-native.com");
+    expect(text).not.toContain("@jami.studio");
     expect(text).not.toContain(" by *");
   });
 
   it("shows a friendly App label and a readable page link for a per-app host", () => {
     const text = contextText(
       buildSlackPayload(
-        payload({ pageUrl: "https://plan.agent-native.com/plans/plan-abc123" }),
+        payload({ pageUrl: "https://plan.jami.studio/plans/plan-abc123" }),
       ),
     );
     expect(text).toContain("App: Plan");
     // The page is legible inline (host+path as link text), not hidden behind "open".
     expect(text).toContain(
-      "Page: <https://plan.agent-native.com/plans/plan-abc123|plan.agent-native.com/plans/plan-abc123>",
+      "Page: <https://plan.jami.studio/plans/plan-abc123|plan.jami.studio/plans/plan-abc123>",
     );
     expect(text).not.toContain("|open>");
   });
@@ -100,7 +100,7 @@ describe("buildSlackPayload page context", () => {
   it("title-cases hyphenated subdomains", () => {
     const text = contextText(
       buildSlackPayload(
-        payload({ pageUrl: "https://analytics.agent-native.com/dashboards/7" }),
+        payload({ pageUrl: "https://analytics.jami.studio/dashboards/7" }),
       ),
     );
     expect(text).toContain("App: Analytics");
@@ -109,11 +109,11 @@ describe("buildSlackPayload page context", () => {
   it("omits the App label for non-app hosts but keeps the page legible", () => {
     const text = contextText(
       buildSlackPayload(
-        payload({ pageUrl: "https://www.agent-native.com/pricing" }),
+        payload({ pageUrl: "https://www.jami.studio/pricing" }),
       ),
     );
     expect(text).not.toContain("App:");
-    expect(text).toContain("www.agent-native.com/pricing");
+    expect(text).toContain("www.jami.studio/pricing");
   });
 
   it("falls back gracefully when no page url is present", () => {
@@ -132,7 +132,7 @@ describe("buildSlackPayload page context", () => {
       ],
       payload({
         submitterEmail:
-          "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+          "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
       }),
     );
 
@@ -145,7 +145,7 @@ describe("buildSlackPayload page context", () => {
     const slackText = contextText(payloadByType.get("slack"));
     const discordFields = payloadByType.get("discord").embeds[0].fields;
 
-    expect(slackText).not.toContain("@agent-native.com");
+    expect(slackText).not.toContain("@jami.studio");
     expect(discordFields).not.toContainEqual(
       expect.objectContaining({ name: "Submitted by" }),
     );

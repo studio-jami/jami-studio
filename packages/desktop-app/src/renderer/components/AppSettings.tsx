@@ -948,7 +948,7 @@ export default function AppSettings({
                   type="url"
                   value={remotePairUrl}
                   onChange={(e) => setRemotePairUrl(e.target.value)}
-                  placeholder="https://dispatch.agent-native.com"
+                  placeholder="https://dispatch.jami.studio"
                 />
                 <button
                   type="button"
@@ -1455,7 +1455,7 @@ export function AddAppDialog({
                 type="url"
                 value={prodUrl}
                 onChange={(e) => setProdUrl(e.target.value)}
-                placeholder="https://dispatch.agent-native.com"
+                placeholder="https://dispatch.jami.studio"
                 required
               />
             </label>

@@ -164,7 +164,7 @@ npx @agent-native/core@latest recap doctor
 任何组织所有者或管理员都可以列出或撤销它。创建一个（仅限组织所有者/管理员）：
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 该命令在浏览器中对您进行身份验证，然后打印服务令牌
@@ -177,7 +177,7 @@ npx @agent-native/core@latest connect https://plan.agent-native.com --service-to
 `npx @agent-native/core@latest recap setup`可以读取的发布令牌文件：
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ npx @agent-native/core@latest recap setup
 | `VISUAL_RECAP_MODEL`     | 每个CLI的默认值                 | 变量。固定模型 - 例如`gpt-5.5` 表示 Codex，或 Claude 型号 ID。取消设置使用 CLI 自己的默认值。                                |
 | `VISUAL_RECAP_REASONING` | 每个模型的默认值                | 变量。推理深度：`none`、`minimal`、`low`、`medium`、`high` 或 `xhigh`。适用于Codex后端。                                     |
 | `RECAP_CLI_VERSION`      | `latest`                        | 变量。固定工作流程安装的 `@agent-native/core` CLI 版本 - 例如`1.5.0`。参见[Version pinning](#version-pinning-copy-variant)。 |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com` | 秘密。仅当在不同来源自行托管计划应用时。                                                                                     |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio` | 秘密。仅当在不同来源自行托管计划应用时。                                                                                     |
 
 工作流自动检测如何调用其助手 CLI（此 monorepo 内的本地源，在其他地方发布的 `@agent-native/core`），因此无需设置 `RECAP_CLI` 变量。
 

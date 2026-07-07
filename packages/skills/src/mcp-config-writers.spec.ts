@@ -24,7 +24,7 @@ describe("writeCodexBlock", () => {
   it("treats table headers with trailing comments as table boundaries", () => {
     const dir = tmpDir();
     const file = path.join(dir, "config.toml");
-    const planUrl = "https://plan.agent-native.com/_agent-native/mcp";
+    const planUrl = "https://plan.jami.studio/_agent-native/mcp";
     fs.writeFileSync(
       file,
       [

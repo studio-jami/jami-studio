@@ -228,8 +228,8 @@ describe("requestMatchesEmbedTarget", () => {
     expect(
       requestMatchesEmbedTarget(
         fakeEvent("/_agent-native/application-state/compose", {
-          host: "mail.agent-native.com",
-          referer: "https://mail.agent-native.com/inbox?embedded=1",
+          host: "mail.jami.studio",
+          referer: "https://mail.jami.studio/inbox?embedded=1",
         }),
         "/_agent-native/open?app=mail&view=inbox&composeDraftId=d1",
       ),
@@ -237,7 +237,7 @@ describe("requestMatchesEmbedTarget", () => {
     expect(
       requestMatchesEmbedTarget(
         fakeEvent("/api/emails?view=inbox", {
-          host: "mail.agent-native.com",
+          host: "mail.jami.studio",
           referer: "https://evil.example/inbox?embedded=1",
         }),
         "/_agent-native/open?app=mail&view=inbox&composeDraftId=d1",

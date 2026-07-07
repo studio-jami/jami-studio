@@ -4,7 +4,7 @@ An open-source, agent-native alternative to Amplitude, Mixpanel, and Looker. Ask
 analytics questions in plain English and get charts, dashboards, and re-runnable
 investigations back — you own the code, the queries, and the data.
 
-**Live app: [analytics.agent-native.com](https://analytics.agent-native.com)**
+**Live app: [analytics.jami.studio](https://analytics.jami.studio)**
 
 The agent connects to your data, writes and validates the SQL for you, and
 renders the answer as a chart, table, metric, or saved dashboard panel. Anything
@@ -32,4 +32,4 @@ pnpm install
 pnpm dev
 ```
 
-Full docs: [agent-native.com/docs/template-analytics](https://agent-native.com/docs/template-analytics).
+Full docs: [jami.studio/docs/template-analytics](https://jami.studio/docs/template-analytics).

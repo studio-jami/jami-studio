@@ -13,7 +13,7 @@ AGENT_NATIVE_ANALYTICS_PUBLIC_KEY=anpk_...
 VITE_AGENT_NATIVE_ANALYTICS_PUBLIC_KEY=anpk_...
 ```
 
-The core `track()` and browser `trackEvent()` helpers automatically send to `https://analytics.agent-native.com/track` when those env vars are present. Localhost is skipped by default.
+The core `track()` and browser `trackEvent()` helpers automatically send to `https://analytics.jami.studio/track` when those env vars are present. Localhost is skipped by default.
 
 Agent loop observability also uses this same tracking path. When an emitting app
 has `AGENT_NATIVE_ANALYTICS_PUBLIC_KEY` configured and observability is enabled,
@@ -26,7 +26,7 @@ properties. Prompts, tool inputs, and model outputs are not included by default.
 Use either endpoint shape:
 
 ```txt
-POST https://analytics.agent-native.com/track
+POST https://analytics.jami.studio/track
 POST https://your-analytics-domain.com/api/analytics/track
 ```
 
@@ -51,7 +51,7 @@ Single-event body:
     "app": "docs",
     "template": "mail",
     "signed_in": true,
-    "url": "https://agent-native.com/templates/mail"
+    "url": "https://jami.studio/templates/mail"
   },
   "context": {
     "source": "docs"

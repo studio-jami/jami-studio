@@ -15,7 +15,7 @@ type OpenResult = {
 let currentPanel: vscode.WebviewPanel | undefined;
 let currentUrl: string | undefined;
 let lastOpenedUrl: string | undefined;
-const DESIGN_APP_URL = "https://design.agent-native.com";
+const DESIGN_APP_URL = "https://design.jami.studio";
 
 export function activate(context: vscode.ExtensionContext): void {
   const controller = new AgentNativeController(context);

@@ -5,7 +5,7 @@ description: "Sign in once across every hosted agent-native app via identity fed
 
 # Cross-App SSO
 
-Each hosted app at `*.agent-native.com` runs its own deployment with its **own separate user store**. `mail.agent-native.com` and `calendar.agent-native.com` do not share a database, a session table, or a cookie domain. So "sign in once, use every app" cannot be a shared cookie — it has to be **identity federation**, with [Dispatch](/docs/dispatch) acting as the identity authority for the workspace.
+Each hosted app at `*.jami.studio` runs its own deployment with its **own separate user store**. `mail.jami.studio` and `calendar.jami.studio` do not share a database, a session table, or a cookie domain. So "sign in once, use every app" cannot be a shared cookie — it has to be **identity federation**, with [Dispatch](/docs/dispatch) acting as the identity authority for the workspace.
 
 This is the same trust primitive [A2A](/docs/a2a-protocol) and [External Agents](/docs/external-agents) already use — an `A2A_SECRET`-signed JWT verified at the request boundary — applied to the human sign-in path instead of agent-to-agent calls.
 
@@ -89,7 +89,7 @@ The flow is a standard authorize → signed-token → callback redirect, with em
 1. **App → Dispatch (authorize).** The app sends the user to the identity authority:
 
    ```
-   GET https://dispatch.agent-native.com/_agent-native/identity/authorize
+   GET https://dispatch.jami.studio/_agent-native/identity/authorize
        ?app=<requesting-app>
        &redirect_uri=<app-callback-url>
        &state=<csrf-state>
@@ -108,7 +108,7 @@ The flow is a standard authorize → signed-token → callback redirect, with em
     "in": "query",
     "type": "string",
     "required": true,
-    "description": "App callback URL. Validated against a strict allowlist (`*.agent-native.com` or localhost by default)."
+    "description": "App callback URL. Validated against a strict allowlist (`*.jami.studio` or localhost by default)."
   },
   {
     "name": "state",
@@ -154,7 +154,7 @@ The flow is a standard authorize → signed-token → callback redirect, with em
 An app participates **only** when this environment variable is set on its deployment:
 
 ```bash
-AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
+AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
 - **Set** → the app shows a **"Sign in with Agent-Native"** option that runs the flow above. Direct local login (email/password, Google) still works alongside it.
@@ -165,7 +165,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
 The whole model rests on a few deliberately small guarantees:
 
 - **Short-lived signed token.** The identity assertion is an `A2A_SECRET`-signed JWT with a **≤ 2-minute** expiry and `scope: "identity"`. It authorizes a single sign-in and cannot be replayed for long or repurposed for API/A2A access.
-- **Strict `redirect_uri` allowlist.** Dispatch only ever redirects to `*.agent-native.com` or localhost by default. Arbitrary, scheme-relative (`//host`), and cross-origin redirect targets are rejected, so the authority can't be turned into an open-redirect or token-exfiltration oracle.
+- **Strict `redirect_uri` allowlist.** Dispatch only ever redirects to `*.jami.studio` or localhost by default. Arbitrary, scheme-relative (`//host`), and cross-origin redirect targets are rejected, so the authority can't be turned into an open-redirect or token-exfiltration oracle.
 - **Email-only join from a verified token.** The _only_ thing that crosses the trust boundary is the verified email in a signed token. The app does not accept a user id, role, org membership, or any privileged state from the wire — it derives everything locally from the matched account.
 - **Additive-only identity writes.** Linking either reuses an existing same-email account untouched or inserts a new one. No update, rename, repoint, or delete of identity rows ever happens on this path.
 - **Off by default.** With `AGENT_NATIVE_IDENTITY_HUB_URL` unset the entire feature is inert.
@@ -235,7 +235,7 @@ The just-in-time link is a single decision keyed entirely on the verified email:
 
 ## Self-hosting {#self-hosting}
 
-Any Dispatch deployment can serve as the identity hub — you are not limited to `dispatch.agent-native.com`. Set `AGENT_NATIVE_IDENTITY_HUB_URL` on each client app to point at your Dispatch instance:
+Any Dispatch deployment can serve as the identity hub — you are not limited to `dispatch.jami.studio`. Set `AGENT_NATIVE_IDENTITY_HUB_URL` on each client app to point at your Dispatch instance:
 
 ```bash
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
@@ -243,7 +243,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
 
 **Redirect allowlist.** The hub (Dispatch) validates `redirect_uri` on the authorize endpoint before issuing a token. The allowlist is configured in `templates/dispatch/server/lib/identity-sso.ts`:
 
-- **Default:** `*.agent-native.com` and localhost only (the `DEFAULT_ALLOWED_HOST_SUFFIXES` constant).
+- **Default:** `*.jami.studio` and localhost only (the `DEFAULT_ALLOWED_HOST_SUFFIXES` constant).
 - **Extending it:** set the `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES` environment variable on the Dispatch deployment with a comma-separated list of additional host suffixes:
 
   ```bash
@@ -255,7 +255,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
 
 - **Localhost** is always allowed for local development of client-side apps regardless of `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`.
 
-Without `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`, a self-hosted Dispatch can only issue tokens to apps on `*.agent-native.com`. Set the env var on your Dispatch deployment to unlock other domains.
+Without `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`, a self-hosted Dispatch can only issue tokens to apps on `*.jami.studio`. Set the env var on your Dispatch deployment to unlock other domains.
 
 ## Canary rollout runbook {#canary-rollout}
 
@@ -268,7 +268,7 @@ Ship the release to every app with `AGENT_NATIVE_IDENTITY_HUB_URL` **unset every
 Set, on one deployment only:
 
 ```bash
-AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
+AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
 Leave every other app's environment unset. Redeploy/restart so it picks up the variable.

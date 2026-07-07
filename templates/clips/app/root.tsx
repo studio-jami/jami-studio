@@ -217,7 +217,7 @@ const CLIPS_COMMAND_DOCS = [
     title: "Use the Chrome extension for browser logs",
     description:
       "Record a browser tab with redacted console logs, JavaScript exceptions, and fetch/XHR diagnostics.",
-    href: "https://www.agent-native.com/docs/template-clips#browser-logs-and-developer-diagnostics",
+    href: "https://www.jami.studio/docs/template-clips#browser-logs-and-developer-diagnostics",
     keywords: [
       "logs",
       "browser logs",

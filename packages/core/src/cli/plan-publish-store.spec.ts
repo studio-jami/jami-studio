@@ -41,10 +41,10 @@ describe("planPublishConfigPath", () => {
 });
 
 describe("isFirstPartyPlanHost", () => {
-  it("accepts plan.agent-native.com (the canonical Plans host)", () => {
-    expect(isFirstPartyPlanHost("https://plan.agent-native.com")).toBe(true);
+  it("accepts plan.jami.studio (the canonical Plans host)", () => {
+    expect(isFirstPartyPlanHost("https://plan.jami.studio")).toBe(true);
     expect(
-      isFirstPartyPlanHost("https://plan.agent-native.com/_agent-native/mcp"),
+      isFirstPartyPlanHost("https://plan.jami.studio/_agent-native/mcp"),
     ).toBe(true);
   });
 
@@ -52,16 +52,16 @@ describe("isFirstPartyPlanHost", () => {
     // connect --all iterates every first-party app; only the Plans app should
     // update plan-publish.json — other apps (assets, mail, …) must not overwrite
     // the canonical Plans token.
-    expect(isFirstPartyPlanHost("https://mail.agent-native.com")).toBe(false);
-    expect(isFirstPartyPlanHost("https://assets.agent-native.com")).toBe(false);
-    expect(isFirstPartyPlanHost("https://agent-native.com")).toBe(false);
+    expect(isFirstPartyPlanHost("https://mail.jami.studio")).toBe(false);
+    expect(isFirstPartyPlanHost("https://assets.jami.studio")).toBe(false);
+    expect(isFirstPartyPlanHost("https://jami.studio")).toBe(false);
   });
 
   it("rejects custom, look-alike, and invalid hosts", () => {
     expect(isFirstPartyPlanHost("https://my-app.ngrok-free.dev")).toBe(false);
     expect(isFirstPartyPlanHost("http://localhost:8100")).toBe(false);
     // Look-alike domain must not match the suffix check.
-    expect(isFirstPartyPlanHost("https://evil-agent-native.com")).toBe(false);
+    expect(isFirstPartyPlanHost("https://evil-jami.studio")).toBe(false);
     expect(isFirstPartyPlanHost("not-a-url")).toBe(false);
   });
 });
@@ -70,14 +70,14 @@ describe("writePlanPublishAuth", () => {
   it("writes the canonical { url, token } shape and creates the dir", () => {
     const file = tmpFile();
     const written = writePlanPublishAuth(
-      { url: "https://plan.agent-native.com", token: "tok-1" },
+      { url: "https://plan.jami.studio", token: "tok-1" },
       file,
     );
 
     expect(written).toBe(file);
     const rec = JSON.parse(fs.readFileSync(file, "utf-8"));
     expect(rec).toMatchObject({
-      url: "https://plan.agent-native.com",
+      url: "https://plan.jami.studio",
       token: "tok-1",
     });
     expect(typeof rec.updatedAt).toBe("string");
@@ -86,11 +86,11 @@ describe("writePlanPublishAuth", () => {
   it("strips a trailing slash from the url", () => {
     const file = tmpFile();
     writePlanPublishAuth(
-      { url: "https://plan.agent-native.com/", token: "tok-2" },
+      { url: "https://plan.jami.studio/", token: "tok-2" },
       file,
     );
     expect(JSON.parse(fs.readFileSync(file, "utf-8")).url).toBe(
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
     );
   });
 
@@ -103,13 +103,13 @@ describe("writePlanPublishAuth", () => {
     );
 
     writePlanPublishAuth(
-      { url: "https://plan.agent-native.com", token: "tok-3" },
+      { url: "https://plan.jami.studio", token: "tok-3" },
       file,
     );
 
     const rec = JSON.parse(fs.readFileSync(file, "utf-8"));
     expect(rec.keepMe).toBe(true);
-    expect(rec.url).toBe("https://plan.agent-native.com");
+    expect(rec.url).toBe("https://plan.jami.studio");
     expect(rec.token).toBe("tok-3");
   });
 
@@ -117,7 +117,7 @@ describe("writePlanPublishAuth", () => {
     const file = tmpFile();
     expect(
       writePlanPublishAuth(
-        { url: "https://plan.agent-native.com", token: "" },
+        { url: "https://plan.jami.studio", token: "" },
         file,
       ),
     ).toBeNull();
@@ -131,7 +131,7 @@ describe("writePlanPublishAuth", () => {
     fs.writeFileSync(file, "{ not valid json");
 
     const written = writePlanPublishAuth(
-      { url: "https://plan.agent-native.com", token: "tok-4" },
+      { url: "https://plan.jami.studio", token: "tok-4" },
       file,
     );
 
@@ -146,13 +146,13 @@ describe("writePlanPublishAuth", () => {
     fs.writeFileSync(
       file,
       JSON.stringify({
-        hostedUrl: "https://plan.agent-native.com/",
+        hostedUrl: "https://plan.jami.studio/",
         bearerToken: "tok-alias",
       }),
     );
 
     expect(readPlanPublishAuth(file)).toEqual({
-      url: "https://plan.agent-native.com",
+      url: "https://plan.jami.studio",
       token: "tok-alias",
     });
   });
@@ -164,7 +164,7 @@ describe("writePlanPublishAuth", () => {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(
       file,
-      JSON.stringify({ url: "https://plan.agent-native.com" }),
+      JSON.stringify({ url: "https://plan.jami.studio" }),
     );
     expect(readPlanPublishAuth(file)).toBeNull();
   });

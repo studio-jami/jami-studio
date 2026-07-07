@@ -48,9 +48,9 @@ describe("MCP embed headers", () => {
 
   it("allows first-party hosted apps to embed sibling MCP apps without credentialed CORS", () => {
     for (const origin of [
-      "https://design.agent-native.com",
-      "https://assets.agent-native.com",
-      "https://team.design.agent-native.com",
+      "https://design.jami.studio",
+      "https://assets.jami.studio",
+      "https://team.design.jami.studio",
     ]) {
       expect(isAgentNativeFirstPartyAppOrigin(origin)).toBe(true);
       expect(isMcpEmbedCorsOrigin(origin)).toBe(true);
@@ -73,11 +73,11 @@ describe("MCP embed headers", () => {
 
   it("rejects agent-native suffix spoofs and non-hosted app origins", () => {
     for (const origin of [
-      "https://agent-native.com",
-      "https://design.agent-native.com.evil.example",
-      "https://evil-agent-native.com",
-      "http://design.agent-native.com",
-      "https://design.agent-native.com:4443",
+      "https://jami.studio",
+      "https://design.jami.studio.evil.example",
+      "https://evil-jami.studio",
+      "http://design.jami.studio",
+      "https://design.jami.studio:4443",
     ]) {
       expect(isAgentNativeFirstPartyAppOrigin(origin)).toBe(false);
       expect(isMcpEmbedCorsOrigin(origin)).toBe(false);

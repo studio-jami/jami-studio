@@ -356,7 +356,7 @@ export async function discoverAgents(
           manifest.id.trim().toLowerCase() !== manifestId;
         if (isLegacyAssetsManifest && builtin?.url) {
           try {
-            if (new URL(url).hostname === "images.agent-native.com") {
+            if (new URL(url).hostname === "images.jami.studio") {
               url = builtin.url;
             }
           } catch {

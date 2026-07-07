@@ -5,7 +5,7 @@ description: "Connectez-vous une fois sur chaque application native d'agent héb
 
 # Inter-application SSO
 
-Chaque application hébergée sur `*.agent-native.com` exécute son propre déploiement avec son **propre magasin d'utilisateurs distinct**. `mail.agent-native.com` et `calendar.agent-native.com` ne partagent pas de base de données, de table de session ou de domaine de cookie. Ainsi, « Connectez-vous une fois, utilisez chaque application » ne peut pas être un cookie partagé : il doit s'agir d'une **fédération d'identité**, avec [Dispatch](/docs/dispatch) agissant en tant qu'autorité d'identité pour l'espace de travail.
+Chaque application hébergée sur `*.jami.studio` exécute son propre déploiement avec son **propre magasin d'utilisateurs distinct**. `mail.jami.studio` et `calendar.jami.studio` ne partagent pas de base de données, de table de session ou de domaine de cookie. Ainsi, « Connectez-vous une fois, utilisez chaque application » ne peut pas être un cookie partagé : il doit s'agir d'une **fédération d'identité**, avec [Dispatch](/docs/dispatch) agissant en tant qu'autorité d'identité pour l'espace de travail.
 
 Il s'agit de la même primitive de confiance que [A2A](/docs/a2a-protocol) et [External Agents](/docs/external-agents) utilisent déjà (un JWT signé `A2A_SECRET` et vérifié à la limite de la demande) appliquée au chemin de connexion humaine au lieu des appels d'agent à agent.
 
@@ -89,7 +89,7 @@ Le flux est une redirection standard d'autorisation → jeton signé → rappel,
 1. **Application → Répartir (autoriser).** L'application envoie l'utilisateur à l'autorité d'identité :
 
    ```
-   GET https://dispatch.agent-native.com/_agent-native/identity/authorize
+   GET https://dispatch.jami.studio/_agent-native/identity/authorize
        ?app=<requesting-app>
        &redirect_uri=<app-callback-url>
        &state=<csrf-state>
@@ -108,7 +108,7 @@ Le flux est une redirection standard d'autorisation → jeton signé → rappel,
     "in": "query",
     "type": "string",
     "required": true,
-    "description": "Callback de l’application URL. Validé par rapport à une liste blanche stricte (`*.agent-native.com` ou localhost par défaut)."
+    "description": "Callback de l’application URL. Validé par rapport à une liste blanche stricte (`*.jami.studio` ou localhost par défaut)."
   },
   {
     "name": "state",
@@ -154,7 +154,7 @@ Le flux est une redirection standard d'autorisation → jeton signé → rappel,
 Une application participe **uniquement** lorsque cette variable d'environnement est définie lors de son déploiement :
 
 ```bash
-AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
+AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
 - **Set** → l'application affiche une option **"Connectez-vous avec Agent-Native"** qui exécute le flux ci-dessus. La connexion locale directe (e-mail/mot de passe, Google) fonctionne toujours en parallèle.
@@ -165,7 +165,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
 L'ensemble du modèle repose sur quelques garanties volontairement petites :
 
 - **Jeton signé de courte durée.** L'assertion d'identité est un JWT signé `A2A_SECRET` avec une expiration **≤ 2 minutes** et `scope: "identity"`. Il autorise une connexion unique et ne peut pas être rejoué longtemps ni réutilisé pour l'accès aux API/A2A.
-- **Liste verte stricte de `redirect_uri`.** La répartition redirige uniquement vers `*.agent-native.com` ou localhost par défaut. Les cibles de redirection arbitraires, relatives au schéma (`//host`) et d'origine croisée sont rejetées, de sorte que l'autorité ne peut pas être transformée en un oracle de redirection ouverte ou d'exfiltration de jetons.
+- **Liste verte stricte de `redirect_uri`.** La répartition redirige uniquement vers `*.jami.studio` ou localhost par défaut. Les cibles de redirection arbitraires, relatives au schéma (`//host`) et d'origine croisée sont rejetées, de sorte que l'autorité ne peut pas être transformée en un oracle de redirection ouverte ou d'exfiltration de jetons.
 - **Jointure par e-mail uniquement à partir d'un jeton vérifié.** La seule chose qui traverse la limite de confiance est l'e-mail vérifié dans un jeton signé. L'application n'accepte pas d'identifiant d'utilisateur, de rôle, d'appartenance à une organisation ou tout autre état privilégié du fil : elle dérive tout localement du compte correspondant.
 - **Écrites d'identité additives uniquement.** La liaison réutilise un compte de même adresse existant sans modification ou en insère un nouveau. Aucune mise à jour, renommage, redirection ou suppression des lignes d'identité ne se produit sur ce chemin.
 - **Désactivé par défaut.** Avec `AGENT_NATIVE_IDENTITY_HUB_URL` désactivé, toute la fonctionnalité est inerte.
@@ -235,7 +235,7 @@ Le lien juste à temps est une décision unique entièrement saisie sur l’e-ma
 
 ## Auto-hébergement {#self-hosting}
 
-Tout déploiement Dispatch peut servir de centre d'identité ; vous n'êtes pas limité à `dispatch.agent-native.com`. Définissez `AGENT_NATIVE_IDENTITY_HUB_URL` sur chaque application client pour pointer vers votre instance Dispatch :
+Tout déploiement Dispatch peut servir de centre d'identité ; vous n'êtes pas limité à `dispatch.jami.studio`. Définissez `AGENT_NATIVE_IDENTITY_HUB_URL` sur chaque application client pour pointer vers votre instance Dispatch :
 
 ```bash
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
@@ -243,7 +243,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
 
 **Liste autorisée de redirection.** Le hub (Dispatch) valide `redirect_uri` sur le point de terminaison d'autorisation avant d'émettre un jeton. La liste blanche est configurée dans `templates/dispatch/server/lib/identity-sso.ts` :
 
-- **Par défaut :** `*.agent-native.com` et localhost uniquement (la constante `DEFAULT_ALLOWED_HOST_SUFFIXES`).
+- **Par défaut :** `*.jami.studio` et localhost uniquement (la constante `DEFAULT_ALLOWED_HOST_SUFFIXES`).
 - **Extension :** définissez la variable d'environnement `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES` sur le déploiement Dispatch avec une liste de suffixes d'hôte supplémentaires séparés par des virgules :
 
   ```bash
@@ -255,7 +255,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.yourcompany.com
 
 - **Localhost** est toujours autorisé pour le développement local d'applications côté client, quel que soit `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`.
 
-Sans `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`, un Dispatch auto-hébergé ne peut émettre des jetons qu'aux applications sur `*.agent-native.com`. Définissez la variable d'environnement sur votre déploiement Dispatch pour déverrouiller d'autres domaines.
+Sans `IDENTITY_SSO_ALLOWED_HOST_SUFFIXES`, un Dispatch auto-hébergé ne peut émettre des jetons qu'aux applications sur `*.jami.studio`. Définissez la variable d'environnement sur votre déploiement Dispatch pour déverrouiller d'autres domaines.
 
 ## Runbook de déploiement Canary {#canary-rollout}
 
@@ -268,7 +268,7 @@ Expédiez la version à chaque application avec `AGENT_NATIVE_IDENTITY_HUB_URL` 
 Défini, sur un seul déploiement :
 
 ```bash
-AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.agent-native.com
+AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
 Laissez l'environnement de toutes les autres applications non défini. Redéployez/redémarrez pour qu'il récupère la variable.

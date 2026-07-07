@@ -39,7 +39,7 @@ Codex、Claude コード、Markdown、または構造化された実装計画に
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-panel center">
     Plan MCP コネクター<br /><small class="diagram-muted"
-      >plan.agent-native.com</small
+      >plan.jami.studio</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -116,7 +116,7 @@ npx @agent-native/core@latest skills add visual-plan
 
 MCP コネクタ URL を直接受け入れるチャットベースのホストを使用している場合
 (CLI で構成されたクライアントではなく)、ホストされたプラン コネクタに
-`https://plan.agent-native.com/_agent-native/mcp` — クライアント固有のセットアップについては、[MCP Clients](/docs/mcp-clients) を参照してください。
+`https://plan.jami.studio/_agent-native/mcp` — クライアント固有のセットアップについては、[MCP Clients](/docs/mcp-clients) を参照してください。
 
 認証はセットアップ時に 1 回限りのブラウザ サインインです。これは意図されたものであり、
 により、エージェントは永続化し、生成した計画を共有できるようになります。なんという認証
@@ -138,7 +138,7 @@ npx @agent-native/core@latest skills add visual-plan
 ```
 
 `--no-connect` を渡して認証せずにコネクタを登録し、実行します
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 準備ができたらいつでも、またはより狭い `--client` を選択してください:
 
 ```bash
@@ -255,7 +255,7 @@ Codex、Claude コード、Markdown、または貼り付けられたプランが
   クロスデバイスまたはチームでのレビュー）にはサインインが必要です。Google サインインは次の場合に表示されます。
   標準の Google OAuth 環境変数が設定されています。
 
-ホストされたプラン コネクタは `https://plan.agent-native.com/_agent-native/mcp` にあります。
+ホストされたプラン コネクタは `https://plan.jami.studio/_agent-native/mcp` にあります。
 スキル ファイルには共有シークレットを決して入れないでください。
 
 ## ローカル ファイル プライバシー モード {#local-files}
@@ -292,7 +292,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 ```
 
 橋 URL は次のようになります
-`https://plan.agent-native.com/local-plans/<slug>?bridge=http://127.0.0.1:...`.
+`https://plan.jami.studio/local-plans/<slug>?bridge=http://127.0.0.1:...`.
 このページは通常のプラン ビューアですが、ブラウザは `plan.mdx` を取得します。
 `canvas.mdx`、`prototype.mdx`、`.plan-state.json`、およびローカル画像アセット
 ローカルホストブリッジ。プランのコンテンツはホストされたデータベースに書き込まれず、
@@ -432,7 +432,7 @@ Agent Native デスクトップでプランを開き、プラン メニューの
 
 プラン ツールが `needs auth`、`Unauthorized`、または「セッション」を返した場合
 終了しました`。再試行し続けないでください。
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`、または OAuth 対応ホストで`/mcp` → **認証** を再実行します。
+`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`、または OAuth 対応ホストで`/mcp` → **認証** を再実行します。
 ツールを期待する前に、新しい Codex スレッドを実行するか、関連するクライアントを再起動/リロードしてください
 更新するレジストリ。
 
@@ -452,8 +452,8 @@ pnpm dev
 
 ホストされたアプリベースのスキルは以下を使用します:
 
-- アプリ: `https://plan.agent-native.com`
-- MCP: `https://plan.agent-native.com/_agent-native/mcp`
+- アプリ: `https://plan.jami.studio`
+- MCP: `https://plan.jami.studio/_agent-native/mcp`
 
 ローカル テンプレートは、プラン自体を開発する場合、ローカルの永続性をテストする場合、または完全に自己ホスト型のレビュー サーフェスを実行する場合に役立ちます。
 

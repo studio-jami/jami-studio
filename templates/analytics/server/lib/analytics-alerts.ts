@@ -224,7 +224,7 @@ function currentDeployHostname(): string {
 function defaultHttp5xxAlertEnabled(): boolean {
   const configured = boolEnv("ANALYTICS_DEFAULT_HTTP_5XX_ALERT_ENABLED");
   if (configured !== null) return configured;
-  return currentDeployHostname() === "analytics.agent-native.com";
+  return currentDeployHostname() === "analytics.jami.studio";
 }
 
 function envInt(name: string, fallback: number, min: number, max: number) {

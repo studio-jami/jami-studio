@@ -9,8 +9,8 @@ import {
 
 describe("normalizeOpenUrl", () => {
   it("keeps http and https URLs", () => {
-    expect(normalizeOpenUrl("https://dispatch.agent-native.com")).toBe(
-      "https://dispatch.agent-native.com/",
+    expect(normalizeOpenUrl("https://dispatch.jami.studio")).toBe(
+      "https://dispatch.jami.studio/",
     );
     expect(normalizeOpenUrl("http://localhost:3000/_agent-native/open")).toBe(
       "http://localhost:3000/_agent-native/open",
@@ -25,13 +25,13 @@ describe("normalizeOpenUrl", () => {
 
   it("unwraps the Agent Native VS Code URI", () => {
     const target =
-      "https://mail.agent-native.com/_agent-native/open?view=inbox";
+      "https://mail.jami.studio/_agent-native/open?view=inbox";
     expect(normalizeOpenUrl(buildVsCodeOpenUri(target))).toBe(target);
   });
 
   it("unwraps agentnative URLs when they carry a webUrl", () => {
     const target =
-      "https://mail.agent-native.com/_agent-native/open?view=inbox";
+      "https://mail.jami.studio/_agent-native/open?view=inbox";
     expect(
       normalizeOpenUrl(
         `agentnative://open?webUrl=${encodeURIComponent(target)}`,
@@ -61,8 +61,8 @@ describe("buildVsCodeOpenUri", () => {
 
 describe("titleForUrl", () => {
   it("uses the host when available", () => {
-    expect(titleForUrl("https://mail.agent-native.com/inbox")).toBe(
-      "Agent Native: mail.agent-native.com",
+    expect(titleForUrl("https://mail.jami.studio/inbox")).toBe(
+      "Agent Native: mail.jami.studio",
     );
   });
 });

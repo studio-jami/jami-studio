@@ -96,7 +96,7 @@ export const DEFAULT_MCP_INTEGRATIONS: DefaultMcpIntegration[] = [
     useCaseKey: "mcpIntegrations.catalog.linear.useCase",
     url: "https://mcp.linear.app/sse",
     authMode: "oauth",
-    docsUrl: "https://www.builder.io/c/docs/fusion-connect-to-linear",
+    docsUrl: "https://www.jami.studio/c/docs/fusion-connect-to-linear",
     keywords: ["issues", "tickets", "planning", "project management"],
   },
   {
@@ -109,7 +109,7 @@ export const DEFAULT_MCP_INTEGRATIONS: DefaultMcpIntegration[] = [
     useCaseKey: "mcpIntegrations.catalog.supabase.useCase",
     url: "https://mcp.supabase.com/mcp",
     authMode: "oauth",
-    docsUrl: "https://www.builder.io/c/docs/fusion-connect-to-supabase",
+    docsUrl: "https://www.jami.studio/c/docs/fusion-connect-to-supabase",
     keywords: ["database", "auth", "postgres", "storage"],
   },
   {
@@ -122,7 +122,7 @@ export const DEFAULT_MCP_INTEGRATIONS: DefaultMcpIntegration[] = [
     useCaseKey: "mcpIntegrations.catalog.neon.useCase",
     url: "https://mcp.neon.tech/sse",
     authMode: "oauth",
-    docsUrl: "https://www.builder.io/c/docs/fusion-connect-to-neon",
+    docsUrl: "https://www.jami.studio/c/docs/fusion-connect-to-neon",
     keywords: ["database", "postgres", "serverless", "backend"],
   },
   {

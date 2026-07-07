@@ -233,14 +233,14 @@ MCP 엔드포인트는 표준 원격 MCP OAuth와 기존 베어러 토큰 폴백
 OAuth 가능 MCP 호스트의 경우 정적 헤더 없이 원격 서버 URL를 구성합니다.
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 인증되지 않은 첫 번째 MCP 요청은 다음을 수신합니다.
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 검색 엔드포인트:

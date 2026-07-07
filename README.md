@@ -31,7 +31,7 @@ Fork a working app and let the agent evolve it. **You can customize everything.*
 
 **Clips**
 
-<a href="https://agent-native.com/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800" alt="Clips app" width="100%" /></a>
+<a href="https://jami.studio/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800" alt="Clips app" width="100%" /></a>
 
 **Jami Studio Loom + Jam**
 
@@ -42,7 +42,7 @@ Record your screen with auto-transcripts and captured browser debug logs, share 
 
 **Plans**
 
-<a href="https://agent-native.com/templates/plan"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800" alt="Plans app" width="100%" /></a>
+<a href="https://jami.studio/templates/plan"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800" alt="Plans app" width="100%" /></a>
 
 **Visual plan mode for coding agents**
 
@@ -53,7 +53,7 @@ Install `/visual-plan` and `/visual-recap` so your coding agent can plan before 
 
 **Design**
 
-<a href="https://agent-native.com/templates/design"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800" alt="Design app" width="100%" /></a>
+<a href="https://jami.studio/templates/design"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800" alt="Design app" width="100%" /></a>
 
 **Jami Studio design prototyping**
 
@@ -66,7 +66,7 @@ Generate interactive HTML prototypes, compare variants, refine controls, and exp
 
 **Content**
 
-<a href="https://agent-native.com/templates/content"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800" alt="Content app" width="100%" /></a>
+<a href="https://jami.studio/templates/content"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800" alt="Content app" width="100%" /></a>
 
 **Open-source Obsidian for MDX**
 
@@ -77,7 +77,7 @@ Edit local Markdown/MDX files, generate rich interactive custom blocks, and draf
 
 **Slides**
 
-<a href="https://agent-native.com/templates/slides"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800" alt="Slides app" width="100%" /></a>
+<a href="https://jami.studio/templates/slides"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800" alt="Slides app" width="100%" /></a>
 
 **Jami Studio Google Slides, Pitch**
 
@@ -88,7 +88,7 @@ Generate and edit React-based presentations via prompt or point-and-click.
 
 **Analytics**
 
-<a href="https://agent-native.com/templates/analytics"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800" alt="Analytics app" width="100%" /></a>
+<a href="https://jami.studio/templates/analytics"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800" alt="Analytics app" width="100%" /></a>
 
 **Jami Studio Amplitude, Mixpanel**
 
@@ -98,7 +98,7 @@ Connect analytics data sources, prompt for real charts, and build reusable dashb
 </tr>
 </table>
 
-View the full app gallery at **[agent-native.com/templates](https://agent-native.com/templates)**.
+View the full app gallery at **[jami.studio/templates](https://jami.studio/templates)**.
 
 ## Quick Start
 
@@ -119,7 +119,7 @@ pnpm dev
 
 Prefer flags? `create my-app --template mail`, `--headless`, or `--standalone` skip the prompt.
 
-See the full [getting started docs](https://agent-native.com/docs).
+See the full [getting started docs](https://jami.studio/docs).
 
 ## Community
 
@@ -127,7 +127,7 @@ Join the **[Discord](https://discord.gg/qm82StQ2NC)** to ask questions, share wh
 
 ## Docs
 
-Full documentation at **[agent-native.com](https://agent-native.com)**.
+Full documentation at **[jami.studio](https://jami.studio)**.
 
 ## License
 

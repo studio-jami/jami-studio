@@ -1,4 +1,4 @@
-export const DEFAULT_APP_URL = "https://plan.agent-native.com";
+export const DEFAULT_APP_URL = "https://plan.jami.studio";
 export const VSCODE_OPEN_AUTHORITY = "builder.agent-native";
 
 export function normalizeOpenUrl(input: string | undefined): string | null {

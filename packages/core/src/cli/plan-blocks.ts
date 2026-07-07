@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export const DEFAULT_PLAN_APP_URL = "https://plan.agent-native.com";
+export const DEFAULT_PLAN_APP_URL = "https://plan.jami.studio";
 
 const PLAN_BLOCKS_HTTP_TIMEOUT_MS = 45_000;
 

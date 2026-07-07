@@ -108,7 +108,7 @@ interface GitHubOAuthStatus {
 const firstPartyAnalyticsEndpoint =
   (import.meta.env as Record<string, string | undefined>)
     .VITE_AGENT_NATIVE_ANALYTICS_ENDPOINT ||
-  "https://analytics.agent-native.com/track";
+  "https://analytics.jami.studio/track";
 
 async function saveEnvVars(
   vars: Array<{ key: string; value: string }>,

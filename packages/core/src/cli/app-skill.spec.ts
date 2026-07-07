@@ -65,7 +65,7 @@ function writeFixture(root: string): string {
         displayName: "Assets",
         description: "Create, search, and export brand assets.",
         hosted: {
-          url: "https://assets.agent-native.com",
+          url: "https://assets.jami.studio",
         },
         mcp: {
           serverName: "agent-native-assets",
@@ -120,7 +120,7 @@ describe("app skill manifests", () => {
   it("normalizes defaults and selects exported skills", () => {
     const manifest = normalizeAppSkillManifest({
       id: "assets",
-      hosted: { url: "https://assets.agent-native.com/" },
+      hosted: { url: "https://assets.jami.studio/" },
       skills: [
         { path: "a", visibility: "internal" },
         { path: "b", visibility: "exported" },
@@ -129,7 +129,7 @@ describe("app skill manifests", () => {
     });
 
     expect(manifest.hosted.mcpUrl).toBe(
-      "https://assets.agent-native.com/_agent-native/mcp",
+      "https://assets.jami.studio/_agent-native/mcp",
     );
     expect(manifest.mcp.serverName).toBe("agent-native-assets");
     expect(manifest.hostAdapters).toContain("claude-marketplace");
@@ -267,7 +267,7 @@ describe("app skill packaging", () => {
       ),
     );
     expect(claudeMcpConfig.mcpServers["agent-native-assets"].url).toBe(
-      "https://assets.agent-native.com/_agent-native/mcp",
+      "https://assets.jami.studio/_agent-native/mcp",
     );
     expect(
       fs.existsSync(
@@ -329,7 +329,7 @@ describe("app skill packaging", () => {
       ),
     ).toMatchObject({
       name: "agent-native-assets",
-      url: "https://assets.agent-native.com/_agent-native/mcp",
+      url: "https://assets.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -392,7 +392,7 @@ describe("app skill packaging", () => {
     expect(Object.keys(config.mcpServers)).toEqual(["agent-native-assets"]);
     expect(config.mcpServers["agent-native-assets"]).toEqual({
       type: "http",
-      url: "https://assets.agent-native.com/_agent-native/mcp",
+      url: "https://assets.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -411,11 +411,11 @@ describe("app skill packaging", () => {
           mcpServers: {
             "agent-native-assets": {
               type: "http",
-              url: "https://assets.agent-native.com/_agent-native/mcp",
+              url: "https://assets.jami.studio/_agent-native/mcp",
             },
             assets: {
               type: "http",
-              url: "https://assets.agent-native.com/_agent-native/mcp",
+              url: "https://assets.jami.studio/_agent-native/mcp",
             },
             "other-server": {
               type: "http",
@@ -520,8 +520,8 @@ describe("app skill launch and ensure", () => {
 
     expect(resolveLaunchPlan(loaded, { mode: "hosted" })).toMatchObject({
       mode: "hosted",
-      url: "https://assets.agent-native.com",
-      mcpUrl: "https://assets.agent-native.com/_agent-native/mcp",
+      url: "https://assets.jami.studio",
+      mcpUrl: "https://assets.jami.studio/_agent-native/mcp",
     });
 
     const local = resolveLaunchPlan(loaded, {
@@ -558,7 +558,7 @@ describe("app skill launch and ensure", () => {
     expect(Object.keys(config.mcpServers)).toEqual(["agent-native-assets"]);
     expect(config.mcpServers["agent-native-assets"]).toEqual({
       type: "http",
-      url: "https://assets.agent-native.com/_agent-native/mcp",
+      url: "https://assets.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -589,13 +589,13 @@ describe("app skill launch and ensure", () => {
       );
       expect(config.mcpServers["agent-native-assets"]).toEqual({
         type: "http",
-        url: "https://assets.agent-native.com/_agent-native/mcp",
+        url: "https://assets.jami.studio/_agent-native/mcp",
       });
       expect(logged.join("\n")).toContain(
         "Skipped URL-only hosted MCP config for codex",
       );
       expect(logged.join("\n")).toContain(
-        "agent-native connect https://assets.agent-native.com --client codex --scope project",
+        "agent-native connect https://assets.jami.studio --client codex --scope project",
       );
     } finally {
       if (previousCodexHome === undefined) delete process.env.CODEX_HOME;

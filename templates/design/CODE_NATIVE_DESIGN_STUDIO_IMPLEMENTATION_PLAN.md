@@ -22,11 +22,11 @@ architecture plan, the cross-reviews, and the supplied screenshots.
 
 Primary visual direction:
 
-- https://plan.agent-native.com/plans/plan-88dc4a09fb0c46bc
+- https://plan.jami.studio/plans/plan-88dc4a09fb0c46bc
 
 Supporting guardrail plan:
 
-- https://plan.agent-native.com/plans/plan-b51dc200d7394583
+- https://plan.jami.studio/plans/plan-b51dc200d7394583
 
 Screenshot acceptance references:
 

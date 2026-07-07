@@ -18,7 +18,7 @@ import { useSession } from "./use-session.js";
 import { cn } from "./utils.js";
 
 const DEFAULT_FEEDBACK_URL =
-  "https://forms.agent-native.com/f/agent-native-feedback/_16ewV";
+  "https://forms.jami.studio/f/agent-native-feedback/_16ewV";
 
 function isSyntheticAgentNativeAnonymousEmail(
   value: string | null | undefined,

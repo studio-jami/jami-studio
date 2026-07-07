@@ -4,7 +4,7 @@ An open-source, agent-native alternative to Superhuman. An agent-powered,
 keyboard-first email client for Gmail — the agent can read, draft, send, and
 organize email for you, and the codebase is yours to own.
 
-**Live app: [mail.agent-native.com](https://mail.agent-native.com)**
+**Live app: [mail.jami.studio](https://mail.jami.studio)**
 
 Connect one or more Gmail accounts and drive a fast, keyboard-first inbox
 yourself, or ask the agent to do anything you can. The agent always knows which
@@ -32,4 +32,4 @@ pnpm dev
 ```
 
 Connecting Gmail in dev needs a Google OAuth client — see the docs for setup.
-Full docs: [agent-native.com/docs/template-mail](https://agent-native.com/docs/template-mail).
+Full docs: [jami.studio/docs/template-mail](https://jami.studio/docs/template-mail).

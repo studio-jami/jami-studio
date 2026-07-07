@@ -5,7 +5,7 @@
   const PROCESSED_ATTR = "data-clips-github-preview";
   const SOURCE_ATTR = "data-clips-source-url";
   const EXTENSION_ORIGIN = chrome.runtime.getURL("").replace(/\/$/, "");
-  const CLIPS_HOSTS = new Set(["clips.agent-native.com"]);
+  const CLIPS_HOSTS = new Set(["clips.jami.studio"]);
   const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
   const ROUTE_SEGMENTS = new Set(["r", "share", "embed"]);
   const MIN_HEIGHT = 120;

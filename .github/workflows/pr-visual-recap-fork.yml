@@ -227,7 +227,7 @@ jobs:
       issues: write
       pull-requests: write
     env:
-      PLAN_RECAP_APP_URL: ${{ secrets.PLAN_RECAP_APP_URL || 'https://plan.agent-native.com' }}
+      PLAN_RECAP_APP_URL: ${{ secrets.PLAN_RECAP_APP_URL || 'https://plan.jami.studio' }}
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       GH_TOKEN: ${{ github.token }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -343,7 +343,7 @@ jobs:
           set -uo pipefail
           HTTP_STATUS=$(node -e '
             const https = require("https");
-            const url = new URL("/_agent-native/actions/record-recap-usage", process.env.PLAN_RECAP_APP_URL || "https://plan.agent-native.com");
+            const url = new URL("/_agent-native/actions/record-recap-usage", process.env.PLAN_RECAP_APP_URL || "https://plan.jami.studio");
             const req = https.request(url, { method: "POST", headers: { "authorization": "Bearer " + process.env.PLAN_RECAP_TOKEN, "content-type": "application/json" }, timeout: 8000 }, (res) => { process.stdout.write(String(res.statusCode)); req.destroy(); });
             req.on("error", () => process.stdout.write("0"));
             req.end(JSON.stringify({ planId: "__probe__" }));
@@ -370,7 +370,7 @@ jobs:
           probe_status() {
             ROUTE="$1" METHOD="$2" node -e '
               const https = require("https");
-              const base = process.env.PLAN_RECAP_APP_URL || "https://plan.agent-native.com";
+              const base = process.env.PLAN_RECAP_APP_URL || "https://plan.jami.studio";
               const url = new URL(process.env.ROUTE, base);
               if (process.env.METHOD === "GET") url.searchParams.set("format", "reference");
               const req = https.request(url, { method: process.env.METHOD, headers: { "authorization": "Bearer " + (process.env.PLAN_RECAP_TOKEN || ""), "content-type": "application/json" }, timeout: 8000 }, (res) => { process.stdout.write(String(res.statusCode)); req.destroy(); });
@@ -563,7 +563,7 @@ jobs:
               emit({ url: "", reason: "recap-url.txt was empty" });
               process.exit(0);
             }
-            const trusted = new URL(process.env.PLAN_RECAP_APP_URL || "https://plan.agent-native.com");
+            const trusted = new URL(process.env.PLAN_RECAP_APP_URL || "https://plan.jami.studio");
             const parsed = /^https?:\/\//i.test(raw)
               ? new URL(raw)
               : new URL(raw, trusted);

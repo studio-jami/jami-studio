@@ -137,7 +137,7 @@ describe("Plans template — allow-list & metadata", () => {
     expect(meta?.core).toBe(true);
     // Plans is a public, featured app — it must not be hidden from the picker.
     expect(meta?.hidden).toBeFalsy();
-    expect(meta?.prodUrl).toBe("https://plan.agent-native.com");
+    expect(meta?.prodUrl).toBe("https://plan.jami.studio");
   });
 
   it("resolves the visual-plans legacy alias to the plan template", () => {
@@ -373,11 +373,11 @@ describe("Plans skills install — materialized output", () => {
     expect(result.id).toBe("visual-plans");
     expect(result.skillNames).toEqual(PLANS_INSTALL_SKILL_NAMES);
     expect(result.mcpUrl).toBe(
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
     );
     expect(codexConfigExists).toBe(false);
     expect(result.commands).toContain(
-      "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope project",
+      "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope project",
     );
 
     for (const [name, constant] of PLANS_INSTALL_SKILLS) {
@@ -446,7 +446,7 @@ describe("Plans skills install — materialized output", () => {
     expect(result.connectCommand).toBeUndefined();
     expect(codexConfigExists).toBe(false);
     expect(result.commands).not.toContain(
-      "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope project",
+      "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope project",
     );
 
     for (const name of PLANS_INSTALL_SKILL_NAMES) {
@@ -496,7 +496,7 @@ describe("Plans skills install — materialized output", () => {
     // connect command without writing URL-only Codex auth config.
     expect(recap.codexConfigExists).toBe(false);
     expect(recap.result.commands).toContain(
-      "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope project",
+      "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope project",
     );
 
     const repo = await materializeViaAlias("visualize-repo");

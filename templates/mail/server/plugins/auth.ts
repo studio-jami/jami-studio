@@ -37,7 +37,7 @@ export default createAuthPlugin({
       "npx @agent-native/core@latest create my-mail-app --template mail",
   },
   googleSignInNotice: {
-    host: "mail.agent-native.com",
+    host: "mail.jami.studio",
     title: "Google may show a warning",
     body: [
       "You'll see this screen because this demo uses Agent-Native's Google app, not a Google-reviewed public app.",

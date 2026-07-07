@@ -18,7 +18,7 @@ import type { TrackingProvider, TrackingEvent } from "./types.js";
 
 const POSTHOG_DEFAULT_HOST = "https://us.i.posthog.com";
 const AGENT_NATIVE_ANALYTICS_DEFAULT_ENDPOINT =
-  "https://analytics.agent-native.com/track";
+  "https://analytics.jami.studio/track";
 const BATCH_INTERVAL_MS = 10_000;
 const MAX_BATCH_SIZE = 50;
 

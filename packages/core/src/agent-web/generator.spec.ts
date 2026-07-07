@@ -18,7 +18,7 @@ const config = normalizeAgentWebConfig(
 describe("agent web generators", () => {
   it("builds policy-aware robots.txt with absolute sitemap", () => {
     const robots = buildRobotsTxt({
-      siteUrl: "https://www.agent-native.com",
+      siteUrl: "https://www.jami.studio",
       config,
     });
 
@@ -28,7 +28,7 @@ describe("agent web generators", () => {
     expect(robots).toContain("# userTriggered: allow");
     expect(robots).toContain("User-agent: ChatGPT-User");
     expect(robots).toContain(
-      "Sitemap: https://www.agent-native.com/sitemap.xml",
+      "Sitemap: https://www.jami.studio/sitemap.xml",
     );
   });
 
@@ -41,17 +41,17 @@ describe("agent web generators", () => {
           lastmod: new Date("2026-05-14T12:00:00Z"),
         },
       ],
-      "https://www.agent-native.com",
+      "https://www.jami.studio",
     );
 
-    expect(sitemap).toContain("<loc>https://www.agent-native.com/docs</loc>");
+    expect(sitemap).toContain("<loc>https://www.jami.studio/docs</loc>");
     expect(sitemap).toContain("<lastmod>2026-05-14</lastmod>");
   });
 
   it("builds llms files and Markdown mirrors from one page list", () => {
     const files = buildAgentWebStaticFiles({
       siteName: "Agent-Native",
-      siteUrl: "https://www.agent-native.com",
+      siteUrl: "https://www.jami.studio",
       description: "Agent-native framework docs.",
       config,
       pages: [
@@ -67,7 +67,7 @@ describe("agent web generators", () => {
 
     const byPath = new Map(files.map((file) => [file.path, file.content]));
     expect(byPath.get("llms.txt")).toContain(
-      "https://www.agent-native.com/docs/getting-started.md",
+      "https://www.jami.studio/docs/getting-started.md",
     );
     expect(byPath.get("llms-full.txt")).toContain("Hello agents.");
     expect(byPath.get("docs/getting-started.md")).toBe(
@@ -81,7 +81,7 @@ describe("agent web generators", () => {
     );
 
     const headers = buildMarkdownResponseHeaders({
-      siteUrl: "https://www.agent-native.com",
+      siteUrl: "https://www.jami.studio",
       pagePath: "/docs",
       markdown: "# Docs\n\nContent",
     });

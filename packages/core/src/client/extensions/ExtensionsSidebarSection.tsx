@@ -917,7 +917,7 @@ export function ExtensionsSidebarSection() {
                     {copy.open}
                   </Link>
                   <a
-                    href="https://agent-native.com/docs/extensions"
+                    href="https://jami.studio/docs/extensions"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"

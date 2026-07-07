@@ -116,7 +116,7 @@ export type ExportPlanMdxInput = {
   referencedBlockIds?: Iterable<string>;
 };
 
-const HOSTED_PLAN_ORIGIN = "https://plan.agent-native.com";
+const HOSTED_PLAN_ORIGIN = "https://plan.jami.studio";
 
 export const planMdxFileSchema = z.object({
   "plan.mdx": z.string().min(1),

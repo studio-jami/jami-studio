@@ -139,7 +139,7 @@ function ev(opts: {
   return {
     method: opts.method ?? "GET",
     body: opts.body,
-    headers: { host: opts.host ?? "mail.agent-native.com" },
+    headers: { host: opts.host ?? "mail.jami.studio" },
     node: { req: { url: opts.path ?? "/" } },
     path: opts.path ?? "/",
     url: { pathname: (opts.path ?? "/").split("?")[0] },
@@ -186,7 +186,7 @@ describe("handleMcpConnect", () => {
       // (Claude / ChatGPT / Cursor / Claude Code / Codex / Other) so users can
       // connect without copying a token. Display the live host MCP URL rather
       // than a hardcoded one.
-      expect(body).toContain("https://mail.agent-native.com/_agent-native/mcp");
+      expect(body).toContain("https://mail.jami.studio/_agent-native/mcp");
       expect(body).toContain('data-tab="claude"');
       expect(body).toContain('data-tab="chatgpt"');
       expect(body).toContain('data-tab="claude-code"');
@@ -196,7 +196,7 @@ describe("handleMcpConnect", () => {
         "claude mcp add --transport http agent-native-mail",
       );
       expect(body).toContain(
-        "npx @agent-native/core@latest connect https://mail.agent-native.com",
+        "npx @agent-native/core@latest connect https://mail.jami.studio",
       );
       expect(body).toContain('<details id="assistantSetup" class="hosts">');
       expect(body).not.toContain(
@@ -240,18 +240,18 @@ describe("handleMcpConnect", () => {
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.mcpUrl).toBe(
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
       );
       expect(data.serverName).toBe("agent-native-mail");
       expect(data.mcpServerEntry).toEqual({
         type: "http",
-        url: "https://mail.agent-native.com/_agent-native/mcp",
+        url: "https://mail.jami.studio/_agent-native/mcp",
         headers: {
           Authorization: `Bearer ${data.token}`,
         },
       });
       expect(data.cli).toBe(
-        "npx @agent-native/core@latest connect https://mail.agent-native.com",
+        "npx @agent-native/core@latest connect https://mail.jami.studio",
       );
 
       const { payload } = await jose.jwtVerify(
@@ -419,7 +419,7 @@ describe("handleMcpConnect", () => {
       expect(data.device_code).toBeTruthy();
       expect(data.user_code).toMatch(/^[A-Z2-7]{4}-[A-Z2-7]{4}$/);
       expect(data.verification_uri).toBe(
-        "https://mail.agent-native.com/_agent-native/mcp/connect",
+        "https://mail.jami.studio/_agent-native/mcp/connect",
       );
       expect(data.verification_uri_complete).toContain(
         "?user_code=" + data.user_code,
@@ -445,10 +445,10 @@ describe("handleMcpConnect", () => {
         );
         const data = await res.json();
         expect(data.mcpUrl).toBe(
-          "https://mail.agent-native.com/mail/_agent-native/mcp",
+          "https://mail.jami.studio/mail/_agent-native/mcp",
         );
         expect(data.cli).toBe(
-          "npx @agent-native/core@latest connect https://mail.agent-native.com/mail",
+          "npx @agent-native/core@latest connect https://mail.jami.studio/mail",
         );
       } finally {
         delete process.env.APP_BASE_PATH;

@@ -10,7 +10,7 @@
  *      `PLAN_PUBLISH_TOKEN` (or `AGENT_NATIVE_TOKEN`).
  *   2. A JSON config file at `PLAN_PUBLISH_CONFIG_PATH`, defaulting to
  *      `~/.agent-native/plan-publish.json`, shaped like:
- *        { "url": "https://plan.agent-native.com", "token": "<bearer>" }
+ *        { "url": "https://plan.jami.studio", "token": "<bearer>" }
  *      (also accepts `baseUrl`/`hostedUrl` and `accessToken`/`bearerToken`).
  *
  * This mirrors the existing device-token config precedent in
@@ -35,7 +35,7 @@ export interface PlanPublishAuth {
 const CONFIG_PATH_ENV = "PLAN_PUBLISH_CONFIG_PATH";
 
 /** Default hosted base URL surfaced to the user when no token is configured. */
-export const DEFAULT_PLAN_HOSTED_URL = "https://plan.agent-native.com";
+export const DEFAULT_PLAN_HOSTED_URL = "https://plan.jami.studio";
 
 /** Absolute path to the publish config file for this process. */
 export function planPublishConfigPath(): string {

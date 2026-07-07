@@ -7,7 +7,7 @@ vi.mock("@agent-native/core/server", () => ({
     params?: Record<string, string>;
   }) =>
     `/_agent-native/open?app=${args.app}&view=${args.view}&designId=${args.params?.designId ?? ""}`,
-  getAppProductionUrl: () => "https://design.agent-native.com",
+  getAppProductionUrl: () => "https://design.jami.studio",
   getRequestContext: () => null,
   signShortLivedToken: () => "signed-token",
 }));
@@ -24,9 +24,9 @@ vi.mock("../server/db/index.js", () => ({
 vi.mock("../server/lib/coding-handoff.js", () => ({
   buildCodingHandoffPrompt: () => "Use this handoff",
   buildHandoffZipUrl: () =>
-    "https://design.agent-native.com/api/design-handoff/design_123.zip?token=signed-token",
+    "https://design.jami.studio/api/design-handoff/design_123.zip?token=signed-token",
   buildRawHandoffUrl: () =>
-    "https://design.agent-native.com/api/design-handoff/design_123?token=signed-token&format=json",
+    "https://design.jami.studio/api/design-handoff/design_123?token=signed-token&format=json",
   normalizeHandoffFormat: (format?: string) => format ?? "markdown",
 }));
 

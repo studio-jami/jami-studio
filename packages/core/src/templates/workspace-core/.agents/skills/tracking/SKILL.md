@@ -82,7 +82,7 @@ Set the env var and the provider auto-registers at startup. No SDK dependencies 
 | PostHog                | `POSTHOG_API_KEY` (required), `POSTHOG_HOST` (optional, defaults to `https://us.i.posthog.com`)                                                    |
 | Mixpanel               | `MIXPANEL_TOKEN`                                                                                                                                   |
 | Amplitude              | `AMPLITUDE_API_KEY`                                                                                                                                |
-| Agent Native Analytics | `AGENT_NATIVE_ANALYTICS_PUBLIC_KEY` (server), `AGENT_NATIVE_ANALYTICS_ENDPOINT` (optional, defaults to `https://analytics.agent-native.com/track`) |
+| Agent Native Analytics | `AGENT_NATIVE_ANALYTICS_PUBLIC_KEY` (server), `AGENT_NATIVE_ANALYTICS_ENDPOINT` (optional, defaults to `https://analytics.jami.studio/track`) |
 | Webhook                | `TRACKING_WEBHOOK_URL` (required), `TRACKING_WEBHOOK_AUTH` (optional, sent as `Authorization` header)                                              |
 
 Multiple providers can be active simultaneously. All receive every event.

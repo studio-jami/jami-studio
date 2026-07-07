@@ -129,7 +129,7 @@ description: "이메일/비밀번호, 소셜 공급자, 조직 및 MCP 보유자
 | 독립형 앱                                 | 슬러그(`APP_NAME` 또는 로컬 개발의 패키지 이름)로 앱별로 격리됩니다. 프로덕션에서 안정적인 `an` 접두사                   |
 | 작업공간 모드(`AGENT_NATIVE_WORKSPACE=1`) | 하나의 공유 영역 - 작업 공간 앱은 원본과 데이터베이스를 공유합니다                                                       |
 | 사용자 정의 동일 데이터베이스 하위 도메인 | `COOKIE_DOMAIN`와의 공유 쿠키 선택                                                                                       |
-| 자사 호스팅(`*.agent-native.com`)         | 앱별로 격리된 네임스페이스(각각 자체 인증 데이터베이스가 있음) `COOKIE_DOMAIN=.agent-native.com`는 기본적으로 무시됩니다 |
+| 자사 호스팅(`*.jami.studio`)         | 앱별로 격리된 네임스페이스(각각 자체 인증 데이터베이스가 있음) `COOKIE_DOMAIN=.jami.studio`는 기본적으로 무시됩니다 |
 
 자사 호스팅 앱마다 자체 인증 데이터베이스가 있으므로 앱 간 로그인
 공유 쿠키가 아닌 [Cross-App SSO](/docs/cross-app-sso)를 통과합니다.
@@ -219,7 +219,7 @@ ACCESS_TOKENS=token1,token2,token3
 모든 앱의 MCP 엔드포인트는 표준 보호 MCP 리소스 역할을 할 수 있습니다. OAuth 가능 클라이언트는 원격 MCP URL로만 구성할 수 있습니다:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
 ```
 
 인증되지 않은 MCP 요청은 `/.well-known/oauth-protected-resource`를 가리키는 `WWW-Authenticate` 챌린지를 반환합니다. 그런 다음 클라이언트는 앱의 OAuth 메타데이터를 검색하고, 공개 클라이언트를 동적으로 등록하고, 앱의 인증 페이지를 열고, 액세스 및 새로 고침 토큰을 위해 PKCE와 인증 코드를 교환합니다.

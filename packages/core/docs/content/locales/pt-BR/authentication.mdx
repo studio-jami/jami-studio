@@ -129,7 +129,7 @@ login e aplicativos de compartilhamento de banco de dados/origem que não ficam 
 | Aplicativo independente                                 | Isolado por aplicativo por slug (`APP_NAME` ou nome do pacote no desenvolvedor local); prefixo `an` estável em produção                            |
 | Modo de espaço de trabalho (`AGENT_NATIVE_WORKSPACE=1`) | Um domínio compartilhado: os aplicativos de espaço de trabalho compartilham uma origem e um banco de dados                                         |
 | Subdomínios personalizados do mesmo banco de dados      | Ative cookies compartilhados com `COOKIE_DOMAIN`                                                                                                   |
-| Hospedado próprio (`*.agent-native.com`)                | Namespace isolado por aplicativo (cada um tem seu próprio banco de dados de autenticação); `COOKIE_DOMAIN=.agent-native.com` é ignorado por padrão |
+| Hospedado próprio (`*.jami.studio`)                | Namespace isolado por aplicativo (cada um tem seu próprio banco de dados de autenticação); `COOKIE_DOMAIN=.jami.studio` é ignorado por padrão |
 
 Cada um dos aplicativos hospedados próprios tem seu próprio banco de dados de autenticação, portanto, login entre aplicativos
 passa por [Cross-App SSO](/docs/cross-app-sso) em vez de por um cookie compartilhado.
@@ -219,7 +219,7 @@ A configuração dessas variáveis ​​nunca renderiza uma página de login de
 O endpoint MCP de cada aplicativo pode atuar como um recurso MCP protegido padrão. Clientes compatíveis com OAuth podem ser configurados apenas com o MCP remoto URL:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
 ```
 
 Solicitações MCP não autenticadas retornam um desafio `WWW-Authenticate` apontando para `/.well-known/oauth-protected-resource`. O cliente então descobre os metadados OAuth do aplicativo, registra dinamicamente um cliente público, abre a página de autorização do aplicativo e troca um código de autorização com PKCE para tokens de acesso e atualização.

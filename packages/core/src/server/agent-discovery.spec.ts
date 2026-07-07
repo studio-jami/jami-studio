@@ -128,13 +128,13 @@ describe("agent discovery", () => {
   });
 
   it("uses production built-in agent URLs when a public app URL is configured", () => {
-    process.env.APP_URL = "https://content.agent-native.com";
+    process.env.APP_URL = "https://content.jami.studio";
 
     const slides = getBuiltinAgents("content").find(
       (agent) => agent.id === "slides",
     );
 
-    expect(slides?.url).toBe("https://slides.agent-native.com");
+    expect(slides?.url).toBe("https://slides.jami.studio");
   });
 
   it("keeps localhost built-in agent URLs when only a loopback app URL is configured", () => {
@@ -170,17 +170,17 @@ describe("agent discovery", () => {
         "dispatch-resource": JSON.stringify({
           id: "dispatch",
           name: "Dispatch",
-          url: "https://dispatch.agent-native.com",
+          url: "https://dispatch.jami.studio",
         }),
         "issues-resource": JSON.stringify({
           id: "issues",
           name: "Issues",
-          url: "https://issues.agent-native.com",
+          url: "https://issues.jami.studio",
         }),
         "recruiting-resource": JSON.stringify({
           id: "recruiting",
           name: "Recruiting",
-          url: "https://recruiting.agent-native.com",
+          url: "https://recruiting.jami.studio",
         }),
         "custom-resource": JSON.stringify({
           id: "custom-qa",
@@ -301,7 +301,7 @@ describe("agent discovery", () => {
   });
 
   it("ignores stale localhost workspace URLs for first-party agents on public runtimes", async () => {
-    process.env.APP_URL = "https://content.agent-native.com";
+    process.env.APP_URL = "https://content.jami.studio";
     process.env.AGENT_NATIVE_WORKSPACE_APPS_JSON = JSON.stringify({
       version: 1,
       apps: [
@@ -318,7 +318,7 @@ describe("agent discovery", () => {
     const agents = await discoverAgents("content");
 
     expect(agents.find((agent) => agent.id === "slides")).toMatchObject({
-      url: "https://slides.agent-native.com",
+      url: "https://slides.jami.studio",
     });
   });
 

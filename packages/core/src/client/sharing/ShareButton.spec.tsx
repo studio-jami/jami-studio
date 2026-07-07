@@ -137,7 +137,7 @@ describe("ShareButton", () => {
             resourceType="document"
             resourceId="doc-1"
             resourceTitle="Launch notes"
-            shareUrl="https://content.agent-native.com/page/doc-1"
+            shareUrl="https://content.jami.studio/page/doc-1"
           />
         </QueryClientProvider>,
       );
@@ -165,7 +165,7 @@ describe("ShareButton", () => {
         principalId: "teammate@example.com",
         role: "viewer",
         notify: true,
-        resourceUrl: "https://content.agent-native.com/page/doc-1",
+        resourceUrl: "https://content.jami.studio/page/doc-1",
       }),
       expect.any(Object),
     );
@@ -181,7 +181,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="deck"
             resourceId="deck-1"
-            shareUrl="https://slides.agent-native.com/deck/deck-1"
+            shareUrl="https://slides.jami.studio/deck/deck-1"
           />
         </QueryClientProvider>,
       );
@@ -195,7 +195,7 @@ describe("ShareButton", () => {
   });
 
   it("falls back when async clipboard copy is denied", async () => {
-    const shareUrl = "https://slides.agent-native.com/deck/deck-1";
+    const shareUrl = "https://slides.jami.studio/deck/deck-1";
     const writeText = vi.fn(async () => {
       throw new Error("denied");
     });
@@ -243,7 +243,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="plan"
             resourceId="plan-1"
-            shareUrl="https://plan.agent-native.com/plans/plan-1"
+            shareUrl="https://plan.jami.studio/plans/plan-1"
             trigger="icon"
           />
         </QueryClientProvider>,
@@ -273,7 +273,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="document"
             resourceId="doc-1"
-            shareUrl="https://content.agent-native.com/page/doc-1"
+            shareUrl="https://content.jami.studio/page/doc-1"
           />
         </QueryClientProvider>,
       );
@@ -297,7 +297,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="plan"
             resourceId="plan-1"
-            shareUrl="https://plan.agent-native.com/plans/plan-1"
+            shareUrl="https://plan.jami.studio/plans/plan-1"
             trigger="icon"
           />
         </QueryClientProvider>,
@@ -319,9 +319,9 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="deck"
             resourceId="deck-1"
-            shareUrl="https://slides.agent-native.com/deck/deck-1"
+            shareUrl="https://slides.jami.studio/deck/deck-1"
             shareUrlLabel="Editor link"
-            secondaryShareUrl="https://slides.agent-native.com/p/deck-1"
+            secondaryShareUrl="https://slides.jami.studio/p/deck-1"
             secondaryShareUrlLabel="Presentation link"
           />
         </QueryClientProvider>,
@@ -330,10 +330,10 @@ describe("ShareButton", () => {
 
     const inputs = Array.from(container.querySelectorAll("input"));
     const editorInput = inputs.find(
-      (i) => i.value === "https://slides.agent-native.com/deck/deck-1",
+      (i) => i.value === "https://slides.jami.studio/deck/deck-1",
     );
     const presentationInput = inputs.find(
-      (i) => i.value === "https://slides.agent-native.com/p/deck-1",
+      (i) => i.value === "https://slides.jami.studio/p/deck-1",
     );
     expect(editorInput).toBeTruthy();
     expect(presentationInput).toBeTruthy();
@@ -346,7 +346,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="form"
             resourceId="form-1"
-            shareUrl="https://forms.agent-native.com/f/form-1"
+            shareUrl="https://forms.jami.studio/f/form-1"
             shareUrlLabel="Public response link"
             shareUrlPlacement="top"
             peopleAccessLabel="People with editing access"
@@ -371,7 +371,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="design"
             resourceId="design-1"
-            shareUrl="https://design.agent-native.com/design/design-1"
+            shareUrl="https://design.jami.studio/design/design-1"
             shareUrlLabel="Design editor link"
             showShareLinks={false}
             showDoneButton={false}
@@ -396,7 +396,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="design"
             resourceId="design-1"
-            shareUrl="https://design.agent-native.com/design/design-1"
+            shareUrl="https://design.jami.studio/design/design-1"
           />
         </QueryClientProvider>,
       );
@@ -439,7 +439,7 @@ describe("ShareButton", () => {
           <ShareButton
             resourceType="design"
             resourceId="design-1"
-            shareUrl="https://design.agent-native.com/design/design-1"
+            shareUrl="https://design.jami.studio/design/design-1"
             shareTabs={{
               tabs: [
                 {

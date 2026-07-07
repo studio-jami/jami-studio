@@ -164,7 +164,7 @@ survit à tout individu quittant, les récapitulatifs qu'il publie sont visibles
 n'importe quel propriétaire ou administrateur d'organisation peut le répertorier ou le révoquer. Mint One (propriétaire/administrateur de l'organisation uniquement) :
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 La commande vous authentifie dans le navigateur, puis imprime le jeton de service
@@ -177,7 +177,7 @@ contre votre application Plans. Pour l'application hébergée, ceci écrit égal
 fichier de jeton de publication que `npx @agent-native/core@latest recap setup` peut lire :
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ vrai jeton.
 | `VISUAL_RECAP_MODEL`     | valeur par défaut de chaque CLI    | Variable. Épingle le modèle - par ex. `gpt-5.5` pour Codex, ou un identifiant de modèle Claude. Unset utilise la valeur par défaut du CLI.                      |
 | `VISUAL_RECAP_REASONING` | valeur par défaut de chaque modèle | Variable. Profondeur de raisonnement : `none`, `minimal`, `low`, `medium`, `high` ou `xhigh`. S'applique au backend Codex.                                      |
 | `RECAP_CLI_VERSION`      | `latest`                           | Variable. Épingle la version `@agent-native/core` CLI installée par le flux de travail, par ex. `1.5.0`. Voir [Version pinning](#version-pinning-copy-variant). |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com`    | Secret. Uniquement lors de l'auto-hébergement de l'application Plans à une origine différente.                                                                  |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio`    | Secret. Uniquement lors de l'auto-hébergement de l'application Plans à une origine différente.                                                                  |
 
 Le workflow détecte automatiquement comment appeler son assistant CLI (source locale dans ce monorepo, le `@agent-native/core` publié ailleurs), il n'y a donc aucune variable `RECAP_CLI` à définir.
 

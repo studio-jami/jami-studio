@@ -1494,7 +1494,7 @@ const AssistantChatInner = forwardRef<
   // user message and the `performRoundtrip` call that tries to record the
   // assistant placeholder against that user message's id. The internal-bug
   // throw turns into an unhandled rejection that Sentry captures from the
-  // assets.agent-native.com prompt composer (AGENT-NATIVE-BROWSER-18). Fix
+  // assets.jami.studio prompt composer (AGENT-NATIVE-BROWSER-18). Fix
   // it by relinking to the current head whenever the requested parent has
   // gone missing instead of throwing.
   useEffect(() => {

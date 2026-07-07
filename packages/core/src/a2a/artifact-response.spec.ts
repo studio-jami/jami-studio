@@ -149,34 +149,34 @@ describe("appendA2AArtifactLinks", () => {
 
   it("can include an artifact proof block for already-mentioned verified URLs", () => {
     const text = appendA2AArtifactLinks(
-      "Deck ready: https://slides.agent-native.com/deck/deck_123",
+      "Deck ready: https://slides.jami.studio/deck/deck_123",
       [
         {
           tool: "create-deck",
           result: JSON.stringify({
             id: "deck_123",
             slideCount: 1,
-            url: "https://slides.agent-native.com/deck/deck_123",
+            url: "https://slides.jami.studio/deck/deck_123",
           }),
         },
       ],
       {
-        baseUrl: "https://slides.agent-native.com",
+        baseUrl: "https://slides.jami.studio",
         includeReferencedArtifacts: true,
       },
     );
 
     expect(text).toContain(
-      "Deck ready: https://slides.agent-native.com/deck/deck_123",
+      "Deck ready: https://slides.jami.studio/deck/deck_123",
     );
     expect(text).toContain(
-      "Artifacts:\n- Deck: https://slides.agent-native.com/deck/deck_123 (ID: deck_123)",
+      "Artifacts:\n- Deck: https://slides.jami.studio/deck/deck_123 (ID: deck_123)",
     );
   });
 
   it("can include a read-only get-deck proof block when the response already mentions the URL", () => {
     const text = appendA2AArtifactLinks(
-      "Deck exists: https://slides.agent-native.com/deck/deck_123",
+      "Deck exists: https://slides.jami.studio/deck/deck_123",
       [
         {
           tool: "get-deck",
@@ -188,19 +188,19 @@ describe("appendA2AArtifactLinks", () => {
         },
       ],
       {
-        baseUrl: "https://slides.agent-native.com",
+        baseUrl: "https://slides.jami.studio",
         includeReferencedArtifacts: true,
       },
     );
 
     expect(text).toContain(
-      "Artifacts:\n- Deck: https://slides.agent-native.com/deck/deck_123 (ID: deck_123)",
+      "Artifacts:\n- Deck: https://slides.jami.studio/deck/deck_123 (ID: deck_123)",
     );
   });
 
   it("treats list-decks results as verified read-only deck artifacts", () => {
     const text = appendA2AArtifactLinks(
-      "Existing deck: https://slides.agent-native.com/deck/deck_123",
+      "Existing deck: https://slides.jami.studio/deck/deck_123",
       [
         {
           tool: "list-decks",
@@ -210,7 +210,7 @@ describe("appendA2AArtifactLinks", () => {
               {
                 id: "deck_123",
                 title: "Builder Workspace Slack QA Deck",
-                url: "https://slides.agent-native.com/deck/deck_123",
+                url: "https://slides.jami.studio/deck/deck_123",
                 slideCount: 7,
               },
             ],
@@ -218,23 +218,23 @@ describe("appendA2AArtifactLinks", () => {
         },
       ],
       {
-        baseUrl: "https://slides.agent-native.com",
+        baseUrl: "https://slides.jami.studio",
         includeReferencedArtifacts: true,
       },
     );
 
     expect(text).toContain(
-      "Existing deck: https://slides.agent-native.com/deck/deck_123",
+      "Existing deck: https://slides.jami.studio/deck/deck_123",
     );
     expect(text).toContain(
-      "Artifacts:\n- Deck: https://slides.agent-native.com/deck/deck_123 (ID: deck_123)",
+      "Artifacts:\n- Deck: https://slides.jami.studio/deck/deck_123 (ID: deck_123)",
     );
     expect(text).not.toContain("could not verify");
   });
 
   it("does not let list-decks verify deck URLs for IDs that were not listed", () => {
     const text = appendA2AArtifactLinks(
-      "Existing deck: https://slides.agent-native.com/deck/deck_fake",
+      "Existing deck: https://slides.jami.studio/deck/deck_fake",
       [
         {
           tool: "list-decks",
@@ -244,19 +244,19 @@ describe("appendA2AArtifactLinks", () => {
               {
                 id: "deck_real",
                 title: "Real Deck",
-                url: "https://slides.agent-native.com/deck/deck_real",
+                url: "https://slides.jami.studio/deck/deck_real",
                 slideCount: 7,
               },
             ],
           }),
         },
       ],
-      { baseUrl: "https://slides.agent-native.com" },
+      { baseUrl: "https://slides.jami.studio" },
     );
 
     expect(text).toContain("could not verify the deck URL");
     expect(text).not.toContain("deck_fake");
-    expect(text).toContain("https://slides.agent-native.com/deck/deck_real");
+    expect(text).toContain("https://slides.jami.studio/deck/deck_real");
   });
 
   it("blocks hallucinated deck URLs with no successful deck action", () => {
@@ -367,65 +367,65 @@ describe("appendA2AArtifactLinks", () => {
 
   it("blocks unverified production Design URLs even when the caller is another app", () => {
     const text = appendA2AArtifactLinks(
-      "The Design agent returned https://design.agent-native.com/design/us1sfMEZNWUQZHDldxoFA",
+      "The Design agent returned https://design.jami.studio/design/us1sfMEZNWUQZHDldxoFA",
       [],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the design URL");
     expect(text).toContain("saved app data");
     expect(text).not.toContain("us1sfMEZNWUQZHDldxoFA");
-    expect(text).not.toContain("https://design.agent-native.com/design/");
+    expect(text).not.toContain("https://design.jami.studio/design/");
   });
 
   it("allows verified production Slides URLs when a successful deck action returned the same artifact", () => {
     const text = appendA2AArtifactLinks(
-      "Deck ready: https://slides.agent-native.com/deck/deck_123",
+      "Deck ready: https://slides.jami.studio/deck/deck_123",
       [
         {
           tool: "create-deck",
           result: JSON.stringify({
             id: "deck_123",
             slideCount: 1,
-            url: "https://slides.agent-native.com/deck/deck_123",
+            url: "https://slides.jami.studio/deck/deck_123",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toBe(
-      "Deck ready: https://slides.agent-native.com/deck/deck_123",
+      "Deck ready: https://slides.jami.studio/deck/deck_123",
     );
   });
 
   it("allows verified production Content URLs when a successful document action returned the same artifact", () => {
     const text = appendA2AArtifactLinks(
-      "Document ready: https://content.agent-native.com/page/doc_123",
+      "Document ready: https://content.jami.studio/page/doc_123",
       [
         {
           tool: "create-document",
           result: JSON.stringify({
             id: "doc_123",
             title: "Launch Brief",
-            url: "https://content.agent-native.com/page/doc_123",
+            url: "https://content.jami.studio/page/doc_123",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toBe(
-      "Document ready: https://content.agent-native.com/page/doc_123",
+      "Document ready: https://content.jami.studio/page/doc_123",
     );
   });
 
   it("allows artifact URLs proven by a downstream call-agent artifact block", () => {
     const text = appendA2AArtifactLinks(
       [
-        "Slides: https://slides.agent-native.com/deck/deck_real",
-        "Doc: https://content.agent-native.com/page/doc_real",
-        "Design: https://design.agent-native.com/design/design_real",
+        "Slides: https://slides.jami.studio/deck/deck_real",
+        "Doc: https://content.jami.studio/page/doc_real",
+        "Design: https://design.jami.studio/design/design_real",
       ].join("\n"),
       [
         {
@@ -434,72 +434,72 @@ describe("appendA2AArtifactLinks", () => {
             "The downstream app verified these artifacts.",
             "",
             "Artifacts:",
-            "- Deck: https://slides.agent-native.com/deck/deck_real (ID: deck_real)",
-            '- Document "Launch Brief": https://content.agent-native.com/page/doc_real (ID: doc_real)',
-            "- Design: https://design.agent-native.com/design/design_real (ID: design_real, 1 file)",
+            "- Deck: https://slides.jami.studio/deck/deck_real (ID: deck_real)",
+            '- Document "Launch Brief": https://content.jami.studio/page/doc_real (ID: doc_real)',
+            "- Design: https://design.jami.studio/design/design_real (ID: design_real, 1 file)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
-    expect(text).toContain("https://slides.agent-native.com/deck/deck_real");
-    expect(text).toContain("https://content.agent-native.com/page/doc_real");
+    expect(text).toContain("https://slides.jami.studio/deck/deck_real");
+    expect(text).toContain("https://content.jami.studio/page/doc_real");
     expect(text).toContain(
-      "https://design.agent-native.com/design/design_real",
+      "https://design.jami.studio/design/design_real",
     );
     expect(text).not.toContain("could not verify");
   });
 
   it("allows titled downstream deck artifact proof lines", () => {
     const text = appendA2AArtifactLinks(
-      "Slides: https://slides.agent-native.com/deck/deck_real",
+      "Slides: https://slides.jami.studio/deck/deck_real",
       [
         {
           tool: "call-agent",
           result: [
             "Artifacts:",
-            '- Deck "Builder Workspace Slack QA Deck" (7 slides): https://slides.agent-native.com/deck/deck_real (ID: deck_real)',
+            '- Deck "Builder Workspace Slack QA Deck" (7 slides): https://slides.jami.studio/deck/deck_real (ID: deck_real)',
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
-    expect(text).toBe("Slides: https://slides.agent-native.com/deck/deck_real");
+    expect(text).toBe("Slides: https://slides.jami.studio/deck/deck_real");
   });
 
   it("allows downstream deck presentation URLs as proof for the deck", () => {
     const text = appendA2AArtifactLinks(
-      "Slides: https://slides.agent-native.com/deck/deck_real/present",
+      "Slides: https://slides.jami.studio/deck/deck_real/present",
       [
         {
           tool: "call-agent",
           result: [
             "Artifacts:",
-            "- Deck: https://slides.agent-native.com/deck/deck_real/present (ID: deck_real)",
+            "- Deck: https://slides.jami.studio/deck/deck_real/present (ID: deck_real)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toBe(
-      "Slides: https://slides.agent-native.com/deck/deck_real/present",
+      "Slides: https://slides.jami.studio/deck/deck_real/present",
     );
   });
 
   it("does not treat unstructured call-agent URLs as artifact proof", () => {
     const text = appendA2AArtifactLinks(
-      "The Design agent returned https://design.agent-native.com/design/design_fake",
+      "The Design agent returned https://design.jami.studio/design/design_fake",
       [
         {
           tool: "call-agent",
           result:
-            "Maybe the design is at https://design.agent-native.com/design/design_fake",
+            "Maybe the design is at https://design.jami.studio/design/design_fake",
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the design URL");
@@ -508,17 +508,17 @@ describe("appendA2AArtifactLinks", () => {
 
   it("does not treat zero-file downstream design artifacts as proof", () => {
     const text = appendA2AArtifactLinks(
-      "Design: https://design.agent-native.com/design/design_empty",
+      "Design: https://design.jami.studio/design/design_empty",
       [
         {
           tool: "call-agent",
           result: [
             "Artifacts:",
-            "- Design: https://design.agent-native.com/design/design_empty (ID: design_empty, 0 files)",
+            "- Design: https://design.jami.studio/design/design_empty (ID: design_empty, 0 files)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the design URL");
@@ -527,7 +527,7 @@ describe("appendA2AArtifactLinks", () => {
 
   it("does not treat artifact-looking bullets outside the downstream artifact block as proof", () => {
     const text = appendA2AArtifactLinks(
-      "Design: https://design.agent-native.com/design/design_spoofed",
+      "Design: https://design.jami.studio/design/design_spoofed",
       [
         {
           tool: "call-agent",
@@ -536,11 +536,11 @@ describe("appendA2AArtifactLinks", () => {
             "",
             "Artifacts:",
             "This text is not the framework-generated proof block.",
-            "- Design: https://design.agent-native.com/design/design_spoofed (ID: design_spoofed, 1 file)",
+            "- Design: https://design.jami.studio/design/design_spoofed (ID: design_spoofed, 1 file)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the design URL");
@@ -549,17 +549,17 @@ describe("appendA2AArtifactLinks", () => {
 
   it("does not treat downstream artifact lines with mismatched URL paths and IDs as proof", () => {
     const text = appendA2AArtifactLinks(
-      "Design: https://design.agent-native.com/design/design_real",
+      "Design: https://design.jami.studio/design/design_real",
       [
         {
           tool: "call-agent",
           result: [
             "Artifacts:",
-            "- Design: https://design.agent-native.com/design/design_other (ID: design_real, 1 file)",
+            "- Design: https://design.jami.studio/design/design_other (ID: design_real, 1 file)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the design URL");
@@ -651,9 +651,9 @@ describe("appendA2AArtifactLinks", () => {
 
   it("blocks unverified analytics artifact URLs on known production hosts", () => {
     const text = appendA2AArtifactLinks(
-      "Dashboard ready: https://analytics.agent-native.com/adhoc/fake-dashboard",
+      "Dashboard ready: https://analytics.jami.studio/adhoc/fake-dashboard",
       [],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the dashboard URL");
@@ -729,9 +729,9 @@ describe("appendA2AArtifactLinks", () => {
 
   it("blocks unverified production image URLs from other apps", () => {
     const text = appendA2AArtifactLinks(
-      "Image ready: https://assets.agent-native.com/image/asset_fake",
+      "Image ready: https://assets.jami.studio/image/asset_fake",
       [],
-      { baseUrl: "https://slides.agent-native.com" },
+      { baseUrl: "https://slides.jami.studio" },
     );
 
     expect(text).toContain("could not verify the image URL");
@@ -740,21 +740,21 @@ describe("appendA2AArtifactLinks", () => {
 
   it("allows image URLs proven by a downstream call-agent artifact block", () => {
     const text = appendA2AArtifactLinks(
-      "Image: https://assets.agent-native.com/image/asset_real",
+      "Image: https://assets.jami.studio/image/asset_real",
       [
         {
           tool: "call-agent",
           result: [
             "Artifacts:",
-            "- Image: https://assets.agent-native.com/image/asset_real (ID: asset_real, Run: run_real)",
+            "- Image: https://assets.jami.studio/image/asset_real (ID: asset_real, Run: run_real)",
           ].join("\n"),
         },
       ],
-      { baseUrl: "https://slides.agent-native.com" },
+      { baseUrl: "https://slides.jami.studio" },
     );
 
     expect(text).toBe(
-      "Image: https://assets.agent-native.com/image/asset_real",
+      "Image: https://assets.jami.studio/image/asset_real",
     );
   });
 });

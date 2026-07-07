@@ -199,7 +199,7 @@ describe("local-identity adversarial", () => {
     it("does not classify a real account whose local-part merely starts with 'guest-' as a guest", () => {
       // Real account on a real domain must never be treated as a synthetic guest.
       expect(isGuestAuthorIdentity("guest-relations@example.com")).toBe(false);
-      expect(isGuestAuthorIdentity("guest-team@agent-native.com")).toBe(false);
+      expect(isGuestAuthorIdentity("guest-team@jami.studio")).toBe(false);
     });
 
     it("does not classify a real account on the local/public domain as a public viewer", () => {

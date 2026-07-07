@@ -223,9 +223,9 @@ describe("recap agent failure summaries", () => {
       expect(
         inferLocalRecapUrlFailureReason({
           cwd: dir,
-          appUrl: "https://plan.agent-native.com",
+          appUrl: "https://plan.jami.studio",
         }),
-      ).toContain("expected https://plan.agent-native.com");
+      ).toContain("expected https://plan.jami.studio");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
@@ -392,14 +392,14 @@ describe("recap direct publish", () => {
 
       const out = path.join(dir, "recap-blocks.md");
       const result = await fetchRecapBlockReference({
-        appUrl: "https://plan.agent-native.com/",
+        appUrl: "https://plan.jami.studio/",
         out,
         fetchFn,
       });
 
       expect(result).toEqual({ ok: true, out, count: 12 });
       expect(calls[0].url).toBe(
-        "https://plan.agent-native.com/_agent-native/actions/get-plan-blocks?format=reference",
+        "https://plan.jami.studio/_agent-native/actions/get-plan-blocks?format=reference",
       );
       expect(calls[0].method).toBe("GET");
       expect(fs.readFileSync(out, "utf8")).toContain("## Blocks");
@@ -424,7 +424,7 @@ describe("recap direct publish", () => {
 
       const out = path.join(dir, "recap-blocks.md");
       const result = await fetchRecapBlockReference({
-        appUrl: "https://plan.agent-native.com",
+        appUrl: "https://plan.jami.studio",
         out,
         fetchFn,
       });
@@ -458,7 +458,7 @@ describe("recap direct publish", () => {
       const idempotencyKeys: string[] = [];
       const fetchFn: typeof fetch = (async (input, init) => {
         expect(String(input)).toBe(
-          "https://plan.agent-native.com/_agent-native/actions/create-visual-recap",
+          "https://plan.jami.studio/_agent-native/actions/create-visual-recap",
         );
         const headers = init?.headers as Record<string, string>;
         expect(headers.authorization).toBe("Bearer plan-token");
@@ -475,7 +475,7 @@ describe("recap direct publish", () => {
       }) as typeof fetch;
 
       const result = await publishRecapSource({
-        appUrl: "https://plan.agent-native.com",
+        appUrl: "https://plan.jami.studio",
         token: "plan-token",
         sourcePath: source,
         out,
@@ -492,7 +492,7 @@ describe("recap direct publish", () => {
       });
 
       expect(result.url).toBe(
-        "https://plan.agent-native.com/recaps/recap-abc123",
+        "https://plan.jami.studio/recaps/recap-abc123",
       );
       expect(fs.readFileSync(out, "utf8").trim()).toBe(result.url);
       expect(bodies[0]).toMatchObject({
@@ -601,7 +601,7 @@ describe("recap direct publish", () => {
       }) as typeof fetch;
 
       const result = await publishRecapSource({
-        appUrl: "https://plan.agent-native.com",
+        appUrl: "https://plan.jami.studio",
         token: "plan-token",
         sourcePath: source,
         out,
@@ -612,7 +612,7 @@ describe("recap direct publish", () => {
       });
 
       expect(result.url).toBe(
-        "https://plan.agent-native.com/recaps/recap-retry",
+        "https://plan.jami.studio/recaps/recap-retry",
       );
       expect(keys).toHaveLength(2);
       expect(new Set(keys).size).toBe(1);
@@ -646,7 +646,7 @@ describe("recap direct publish", () => {
               error: true,
               status: 404,
               message:
-                "Cannot find any route matching [POST] https://plan.agent-native.com/_agent-native/actions/create-visual-recap",
+                "Cannot find any route matching [POST] https://plan.jami.studio/_agent-native/actions/create-visual-recap",
             },
             404,
           );
@@ -655,7 +655,7 @@ describe("recap direct publish", () => {
       }) as typeof fetch;
 
       const result = await publishRecapSource({
-        appUrl: "https://plan.agent-native.com",
+        appUrl: "https://plan.jami.studio",
         token: "plan-token",
         sourcePath: source,
         out,
@@ -666,9 +666,9 @@ describe("recap direct publish", () => {
       });
 
       expect(calls).toBe(2);
-      expect(result.url).toBe("https://plan.agent-native.com/recaps/recap-404");
+      expect(result.url).toBe("https://plan.jami.studio/recaps/recap-404");
       expect(fs.readFileSync(out, "utf8").trim()).toBe(
-        "https://plan.agent-native.com/recaps/recap-404",
+        "https://plan.jami.studio/recaps/recap-404",
       );
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
@@ -789,7 +789,7 @@ describe("recap prompt builder", () => {
       pr: "1095",
       repo: "BuilderIO/ai-services",
       head: "abc1234",
-      appUrl: "https://plan.agent-native.com/",
+      appUrl: "https://plan.jami.studio/",
       diffPath: "recap.diff",
       statPath: "recap.stat",
       blockReferencePath: "recap-blocks.md",
@@ -824,7 +824,7 @@ describe("recap prompt builder", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "7",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       prevPlanId: "plan-deadbeef",
     });
@@ -836,7 +836,7 @@ describe("recap prompt builder", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "42",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       localFiles: true,
       localDir: "plans/private-recap",
@@ -852,7 +852,7 @@ describe("recap prompt builder", () => {
     expect(prompt).not.toContain("mcp__plan__create-visual-recap");
     expect(prompt).not.toContain("set-resource-visibility");
     expect(prompt).not.toContain(
-      "https://plan.agent-native.com/recaps/<the returned plan id>",
+      "https://plan.jami.studio/recaps/<the returned plan id>",
     );
   });
 
@@ -861,7 +861,7 @@ describe("recap prompt builder", () => {
       skillMd,
       pr: "1095",
       repo: "BuilderIO/ai-services",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
     });
     expect(prompt).toContain(
@@ -874,7 +874,7 @@ describe("recap prompt builder", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "42",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
     });
     expect(prompt).not.toContain("sourceUrl:");
@@ -886,7 +886,7 @@ describe("recap prompt builder", () => {
       skillMd,
       pr: "1095",
       repo: "BuilderIO/ai-services",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       sourceUrl: "https://github.com/OtherOrg/other-repo/pull/999",
     });
@@ -910,7 +910,7 @@ describe("recap prompt builder", () => {
       skillMd,
       pr: "55",
       repo: "external/fork-repo",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       forkPr: true,
     });
@@ -929,7 +929,7 @@ describe("recap prompt builder", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "56",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
     });
     expect(prompt).not.toContain("Security note (fork PR)");
@@ -941,18 +941,18 @@ describe("recap comment body", () => {
   it("embeds an inline screenshot picture link and a plan-id marker on success", () => {
     const token = "a".repeat(64);
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
-      RECAP_IMAGE_URL: `https://plan.agent-native.com/_agent-native/recap-image/${token}.png`,
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
+      RECAP_IMAGE_URL: `https://plan.jami.studio/_agent-native/recap-image/${token}.png`,
       HEAD_SHA: "abcdef1234567",
     } as NodeJS.ProcessEnv);
     expect(body).toContain(
-      `<a href="https://plan.agent-native.com/recaps/plan-abc123"><picture>  <img alt="Visual recap" src="https://plan.agent-native.com/_agent-native/recap-image/${token}.png"></picture></a>`,
+      `<a href="https://plan.jami.studio/recaps/plan-abc123"><picture>  <img alt="Visual recap" src="https://plan.jami.studio/_agent-native/recap-image/${token}.png"></picture></a>`,
     );
     expect(body).not.toContain("\n<picture>\n");
     expect(body).not.toContain(`<source media="(prefers-color-scheme: dark)"`);
     expect(body).toContain(
-      "Here's a [visual recap](https://plan.agent-native.com/recaps/plan-abc123) of what changed:",
+      "Here's a [visual recap](https://plan.jami.studio/recaps/plan-abc123) of what changed:",
     );
     expect(body).not.toContain(
       "Access note: private-repo recaps are org-gated",
@@ -969,14 +969,14 @@ describe("recap comment body", () => {
     const lightToken = "a".repeat(64);
     const darkToken = "b".repeat(64);
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
-      RECAP_LIGHT_IMAGE_URL: `https://plan.agent-native.com/_agent-native/recap-image/${lightToken}.png`,
-      RECAP_DARK_IMAGE_URL: `https://plan.agent-native.com/_agent-native/recap-image/${darkToken}.png`,
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
+      RECAP_LIGHT_IMAGE_URL: `https://plan.jami.studio/_agent-native/recap-image/${lightToken}.png`,
+      RECAP_DARK_IMAGE_URL: `https://plan.jami.studio/_agent-native/recap-image/${darkToken}.png`,
       HEAD_SHA: "abcdef1234567",
     } as NodeJS.ProcessEnv);
     expect(body).toContain(
-      `<a href="https://plan.agent-native.com/recaps/plan-abc123"><picture>  <source media="(prefers-color-scheme: dark)" srcset="https://plan.agent-native.com/_agent-native/recap-image/${darkToken}.png">  <img alt="Visual recap" src="https://plan.agent-native.com/_agent-native/recap-image/${lightToken}.png"></picture></a>`,
+      `<a href="https://plan.jami.studio/recaps/plan-abc123"><picture>  <source media="(prefers-color-scheme: dark)" srcset="https://plan.jami.studio/_agent-native/recap-image/${darkToken}.png">  <img alt="Visual recap" src="https://plan.jami.studio/_agent-native/recap-image/${lightToken}.png"></picture></a>`,
     );
     expect(body).not.toContain("\n<picture>\n");
     expect(body).not.toContain("![Visual recap]");
@@ -985,13 +985,13 @@ describe("recap comment body", () => {
   it("preserves a sanitized screenshot cache key query", () => {
     const token = "a".repeat(64);
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
-      RECAP_IMAGE_URL: `https://plan.agent-native.com/_agent-native/recap-image/${token}.png?v=28162728843-1`,
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
+      RECAP_IMAGE_URL: `https://plan.jami.studio/_agent-native/recap-image/${token}.png?v=28162728843-1`,
       HEAD_SHA: "abcdef1234567",
     } as NodeJS.ProcessEnv);
     expect(body).toContain(
-      `<img alt="Visual recap" src="https://plan.agent-native.com/_agent-native/recap-image/${token}.png?v=28162728843-1">`,
+      `<img alt="Visual recap" src="https://plan.jami.studio/_agent-native/recap-image/${token}.png?v=28162728843-1">`,
     );
   });
 
@@ -1000,21 +1000,21 @@ describe("recap comment body", () => {
       // Legacy same-origin /plans/ URL, but with markdown-breakout junk appended
       // to the path. The rebuild canonicalizes to /recaps/ and drops the junk.
       PLAN_URL:
-        "https://plan.agent-native.com/plans/plan-abc123)](https://evil.example.com)",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+        "https://plan.jami.studio/plans/plan-abc123)](https://evil.example.com)",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
     expect(body).toContain(
-      "Open the [full interactive recap](https://plan.agent-native.com/recaps/plan-abc123)",
+      "Open the [full interactive recap](https://plan.jami.studio/recaps/plan-abc123)",
     );
     expect(body).not.toContain("evil.example.com");
   });
 
   it("drops a same-origin image URL that is not a canonical recap-image path", () => {
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
-      RECAP_IMAGE_URL: "https://plan.agent-native.com/evil.png)](javascript:0)",
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
+      RECAP_IMAGE_URL: "https://plan.jami.studio/evil.png)](javascript:0)",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
     expect(body).not.toContain("![Visual recap]");
@@ -1025,27 +1025,27 @@ describe("recap comment body", () => {
   it("drops an invalid dark image URL and keeps the light screenshot picture", () => {
     const token = "a".repeat(64);
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
-      RECAP_LIGHT_IMAGE_URL: `https://plan.agent-native.com/_agent-native/recap-image/${token}.png`,
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
+      RECAP_LIGHT_IMAGE_URL: `https://plan.jami.studio/_agent-native/recap-image/${token}.png`,
       RECAP_DARK_IMAGE_URL:
-        "https://plan.agent-native.com/evil.png)](javascript:0)",
+        "https://plan.jami.studio/evil.png)](javascript:0)",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
     expect(body).toContain("<picture>");
     expect(body).not.toContain(`<source media="(prefers-color-scheme: dark)"`);
     expect(body).toContain(
-      `<img alt="Visual recap" src="https://plan.agent-native.com/_agent-native/recap-image/${token}.png">`,
+      `<img alt="Visual recap" src="https://plan.jami.studio/_agent-native/recap-image/${token}.png">`,
     );
     expect(body).not.toContain("javascript:");
   });
 
   it("drops a recap-image URL whose token is too short for the image route", () => {
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_IMAGE_URL:
-        "https://plan.agent-native.com/_agent-native/recap-image/a1b2c3d4e5f6.png",
+        "https://plan.jami.studio/_agent-native/recap-image/a1b2c3d4e5f6.png",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
     expect(body).not.toContain("![Visual recap]");
@@ -1075,8 +1075,8 @@ describe("recap comment body", () => {
 
   it("reports screenshot failure instead of a successful link-only recap", () => {
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_IMAGE_URL: "",
       RECAP_SHOT_OK: "false",
       RECAP_SHOT_REASON: "screenshot captured but image upload failed",
@@ -1093,7 +1093,7 @@ describe("recap comment body", () => {
   it("drops the link when the plan URL origin does not match the app origin", () => {
     const body = buildCommentBody({
       PLAN_URL: "https://evil.example.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_IMAGE_URL: "",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
@@ -1106,7 +1106,7 @@ describe("recap comment body", () => {
   it("failure branch preserves the previous plan marker without linking stale recaps", () => {
     const body = buildCommentBody({
       PLAN_URL: "",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       PREV_PLAN_ID: "plan-deadbeef",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
@@ -1121,7 +1121,7 @@ describe("recap comment body", () => {
     // Bad-origin URL on this push, but we know the previous good plan id.
     const body = buildCommentBody({
       PLAN_URL: "https://evil.example.com/recaps/plan-fresh",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       PREV_PLAN_ID: "plan-deadbeef",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
@@ -1170,7 +1170,7 @@ describe("recap comment body", () => {
   it("includes sanitized agent output on generic generation failure", () => {
     const body = buildCommentBody({
       PLAN_URL: "",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_AGENT_SUMMARY:
         "Tool create-visual-recap failed because get-plan-blocks was unavailable",
       HEAD_SHA: "abcdef1",
@@ -1183,8 +1183,8 @@ describe("recap comment body", () => {
 
   it("does not include a freshness line in the GitHub comment", () => {
     const body = buildCommentBody({
-      PLAN_URL: "https://plan.agent-native.com/recaps/plan-abc123",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_URL: "https://plan.jami.studio/recaps/plan-abc123",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       HEAD_SHA: "abcdef1",
     } as NodeJS.ProcessEnv);
     expect(body).not.toContain("_As of `");
@@ -1196,11 +1196,11 @@ describe("recap screenshot URL params", () => {
   it("adds screenshot mode and an optional forced theme", () => {
     expect(
       withRecapScreenshotParams(
-        "https://plan.agent-native.com/recaps/plan-abc123?foo=bar",
+        "https://plan.jami.studio/recaps/plan-abc123?foo=bar",
         { theme: "dark" },
       ),
     ).toBe(
-      "https://plan.agent-native.com/recaps/plan-abc123?foo=bar&recapScreenshot=1&recapScreenshotTheme=dark",
+      "https://plan.jami.studio/recaps/plan-abc123?foo=bar&recapScreenshot=1&recapScreenshotTheme=dark",
     );
   });
 });
@@ -1324,7 +1324,7 @@ describe("recap screenshot capture", () => {
     try {
       await runShot(
         {
-          url: "https://plan.agent-native.com/recaps/plan-abc123",
+          url: "https://plan.jami.studio/recaps/plan-abc123",
           out,
         },
         importPlaywright,
@@ -1363,7 +1363,7 @@ describe("recap screenshot capture", () => {
     try {
       await runShot(
         {
-          url: "https://plan.agent-native.com/recaps/plan-abc123",
+          url: "https://plan.jami.studio/recaps/plan-abc123",
           out,
         },
         importPlaywright,
@@ -1404,7 +1404,7 @@ describe("recap screenshot capture", () => {
     try {
       await runShot(
         {
-          url: "https://plan.agent-native.com/recaps/plan-abc123",
+          url: "https://plan.jami.studio/recaps/plan-abc123",
           out,
         },
         importPlaywright,
@@ -1445,10 +1445,10 @@ describe("recap screenshot capture", () => {
     try {
       await runShot(
         {
-          url: "https://plan.agent-native.com/recaps/plan-abc123",
+          url: "https://plan.jami.studio/recaps/plan-abc123",
           out,
           token: "recap-token",
-          "app-url": "https://plan.agent-native.com",
+          "app-url": "https://plan.jami.studio",
         },
         importPlaywright,
       );
@@ -1487,7 +1487,7 @@ describe("recap image public readiness", () => {
     await expect(
       waitForPublicRecapImage({
         imageUrl:
-          "https://plan.agent-native.com/_agent-native/recap-image/" +
+          "https://plan.jami.studio/_agent-native/recap-image/" +
           `${"a".repeat(64)}.png`,
         attempts: 2,
         delayMs: 0,
@@ -1516,7 +1516,7 @@ describe("recap image public readiness", () => {
     await expect(
       waitForPublicRecapImage({
         imageUrl:
-          "https://plan.agent-native.com/_agent-native/recap-image/" +
+          "https://plan.jami.studio/_agent-native/recap-image/" +
           `${"a".repeat(64)}.png`,
         attempts: 2,
         delayMs: 0,
@@ -1551,7 +1551,7 @@ describe("recap image public readiness", () => {
     await expect(
       waitForPublicRecapImage({
         imageUrl:
-          "https://plan.agent-native.com/_agent-native/recap-image/" +
+          "https://plan.jami.studio/_agent-native/recap-image/" +
           `${"a".repeat(64)}.png`,
         // Override delayMs to 0 so the test doesn't sleep; attempts uses the
         // default (omitted) to confirm it's >= 8.
@@ -1984,7 +1984,7 @@ describe("recap sensitive-path guard", () => {
 });
 
 describe("recap check — canonicalRecapUrl", () => {
-  const app = "https://plan.agent-native.com";
+  const app = "https://plan.jami.studio";
 
   it("canonicalizes a recap URL on a root-mounted app", () => {
     expect(canonicalRecapUrl(`${app}/recaps/abc123`, app)).toBe(
@@ -2025,7 +2025,7 @@ describe("recap check — canonicalRecapUrl", () => {
 });
 
 describe("recap check — outcome mapper", () => {
-  const app = "https://plan.agent-native.com";
+  const app = "https://plan.jami.studio";
   const workflowUrl = "https://github.com/o/r/actions/runs/1";
   const base = {
     planOk: false,
@@ -2362,7 +2362,7 @@ describe("recap comment body — auth-failure differentiation", () => {
   it("shows auth-failure copy when RECAP_AUTH_FAILED=true", () => {
     const body = buildCommentBody({
       PLAN_URL: "",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_AUTH_FAILED: "true",
       HEAD_SHA: "abc1234",
     } as NodeJS.ProcessEnv);
@@ -2375,7 +2375,7 @@ describe("recap comment body — auth-failure differentiation", () => {
   it("shows generic failure copy when RECAP_AUTH_FAILED is absent/false", () => {
     const body = buildCommentBody({
       PLAN_URL: "",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       HEAD_SHA: "abc1234",
     } as NodeJS.ProcessEnv);
     expect(body).toContain("generation failed");
@@ -2386,7 +2386,7 @@ describe("recap comment body — auth-failure differentiation", () => {
   it("shows URL and agent diagnostics when a recap was not generated", () => {
     const body = buildCommentBody({
       PLAN_URL: "",
-      PLAN_RECAP_APP_URL: "https://plan.agent-native.com",
+      PLAN_RECAP_APP_URL: "https://plan.jami.studio",
       RECAP_URL_REASON: "recap-url.txt was not created by the agent",
       RECAP_AGENT_SUMMARY:
         "Tool create-visual-recap failed because get-plan-blocks was unavailable",
@@ -2947,7 +2947,7 @@ describe("buildRecapPrompt diff-consumption instructions", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "1",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       diffBytes: 204800,
       diffLines: 5000,
@@ -2963,7 +2963,7 @@ describe("buildRecapPrompt diff-consumption instructions", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "1",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
     });
     expect(prompt).not.toContain("Read this file IN FULL");
@@ -2974,7 +2974,7 @@ describe("buildRecapPrompt diff-consumption instructions", () => {
     const prompt = buildRecapPrompt({
       skillMd,
       pr: "1",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
       statPath: "recap.stat",
       huge: true,
@@ -2996,7 +2996,7 @@ describe("buildRecapPrompt — small-diff override sentence", () => {
     const prompt = buildRecapPrompt({
       skillMd: "skill",
       pr: "1",
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       diffPath: "recap.diff",
     });
     expect(prompt).toContain("CI already gated tiny diffs before invoking you");

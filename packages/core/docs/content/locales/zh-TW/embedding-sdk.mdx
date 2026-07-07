@@ -222,7 +222,7 @@ import { EmbeddedApp } from "@agent-native/embedding";
 export function AssetPickerDialog({ close }) {
   return (
     <EmbeddedApp
-      url="https://assets.agent-native.com/picker"
+      url="https://assets.jami.studio/picker"
       className="h-full w-full"
       onLoad={(ref) => {
         ref.postMessage("configure", {
@@ -264,7 +264,7 @@ sendEmbeddedAppMessage("chooseAsset", {
 主機；新的整合應該偵聽 `chooseAsset`。
 
 對於託管的第一方應用，啟用跨應用 SSO，並以 Dispatch 作為身分
-集線器，使 `content.agent-native.com` 和 `assets.agent-native.com` 連結使用者
+集線器，使 `content.jami.studio` 和 `assets.jami.studio` 連結使用者
 已驗證的電子郵件。 iframe 啟動仍應使用短暫的、路由範圍的
 在需要第三方 cookie 彈性時嵌入工作階段；普通應用程式cookie
 本身並不是一個完整的嵌入驗證故事。
@@ -275,11 +275,11 @@ sendEmbeddedAppMessage("chooseAsset", {
 ```ts
 import { getA2AUrl, getMcpUrl, sendMessage } from "@agent-native/embedding";
 
-getMcpUrl("https://assets.agent-native.com");
-getA2AUrl("https://assets.agent-native.com");
+getMcpUrl("https://assets.jami.studio");
+getA2AUrl("https://assets.jami.studio");
 
 for await (const chunk of sendMessage(
-  "https://assets.agent-native.com",
+  "https://assets.jami.studio",
   "Generate a blog hero",
 )) {
   append(chunk);

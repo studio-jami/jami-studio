@@ -830,7 +830,7 @@ describe("integration webhook handler engine resolution", () => {
   it("guards recoverable A2A artifact fallbacks before sending Slack-style replies", async () => {
     const { processIntegrationTask } = await import("./webhook-handler.js");
     const previousAppUrl = process.env.APP_URL;
-    process.env.APP_URL = "https://dispatch.agent-native.com";
+    process.env.APP_URL = "https://dispatch.jami.studio";
     const sendResponse = vi.fn();
     runAgentLoopMock.mockImplementationOnce(async ({ send }) => {
       send({
@@ -844,7 +844,7 @@ describe("integration webhook handler engine resolution", () => {
         result:
           "The agent is still working on the full response, but these verified artifacts already exist:\n\n" +
           "Artifacts:\n" +
-          "- Design: https://design.agent-native.com/design/design-empty (ID: design-empty, 0 files)",
+          "- Design: https://design.jami.studio/design/design-empty (ID: design-empty, 0 files)",
       });
     });
 
@@ -957,12 +957,12 @@ describe("integration webhook handler engine resolution", () => {
   it("does not relay unverified production Design URLs from Dispatch Slack replies", async () => {
     const { processIntegrationTask } = await import("./webhook-handler.js");
     const previousAppUrl = process.env.APP_URL;
-    process.env.APP_URL = "https://dispatch.agent-native.com";
+    process.env.APP_URL = "https://dispatch.jami.studio";
     const sendResponse = vi.fn();
     runAgentLoopMock.mockImplementationOnce(async ({ send }) => {
       send({
         type: "text",
-        text: "The Design agent returned https://design.agent-native.com/design/us1sfMEZNWUQZHDldxoFA",
+        text: "The Design agent returned https://design.jami.studio/design/us1sfMEZNWUQZHDldxoFA",
       });
     });
 
@@ -998,7 +998,7 @@ describe("integration webhook handler engine resolution", () => {
       "us1sfMEZNWUQZHDldxoFA",
     );
     expect(sendResponse.mock.calls[0][0].text).not.toContain(
-      "https://design.agent-native.com/design/",
+      "https://design.jami.studio/design/",
     );
   });
 

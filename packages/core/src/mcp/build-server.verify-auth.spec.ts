@@ -230,7 +230,7 @@ describe("verifyAuth — connect-token revoke check", () => {
   });
 
   it("accepts an audience-bound standard MCP OAuth access token", async () => {
-    const resource = "https://mail.agent-native.com/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ownerEmail: "oauth@example.com",
       orgId: "org_123",
@@ -238,7 +238,7 @@ describe("verifyAuth — connect-token revoke check", () => {
       clientId: "client-123",
       scope: "mcp:read mcp:apps",
       resource,
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
     });
     const res = await verifyAuth(`Bearer ${token}`, undefined, {
       resourceUrl: resource,
@@ -260,11 +260,11 @@ describe("verifyAuth — connect-token revoke check", () => {
       ownerEmail: "oauth@example.com",
       clientId: "client-123",
       scope: "mcp:read",
-      resource: "https://mail.agent-native.com/_agent-native/mcp",
-      issuer: "https://mail.agent-native.com",
+      resource: "https://mail.jami.studio/_agent-native/mcp",
+      issuer: "https://mail.jami.studio",
     });
     const res = await verifyAuth(`Bearer ${token}`, undefined, {
-      resourceUrl: "https://calendar.agent-native.com/_agent-native/mcp",
+      resourceUrl: "https://calendar.jami.studio/_agent-native/mcp",
     });
     expect(res.authed).toBe(false);
     expect(res.identity).toBeUndefined();
@@ -272,13 +272,13 @@ describe("verifyAuth — connect-token revoke check", () => {
 
   it("accepts a connect-minted MCP OAuth token whose jti is not revoked", async () => {
     isJtiRevokedMock.mockResolvedValue(false);
-    const resource = "https://mail.agent-native.com/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ownerEmail: "oauth-connect@example.com",
       clientId: "agent-native-connect",
       scope: "mcp:read mcp:write mcp:apps",
       resource,
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
       jti: "jti-oauth-active",
     });
     const res = await verifyAuth(`Bearer ${token}`, undefined, {
@@ -296,13 +296,13 @@ describe("verifyAuth — connect-token revoke check", () => {
 
   it("rejects a revoked connect-minted MCP OAuth token", async () => {
     isJtiRevokedMock.mockResolvedValue(true);
-    const resource = "https://mail.agent-native.com/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ownerEmail: "oauth-connect@example.com",
       clientId: "agent-native-connect",
       scope: "mcp:read mcp:write mcp:apps",
       resource,
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
       jti: "jti-oauth-revoked",
     });
     const res = await verifyAuth(`Bearer ${token}`, undefined, {
@@ -449,13 +449,13 @@ describe("verifyAuth — fullSurface (real-caller → full MCP surface)", () => 
 
   it("standard MCP OAuth token without A2A_SECRET → authed even when dev-open is disabled", async () => {
     process.env.BETTER_AUTH_SECRET = SECRET;
-    const resource = "https://mail.agent-native.com/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ownerEmail: "oauth@example.com",
       clientId: "client-123",
       scope: "mcp:read",
       resource,
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
     });
     const res = await verifyAuth(`Bearer ${token}`, undefined, {
       allowDevOpen: false,
@@ -471,13 +471,13 @@ describe("verifyAuth — fullSurface (real-caller → full MCP surface)", () => 
 
   it("accepts standard MCP OAuth tokens with lowercase bearer headers", async () => {
     process.env.BETTER_AUTH_SECRET = SECRET;
-    const resource = "https://mail.agent-native.com/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ownerEmail: "oauth@example.com",
       clientId: "client-123",
       scope: "mcp:read",
       resource,
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
     });
     const res = await verifyAuth(`bearer  ${token}`, undefined, {
       allowDevOpen: false,

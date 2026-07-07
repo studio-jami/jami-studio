@@ -92,7 +92,7 @@ description: "مدير أصول رقمية أصلي للوكيل وخدمة إن
 
 ## البدء
 
-عرض توضيحي مباشر: [assets.agent-native.com](https://assets.agent-native.com).
+عرض توضيحي مباشر: [assets.jami.studio](https://assets.jami.studio).
 
 1. **إنشاء مكتبة.** أضف العلامة التجارية أو الحملة أو المنتج أو مصدر المحتوى الذي تستخدمه
    تريد الإدارة.
@@ -451,7 +451,7 @@ npx @agent-native/core@latest create my-assets --standalone --template assets
 import { EmbeddedApp } from "@agent-native/embedding";
 
 <EmbeddedApp
-  url="https://assets.agent-native.com/picker?mediaType=image"
+  url="https://assets.jami.studio/picker?mediaType=image"
   onMessage={(name, payload) => {
     if (name === "chooseAsset") {
       insertAsset((payload as { url: string }).url);
@@ -488,7 +488,7 @@ import { EmbeddedApp } from "@agent-native/embedding";
 ### المطور: توزيع مهارة التطبيق
 
 تحتوي مهارة تطبيق الأصول على معرف التطبيق `assets` وتستضيف MCP URL
-`https://assets.agent-native.com/_agent-native/mcp`.
+`https://assets.jami.studio/_agent-native/mcp`.
 
 ```bash
 # أسهل تثبيت مستضاف: تعليمات المهارات المصدرة بالإضافة إلى موصل MCP.

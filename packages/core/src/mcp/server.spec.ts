@@ -124,7 +124,7 @@ const embedSessionMocks = vi.hoisted(() => ({
       if (!value) return null;
       try {
         const url = value.startsWith("/")
-          ? new URL(value, requestOrigin ?? "https://mail.agent-native.com")
+          ? new URL(value, requestOrigin ?? "https://mail.jami.studio")
           : new URL(value);
         if (requestOrigin && url.origin !== new URL(requestOrigin).origin) {
           return null;
@@ -173,7 +173,7 @@ interface MakeEventOpts {
 
 function makeWebEvent(opts: MakeEventOpts): any {
   const headers: Record<string, string> = {
-    host: "mail.agent-native.com",
+    host: "mail.jami.studio",
     "x-forwarded-proto": "https",
     accept: "application/json, text/event-stream",
     "content-type": "application/json",
@@ -186,7 +186,7 @@ function makeWebEvent(opts: MakeEventOpts): any {
   };
   // h3 v2 web runtime: `event.req` IS the web Request. We hand a real one so
   // buildWebRequest's preferred path is exercised.
-  const reqUrl = `https://mail.agent-native.com${opts.path ?? "/"}`;
+  const reqUrl = `https://mail.jami.studio${opts.path ?? "/"}`;
   const webReq = new Request(reqUrl, {
     method: opts.method ?? "POST",
     headers,
@@ -317,7 +317,7 @@ const config = {
           description: "Review the echoed thing in an inline MCP App.",
           html: ({ actionName, requestOrigin }: any) =>
             `<!doctype html><html><body><main data-action="${actionName}" data-origin="${requestOrigin}">Mail review</main></body></html>`,
-          csp: { connectDomains: ["https://mail.agent-native.com"] },
+          csp: { connectDomains: ["https://mail.jami.studio"] },
           prefersBorder: true,
         },
       },
@@ -343,7 +343,7 @@ async function firstPartyMcpAuthHeaders() {
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setAudience("https://mail.agent-native.com/_agent-native/mcp")
+    .setAudience("https://mail.jami.studio/_agent-native/mcp")
     .setExpirationTime("5m")
     .sign(new TextEncoder().encode(process.env.A2A_SECRET));
   return {
@@ -478,8 +478,8 @@ async function mcpAppsAuthHeaders(
     ownerEmail: "oauth@example.com",
     clientId: options.clientId ?? "client-123",
     scope: options.scope ?? "mcp:read mcp:write mcp:apps",
-    resource: "https://mail.agent-native.com/_agent-native/mcp",
-    issuer: "https://mail.agent-native.com",
+    resource: "https://mail.jami.studio/_agent-native/mcp",
+    issuer: "https://mail.jami.studio",
   });
   return { authorization: `Bearer ${token}` };
 }
@@ -544,11 +544,11 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.result.serverInfo.title).toBe("Agent-Native Mail");
     expect(out.result.serverInfo.description).toBe("Mail app");
     expect(out.result.serverInfo.websiteUrl).toBe(
-      "https://mail.agent-native.com/mail",
+      "https://mail.jami.studio/mail",
     );
     expect(out.result.serverInfo.icons).toEqual([
       {
-        src: "https://mail.agent-native.com/agent-native-icon-light.svg",
+        src: "https://mail.jami.studio/agent-native-icon-light.svg",
         mimeType: "image/svg+xml",
         sizes: ["135x78"],
         theme: "light",
@@ -578,11 +578,11 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
 
     expect(out.error).toBeUndefined();
     expect(out.result.serverInfo.websiteUrl).toBe(
-      "https://mail.agent-native.com/dispatch/mail",
+      "https://mail.jami.studio/dispatch/mail",
     );
     expect(out.result.serverInfo.icons).toEqual([
       {
-        src: "https://mail.agent-native.com/dispatch/agent-native-icon-light.svg",
+        src: "https://mail.jami.studio/dispatch/agent-native-icon-light.svg",
         mimeType: "image/svg+xml",
         sizes: ["135x78"],
         theme: "light",
@@ -629,7 +629,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     );
     expect(echo._meta?.["openai/widgetAccessible"]).toBe(true);
     expect(echo._meta?.["openai/widgetCSP"]).toEqual({
-      connect_domains: ["https://mail.agent-native.com"],
+      connect_domains: ["https://mail.jami.studio"],
     });
     expect(echo._meta?.ui).toEqual({
       resourceUri: "ui://mail/echo-thing/shell-v64",
@@ -1410,16 +1410,16 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
         _meta: expect.objectContaining({
           ui: {
             csp: {
-              connectDomains: ["https://mail.agent-native.com"],
+              connectDomains: ["https://mail.jami.studio"],
             },
             prefersBorder: true,
           },
           "openai/widgetDescription":
             "Review the echoed thing in an inline MCP App.",
-          "openai/widgetDomain": "https://mail.agent-native.com",
+          "openai/widgetDomain": "https://mail.jami.studio",
           "openai/widgetPrefersBorder": true,
           "openai/widgetCSP": {
-            connect_domains: ["https://mail.agent-native.com"],
+            connect_domains: ["https://mail.jami.studio"],
           },
         }),
       }),
@@ -1542,22 +1542,22 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
         _meta: expect.objectContaining({
           ui: {
             csp: {
-              connectDomains: ["https://mail.agent-native.com"],
+              connectDomains: ["https://mail.jami.studio"],
             },
             prefersBorder: true,
           },
           "openai/widgetCSP": {
-            connect_domains: ["https://mail.agent-native.com"],
+            connect_domains: ["https://mail.jami.studio"],
           },
           "openai/widgetDescription":
             "Review the echoed thing in an inline MCP App.",
-          "openai/widgetDomain": "https://mail.agent-native.com",
+          "openai/widgetDomain": "https://mail.jami.studio",
           "openai/widgetPrefersBorder": true,
         }),
       }),
     ]);
     expect(out.result.contents[0].text).toContain(
-      'data-origin="https://mail.agent-native.com"',
+      'data-origin="https://mail.jami.studio"',
     );
     expect(out.result.contents[0]._meta.ui.domain).toBeUndefined();
   });
@@ -1605,7 +1605,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     );
     expect(tool._meta["openai/widgetCSP"]).toEqual({
       connect_domains: [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "https://api.example.com",
       ],
       resource_domains: ["https://cdn.example.com"],
@@ -1623,7 +1623,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     );
     expect(list.result.resources[0]._meta.ui.csp).toEqual({
       connectDomains: [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "https://api.example.com",
       ],
       resourceDomains: ["https://cdn.example.com"],
@@ -1674,7 +1674,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
         {
           actionName: "dynamic-review",
           appId: "mail",
-          requestOrigin: "https://mail.agent-native.com",
+          requestOrigin: "https://mail.jami.studio",
         },
       ]),
     );
@@ -2103,20 +2103,20 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     // Second block: the appended markdown deep link, absolutized to the
     // request origin derived from the inbound Host header.
     expect(content[1].text).toContain(
-      "[Open in Mail →](https://mail.agent-native.com/_agent-native/open?view=thing&id=thing-42&agentSidebar=closed)",
+      "[Open in Mail →](https://mail.jami.studio/_agent-native/open?view=thing&id=thing-42&agentSidebar=closed)",
     );
     // Structured `_meta` so a desktop client can open it natively.
     expect(out.result._meta["agent-native/openLink"]).toMatchObject({
       label: "Open in Mail",
       view: "thing",
       webUrl:
-        "https://mail.agent-native.com/_agent-native/open?view=thing&id=thing-42&agentSidebar=closed",
+        "https://mail.jami.studio/_agent-native/open?view=thing&id=thing-42&agentSidebar=closed",
     });
     expect(out.result._meta["openai/outputTemplate"]).toBe(
       "ui://mail/echo-thing/shell-v64",
     );
     expect(out.result._meta["openai/widgetCSP"]).toEqual({
-      connect_domains: ["https://mail.agent-native.com"],
+      connect_domains: ["https://mail.jami.studio"],
     });
     // The tools/call RESULT deliberately carries NO `_meta.ui` resource
     // linkage. MCP Apps (ext-apps 1.7.2) binds the `ui://` window on the tool
@@ -2297,7 +2297,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.result._meta["agent-native/openLink"]).toMatchObject({
       label: "Open mail",
       view: "/inbox",
-      webUrl: "https://mail.agent-native.com/inbox",
+      webUrl: "https://mail.jami.studio/inbox",
       desktopUrl:
         "agentnative://open?app=mail&view=&to=%2Finbox&agentSidebar=closed",
     });
@@ -2306,10 +2306,10 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
         (out.result._meta["agent-native/openLink"] as Record<string, string>)
           .vscodeUrl,
       ).searchParams.get("url"),
-    ).toBe("https://mail.agent-native.com/inbox");
+    ).toBe("https://mail.jami.studio/inbox");
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=test-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=test-ticket&__an_mcp_chat_bridge=1",
     });
     expect(
       JSON.stringify(out.result._meta["agent-native/openLink"]),
@@ -2318,7 +2318,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
       app: "mail",
       path: "/inbox",
       openLink: {
-        webUrl: "https://mail.agent-native.com/inbox",
+        webUrl: "https://mail.jami.studio/inbox",
       },
     });
     expect(JSON.stringify(out.result.structuredContent)).not.toContain(
@@ -2369,7 +2369,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.error).toBeUndefined();
     expect(embedSessionMocks.normalizeEmbedTargetPath).toHaveBeenCalledWith(
       "/picker?mediaType=image&prompt=cat&__an_mcp_chat_bridge=1",
-      "https://mail.agent-native.com",
+      "https://mail.jami.studio",
     );
     expect(embedSessionMocks.createEmbedSessionTicket).toHaveBeenCalledWith({
       ownerEmail: "oauth@example.com",
@@ -2382,13 +2382,13 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     ]);
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=minted-picker-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=minted-picker-ticket&__an_mcp_chat_bridge=1",
       expiresAt: 1735689600000,
     });
     expect(out.result._meta["agent-native/openLink"]).toMatchObject({
       label: "Open assets",
       view: "/picker?mediaType=image&prompt=cat",
-      webUrl: "https://mail.agent-native.com/picker?mediaType=image&prompt=cat",
+      webUrl: "https://mail.jami.studio/picker?mediaType=image&prompt=cat",
     });
     expect(out.result.structuredContent).toMatchObject({
       app: "assets",
@@ -2449,7 +2449,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.result._meta["agent-native/openLink"]).toBeUndefined();
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=only-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=only-ticket&__an_mcp_chat_bridge=1",
     });
     expect(JSON.stringify(out.result.content)).not.toContain("only-ticket");
     expect(JSON.stringify(out.result.structuredContent)).not.toContain(
@@ -2500,7 +2500,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.result._meta["agent-native/openLink"]).toBeUndefined();
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=url-only-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=url-only-ticket&__an_mcp_chat_bridge=1",
     });
     expect(JSON.stringify(out.result.content)).not.toContain("url-only-ticket");
     expect(JSON.stringify(out.result.structuredContent)).not.toContain(
@@ -2553,23 +2553,23 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     expect(out.result._meta["agent-native/openLink"]).toMatchObject({
       label: "Open dispatch",
       view: "/",
-      webUrl: "https://mail.agent-native.com/",
+      webUrl: "https://mail.jami.studio/",
       desktopUrl:
         "agentnative://open?app=dispatch&view=&to=%2F&agentSidebar=closed",
     });
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=root-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=root-ticket&__an_mcp_chat_bridge=1",
     });
     expect(JSON.stringify(out.result.content)).not.toContain("root-ticket");
     expect(JSON.stringify(out.result.structuredContent)).not.toContain(
       "root-ticket",
     );
     expect(out.result.structuredContent.openLink).toMatchObject({
-      webUrl: "https://mail.agent-native.com/",
+      webUrl: "https://mail.jami.studio/",
     });
     expect(out.result.structuredContent.url).toBe(
-      "https://mail.agent-native.com/",
+      "https://mail.jami.studio/",
     );
   });
 
@@ -2885,14 +2885,14 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     // The embedStart meta still carries the reference to launch the app.
     expect(out.result._meta["agent-native/embedStart"]).toMatchObject({
       startUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=deck-name-ticket&__an_mcp_chat_bridge=1",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=deck-name-ticket&__an_mcp_chat_bridge=1",
     });
     // No fabricated origin-relative URL leaks into the response.
     expect(JSON.stringify(out.result.content)).not.toContain(
-      "https://mail.agent-native.com/deck",
+      "https://mail.jami.studio/deck",
     );
     expect(JSON.stringify(out.result.structuredContent)).not.toContain(
-      "https://mail.agent-native.com/deck",
+      "https://mail.jami.studio/deck",
     );
   });
 
@@ -2955,7 +2955,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     );
     expect(routeOut.result._meta["agent-native/openLink"]).toMatchObject({
       webUrl:
-        "https://mail.agent-native.com/inbox?threadId=abc123&filter=unread",
+        "https://mail.jami.studio/inbox?threadId=abc123&filter=unread",
       desktopUrl:
         "agentnative://open?app=mail&view=inbox&to=%2Finbox%3FthreadId%3Dabc123%26filter%3Dunread&agentSidebar=closed",
     });
@@ -2973,7 +2973,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
       },
     );
     expect(paramsOut.result._meta["agent-native/openLink"]).toMatchObject({
-      webUrl: "https://mail.agent-native.com/agenda",
+      webUrl: "https://mail.jami.studio/agenda",
       desktopUrl:
         "agentnative://open?app=calendar&view=&to=%2Fagenda&eventId=evt-1&date=2026-05-23&agentSidebar=closed",
     });
@@ -2989,7 +2989,7 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
     const res = await handleMcpRequest(event, config as any);
     expect(event._status).toBe(401);
     expect(event._responseHeaders?.["www-authenticate"]).toContain(
-      'resource_metadata="https://mail.agent-native.com/.well-known/oauth-protected-resource"',
+      'resource_metadata="https://mail.jami.studio/.well-known/oauth-protected-resource"',
     );
     expect(event._responseHeaders?.["www-authenticate"]).toContain(
       'scope="mcp:read mcp:write mcp:apps"',
@@ -3000,18 +3000,18 @@ describe("handleMcpRequest — web-standard runtime fallback (no Node req/res)",
       error: "Unauthorized",
       authenticate: {
         command:
-          "npx -y @agent-native/core@latest reconnect https://mail.agent-native.com",
+          "npx -y @agent-native/core@latest reconnect https://mail.jami.studio",
         firstTimeCommand:
-          "npx @agent-native/core@latest connect https://mail.agent-native.com",
+          "npx @agent-native/core@latest connect https://mail.jami.studio",
         authorizeUrl:
-          "https://mail.agent-native.com/_agent-native/mcp/oauth/authorize",
+          "https://mail.jami.studio/_agent-native/mcp/oauth/authorize",
         resourceMetadataUrl:
-          "https://mail.agent-native.com/.well-known/oauth-protected-resource",
-        mcpUrl: "https://mail.agent-native.com/_agent-native/mcp",
+          "https://mail.jami.studio/.well-known/oauth-protected-resource",
+        mcpUrl: "https://mail.jami.studio/_agent-native/mcp",
       },
     });
     expect((res as any).message).toContain(
-      "npx -y @agent-native/core@latest reconnect https://mail.agent-native.com",
+      "npx -y @agent-native/core@latest reconnect https://mail.jami.studio",
     );
   });
 

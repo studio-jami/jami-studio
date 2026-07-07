@@ -159,7 +159,7 @@ async function fetchText(url: string, maxChars: number): Promise<string> {
       headers: {
         Accept: "text/html,application/json,text/plain;q=0.9,*/*;q=0.8",
         "User-Agent":
-          "Mozilla/5.0 (compatible; AgentNativeClips/1.0; +https://agent-native.com)",
+          "Mozilla/5.0 (compatible; AgentNativeClips/1.0; +https://jami.studio)",
       },
       signal: AbortSignal.timeout(15_000),
     },

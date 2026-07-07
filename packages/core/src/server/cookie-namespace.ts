@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const FIRST_PARTY_COOKIE_DOMAIN = "agent-native.com";
+const FIRST_PARTY_COOKIE_DOMAIN = "jami.studio";
 
 export interface AuthCookieNamespace {
   appSlug: string;
@@ -54,7 +54,7 @@ export function resolveAuthCookieNamespace(
 
   if (firstPartyIsolatedRealm && !appSlug) {
     throw new Error(
-      "[agent-native] COOKIE_DOMAIN=.agent-native.com requires an app identifier " +
+      "[agent-native] COOKIE_DOMAIN=.jami.studio requires an app identifier " +
         "so first-party auth cookies stay isolated. Set APP_NAME, APP_URL, URL, " +
         "DEPLOY_PRIME_URL, or DEPLOY_URL; only set AGENT_NATIVE_SHARE_COOKIE_DOMAIN=1 " +
         "when every subdomain intentionally shares one auth database.",

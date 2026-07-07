@@ -27,8 +27,8 @@
     "storage"
   ],
   "host_permissions": [
-    "https://clips.agent-native.com/*",
-    "https://forms.agent-native.com/*",
+    "https://clips.jami.studio/*",
+    "https://forms.jami.studio/*",
     "http://localhost/*",
     "http://127.0.0.1/*"
   ],
@@ -52,7 +52,7 @@
   ],
   "externally_connectable": {
     "matches": [
-      "https://clips.agent-native.com/*",
+      "https://clips.jami.studio/*",
       "http://localhost/*",
       "http://127.0.0.1/*"
     ]

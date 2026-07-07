@@ -96,7 +96,7 @@ Lorsque vous ouvrez l'application, la bibliothèque sélectionnée, l'invite, le
 
 ## Démarrer
 
-Démo en direct : [assets.agent-native.com](https://assets.agent-native.com).
+Démo en direct : [assets.jami.studio](https://assets.jami.studio).
 
 1. **Créez une bibliothèque.** Ajoutez la marque, la campagne, le produit ou le flux de contenu que vous souhaitez
    veulent gérer.
@@ -455,7 +455,7 @@ vous souhaitez parcourir/sélectionner des vidéos :
 import { EmbeddedApp } from "@agent-native/embedding";
 
 <EmbeddedApp
-  url="https://assets.agent-native.com/picker?mediaType=image"
+  url="https://assets.jami.studio/picker?mediaType=image"
   onMessage={(name, payload) => {
     if (name === "chooseAsset") {
       insertAsset((payload as { url: string }).url);
@@ -492,7 +492,7 @@ sélecteur humain UI.
 ### Développeur : distribuer la compétence d'application
 
 La compétence d'application Actifs porte l'ID d'application `assets` et héberge MCP URL
-`https://assets.agent-native.com/_agent-native/mcp`.
+`https://assets.jami.studio/_agent-native/mcp`.
 
 ```bash
 # Installation hébergée la plus simple : instructions de compétences exportées et connecteur MCP.

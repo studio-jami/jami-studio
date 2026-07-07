@@ -159,10 +159,10 @@ describe("resolveLegacyToolsRedirect", () => {
 describe("getFrameworkRouteRequestUrl", () => {
   it("preserves the raw query when a mounted event URL was normalized", () => {
     const event = createMockEvent(
-      `https://www.agent-native.com/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=signed-state&api-key=public-key`,
+      `https://www.jami.studio/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=signed-state&api-key=public-key`,
     );
     event.url = new URL(
-      "https://www.agent-native.com/_agent-native/builder/callback",
+      "https://www.jami.studio/_agent-native/builder/callback",
     );
 
     const requestUrl = getFrameworkRouteRequestUrl(event);
@@ -175,7 +175,7 @@ describe("getFrameworkRouteRequestUrl", () => {
 
   it("keeps the canonical event URL when it already has a query", () => {
     const event = createMockEvent(
-      `https://www.agent-native.com/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=from-event`,
+      `https://www.jami.studio/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=from-event`,
     );
     event.node.req.url = "/_agent-native/builder/callback?_an_state=from-raw";
 
@@ -200,11 +200,11 @@ describe("resolveBuilderOwnerContextForRequest", () => {
   });
 
   it("uses signed callback state when docs auth minted a fresh anonymous session", async () => {
-    const originalOwner = "anon-original@agent-native.com";
-    const freshOwner = "anon-fresh@agent-native.com";
+    const originalOwner = "anon-original@jami.studio";
+    const freshOwner = "anon-fresh@jami.studio";
     const state = signBuilderCallbackState(originalOwner);
     const event = createMockEvent(
-      `https://agent-native.com/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=${encodeURIComponent(state)}`,
+      `https://jami.studio/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=${encodeURIComponent(state)}`,
     );
 
     const context = await resolveBuilderOwnerContextForRequest(
@@ -221,11 +221,11 @@ describe("resolveBuilderOwnerContextForRequest", () => {
   });
 
   it("uses signed connect owner when docs auth minted a fresh anonymous session", async () => {
-    const originalOwner = "anon-original@agent-native.com";
-    const freshOwner = "anon-fresh@agent-native.com";
+    const originalOwner = "anon-original@jami.studio";
+    const freshOwner = "anon-fresh@jami.studio";
     const token = signBuilderConnectToken(originalOwner);
     const event = createMockEvent(
-      `https://agent-native.com/_agent-native/builder/connect?${BUILDER_CONNECT_PARAM}=${encodeURIComponent(token)}`,
+      `https://jami.studio/_agent-native/builder/connect?${BUILDER_CONNECT_PARAM}=${encodeURIComponent(token)}`,
     );
 
     const context = await resolveBuilderOwnerContextForRequest(
@@ -244,7 +244,7 @@ describe("resolveBuilderOwnerContextForRequest", () => {
   it("does not let signed Builder state override a different real user session", async () => {
     const state = signBuilderCallbackState("mallory@example.com");
     const event = createMockEvent(
-      `https://assets.agent-native.com/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=${encodeURIComponent(state)}`,
+      `https://assets.jami.studio/_agent-native/builder/callback?${BUILDER_STATE_PARAM}=${encodeURIComponent(state)}`,
     );
 
     const context = await resolveBuilderOwnerContextForRequest(
@@ -273,12 +273,12 @@ describe("resolveBuilderWaitlistFormTargetForRequest", () => {
 
   it("uses the Builder-org waitlist form on hosted Agent Native domains", () => {
     const event = createMockEvent(
-      "https://forms.agent-native.com/_agent-native/builder/branch-waitlist",
+      "https://forms.jami.studio/_agent-native/builder/branch-waitlist",
     );
 
     expect(resolveBuilderWaitlistFormTargetForRequest(event)).toEqual({
       formId: "DYTHuM0jlV",
-      formsOrigin: "https://forms.agent-native.com",
+      formsOrigin: "https://forms.jami.studio",
     });
   });
 
@@ -308,7 +308,7 @@ describe("resolveBuilderWaitlistFormTargetForRequest", () => {
 describe("buildBuilderWaitlistFormPayload", () => {
   it("flags the existing Builder waitlist as background coding by default", () => {
     const event = createMockEvent(
-      "https://forms.agent-native.com/_agent-native/builder/branch-waitlist",
+      "https://forms.jami.studio/_agent-native/builder/branch-waitlist",
     );
 
     expect(
@@ -332,24 +332,24 @@ describe("buildBuilderWaitlistFormPayload", () => {
 
   it("preserves an explicit waitlist use case for downstream Forms and Slack routing", () => {
     const event = createMockEvent(
-      "https://forms.agent-native.com/_agent-native/builder/branch-waitlist",
+      "https://forms.jami.studio/_agent-native/builder/branch-waitlist",
     );
 
     expect(
       buildBuilderWaitlistFormPayload(event, "steve@builder.io", {
-        pageUrl: "https://design.agent-native.com/design/abc",
+        pageUrl: "https://design.jami.studio/design/abc",
         prompt: "Publish design",
         source: "design_editor_publish_app_menu",
         useCase: "design_publish_app",
       }),
     ).toMatchObject({
       data: {
-        appUrl: "https://design.agent-native.com/design/abc",
+        appUrl: "https://design.jami.studio/design/abc",
         source: "design_editor_publish_app_menu",
         useCase: "design_publish_app",
       },
       _meta: {
-        pageUrl: "https://design.agent-native.com/design/abc",
+        pageUrl: "https://design.jami.studio/design/abc",
         source: "design_editor_publish_app_menu",
         useCase: "design_publish_app",
       },
@@ -358,7 +358,7 @@ describe("buildBuilderWaitlistFormPayload", () => {
 
   it("falls back to the default use case for unknown waitlist values", () => {
     const event = createMockEvent(
-      "https://forms.agent-native.com/_agent-native/builder/branch-waitlist",
+      "https://forms.jami.studio/_agent-native/builder/branch-waitlist",
     );
 
     expect(

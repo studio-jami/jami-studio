@@ -94,7 +94,7 @@ Ao abrir o aplicativo, a biblioteca selecionada, o prompt, as referências e os 
 
 ## Primeiros passos
 
-Demonstração ao vivo: [assets.agent-native.com](https://assets.agent-native.com).
+Demonstração ao vivo: [assets.jami.studio](https://assets.jami.studio).
 
 1. **Crie uma biblioteca.** Adicione a marca, a campanha, o produto ou o fluxo de conteúdo que você deseja
    deseja gerenciar.
@@ -453,7 +453,7 @@ você deseja navegar/selecionar vídeos:
 import { EmbeddedApp } from "@agent-native/embedding";
 
 <EmbeddedApp
-  url="https://assets.agent-native.com/picker?mediaType=image"
+  url="https://assets.jami.studio/picker?mediaType=image"
   onMessage={(name, payload) => {
     if (name === "chooseAsset") {
       insertAsset((payload as { url: string }).url);
@@ -490,7 +490,7 @@ selecionador humano UI.
 ### Desenvolvedor: distribua a habilidade do aplicativo
 
 A habilidade do aplicativo Assets tem o ID do aplicativo `assets` e MCP hospedado URL hospedado
-`https://assets.agent-native.com/_agent-native/mcp`.
+`https://assets.jami.studio/_agent-native/mcp`.
 
 ```bash
 # Instalação hospedada mais fácil: instruções de habilidade exportadas mais conector MCP.

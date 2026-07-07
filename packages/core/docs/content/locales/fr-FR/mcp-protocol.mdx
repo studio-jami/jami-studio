@@ -233,14 +233,14 @@ Le point de terminaison MCP prend en charge le modèle distant standard MCP OAut
 Pour les hôtes MCP compatibles OAuth, configurez le serveur distant URL sans en-têtes statiques :
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 La première requête MCP non authentifiée reçoit :
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 Points de terminaison de découverte :

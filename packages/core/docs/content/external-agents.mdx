@@ -98,7 +98,7 @@ Add one remote MCP connector to the host where you want to use Agent-Native.
 For workspace or cross-app work, use Dispatch:
 
 ```text
-https://dispatch.agent-native.com/_agent-native/mcp
+https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 Dispatch is the single gateway for Mail, Calendar, Analytics, Brain, and your
@@ -109,8 +109,8 @@ reach all apps or only selected apps. The connected host then gets
 For one intentionally isolated app, use that app directly:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
-https://<your-app>.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
+https://<your-app>.jami.studio/_agent-native/mcp
 ```
 
 Every hosted app also has a helper page at
@@ -169,7 +169,7 @@ Use this flow for local agent clients on your machine — Claude Code, Claude Co
 Run the connect command through npm:
 
 ```bash
-npx @agent-native/core@latest connect https://dispatch.agent-native.com
+npx @agent-native/core@latest connect https://dispatch.jami.studio
 ```
 
 The command asks which local agent clients should receive MCP config. All clients are preselected the first time; after you choose, the selection is saved to `~/.agent-native/connect.json` so the next run can reuse it with Enter, or you can edit the checked items.
@@ -214,7 +214,7 @@ npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 The raw `skills` CLI installs `SKILL.md` files only; local MCP clients still
-need a connector such as `npx @agent-native/core@latest connect https://assets.agent-native.com`.
+need a connector such as `npx @agent-native/core@latest connect https://assets.jami.studio`.
 
 | Skill    | Alias              | For                    |
 | -------- | ------------------ | ---------------------- |
@@ -226,7 +226,7 @@ When you truly need an isolated app instead of Dispatch's workspace gateway,
 run the same command with that app's host:
 
 ```bash
-npx @agent-native/core@latest connect https://mail.agent-native.com
+npx @agent-native/core@latest connect https://mail.jami.studio
 ```
 
 `connect --all` still exists for legacy per-app client setups, but new
@@ -239,10 +239,10 @@ The connection is **per-user, scoped, and revocable**. In the OAuth path, the ho
 Once connected, auth should persist long-term — access tokens last 30 days by default (override with `MCP_OAUTH_ACCESS_TOKEN_TTL` on the server, e.g. `7d` or `12h`) with a sliding 365-day refresh window, so random 401s should be rare. When one does happen, use the lightweight reconnect command rather than reinstalling:
 
 ```bash
-npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex
+npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex
 ```
 
-`reconnect` finds any MCP config entry whose URL ends in `/_agent-native/mcp` for the given host and selected client (matching by URL regardless of connector name), then refreshes or replaces the auth material without touching your installed skills or re-running the full install flow. Pass the base app URL (e.g. `https://plan.agent-native.com`) — the `/_agent-native/mcp` suffix is inferred. Auth and tool loading are per client, so restart/reload that client afterward; Codex needs a new session before newly loaded tools appear.
+`reconnect` finds any MCP config entry whose URL ends in `/_agent-native/mcp` for the given host and selected client (matching by URL regardless of connector name), then refreshes or replaces the auth material without touching your installed skills or re-running the full install flow. Pass the base app URL (e.g. `https://plan.jami.studio`) — the `/_agent-native/mcp` suffix is inferred. Auth and tool loading are per client, so restart/reload that client afterward; Codex needs a new session before newly loaded tools appear.
 
 In Claude Code, the equivalent UI path is: run `/mcp` and choose **Authenticate** (or **Reconnect**) for the relevant connector.
 
@@ -258,7 +258,7 @@ For MCP clients that cannot add a remote OAuth URL directly, open the app in you
   "mcpServers": {
     "mail": {
       "type": "http",
-      "url": "https://mail.agent-native.com/_agent-native/mcp",
+      "url": "https://mail.jami.studio/_agent-native/mcp",
       "headers": { "Authorization": "Bearer <minted-token>" },
     },
   },
@@ -275,13 +275,13 @@ Hosted agent-native apps also support the standard remote MCP OAuth flow. For cl
 
 ```bash
 claude mcp add --transport http agent-native \
-  https://dispatch.agent-native.com/_agent-native/mcp
+  https://dispatch.jami.studio/_agent-native/mcp
 ```
 
-This is the same URL-only entry that `npx @agent-native/core@latest connect https://dispatch.agent-native.com --client claude-code` writes for you. Then run `/mcp` in Claude Code and choose **Authenticate**. The client discovers auth from the MCP server's `401 WWW-Authenticate` challenge, fetches `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server`, dynamically registers a public OAuth client, opens the app's authorization page, and stores the resulting token securely. ChatGPT developer-mode connectors use the same server URL:
+This is the same URL-only entry that `npx @agent-native/core@latest connect https://dispatch.jami.studio --client claude-code` writes for you. Then run `/mcp` in Claude Code and choose **Authenticate**. The client discovers auth from the MCP server's `401 WWW-Authenticate` challenge, fetches `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server`, dynamically registers a public OAuth client, opens the app's authorization page, and stores the resulting token securely. ChatGPT developer-mode connectors use the same server URL:
 
 ```text
-https://dispatch.agent-native.com/_agent-native/mcp
+https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 The OAuth flow is authorization-code + PKCE with refresh-token rotation. Access tokens are audience-bound to the exact MCP resource URL and carry the signed user/org identity, so tool calls, `resources/read`, and MCP App iframe-initiated `tools/call` all run through the same `runWithRequestContext` tenant scoping as the existing connect-minted JWT path. The iframe never receives raw OAuth tokens; the host mediates calls through the authenticated MCP connection.
@@ -384,7 +384,7 @@ The complete ~105-tool action surface is served only on explicit opt-in, two way
 - **Per token** — mint with `--full-catalog`, which embeds a `catalog_scope: "full"` claim in the JWT. Subsequent requests bypass the compact filter for that token:
 
   ```bash
-  npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --full-catalog
+  npx @agent-native/core@latest connect https://plan.jami.studio --client codex --full-catalog
   ```
 
 - **Per deployment** — set `AGENT_NATIVE_MCP_FULL_CATALOG=1` (server process env) to serve the full surface to all callers. Use it for single-tenant hosted instances that want the full surface without per-token opt-up.
@@ -436,7 +436,7 @@ and it hands back a link straight into the running app:
 > draft an email to John about the Q3 report
 
 Claude Code calls: manage-draft(to: "john@example.com", subject: "Q3 Report", body: "…")
-→ Open draft in Mail → https://mail.agent-native.com/_agent-native/open?app=mail&view=inbox&compose=…
+→ Open draft in Mail → https://mail.jami.studio/_agent-native/open?app=mail&view=inbox&compose=…
 ```
 
 Click that link and Mail opens with the draft restored — focused exactly where you, the logged-in user, are. The agent never had to know your session; it just produced the artifact.
@@ -668,7 +668,7 @@ You can also write the MCP client config by hand against any deployed endpoint w
   "mcpServers": {
     "analytics": {
       "type": "http",
-      "url": "https://analytics.agent-native.com/_agent-native/mcp",
+      "url": "https://analytics.jami.studio/_agent-native/mcp",
       "headers": { "Authorization": "Bearer <ACCESS_TOKEN-or-JWT>" },
     },
   },
@@ -718,7 +718,7 @@ The fallback hosted `connect` flow never copies the deployment's shared secret. 
 
 **Do**
 
-- Connect your own agent to Dispatch with `npx @agent-native/core@latest connect https://dispatch.agent-native.com`; use a direct app URL only when you want one isolated app.
+- Connect your own agent to Dispatch with `npx @agent-native/core@latest connect https://dispatch.jami.studio`; use a direct app URL only when you want one isolated app.
 - Add a `link` builder to any action that produces or lists a navigable resource (draft, event, dashboard, document).
 - Build the URL with `buildDeepLink(...)` — the single source of truth for the open-route format.
 - Keep `link` pure and synchronous; return `null` when there's nothing to open.

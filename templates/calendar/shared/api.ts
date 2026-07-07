@@ -225,7 +225,7 @@ export interface AvailabilityConfig {
   maxAdvanceDays: number;
   slotDurationMinutes: number;
   bookingPageSlug: string;
-  /** Unique username for booking URLs, e.g. calendar.agent-native.com/book/{username}/{slug} */
+  /** Unique username for booking URLs, e.g. calendar.jami.studio/book/{username}/{slug} */
   bookingUsername?: string;
 }
 

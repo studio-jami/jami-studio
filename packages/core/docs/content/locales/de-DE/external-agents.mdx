@@ -98,7 +98,7 @@ Fügen Sie einen Remote-MCP-Connector zum Host hinzu, auf dem Sie Agent-Native v
 Für arbeitsplatz- oder app-übergreifendes Arbeiten verwenden Sie Dispatch:
 
 ```text
-https://dispatch.agent-native.com/_agent-native/mcp
+https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 Dispatch ist das einzige Gateway für Mail, Kalender, Analytics, Brain und Ihr
@@ -109,8 +109,8 @@ Erreichen Sie alle Apps oder nur ausgewählte Apps. Der verbundene Host erhält 
 Für eine absichtlich isolierte App verwenden Sie diese App direkt:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
-https://<your-app>.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
+https://<your-app>.jami.studio/_agent-native/mcp
 ```
 
 Jede gehostete App verfügt auch über eine Hilfsseite unter
@@ -169,7 +169,7 @@ Verwenden Sie diesen Ablauf für lokale Agent-Clients auf Ihrem Computer – Cla
 Führen Sie den Verbindungsbefehl über npm aus:
 
 ```bash
-npx @agent-native/core@latest connect https://dispatch.agent-native.com
+npx @agent-native/core@latest connect https://dispatch.jami.studio
 ```
 
 Der Befehl fragt, welche lokalen Agent-Clients die MCP-Konfiguration erhalten sollen. Beim ersten Mal werden alle Clients vorausgewählt; Nach der Auswahl wird die Auswahl in `~/.agent-native/connect.json` gespeichert, sodass Sie sie beim nächsten Durchlauf mit der Eingabetaste wiederverwenden oder die markierten Elemente bearbeiten können.
@@ -214,7 +214,7 @@ npx skills@latest add Jami Studio/agent-native --skill assets
 ```
 
 Der rohe `skills` CLI installiert nur `SKILL.md`-Dateien; lokale MCP-Clients noch
-benötigen einen Anschluss wie `npx @agent-native/core@latest connect https://assets.agent-native.com`.
+benötigen einen Anschluss wie `npx @agent-native/core@latest connect https://assets.jami.studio`.
 
 | Fähigkeit | Alias              | Für                    |
 | --------- | ------------------ | ---------------------- |
@@ -226,7 +226,7 @@ Wenn Sie wirklich eine isolierte App anstelle des Workspace-Gateways von Dispatc
 Führen Sie denselben Befehl mit dem Host dieser App aus:
 
 ```bash
-npx @agent-native/core@latest connect https://mail.agent-native.com
+npx @agent-native/core@latest connect https://mail.jami.studio
 ```
 
 `connect --all` existiert weiterhin für ältere Pro-App-Client-Setups, ist aber neu
@@ -239,10 +239,10 @@ Die Verbindung ist **pro Benutzer, bereichsbezogen und widerrufbar**. Im OAuth-P
 Sobald die Verbindung hergestellt ist, sollte die Authentifizierung langfristig bestehen bleiben – Zugriffstokens sind standardmäßig 30 Tage gültig (Überschreibung durch `MCP_OAUTH_ACCESS_TOKEN_TTL` auf dem Server, z. B. `7d` oder `12h`) mit einem gleitenden Aktualisierungsfenster von 365 Tagen, sodass zufällige 401-Fehler selten sein sollten. Wenn einer auftritt, verwenden Sie den einfachen Befehl zum erneuten Verbinden, anstatt eine Neuinstallation durchzuführen:
 
 ```bash
-npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex
+npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex
 ```
 
-`reconnect` findet jeden MCP-Konfigurationseintrag, dessen URL auf `/_agent-native/mcp` für den angegebenen Host und ausgewählten Client endet (Übereinstimmung mit URL unabhängig vom Connector-Namen), und aktualisiert oder ersetzt dann das Authentifizierungsmaterial, ohne Ihren installierten skills zu berühren oder den vollständigen Installationsablauf erneut auszuführen. Übergeben Sie die Basis-App URL (z. B. `https://plan.agent-native.com`) – das Suffix `/_agent-native/mcp` wird abgeleitet. Authentifizierung und Tool-Laden erfolgen pro Client. Starten Sie diesen Client daher anschließend neu bzw. laden Sie ihn neu. Codex benötigt eine neue Sitzung, bevor neu geladene Tools angezeigt werden.
+`reconnect` findet jeden MCP-Konfigurationseintrag, dessen URL auf `/_agent-native/mcp` für den angegebenen Host und ausgewählten Client endet (Übereinstimmung mit URL unabhängig vom Connector-Namen), und aktualisiert oder ersetzt dann das Authentifizierungsmaterial, ohne Ihren installierten skills zu berühren oder den vollständigen Installationsablauf erneut auszuführen. Übergeben Sie die Basis-App URL (z. B. `https://plan.jami.studio`) – das Suffix `/_agent-native/mcp` wird abgeleitet. Authentifizierung und Tool-Laden erfolgen pro Client. Starten Sie diesen Client daher anschließend neu bzw. laden Sie ihn neu. Codex benötigt eine neue Sitzung, bevor neu geladene Tools angezeigt werden.
 
 Im Claude-Code lautet der entsprechende UI-Pfad: Führen Sie `/mcp` aus und wählen Sie **Authentifizieren** (oder **Erneut verbinden**) für den relevanten Connector.
 
@@ -258,7 +258,7 @@ Für MCP-Clients, die keinen Remote-OAuth URL direkt hinzufügen können, öffne
   "mcpServers": {
     "mail": {
       "type": "http",
-      "url": "https://mail.agent-native.com/_agent-native/mcp",
+      "url": "https://mail.jami.studio/_agent-native/mcp",
       "headers": { "Authorization": "Bearer <minted-token>" },
     },
   },
@@ -275,13 +275,13 @@ Gehostete agentennative Apps unterstützen auch den Standard-Remote-Flow MCP OAu
 
 ```bash
 claude mcp add --transport http agent-native \
-  https://dispatch.agent-native.com/_agent-native/mcp
+  https://dispatch.jami.studio/_agent-native/mcp
 ```
 
-Dies ist derselbe Nur-URL-Eintrag, den `npx @agent-native/core@latest connect https://dispatch.agent-native.com --client claude-code` für Sie schreibt. Führen Sie dann `/mcp` im Claude-Code aus und wählen Sie **Authentifizieren**. Der Client erkennt die Authentifizierung anhand der `401 WWW-Authenticate`-Challenge des MCP-Servers, ruft `/.well-known/oauth-protected-resource` und `/.well-known/oauth-authorization-server` ab, registriert dynamisch einen öffentlichen OAuth-Client, öffnet die Autorisierungsseite der App und speichert das resultierende Token sicher. ChatGPT-Entwicklermodus-Konnektoren verwenden denselben Server URL:
+Dies ist derselbe Nur-URL-Eintrag, den `npx @agent-native/core@latest connect https://dispatch.jami.studio --client claude-code` für Sie schreibt. Führen Sie dann `/mcp` im Claude-Code aus und wählen Sie **Authentifizieren**. Der Client erkennt die Authentifizierung anhand der `401 WWW-Authenticate`-Challenge des MCP-Servers, ruft `/.well-known/oauth-protected-resource` und `/.well-known/oauth-authorization-server` ab, registriert dynamisch einen öffentlichen OAuth-Client, öffnet die Autorisierungsseite der App und speichert das resultierende Token sicher. ChatGPT-Entwicklermodus-Konnektoren verwenden denselben Server URL:
 
 ```text
-https://dispatch.agent-native.com/_agent-native/mcp
+https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 Der OAuth-Fluss besteht aus Autorisierungscode + PKCE mit Aktualisierungstokenrotation. Zugriffstoken sind an die genaue MCP-Ressource URL zielgruppengebunden und tragen die signierte Benutzer-/Organisationsidentität, sodass Toolaufrufe, `resources/read` und MCP App-Iframe-initiiertes `tools/call` alle denselben `runWithRequestContext`-Mandantenbereich durchlaufen wie der vorhandene Connect-Minted-JWT-Pfad. Der Iframe empfängt niemals rohe OAuth-Token; Der Host vermittelt Anrufe über die authentifizierte MCP-Verbindung.
@@ -384,7 +384,7 @@ Die vollständige ~105-Tool-Aktionsoberfläche wird nur bei expliziter Einwillig
 - **Pro Token** – neu mit `--full-catalog`, das einen `catalog_scope: "full"`-Anspruch in den JWT einbettet. Nachfolgende Anfragen umgehen den Kompaktfilter für dieses Token:
 
   ```bash
-  npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --full-catalog
+  npx @agent-native/core@latest connect https://plan.jami.studio --client codex --full-catalog
   ```
 
 - **Pro Bereitstellung** – Legen Sie `AGENT_NATIVE_MCP_FULL_CATALOG=1` (Serverprozessumgebung) fest, um allen Aufrufern die gesamte Oberfläche bereitzustellen. Verwenden Sie es für Single-Tenant-gehostete Instanzen, die die volle Oberfläche ohne Opt-up pro Token wünschen.
@@ -436,7 +436,7 @@ und es gibt einen Link direkt an die laufende App zurück:
 > draft an email to John about the Q3 report
 
 Claude Code calls: manage-draft(to: "john@example.com", subject: "Q3 Report", body: "…")
-→ Open draft in Mail → https://mail.agent-native.com/_agent-native/open?app=mail&view=inbox&compose=…
+→ Open draft in Mail → https://mail.jami.studio/_agent-native/open?app=mail&view=inbox&compose=…
 ```
 
 Klicken Sie auf diesen Link und Mail wird mit dem wiederhergestellten Entwurf geöffnet – genau dort, wo Sie, der angemeldete Benutzer, sind. Der Agent musste Ihre Sitzung nie kennen; Es hat gerade das Artefakt erzeugt.
@@ -668,7 +668,7 @@ Sie können die MCP-Clientkonfiguration auch manuell für jeden bereitgestellten
   "mcpServers": {
     "analytics": {
       "type": "http",
-      "url": "https://analytics.agent-native.com/_agent-native/mcp",
+      "url": "https://analytics.jami.studio/_agent-native/mcp",
       "headers": { "Authorization": "Bearer <ACCESS_TOKEN-or-JWT>" },
     },
   },
@@ -718,7 +718,7 @@ Der als Fallback gehostete `connect`-Fluss kopiert niemals das gemeinsame Geheim
 
 **Tun**
 
-- Verbinden Sie Ihren eigenen Agenten mit Dispatch mit `npx @agent-native/core@latest connect https://dispatch.agent-native.com`; Verwenden Sie eine direkte App URL nur, wenn Sie eine isolierte App wünschen.
+- Verbinden Sie Ihren eigenen Agenten mit Dispatch mit `npx @agent-native/core@latest connect https://dispatch.jami.studio`; Verwenden Sie eine direkte App URL nur, wenn Sie eine isolierte App wünschen.
 - Fügen Sie einen `link`-Jami Studio zu jeder Aktion hinzu, die eine navigierbare Ressource (Entwurf, Ereignis, Dashboard, Dokument) erstellt oder auflistet.
 - Erstellen Sie den URL mit `buildDeepLink(...)` – der Single Source of Truth für das Open-Route-Format.
 - `link` rein und synchron halten; Geben Sie `null` zurück, wenn nichts zu öffnen ist.

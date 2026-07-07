@@ -100,7 +100,7 @@ describe("server/auth", () => {
     });
 
     it("infers first-party template identity from agent-native production URLs", async () => {
-      vi.stubEnv("APP_URL", "https://content.agent-native.com");
+      vi.stubEnv("APP_URL", "https://content.jami.studio");
       vi.stubEnv("npm_package_name", "@agent-native/framework");
       const { resolveSignupTrackingIdentity } =
         await import("./better-auth-instance.js");
@@ -1031,7 +1031,7 @@ describe("server/auth", () => {
       // run its own signature/CSRF verification.
       vi.stubEnv(
         "AGENT_NATIVE_IDENTITY_HUB_URL",
-        "https://dispatch.agent-native.com",
+        "https://dispatch.jami.studio",
       );
       for (const path of [
         "/_agent-native/identity/login",
@@ -1098,7 +1098,7 @@ describe("server/auth", () => {
       const result = await guard(
         createMockEvent({
           path: "/",
-          headers: { host: "dispatch.agent-native.com" },
+          headers: { host: "dispatch.jami.studio" },
         }),
       );
 
@@ -2746,7 +2746,7 @@ describe("server/auth", () => {
 
     it("migrates a legacy shared framework cookie into the isolated cookie name", async () => {
       vi.stubEnv("NODE_ENV", "production");
-      vi.stubEnv("COOKIE_DOMAIN", ".agent-native.com");
+      vi.stubEnv("COOKIE_DOMAIN", ".jami.studio");
       vi.stubEnv("APP_NAME", "slides");
       delete process.env.ACCESS_TOKEN;
       delete process.env.ACCESS_TOKENS;
@@ -2788,7 +2788,7 @@ describe("server/auth", () => {
       const setCookie = event.res.headers.get("set-cookie") ?? "";
       expect(setCookie).toContain("an_session=");
       expect(setCookie).toContain("Max-Age=0");
-      expect(setCookie).toContain("Domain=.agent-native.com");
+      expect(setCookie).toContain("Domain=.jami.studio");
       expect(setCookie).toContain("an_session_slides=legacy-token");
     });
 
@@ -3836,7 +3836,7 @@ describe("server/auth", () => {
 
     it("ignores first-party shared cookie domains and sets an isolated app session", async () => {
       vi.stubEnv("NODE_ENV", "production");
-      vi.stubEnv("COOKIE_DOMAIN", ".agent-native.com");
+      vi.stubEnv("COOKIE_DOMAIN", ".jami.studio");
       vi.stubEnv("APP_NAME", "slides");
 
       const mockExecute = vi.fn(async () => ({ rows: [] }));
@@ -3852,7 +3852,7 @@ describe("server/auth", () => {
       const event = createMockEvent({
         headers: {
           "x-forwarded-proto": "https",
-          host: "slides.agent-native.com",
+          host: "slides.jami.studio",
         },
       });
 
@@ -3863,7 +3863,7 @@ describe("server/auth", () => {
       const setCookie = event.res.headers.get("set-cookie") ?? "";
       expect(setCookie).toContain("an_session=");
       expect(setCookie).toContain("Max-Age=0");
-      expect(setCookie).toContain("Domain=.agent-native.com");
+      expect(setCookie).toContain("Domain=.jami.studio");
       expect(setCookie).toContain(`an_session_slides=${result.sessionToken}`);
       const sessionCookie = setCookie
         .split(/,(?=\s*[^=]+=)/)
@@ -3872,7 +3872,7 @@ describe("server/auth", () => {
           value.startsWith(`an_session_slides=${result.sessionToken}`),
         );
       expect(sessionCookie).toBeTruthy();
-      expect(sessionCookie).not.toContain("Domain=.agent-native.com");
+      expect(sessionCookie).not.toContain("Domain=.jami.studio");
     });
   });
 
@@ -4175,10 +4175,10 @@ describe("server/auth", () => {
     it("ignores loopback APP_URL values in hosted production", async () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("APP_URL", "http://localhost:8094");
-      vi.stubEnv("URL", "https://clips.agent-native.com");
+      vi.stubEnv("URL", "https://clips.jami.studio");
       const { getAppProductionUrl } = await import("./app-url.js");
 
-      expect(getAppProductionUrl()).toBe("https://clips.agent-native.com");
+      expect(getAppProductionUrl()).toBe("https://clips.jami.studio");
     });
   });
 

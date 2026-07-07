@@ -44,7 +44,7 @@ describe("slides agent card", () => {
           })),
           streaming: true,
         },
-        "https://slides.agent-native.com",
+        "https://slides.jami.studio",
       );
 
       expect(card.name).toBe("Slides");

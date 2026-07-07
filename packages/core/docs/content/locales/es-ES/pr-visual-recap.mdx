@@ -164,7 +164,7 @@ sobrevive a cualquier partida individual, los resúmenes que publica son visible
 cualquier propietario o administrador de la organización puede incluirlo o revocarlo. Mint one (solo propietario/administrador de la organización):
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 El comando lo autentica en el navegador y luego imprime el token de servicio
@@ -177,7 +177,7 @@ contra tu aplicación de Planes. Para la aplicación alojada, esto también escr
 archivo de token de publicación que `npx @agent-native/core@latest recap setup` puede leer:
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ token real.
 | `VISUAL_RECAP_MODEL`     | el valor predeterminado de cada CLI | Variable. Fija el modelo, p.e. `gpt-5.5` para Codex, o una identificación de modelo Claude. Unset utiliza el valor predeterminado del CLI.            |
 | `VISUAL_RECAP_REASONING` | valor predeterminado de cada modelo | Variable. Profundidad de razonamiento: `none`, `minimal`, `low`, `medium`, `high` o `xhigh`. Se aplica al backend Codex.                              |
 | `RECAP_CLI_VERSION`      | `latest`                            | Variable. Fija la versión `@agent-native/core` CLI que instala el flujo de trabajo, p. `1.5.0`. Ver [Version pinning](#version-pinning-copy-variant). |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com`     | Secreto. Solo cuando se aloja la aplicación Planes en un origen diferente.                                                                            |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio`     | Secreto. Solo cuando se aloja la aplicación Planes en un origen diferente.                                                                            |
 
 El flujo de trabajo detecta automáticamente cómo invocar su asistente CLI (fuente local dentro de este monorepo, el `@agent-native/core` publicado en otro lugar), por lo que no hay ninguna variable `RECAP_CLI` para configurar.
 

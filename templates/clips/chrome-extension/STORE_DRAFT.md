@@ -42,7 +42,7 @@ Diagnostics are bounded and redacted before they are saved. Clips does not colle
 
 ## Review Notes
 
-The extension opens `https://clips.agent-native.com/record` by default. Local development can point the settings page to a localhost Clips instance.
+The extension opens `https://clips.jami.studio/record` by default. Local development can point the settings page to a localhost Clips instance.
 
 ## Submission Artifact
 
@@ -63,7 +63,7 @@ templates/clips/chrome-extension/releases/clips-chrome-extension-0.1.2.zip
 
 The Web Store listing is live, and the web app shows the Chrome extension
 option by default on hosts supported by the published manifest
-(`clips.agent-native.com`, `localhost`, and `127.0.0.1`). Other deployments hide
+(`clips.jami.studio`, `localhost`, and `127.0.0.1`). Other deployments hide
 the option unless they explicitly opt in with a matching extension/listing.
 
 - `VITE_CLIPS_CHROME_EXTENSION_ENABLED=1` shows the Chrome option on custom

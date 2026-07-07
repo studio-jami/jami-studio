@@ -46,7 +46,7 @@ export const docsAuthOptions: AuthOptions = {
     }
 
     return {
-      email: `anon-${sessionId}@agent-native.com`,
+      email: `anon-${sessionId}@jami.studio`,
       userId: sessionId,
     };
   },

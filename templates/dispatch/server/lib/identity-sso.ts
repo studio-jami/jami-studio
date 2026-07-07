@@ -48,20 +48,20 @@ export const IDENTITY_SCOPE = "identity";
  * open-redirect / token-theft guard: an attacker-supplied `redirect_uri`
  * pointing anywhere else would exfiltrate the identity token.
  *
- * `.agent-native.com` covers every first-party hosted app
- * (mail.agent-native.com, calendar.agent-native.com, …) — the shared
- * first-party prod-URL registry is exactly the `*.agent-native.com`
+ * `.jami.studio` covers every first-party hosted app
+ * (mail.jami.studio, calendar.jami.studio, …) — the shared
+ * first-party prod-URL registry is exactly the `*.jami.studio`
  * subdomain space, so a suffix check is both sufficient and the least
  * footgun-prone (no per-app list to keep in sync).
  *
  * These are matched as DOT-prefixed suffixes against the parsed URL
- * hostname, so `agent-native.com.evil.com` does NOT match
- * `.agent-native.com` (it ends in `.evil.com`), and a bare
- * `agent-native.com` apex is intentionally NOT matched (all first-party
+ * hostname, so `jami.studio.evil.com` does NOT match
+ * `.jami.studio` (it ends in `.evil.com`), and a bare
+ * `jami.studio` apex is intentionally NOT matched (all first-party
  * apps are subdomains; the apex is the marketing site).
  */
 export const DEFAULT_ALLOWED_HOST_SUFFIXES: readonly string[] = [
-  ".agent-native.com",
+  ".jami.studio",
 ];
 
 /** Loopback hosts allowed for local development of the client side. */
@@ -70,7 +70,7 @@ const LOCALHOST_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 /**
  * Read an optional comma-separated extra-host-suffix allowlist from the
  * environment. Used for staging/preview client hosts that are not on
- * `*.agent-native.com`. Each entry is normalised to a lower-case,
+ * `*.jami.studio`. Each entry is normalised to a lower-case,
  * dot-prefixed suffix so it can only ever broaden by whole-host suffix,
  * never by substring.
  *
@@ -103,9 +103,9 @@ export function getConfiguredHostSuffixes(
  *   3. It has no embedded credentials (`user:pass@host`) — those are an
  *      open-redirect obfuscation vector.
  *   4. Its hostname is either a loopback host, OR ends in one of the
- *      allowed host suffixes (default `.agent-native.com`, plus any
+ *      allowed host suffixes (default `.jami.studio`, plus any
  *      configured via env). The suffix is matched against the FULL parsed
- *      hostname with a leading dot, so `agent-native.com.evil.com` is
+ *      hostname with a leading dot, so `jami.studio.evil.com` is
  *      rejected (ends in `.evil.com`) and substring spoofs cannot pass.
  *
  * Everything else is rejected. Fragments/queries on the URI are allowed
@@ -128,7 +128,7 @@ export function isAllowedRedirectUri(
     return false;
   }
 
-  // No embedded credentials — `https://evil@good.agent-native.com` style.
+  // No embedded credentials — `https://evil@good.jami.studio` style.
   if (url.username || url.password) return false;
 
   const hostname = url.hostname.toLowerCase();
@@ -152,9 +152,9 @@ export function isAllowedRedirectUri(
 
   // Suffix match against the full hostname, leading-dot anchored so a
   // sibling/parent host can never satisfy a child's suffix:
-  //   "mail.agent-native.com".endsWith(".agent-native.com")        -> true
-  //   "agent-native.com.evil.com".endsWith(".agent-native.com")    -> false
-  //   "evil-agent-native.com".endsWith(".agent-native.com")        -> false
+  //   "mail.jami.studio".endsWith(".jami.studio")        -> true
+  //   "jami.studio.evil.com".endsWith(".jami.studio")    -> false
+  //   "evil-jami.studio".endsWith(".jami.studio")        -> false
   return suffixes.some((suffix) => hostname.endsWith(suffix));
 }
 

@@ -14,7 +14,7 @@
     "plans",
     "visual plans"
   ],
-  "homepage": "https://agent-native.com/docs/template-plan#vscode-extension",
+  "homepage": "https://jami.studio/docs/template-plan#vscode-extension",
   "bugs": {
     "url": "https://github.com/BuilderIO/agent-native/issues"
   },
@@ -70,7 +70,7 @@
       "properties": {
         "agentNative.defaultAppUrl": {
           "type": "string",
-          "default": "https://plan.agent-native.com",
+          "default": "https://plan.jami.studio",
           "description": "The Agent Native app URL opened by the Open Agent Native command."
         }
       }

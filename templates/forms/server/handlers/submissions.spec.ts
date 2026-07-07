@@ -76,7 +76,7 @@ describe("submitForm pageUrl pass-through", () => {
     const res = await submit({
       data: { msg: "love it" },
       _meta: {
-        pageUrl: "https://clips.agent-native.com/library?ref=clip_share",
+        pageUrl: "https://clips.jami.studio/library?ref=clip_share",
         submitterEmail: "user@example.com",
         clientSurface: "tauri",
       },
@@ -85,7 +85,7 @@ describe("submitForm pageUrl pass-through", () => {
     expect(res).toMatchObject({ success: true });
     expect(state.inserted).toHaveLength(1);
     expect(state.inserted[0]!.pageUrl).toBe(
-      "https://clips.agent-native.com/library?ref=clip_share",
+      "https://clips.jami.studio/library?ref=clip_share",
     );
     expect(state.inserted[0]!.submitterEmail).toBe("user@example.com");
     expect(state.inserted[0]!.clientSurface).toBe("tauri");
@@ -116,7 +116,7 @@ describe("submitForm pageUrl pass-through", () => {
       data: { msg: "anonymous feedback" },
       _meta: {
         submitterEmail:
-          "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+          "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
       },
     });
 
@@ -127,7 +127,7 @@ describe("submitForm pageUrl pass-through", () => {
 
   it("drops synthetic anonymous submitter emails from the Forms session", async () => {
     state.session = {
-      email: "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+      email: "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
     };
 
     const res = await submit({ data: { msg: "host session is anonymous" } });
@@ -139,7 +139,7 @@ describe("submitForm pageUrl pass-through", () => {
 
   it("falls back to a real metadata email when the Forms session is anonymous", async () => {
     state.session = {
-      email: "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+      email: "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
     };
 
     const res = await submit({

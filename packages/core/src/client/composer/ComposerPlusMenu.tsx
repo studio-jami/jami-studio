@@ -59,7 +59,7 @@ interface ComposerPlusMenuProps {
 
 type View = "menu" | "skill-upload";
 
-const DEFAULT_ASSETS_PICKER_URL = "https://assets.agent-native.com/picker";
+const DEFAULT_ASSETS_PICKER_URL = "https://assets.jami.studio/picker";
 const EMBED_PROTOCOL = "agent-native.embed";
 const EMBED_VERSION = 1;
 

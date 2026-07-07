@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const LOOM_DOWNLOAD_TIMEOUT_MS = 120_000;
 const LOOM_VIDEO_USER_AGENT =
-  "Mozilla/5.0 (compatible; AgentNativeClips/1.0; +https://agent-native.com)";
+  "Mozilla/5.0 (compatible; AgentNativeClips/1.0; +https://jami.studio)";
 
 const LoomTranscodedUrlSchema = z.object({
   url: z.string().url(),

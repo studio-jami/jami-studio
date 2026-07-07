@@ -60,9 +60,9 @@ export const BUILT_IN_APP_MCP: BuiltInAppMcp[] = [
     serverName: "plan",
     aliases: ["agent-native-plans"],
     // core skills.ts:1828 (hosted.mcpUrl)
-    mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+    mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
     // core skills.ts:1827 (hosted.url)
-    hostedUrl: "https://plan.agent-native.com",
+    hostedUrl: "https://plan.jami.studio",
     // core skills.ts:1832 (auth.mode)
     authMode: "oauth",
     // core skills.ts:3321-3322 (githubActionPath gated on knownTarget === "visual-plans")
@@ -77,9 +77,9 @@ export const BUILT_IN_APP_MCP: BuiltInAppMcp[] = [
     // core skills.ts:1724 (mcp.serverName)
     serverName: "agent-native-assets",
     // core skills.ts:1722 (hosted.mcpUrl)
-    mcpUrl: "https://assets.agent-native.com/_agent-native/mcp",
+    mcpUrl: "https://assets.jami.studio/_agent-native/mcp",
     // core skills.ts:1721 (hosted.url)
-    hostedUrl: "https://assets.agent-native.com",
+    hostedUrl: "https://assets.jami.studio",
     // core skills.ts:1726 (auth.mode)
     authMode: "oauth",
   },
@@ -88,8 +88,8 @@ export const BUILT_IN_APP_MCP: BuiltInAppMcp[] = [
     displayName: "Content",
     skillNames: ["content"],
     serverName: "agent-native-content",
-    mcpUrl: "https://content.agent-native.com/_agent-native/mcp",
-    hostedUrl: "https://content.agent-native.com",
+    mcpUrl: "https://content.jami.studio/_agent-native/mcp",
+    hostedUrl: "https://content.jami.studio",
     authMode: "oauth",
   },
   {
@@ -101,9 +101,9 @@ export const BUILT_IN_APP_MCP: BuiltInAppMcp[] = [
     // core skills.ts:1770 (mcp.serverName)
     serverName: "agent-native-design",
     // core skills.ts:1768 (hosted.mcpUrl)
-    mcpUrl: "https://design.agent-native.com/_agent-native/mcp",
+    mcpUrl: "https://design.jami.studio/_agent-native/mcp",
     // core skills.ts:1767 (hosted.url)
-    hostedUrl: "https://design.agent-native.com",
+    hostedUrl: "https://design.jami.studio",
     // core skills.ts:1772 (auth.mode)
     authMode: "oauth",
   },
@@ -116,9 +116,9 @@ export const BUILT_IN_APP_MCP: BuiltInAppMcp[] = [
     // core skills.ts:1889 (mcp.serverName)
     serverName: "agent-native-context-xray",
     // core skills.ts:1887 (hosted.mcpUrl)
-    mcpUrl: "https://context-xray.agent-native.com/_agent-native/mcp",
+    mcpUrl: "https://context-xray.jami.studio/_agent-native/mcp",
     // core skills.ts:1886 (hosted.url)
-    hostedUrl: "https://context-xray.agent-native.com",
+    hostedUrl: "https://context-xray.jami.studio",
     // core skills.ts:1890 (auth.mode)
     authMode: "none",
     // core skills.ts:1878 (localOnly: true)

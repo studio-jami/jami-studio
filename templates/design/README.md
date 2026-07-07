@@ -4,7 +4,7 @@ An agent-native HTML prototyping studio — describe a screen and get a working
 Alpine/Tailwind prototype you can refine, tweak, and export. An open-source,
 self-hostable alternative to v0 and Lovable-style prototyping tools.
 
-**Live app: [design.agent-native.com](https://design.agent-native.com)**
+**Live app: [design.jami.studio](https://design.jami.studio)**
 
 Instead of a layered drawing canvas, the agent generates complete self-contained
 HTML prototypes, renders them in an iframe, and lets you refine the result with
@@ -30,4 +30,4 @@ pnpm install
 pnpm dev
 ```
 
-Full docs: [agent-native.com/docs/template-design](https://agent-native.com/docs/template-design).
+Full docs: [jami.studio/docs/template-design](https://jami.studio/docs/template-design).

@@ -19,23 +19,23 @@ if (!name) {
 const replacements = {
   contracts: {
     label: "Plans",
-    url: "https://plan.agent-native.com",
+    url: "https://plan.jami.studio",
   },
   images: {
     label: "Assets",
-    url: "https://assets.agent-native.com",
+    url: "https://assets.jami.studio",
   },
   videos: {
     label: "Clips",
-    url: "https://clips.agent-native.com",
+    url: "https://clips.jami.studio",
   },
   scheduling: {
     label: "Calendar",
-    url: "https://calendar.agent-native.com",
+    url: "https://calendar.jami.studio",
   },
   "visual-plans": {
     label: "Plans",
-    url: "https://plan.agent-native.com",
+    url: "https://plan.jami.studio",
   },
 };
 
@@ -93,7 +93,7 @@ const html = `<!doctype html>
           ? `<p>Use <a href="${replacement.url}">${escapeHtml(
               replacement.label,
             )}</a> instead.</p>`
-          : `<p>Visit <a href="https://agent-native.com">Agent Native</a> for the current apps.</p>`
+          : `<p>Visit <a href="https://jami.studio">Agent Native</a> for the current apps.</p>`
       }
     </main>
   </body>

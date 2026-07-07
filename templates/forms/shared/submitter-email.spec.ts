@@ -12,15 +12,15 @@ describe("submitter email helpers", () => {
   });
 
   it("drops synthetic Agent Native anonymous owner emails", () => {
-    expect(cleanSubmitterEmail("anon-abc123@agent-native.com")).toBeNull();
-    expect(cleanSubmitterEmail(" ANON-owner@agent-native.com ")).toBeNull();
-    expect(publicSubmitterEmail("anon-visitor@agent-native.com")).toBeNull();
+    expect(cleanSubmitterEmail("anon-abc123@jami.studio")).toBeNull();
+    expect(cleanSubmitterEmail(" ANON-owner@jami.studio ")).toBeNull();
+    expect(publicSubmitterEmail("anon-visitor@jami.studio")).toBeNull();
   });
 
-  it("does not treat other agent-native.com emails as anonymous owners", () => {
-    expect(cleanSubmitterEmail("support@agent-native.com")).toBe(
-      "support@agent-native.com",
+  it("does not treat other jami.studio emails as anonymous owners", () => {
+    expect(cleanSubmitterEmail("support@jami.studio")).toBe(
+      "support@jami.studio",
     );
-    expect(isAgentNativeAnonymousEmail("anon@agent-native.com")).toBe(false);
+    expect(isAgentNativeAnonymousEmail("anon@jami.studio")).toBe(false);
   });
 });

@@ -113,8 +113,8 @@ describe("getIdentityHubUrl / isIdentitySsoEnabled", () => {
 
   it("normalises a valid https URL and strips trailing slashes", () => {
     process.env.AGENT_NATIVE_IDENTITY_HUB_URL =
-      "https://dispatch.agent-native.com/";
-    expect(store.getIdentityHubUrl()).toBe("https://dispatch.agent-native.com");
+      "https://dispatch.jami.studio/";
+    expect(store.getIdentityHubUrl()).toBe("https://dispatch.jami.studio");
     expect(store.isIdentitySsoEnabled()).toBe(true);
   });
 

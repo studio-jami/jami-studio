@@ -39,7 +39,7 @@ agente de la misma manera.
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-panel center">
     Conector MCP de Plan<br /><small class="diagram-muted"
-      >plan.agent-native.com</small
+      >plan.jami.studio</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -114,7 +114,7 @@ El comando instala tres comandos: `/visual-plan`, `/visual-recap` y `/visualize-
 
 Si está utilizando un host basado en chat que acepta conectores MCP URL directamente
 (en lugar de un cliente configurado con CLI), conecte el conector de planes alojado en
-`https://plan.agent-native.com/_agent-native/mcp`: consulte [MCP Clients](/docs/mcp-clients) para conocer la configuración específica del cliente.
+`https://plan.jami.studio/_agent-native/mcp`: consulte [MCP Clients](/docs/mcp-clients) para conocer la configuración específica del cliente.
 
 La autenticación es un inicio de sesión único en el navegador durante la configuración; esto es lo que se pretende y
 es lo que permite al agente persistir y compartir los planes que genera. ¿Qué diablos?
@@ -136,7 +136,7 @@ npx @agent-native/core@latest skills add visual-plan
 ```
 
 Pase `--no-connect` para registrar el conector sin autenticarse, luego ejecute
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 cuando estés listo, o elige un `--client` más estrecho:
 
 ```bash
@@ -253,7 +253,7 @@ Compartir y comentar son los flujos de trabajo que necesitan una cuenta:
   revisión en varios dispositivos o en equipo) requiere iniciar sesión. El inicio de sesión de Google aparece cuando
   las variables de entorno estándar de Google OAuth están configuradas.
 
-El conector de planes alojado se encuentra en `https://plan.agent-native.com/_agent-native/mcp`.
+El conector de planes alojado se encuentra en `https://plan.jami.studio/_agent-native/mcp`.
 Nunca coloques secretos compartidos en archivos de habilidades.
 
 ## Modo de privacidad de archivos locales {#local-files}
@@ -290,7 +290,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 ```
 
 Parece el puente URL
-`https://plan.agent-native.com/local-plans/<slug>?bridge=http://127.0.0.1:...`.
+`https://plan.jami.studio/local-plans/<slug>?bridge=http://127.0.0.1:...`.
 La página es el visor de planes normal, pero el navegador recupera `plan.mdx`,
 `canvas.mdx`, `prototype.mdx`, `.plan-state.json` y recursos de imagen locales de
 el puente del host local. El contenido del plan no se escribe en la base de datos alojada y se
@@ -430,7 +430,7 @@ tocar archivos locales.
 
 Si una herramienta de Planes alguna vez devuelve `needs auth`, `Unauthorized` o `Session
 terminado`, no sigas intentándolo. Autenticar el conector con
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`
 para Codex, o vuelva a ejecutar `/mcp` → **Authenticate** en un host compatible con OAuth. Iniciar un
 nuevo hilo Codex o reinicie/recargue el cliente relevante antes de esperar la herramienta
 registro para actualizar.
@@ -451,8 +451,8 @@ pnpm dev
 
 La habilidad respaldada por la aplicación alojada utiliza:
 
-- Aplicación: `https://plan.agent-native.com`
-- MCP: `https://plan.agent-native.com/_agent-native/mcp`
+- Aplicación: `https://plan.jami.studio`
+- MCP: `https://plan.jami.studio/_agent-native/mcp`
 
 La plantilla local es útil cuando estás desarrollando planes, probando la persistencia local o ejecutando una superficie de revisión totalmente autohospedada.
 

@@ -41,7 +41,7 @@ import { defaultSocialImageMeta } from "./seo";
 
 import appCss from "./global.css?url";
 
-const SITE_URL = "https://www.agent-native.com";
+const SITE_URL = "https://www.jami.studio";
 const LOCALE_INIT_SCRIPT_SELECTOR = "script[data-agent-native-locale-init]";
 
 configureTracking({
@@ -62,7 +62,7 @@ const JSON_LD = JSON.stringify({
     {
       "@type": "Organization",
       name: "Jami Studio",
-      url: "https://builder.io",
+      url: "https://jami.studio",
       sameAs: ["https://github.com/BuilderIO/agent-native"],
     },
     {

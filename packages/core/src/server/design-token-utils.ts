@@ -926,7 +926,7 @@ export async function extractDesignTokensFromUrl(
   const response = await ssrfSafeFetch(url, {
     headers: {
       "User-Agent":
-        "Mozilla/5.0 (compatible; AgentNative/1.0; +https://agent-native.com)",
+        "Mozilla/5.0 (compatible; AgentNative/1.0; +https://jami.studio)",
     },
     signal: AbortSignal.timeout(10000),
   });

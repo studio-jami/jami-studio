@@ -19,9 +19,9 @@ describe("open_app MCP App metadata", () => {
 
   it("uses exact granted app origins instead of broad HTTPS CSP", async () => {
     mocks.listGrantedDispatchMcpAppOrigins.mockResolvedValue([
-      "https://dispatch.agent-native.com",
-      "https://mail.agent-native.com",
-      "https://calendar.agent-native.com",
+      "https://dispatch.jami.studio",
+      "https://mail.jami.studio",
+      "https://calendar.jami.studio",
     ]);
 
     const cspBuilder = openAppAction.mcpApp?.resource.csp;
@@ -30,22 +30,22 @@ describe("open_app MCP App metadata", () => {
     const csp = await (cspBuilder as any)({
       actionName: "open_app",
       appId: "dispatch",
-      requestOrigin: "https://dispatch.agent-native.com",
+      requestOrigin: "https://dispatch.jami.studio",
     });
 
     expect(csp.connectDomains).toEqual([
       "https://esm.sh",
       "$requestOrigin",
-      "https://mail.agent-native.com",
-      "https://calendar.agent-native.com",
+      "https://mail.jami.studio",
+      "https://calendar.jami.studio",
       "http://localhost:*",
       "http://127.0.0.1:*",
     ]);
     expect(csp.resourceDomains).toEqual(csp.connectDomains);
     expect(csp.frameDomains).toEqual([
       "$requestOrigin",
-      "https://mail.agent-native.com",
-      "https://calendar.agent-native.com",
+      "https://mail.jami.studio",
+      "https://calendar.jami.studio",
       "http://localhost:*",
       "http://127.0.0.1:*",
     ]);
@@ -55,8 +55,8 @@ describe("open_app MCP App metadata", () => {
 
   it("keeps exact granted origins when request origin is unavailable", async () => {
     mocks.listGrantedDispatchMcpAppOrigins.mockResolvedValue([
-      "https://mail.agent-native.com",
-      "https://calendar.agent-native.com",
+      "https://mail.jami.studio",
+      "https://calendar.jami.studio",
     ]);
 
     const cspBuilder = openAppAction.mcpApp?.resource.csp;
@@ -67,8 +67,8 @@ describe("open_app MCP App metadata", () => {
 
     expect(csp.frameDomains).toEqual([
       "$requestOrigin",
-      "https://mail.agent-native.com",
-      "https://calendar.agent-native.com",
+      "https://mail.jami.studio",
+      "https://calendar.jami.studio",
       "http://localhost:*",
       "http://127.0.0.1:*",
     ]);
@@ -78,11 +78,11 @@ describe("open_app MCP App metadata", () => {
     mocks.openGrantedDispatchMcpApp.mockResolvedValue({
       app: "mail",
       view: "inbox",
-      url: "https://mail.agent-native.com/inbox",
+      url: "https://mail.jami.studio/inbox",
       embed: true,
       chrome: "minimal",
       embedStartUrl:
-        "https://mail.agent-native.com/_agent-native/embed/start?ticket=test",
+        "https://mail.jami.studio/_agent-native/embed/start?ticket=test",
     });
 
     await openAppAction.run({

@@ -21,11 +21,11 @@ An agent-native app is reachable by any MCP-compatible host (Claude, Claude
 Desktop, Claude Code, ChatGPT custom MCP apps, Codex, Cursor, Cowork, VS Code
 GitHub Copilot, Goose, Postman, MCPJam, and future standard clients). Keep
 setup simple: for workspace or cross-app access, add one remote MCP connector:
-`https://dispatch.agent-native.com/_agent-native/mcp`. Dispatch's Agents page
+`https://dispatch.jami.studio/_agent-native/mcp`. Dispatch's Agents page
 controls whether that single connector reaches all apps or only selected apps,
 and Dispatch filters `list_apps`, `ask_app`, and `open_app` to the granted set.
 For a deliberately isolated app, add that app directly at
-`https://<app>.agent-native.com/_agent-native/mcp` or
+`https://<app>.jami.studio/_agent-native/mcp` or
 `https://<your-host>/_agent-native/mcp`.
 
 OAuth-capable hosts should use the standard remote MCP OAuth flow. Claude
@@ -68,7 +68,7 @@ the real app focused on exactly what was produced. It reuses the existing
 Use one connector for normal workspace access:
 
 ```text
-https://dispatch.agent-native.com/_agent-native/mcp
+https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 Then open Dispatch → Agents to choose whether the gateway exposes every app or
@@ -79,8 +79,8 @@ only selected app IDs. External agents call `list_apps` to see the granted set,
 Use a direct app URL only when you intentionally want one isolated app:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
-https://<your-app>.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
+https://<your-app>.jami.studio/_agent-native/mcp
 ```
 
 Claude / Claude Desktop: add a custom connector with the URL, click Connect,
@@ -96,9 +96,9 @@ For local stdio proxying, Codex/Cowork compatibility, or clients without
 remote MCP OAuth, use the hosted connect fallback:
 
 ```bash
-npx @agent-native/core@latest connect https://dispatch.agent-native.com
+npx @agent-native/core@latest connect https://dispatch.jami.studio
 # or, for an isolated app:
-npx @agent-native/core@latest connect https://mail.agent-native.com
+npx @agent-native/core@latest connect https://mail.jami.studio
 ```
 
 The command opens the app in the browser, the user clicks **Authorize**, and a
@@ -116,9 +116,9 @@ To re-authenticate an already-installed local/fallback client without
 reinstalling skills or connectors, use:
 
 ```bash
-npx -y @agent-native/core@latest reconnect https://dispatch.agent-native.com --client codex
+npx -y @agent-native/core@latest reconnect https://dispatch.jami.studio --client codex
 # or:
-npx -y @agent-native/core@latest connect reconnect https://dispatch.agent-native.com --client codex
+npx -y @agent-native/core@latest connect reconnect https://dispatch.jami.studio --client codex
 ```
 
 With no URL, `reconnect` searches local client configs for the existing Agent
@@ -366,7 +366,7 @@ before telling the user they are unauthenticated.
 ## Do
 
 - Do connect local/fallback clients to Dispatch with
-  `npx @agent-native/core@latest connect https://dispatch.agent-native.com`;
+  `npx @agent-native/core@latest connect https://dispatch.jami.studio`;
   use `npx -y @agent-native/core@latest reconnect ...` for reauth without
   reinstalling; use a direct app URL only when the host should be isolated to
   one app.

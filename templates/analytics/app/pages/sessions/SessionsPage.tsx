@@ -39,7 +39,7 @@ import { cn } from "@/lib/utils";
 type ReplayRange = "24h" | "7d" | "30d" | "90d" | "all";
 
 const SESSION_REPLAY_DOCS_URL =
-  "https://www.agent-native.com/docs/tracking#session-replay";
+  "https://www.jami.studio/docs/tracking#session-replay";
 
 type SessionRecordingSummary = {
   id: string;

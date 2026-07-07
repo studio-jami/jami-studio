@@ -250,7 +250,7 @@ describe("Builder callback CSRF state", () => {
 
     it("appends a verifiable connect token to the surfaced URL", () => {
       const connectUrl = appendBuilderConnectToken(
-        "https://alice.agent-native.com/_agent-native/builder/connect",
+        "https://alice.jami.studio/_agent-native/builder/connect",
         "alice@example.com",
       );
       const token = new URL(connectUrl).searchParams.get(BUILDER_CONNECT_PARAM);
@@ -276,7 +276,7 @@ describe("Builder callback CSRF state", () => {
 
     it("builds an owner-signed connect URL for server-rendered cards", () => {
       const connectUrl = getBuilderBrowserConnectUrlForOwner(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
         "alice@example.com",
       );
       const parsed = new URL(connectUrl);
@@ -297,7 +297,7 @@ describe("Builder callback CSRF state", () => {
     // in redirect_url so the popup can skip the app trampoline entirely.
     it("builds a clean redirect_url (no _an_state) when state is null", () => {
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
         null,
       );
       const parsed = new URL(cliAuthUrl);
@@ -311,7 +311,7 @@ describe("Builder callback CSRF state", () => {
 
     it("Builder can append p-key/api-key to a clean redirect_url", () => {
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
         null,
       );
       const redirectUrl = new URL(cliAuthUrl).searchParams.get("redirect_url")!;
@@ -330,7 +330,7 @@ describe("Builder callback CSRF state", () => {
     it("still supports an optional state param for legacy/testing use", () => {
       const state = signBuilderCallbackState("alice@example.com");
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
         state,
       );
       const parsed = new URL(cliAuthUrl);
@@ -342,7 +342,7 @@ describe("Builder callback CSRF state", () => {
 
     it("omits the state param when no state is provided", () => {
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
       );
       const redirectUrl = new URL(cliAuthUrl).searchParams.get("redirect_url")!;
       expect(new URL(redirectUrl).searchParams.has(BUILDER_STATE_PARAM)).toBe(
@@ -352,11 +352,11 @@ describe("Builder callback CSRF state", () => {
 
     it("normalizes a trailing slash in the origin", () => {
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com/",
+        "https://alice.jami.studio/",
       );
       const redirectUrl = new URL(cliAuthUrl).searchParams.get("redirect_url")!;
       const parsedRedirect = new URL(redirectUrl);
-      expect(parsedRedirect.origin).toBe("https://alice.agent-native.com");
+      expect(parsedRedirect.origin).toBe("https://alice.jami.studio");
       expect(parsedRedirect.pathname).toBe(BUILDER_CALLBACK_PATH);
       expect(parsedRedirect.searchParams.get(BUILDER_SIGNUP_SOURCE_PARAM)).toBe(
         "agent-native",
@@ -366,24 +366,24 @@ describe("Builder callback CSRF state", () => {
     it("preserves APP_BASE_PATH in redirect and preview URLs", () => {
       process.env.APP_BASE_PATH = "/docs/";
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com/",
+        "https://alice.jami.studio/",
       );
       const parsed = new URL(cliAuthUrl);
       const redirectUrl = parsed.searchParams.get("redirect_url");
       expect(redirectUrl).toBeTruthy();
       const parsedRedirect = new URL(redirectUrl!);
-      expect(parsedRedirect.origin).toBe("https://alice.agent-native.com");
+      expect(parsedRedirect.origin).toBe("https://alice.jami.studio");
       expect(parsedRedirect.pathname).toBe(
         "/docs/_agent-native/builder/callback",
       );
       expect(parsed.searchParams.get("preview_url")).toBe(
-        "https://alice.agent-native.com/docs",
+        "https://alice.jami.studio/docs",
       );
     });
 
     it("adds Agent Native signup attribution to cli-auth and callback URLs", () => {
       const cliAuthUrl = buildBuilderCliAuthUrl(
-        "https://alice.agent-native.com",
+        "https://alice.jami.studio",
         signBuilderCallbackState("alice@example.com"),
         {
           tracking: {
@@ -415,9 +415,9 @@ describe("Builder callback CSRF state", () => {
     it("preserves APP_BASE_PATH in the surfaced connect URL", () => {
       process.env.APP_BASE_PATH = "/docs/";
       expect(
-        getBuilderBrowserConnectUrl("https://alice.agent-native.com/"),
+        getBuilderBrowserConnectUrl("https://alice.jami.studio/"),
       ).toBe(
-        "https://alice.agent-native.com/docs/_agent-native/builder/connect",
+        "https://alice.jami.studio/docs/_agent-native/builder/connect",
       );
     });
 

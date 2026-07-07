@@ -129,7 +129,7 @@ Inicio de sesión compartido de base de datos/origen y aplicaciones que no perma
 | Aplicación independiente                                | Aislado por aplicación por slug (`APP_NAME` o nombre del paquete en el desarrollo local); Prefijo `an` estable en producción                                             |
 | Modo de espacio de trabajo (`AGENT_NATIVE_WORKSPACE=1`) | Un ámbito compartido: las aplicaciones del espacio de trabajo comparten un origen y una base de datos                                                                    |
 | Subdominios personalizados de la misma base de datos    | Aceptar cookies compartidas con `COOKIE_DOMAIN`                                                                                                                          |
-| Alojado propio (`*.agent-native.com`)                   | Espacio de nombres aislado por aplicación (cada una tiene su propia base de datos de autenticación); `COOKIE_DOMAIN=.agent-native.com` se ignora de forma predeterminada |
+| Alojado propio (`*.jami.studio`)                   | Espacio de nombres aislado por aplicación (cada una tiene su propia base de datos de autenticación); `COOKIE_DOMAIN=.jami.studio` se ignora de forma predeterminada |
 
 Las aplicaciones alojadas propias tienen cada una su propia base de datos de autenticación, por lo que el inicio de sesión entre aplicaciones
 pasa por [Cross-App SSO](/docs/cross-app-sso) en lugar de una cookie compartida.
@@ -219,7 +219,7 @@ La configuración de estas variables nunca muestra una página de inicio de sesi
 El punto final MCP de cada aplicación puede actuar como un recurso MCP protegido estándar. Los clientes compatibles con OAuth se pueden configurar solo con el MCP URL remoto:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
 ```
 
 Las solicitudes MCP no autenticadas devuelven un desafío `WWW-Authenticate` que apunta a `/.well-known/oauth-protected-resource`. Luego, el cliente descubre los metadatos OAuth de la aplicación, registra dinámicamente un cliente público, abre la página de autorización de la aplicación e intercambia un código de autorización con PKCE para acceder y actualizar tokens.

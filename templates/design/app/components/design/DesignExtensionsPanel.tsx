@@ -151,7 +151,7 @@ type FirstPartyRow = {
 // ─── Assets picker types (mirrors PromptDialog) ───────────────────────────
 
 const DEFAULT_ASSETS_PICKER_URL =
-  "https://assets.agent-native.com/library?__an_picker=1&mediaType=image&layout=vertical";
+  "https://assets.jami.studio/library?__an_picker=1&mediaType=image&layout=vertical";
 const SHOW_FIGMA_ASSET_TAB = true;
 
 interface PickedAssetPayload {
@@ -175,7 +175,7 @@ function assetsPickerUrl(): string {
     const base =
       typeof window !== "undefined"
         ? window.location.origin
-        : "https://assets.agent-native.com";
+        : "https://assets.jami.studio";
     const url = new URL(configured, base);
     if (url.pathname === "/picker") url.pathname = "/library";
     url.searchParams.set("__an_picker", "1");

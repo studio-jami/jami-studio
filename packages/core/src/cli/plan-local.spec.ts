@@ -934,7 +934,7 @@ describe("local plan CLI helpers", () => {
 
     const out = path.join(dir, "plan-blocks.md");
     const result = await fetchPlanBlockCatalog({
-      appUrl: "https://plan.agent-native.com/",
+      appUrl: "https://plan.jami.studio/",
       out,
       fetchFn,
     });
@@ -946,7 +946,7 @@ describe("local plan CLI helpers", () => {
       format: "reference",
     });
     expect(calls[0].url).toBe(
-      "https://plan.agent-native.com/_agent-native/actions/get-plan-blocks?format=reference",
+      "https://plan.jami.studio/_agent-native/actions/get-plan-blocks?format=reference",
     );
     expect(calls[0].method).toBe("GET");
     expect(fs.readFileSync(out, "utf8")).toContain("## Blocks");
@@ -1001,7 +1001,7 @@ describe("local plan CLI helpers", () => {
     const bodies: unknown[] = [];
     const fetchFn: typeof fetch = (async (input, init) => {
       expect(String(input)).toBe(
-        "https://plan.agent-native.com/_agent-native/actions/visual-answer",
+        "https://plan.jami.studio/_agent-native/actions/visual-answer",
       );
       const headers = init?.headers as Record<string, string>;
       expect(headers.authorization).toBe("Bearer plan-token");
@@ -1013,7 +1013,7 @@ describe("local plan CLI helpers", () => {
     }) as typeof fetch;
 
     const result = await publishVisualAnswerSource({
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       token: "plan-token",
       sourcePath: source,
       out,
@@ -1022,7 +1022,7 @@ describe("local plan CLI helpers", () => {
       cwd: dir,
     });
 
-    expect(result.url).toBe("https://plan.agent-native.com/plans/plan_answer");
+    expect(result.url).toBe("https://plan.jami.studio/plans/plan_answer");
     expect(fs.readFileSync(out, "utf8").trim()).toBe(result.url);
     expect(bodies[0]).toMatchObject({
       question: "What is the billing API shape?",

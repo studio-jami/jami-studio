@@ -739,7 +739,7 @@ function writeCodexPluginAdapter(
     description: manifest.description,
     author: {
       name: "Agent-Native",
-      url: "https://agent-native.com",
+      url: "https://jami.studio",
     },
     homepage: manifest.hosted.url,
     license: "MIT",
@@ -819,7 +819,7 @@ function writeClaudeMarketplaceAdapter(
     description: manifest.description,
     author: {
       name: "Agent-Native",
-      url: "https://agent-native.com",
+      url: "https://jami.studio",
     },
     homepage: manifest.hosted.url,
     repository: "https://github.com/BuilderIO/agent-native",

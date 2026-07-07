@@ -95,7 +95,7 @@ export default function planMcpPlugin(nitroApp: any) {
     appId: "plan",
     description:
       "Create, review, update, publish, and export Agent-Native visual plans.",
-    websiteUrl: "https://plan.agent-native.com",
+    websiteUrl: "https://plan.jami.studio",
     actions,
     productionActions: actions,
     connectorCatalog: PLAN_CONNECTOR_CATALOG,

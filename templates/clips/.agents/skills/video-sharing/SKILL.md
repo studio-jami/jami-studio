@@ -152,7 +152,7 @@ Required Slack app setup:
 
 - Bot scopes: `links:read`, `links:write`, `links.embed:write`
 - Event subscription: `link_shared`
-- App unfurl domains: the public Clips share domain, for example `clips.agent-native.com`
+- App unfurl domains: the public Clips share domain, for example `clips.jami.studio`
 - Request URL: `https://<clips-host>/api/slack/unfurl`
 - OAuth redirect URL: `https://<clips-host>/api/slack/oauth/callback`
 - Deploy secrets: `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, and

@@ -12,7 +12,7 @@ export function supportsPublishedClipsChromeExtensionHost(
 ): boolean {
   const normalized = normalizeHostname(hostname);
   return (
-    normalized === "clips.agent-native.com" ||
+    normalized === "clips.jami.studio" ||
     normalized === "localhost" ||
     normalized === "127.0.0.1"
   );

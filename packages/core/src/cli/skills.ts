@@ -103,7 +103,7 @@ write those files.
 When installing visual-recap interactively, the CLI offers to add the optional PR
 Visual Recap GitHub Action. Pass --with-github-action to write it directly, then
 run "npx @agent-native/core@latest recap setup" / "npx @agent-native/core@latest recap doctor" to configure and
-verify GitHub Actions. Docs: https://www.agent-native.com/docs/pr-visual-recap.
+verify GitHub Actions. Docs: https://www.jami.studio/docs/pr-visual-recap.
 
 The status/update commands inspect copied Agent Native skill folders and refresh
 their instruction files from the current @agent-native/core package. In generated
@@ -148,7 +148,7 @@ of using a generic image generator.
   If the skill instructions are available but the MCP tool namespace has not
   appeared yet, use the Assets browser fallback URL shape instead of switching
   to a generic generator:
-  \`https://assets.agent-native.com/library?mediaType=image&prompt=...&autoGenerate=1&count=3\`.
+  \`https://assets.jami.studio/library?mediaType=image&prompt=...&autoGenerate=1&count=3\`.
   When reporting the final selected image in Codex or Claude Code, include the
   asset link and, if an inline preview is important, download the selected
   \`previewUrl\`/\`downloadUrl\` to a local temp image and embed that absolute
@@ -168,7 +168,7 @@ of using a generic image generator.
 
 ## Cross-App Use
 
-- Hosted default: connect \`https://assets.agent-native.com/_agent-native/mcp\`.
+- Hosted default: connect \`https://assets.jami.studio/_agent-native/mcp\`.
   Do not put shared secrets in skill files.
 - For CLI/code-editor clients, keep any \`npx @agent-native/core@latest connect\` command
   running until browser authorization finishes. Stopping it early can leave the
@@ -183,7 +183,7 @@ of using a generic image generator.
   another connector/session error, do not keep retrying the tool. Stop and give
   the user the reconnect step: in Claude Code run \`/mcp\` and choose
   Authenticate/Reconnect for the Assets connector; from any terminal run
-  \`npx -y @agent-native/core@latest reconnect https://assets.agent-native.com\` — this
+  \`npx -y @agent-native/core@latest reconnect https://assets.jami.studio\` — this
   re-authenticates WITHOUT reinstalling. Never reinstall from scratch just to fix
   auth. Continue once the connector is available.
 - Do not hand-roll MCP HTTP requests with curl from the agent session. Use the
@@ -399,7 +399,7 @@ separate those jobs; use it, and hold this bar:
 
 ## Cross-App Use
 
-- Hosted default: connect \`https://design.agent-native.com/_agent-native/mcp\`.
+- Hosted default: connect \`https://design.jami.studio/_agent-native/mcp\`.
   Do not put shared secrets in skill files.
 - For CLI/code-editor clients, keep any \`npx @agent-native/core@latest connect\` command
   running until browser authorization finishes. Stopping it early can leave the
@@ -414,7 +414,7 @@ separate those jobs; use it, and hold this bar:
   another connector/session error, do not keep retrying the tool. Stop and give
   the user the reconnect step: in Claude Code run \`/mcp\` and choose
   Authenticate/Reconnect for the Design connector; from any terminal run
-  \`npx -y @agent-native/core@latest reconnect https://design.agent-native.com\` — this
+  \`npx -y @agent-native/core@latest reconnect https://design.jami.studio\` — this
   re-authenticates WITHOUT reinstalling. Never reinstall from scratch just to fix
   auth. Continue once the connector is available.
 - Do not hand-roll MCP HTTP requests with curl from the agent session. Use the
@@ -632,7 +632,7 @@ installed slash commands. If you only need one command, use
 \`create-visual-questions\`) are MCP tools reachable from \`/visual-plan\`, not
 separate slash commands. Pass \`--no-connect\` to register the connector without
 authenticating, then run
-\`npx @agent-native/core@latest connect https://plan.agent-native.com --client all\`
+\`npx @agent-native/core@latest connect https://plan.jami.studio --client all\`
 whenever you are ready, or choose a narrower \`--client\`. Auth and MCP tool
 loading are per client config/session.
 
@@ -672,7 +672,7 @@ app/runtime for validation.
 If a Plans tool returns \`needs auth\`, \`Unauthorized\`, or \`Session terminated\`,
 do not keep retrying the tool. Stop and give the user the reconnect step for the
 client they are using: Codex/Codex Desktop should run
-\`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex\`
+\`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex\`
 and start a new Codex session; Claude Code should run \`/mcp\` and choose
 Authenticate/Reconnect for the plan connector, or run the reconnect command with
 \`--client claude-code\` and restart Claude. To refresh every local client config
@@ -681,7 +681,7 @@ client. Reconnect re-authenticates WITHOUT reinstalling and finds the entry by
 URL regardless of connector name. Never reinstall from scratch just to fix auth.
 Continue once the connector is available.
 
-Hosted default: connect \`https://plan.agent-native.com/_agent-native/mcp\`. Do
+Hosted default: connect \`https://plan.jami.studio/_agent-native/mcp\`. Do
 not put shared secrets in skill files.`;
 
 // Single-source shared cores. Each partial is a heading-less BODY string that
@@ -1489,7 +1489,7 @@ assume the user must re-authenticate. Stop and give the user the exact restore
 step for their current client:
 
 - **Codex / Codex Desktop:** run
-  \`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex\`
+  \`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex\`
   and start a new Codex session.
 - **Claude Code:** run \`/mcp\` and choose Authenticate/Reconnect, or run the same
   reconnect command with \`--client claude-code\` and restart Claude.
@@ -2047,7 +2047,7 @@ installed slash commands. If you only need one command, use
 \`create-visual-questions\`) are MCP tools reachable from \`/visual-plan\`, not
 separate slash commands. Pass \`--no-connect\` to register the connector without
 authenticating, then run
-\`npx @agent-native/core@latest connect https://plan.agent-native.com --client all\`
+\`npx @agent-native/core@latest connect https://plan.jami.studio --client all\`
 whenever you are ready, or choose a narrower \`--client\`. Auth and MCP tool
 loading are per client config/session.
 
@@ -2071,7 +2071,7 @@ If a Plans tool returns \`needs auth\`, \`Unauthorized\`, or \`Session terminate
 not keep retrying it — stop and give the user the per-client reconnect step from
 \`references/connection.md\`, then continue once the connector is available.
 
-Hosted default: connect \`https://plan.agent-native.com/_agent-native/mcp\`. Do
+Hosted default: connect \`https://plan.jami.studio/_agent-native/mcp\`. Do
 not put shared secrets in skill files.
 `;
 
@@ -2343,14 +2343,14 @@ Resolve the URL in this order:
 1. Use the absolute URL the create tool RETURNS — \`openLink.webUrl\`, else the
    \`visualUrl\` in the returned \`plan.mdx\` frontmatter, else \`url\`/\`path\`
    resolved against the MCP server's own origin (for the hosted MCP that is
-   \`https://plan.agent-native.com\`). This always points at the database that has
+   \`https://plan.jami.studio\`). This always points at the database that has
    the plan.
 2. Use a \`localhost\`/dev origin ONLY when the recap was created through a Plan
    MCP bound to that same origin — i.e. that MCP's url is
    \`http://localhost:<port>/_agent-native/mcp\`. Creating through the hosted MCP
    and linking to localhost is the exact mismatch that 404s.
 3. If only a plan id is available, build the MCP origin's absolute URL
-   (hosted: \`https://plan.agent-native.com/plans/<id>\`) and say it was inferred.
+   (hosted: \`https://plan.jami.studio/plans/<id>\`) and say it was inferred.
 
 If the user wants to review on localhost but the recap was created through the
 hosted MCP, say so plainly: the local dev server cannot see it. To view a recap
@@ -2727,8 +2727,8 @@ export const BUILT_IN_APP_SKILLS = {
       description:
         "Create, search, select, and export brand image and video assets from the Assets app.",
       hosted: {
-        url: "https://assets.agent-native.com",
-        mcpUrl: "https://assets.agent-native.com/_agent-native/mcp",
+        url: "https://assets.jami.studio",
+        mcpUrl: "https://assets.jami.studio/_agent-native/mcp",
       },
       mcp: { serverName: "agent-native-assets" },
       auth: {
@@ -2773,8 +2773,8 @@ export const BUILT_IN_APP_SKILLS = {
       description:
         "Edit docs, blogs, resources, and MDX content through the Content app, including repo-backed Local File Mode.",
       hosted: {
-        url: "https://content.agent-native.com",
-        mcpUrl: "https://content.agent-native.com/_agent-native/mcp",
+        url: "https://content.jami.studio",
+        mcpUrl: "https://content.jami.studio/_agent-native/mcp",
       },
       mcp: { serverName: "agent-native-content" },
       auth: {
@@ -2825,8 +2825,8 @@ export const BUILT_IN_APP_SKILLS = {
       description:
         "Explore, compare, iterate, and export interactive UI design prototypes from the Design app.",
       hosted: {
-        url: "https://design.agent-native.com",
-        mcpUrl: "https://design.agent-native.com/_agent-native/mcp",
+        url: "https://design.jami.studio",
+        mcpUrl: "https://design.jami.studio/_agent-native/mcp",
       },
       mcp: { serverName: "agent-native-design" },
       auth: {
@@ -2902,8 +2902,8 @@ export const BUILT_IN_APP_SKILLS = {
       description:
         "Create rich interactive visual plans, recaps, and repo-native visual docs with diagrams, file maps, annotated code and diffs, API/schema summaries, feedback, and HTML export.",
       hosted: {
-        url: "https://plan.agent-native.com",
-        mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+        url: "https://plan.jami.studio",
+        mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       },
       mcp: { serverName: "plan", aliases: ["agent-native-plans"] },
       auth: {
@@ -2972,8 +2972,8 @@ export const BUILT_IN_APP_SKILLS = {
       description:
         "Visualize local Codex and Claude Code context usage with warnings and optimization tips.",
       hosted: {
-        url: "https://context-xray.agent-native.com",
-        mcpUrl: "https://context-xray.agent-native.com/_agent-native/mcp",
+        url: "https://context-xray.jami.studio",
+        mcpUrl: "https://context-xray.jami.studio/_agent-native/mcp",
       },
       mcp: { serverName: "agent-native-context-xray" },
       auth: { mode: "none" },
@@ -3581,7 +3581,7 @@ connector only if the user explicitly asks to publish or share.`;
 
 Default storage for this installation: the configured self-hosted/custom Plan
 app${input.mcpUrl ? ` at \`${input.mcpUrl}\`` : ""}. Use that Plan MCP connector
-for plans and recaps instead of assuming \`https://plan.agent-native.com\`.`;
+for plans and recaps instead of assuming \`https://plan.jami.studio\`.`;
   }
   return "";
 }
@@ -3608,7 +3608,7 @@ syntax. The hosted Content app cannot read private repo files by itself.`;
 
 Default storage for this installation: the configured self-hosted/custom Content
 app${input.mcpUrl ? ` at \`${input.mcpUrl}\`` : ""}. Use that Content MCP
-connector instead of assuming \`https://content.agent-native.com\`.`;
+connector instead of assuming \`https://content.jami.studio\`.`;
   }
   return "";
 }
@@ -4835,7 +4835,7 @@ function prVisualRecapWorkflowDisplayPath(): string {
 }
 
 const PR_VISUAL_RECAP_DOCS_URL =
-  "https://www.agent-native.com/docs/pr-visual-recap";
+  "https://www.jami.studio/docs/pr-visual-recap";
 
 function prVisualRecapInstallCommand(): string {
   return "npx @agent-native/core@latest skills add visual-recap --with-github-action";

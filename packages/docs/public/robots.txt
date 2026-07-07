@@ -41,4 +41,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://www.agent-native.com/sitemap.xml
+Sitemap: https://www.jami.studio/sitemap.xml

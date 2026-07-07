@@ -6,11 +6,11 @@ describe("buildConnectCommand", () => {
   it("uses the core connect flow for VS Code / GitHub Copilot MCP", () => {
     expect(
       buildConnectCommand({
-        appUrl: "https://dispatch.agent-native.com/",
+        appUrl: "https://dispatch.jami.studio/",
         scope: "project",
       }),
     ).toContain(
-      "@agent-native/core@latest connect 'https://dispatch.agent-native.com/' --client github-copilot --scope project",
+      "@agent-native/core@latest connect 'https://dispatch.jami.studio/' --client github-copilot --scope project",
     );
   });
 

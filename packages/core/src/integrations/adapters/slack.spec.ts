@@ -34,11 +34,11 @@ describe("slackAdapter", () => {
 
   it("does not bold-wrap bare URLs", () => {
     const formatted = slackAdapter().formatAgentResponse(
-      "**https://slides.agent-native.com/deck/deck-qa**",
+      "**https://slides.jami.studio/deck/deck-qa**",
     );
 
     expect(formatted.text).toBe(
-      "<https://slides.agent-native.com/deck/deck-qa>",
+      "<https://slides.jami.studio/deck/deck-qa>",
     );
   });
 

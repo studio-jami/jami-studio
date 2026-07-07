@@ -65,8 +65,8 @@ function withAppBasePath(path: string): string {
   return `${basePath}${cleanPath}`;
 }
 
-const AGENT_NATIVE_TERMS_URL = "https://www.agent-native.com/terms";
-const AGENT_NATIVE_PRIVACY_URL = "https://www.agent-native.com/privacy";
+const AGENT_NATIVE_TERMS_URL = "https://www.jami.studio/terms";
+const AGENT_NATIVE_PRIVACY_URL = "https://www.jami.studio/privacy";
 
 const EN_AUTH_COPY = {
   languageLabel: "Language",
@@ -1261,7 +1261,7 @@ function normalizeRequestHostname(host: string | undefined): string {
 function isAgentNativeHostedHost(host: string | undefined): boolean {
   const hostname = normalizeRequestHostname(host);
   return (
-    hostname === "agent-native.com" || hostname.endsWith(".agent-native.com")
+    hostname === "jami.studio" || hostname.endsWith(".jami.studio")
   );
 }
 
@@ -1304,7 +1304,7 @@ export interface OnboardingHtmlOptions {
     cancelLabel?: string;
   };
   /**
-   * Optional email signup legal copy. Builder-hosted `*.agent-native.com`
+   * Optional email signup legal copy. Builder-hosted `*.jami.studio`
    * deployments get the Agent Native links automatically; self-hosted and
    * custom-domain apps must opt in with their own URLs.
    */

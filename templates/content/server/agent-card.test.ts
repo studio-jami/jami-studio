@@ -41,7 +41,7 @@ describe("content agent card", () => {
         })),
         streaming: true,
       },
-      "https://content.agent-native.com",
+      "https://content.jami.studio",
     );
 
     expect(card.name).toBe("Content");

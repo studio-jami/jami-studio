@@ -72,7 +72,7 @@ function createFakeXhrClass(): new () => FakeXhr {
   };
 }
 
-function installBrowser(url = "https://app.agent-native.com/inbox") {
+function installBrowser(url = "https://app.jami.studio/inbox") {
   const parsed = new URL(url);
   const storage = new Map<string, string>();
   const location = {
@@ -198,7 +198,7 @@ describe("session replay console/network capture", () => {
   });
 
   it("captures console methods with level mapping, source, and scrubbed url", async () => {
-    installBrowser("https://app.agent-native.com/inbox?token=secret");
+    installBrowser("https://app.jami.studio/inbox?token=secret");
     vi.spyOn(console, "info").mockImplementation(() => {});
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -217,7 +217,7 @@ describe("session replay console/network capture", () => {
       level: "info",
       source: "console",
       message: "info message",
-      url: "https://app.agent-native.com/inbox?token=%3Credacted%3E",
+      url: "https://app.jami.studio/inbox?token=%3Credacted%3E",
     });
     expect(events[1]).toMatchObject({ level: "warn" });
     expect(events[2]).toMatchObject({ level: "error" });
@@ -398,7 +398,7 @@ describe("session replay console/network capture", () => {
     expect(events[0]).toMatchObject({
       api: "fetch",
       method: "POST",
-      url: "https://app.agent-native.com/api/things?token=%3Credacted%3E",
+      url: "https://app.jami.studio/api/things?token=%3Credacted%3E",
       status: 201,
       ok: true,
     });
@@ -455,7 +455,7 @@ describe("session replay console/network capture", () => {
     expect(events[1]).toMatchObject({
       api: "xhr",
       method: "GET",
-      url: "https://app.agent-native.com/relative/path",
+      url: "https://app.jami.studio/relative/path",
       status: 0,
       ok: false,
       error: "XMLHttpRequest failed",
@@ -649,7 +649,7 @@ describe("session replay console/network capture", () => {
     await wrappedFetch("/api/analytics/replay", { method: "POST" });
     await wrappedFetch("/api/analytics/track", { method: "POST" });
     await wrappedFetch("data:text/plain,hello");
-    await wrappedFetch("blob:https://app.agent-native.com/some-blob");
+    await wrappedFetch("blob:https://app.jami.studio/some-blob");
     await wrappedFetch("about:blank");
 
     expect(networkEvents()).toHaveLength(0);

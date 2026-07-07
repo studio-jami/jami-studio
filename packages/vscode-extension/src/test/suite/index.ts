@@ -8,13 +8,13 @@ export async function run(): Promise<void> {
   await extension.activate();
 
   const target =
-    "https://mail.agent-native.com/_agent-native/open?view=inbox&agentSidebar=closed";
+    "https://mail.jami.studio/_agent-native/open?view=inbox&agentSidebar=closed";
   const openResult = await vscode.commands.executeCommand<{
     url: string;
     title: string;
   }>("agentNative.openUrl", target);
   assert.equal(openResult?.url, target);
-  assert.equal(openResult?.title, "Agent Native: mail.agent-native.com");
+  assert.equal(openResult?.title, "Agent Native: mail.jami.studio");
 
   const lastOpened = await vscode.commands.executeCommand<string>(
     "agentNative._getLastOpenedUrl",
@@ -22,7 +22,7 @@ export async function run(): Promise<void> {
   assert.equal(lastOpened, target);
 
   const uriTarget =
-    "https://calendar.agent-native.com/_agent-native/open?view=calendar";
+    "https://calendar.jami.studio/_agent-native/open?view=calendar";
   await vscode.commands.executeCommand(
     "agentNative._openUri",
     vscode.Uri.parse(
@@ -36,7 +36,7 @@ export async function run(): Promise<void> {
 
   const connectCommand = await vscode.commands.executeCommand<string>(
     "agentNative.connectWorkspace",
-    "https://dispatch.agent-native.com",
+    "https://dispatch.jami.studio",
     "project",
   );
   assert.match(connectCommand ?? "", /@agent-native\/core@latest connect/);

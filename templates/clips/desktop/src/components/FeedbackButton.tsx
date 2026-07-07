@@ -9,7 +9,7 @@ import {
 } from "react";
 
 const DEFAULT_FEEDBACK_URL =
-  "https://forms.agent-native.com/f/agent-native-feedback/_16ewV";
+  "https://forms.jami.studio/f/agent-native-feedback/_16ewV";
 const DEFAULT_PLACEHOLDER = "Tell us what's on your mind...";
 const DEFAULT_SUBMIT_TEXT = "Send feedback";
 const DEFAULT_SUCCESS_MESSAGE = "Thanks for the feedback!";

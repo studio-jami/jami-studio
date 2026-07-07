@@ -96,8 +96,8 @@ function organizationForHost(host: string | undefined): string | undefined {
     envValue("AGENT_NATIVE_ORG_NAME");
   if (configured) return configured;
   const normalized = host?.split(":")[0]?.toLowerCase();
-  return normalized?.endsWith(".agent-native.com") ||
-    normalized === "agent-native.com"
+  return normalized?.endsWith(".jami.studio") ||
+    normalized === "jami.studio"
     ? "Builder.io"
     : undefined;
 }

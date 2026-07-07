@@ -64,16 +64,16 @@ const CONNECT_PREFERENCES_VERSION = 1;
  * cannot import from there — it imports connect.ts, which would be circular).
  */
 const CANONICAL_SERVER_NAME_BY_MCP_URL: Readonly<Record<string, string>> = {
-  "https://plan.agent-native.com/_agent-native/mcp": "plan",
-  "https://assets.agent-native.com/_agent-native/mcp": "agent-native-assets",
-  "https://design.agent-native.com/_agent-native/mcp": "agent-native-design",
-  "https://context-xray.agent-native.com/_agent-native/mcp":
+  "https://plan.jami.studio/_agent-native/mcp": "plan",
+  "https://assets.jami.studio/_agent-native/mcp": "agent-native-assets",
+  "https://design.jami.studio/_agent-native/mcp": "agent-native-design",
+  "https://context-xray.jami.studio/_agent-native/mcp":
     "agent-native-context-xray",
 };
 const LEGACY_SERVER_NAMES_BY_MCP_URL: Readonly<
   Record<string, readonly string[]>
 > = {
-  "https://plan.agent-native.com/_agent-native/mcp": [
+  "https://plan.jami.studio/_agent-native/mcp": [
     "agent-native-plan",
     "agent-native-plans",
     "agent-native-visual-plans",
@@ -225,7 +225,7 @@ export function normalizeUrl(raw: string): string {
   } catch {
     throw new Error(
       `Not a valid URL: "${raw}". Pass a full origin, e.g. ` +
-        `npx @agent-native/core@latest connect https://mail.agent-native.com`,
+        `npx @agent-native/core@latest connect https://mail.jami.studio`,
     );
   }
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
@@ -592,7 +592,7 @@ async function showReconnectSuccessOutro({
   }
 }
 
-/** Derive an app slug from a deployed origin, e.g. mail.agent-native.com → mail. */
+/** Derive an app slug from a deployed origin, e.g. mail.jami.studio → mail. */
 function appSlugFromUrl(url: string): string {
   try {
     const host = new URL(url).hostname;
@@ -2548,7 +2548,7 @@ const HELP = `npx @agent-native/core@latest connect — wire your coding agent t
 Usage:
   npx @agent-native/core@latest connect [--client <c>] [--scope user|project]
       With no URL, opens a picker for the built-in hosted apps
-      (mail.agent-native.com, calendar.agent-native.com, and friends).
+      (mail.jami.studio, calendar.jami.studio, and friends).
 
   npx @agent-native/core@latest connect <url> [--client <c>] [--scope user|project] [--name <n>]
       Writes the HTTP MCP entry into your selected client config(s). Claude
@@ -2564,7 +2564,7 @@ Usage:
       URL-only OAuth config and prompts you to authenticate in that host.
 
       For cross-app access, prefer the unified Dispatch gateway:
-      npx @agent-native/core@latest connect https://dispatch.agent-native.com
+      npx @agent-native/core@latest connect https://dispatch.jami.studio
 
   npx @agent-native/core@latest connect <url> --token <token>
       No-browser fallback. Skip the device flow and write the entry with

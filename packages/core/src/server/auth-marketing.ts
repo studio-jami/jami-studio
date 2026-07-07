@@ -206,8 +206,8 @@ function slugFromHost(value: string | undefined): string | undefined {
   if (!value) return undefined;
   const host = value.split(",")[0]?.trim().split(":")[0]?.toLowerCase();
   if (!host) return undefined;
-  if (host.endsWith(".agent-native.com")) {
-    return normalizeSlug(host.slice(0, -".agent-native.com".length));
+  if (host.endsWith(".jami.studio")) {
+    return normalizeSlug(host.slice(0, -".jami.studio".length));
   }
   return undefined;
 }

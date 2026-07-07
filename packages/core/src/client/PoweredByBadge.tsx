@@ -52,7 +52,7 @@ const darkQuery = "(prefers-color-scheme: dark)";
  *
  * - Fixed position in the corner
  * - Subtle, semi-transparent
- * - Links to https://agent-native.com
+ * - Links to https://jami.studio
  * - Respects prefers-color-scheme
  * - Can be hidden via HIDE_BRANDING=true env var (for white-label)
  */
@@ -155,7 +155,7 @@ export function PoweredByBadge({
         }
       `}</style>
       <a
-        href="https://agent-native.com"
+        href="https://jami.studio"
         target="_blank"
         rel="noopener noreferrer"
         className={cn(

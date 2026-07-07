@@ -40,7 +40,7 @@ const SIDEBAR_FULLSCREEN_KEY = "frame-sidebar-fullscreen";
 const SIDEBAR_STATE_CHANGE_EVENT = "agent-panel:state-change";
 const APP_IFRAME_ALLOW = "camera; microphone; display-capture; fullscreen";
 const OPEN_DESKTOP_URL = "agentnative://open";
-const DOWNLOAD_DESKTOP_URL = "https://www.agent-native.com/download";
+const DOWNLOAD_DESKTOP_URL = "https://www.jami.studio/download";
 const SIDEBAR_ANIMATION_MS = 260;
 
 function getAppId(): string {

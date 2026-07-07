@@ -38,7 +38,7 @@ const createOAuthSessionMock = vi.fn(async () => ({
 vi.mock("./google-oauth.js", () => ({
   createOAuthSession: (...a: any[]) => createOAuthSessionMock(...a),
   getOrigin: (event: any) =>
-    `https://${event.headers?.host ?? "mail.agent-native.com"}`,
+    `https://${event.headers?.host ?? "mail.jami.studio"}`,
 }));
 
 vi.mock("./app-name.js", () => ({ getAppName: () => "mail" }));
@@ -117,14 +117,14 @@ vi.mock("./identity-sso-store.js", () => ({
 
 const { handleIdentitySso } = await import("./identity-sso.js");
 
-const HUB = "https://dispatch.agent-native.com";
+const HUB = "https://dispatch.jami.studio";
 const SECRET = "test-a2a-secret";
 
 function ev(opts: { method?: string; path?: string; host?: string }): any {
   const path = opts.path ?? "/";
   return {
     method: opts.method ?? "GET",
-    headers: { host: opts.host ?? "mail.agent-native.com" },
+    headers: { host: opts.host ?? "mail.jami.studio" },
     node: { req: { url: path } },
     path,
     url: { pathname: path.split("?")[0] },
@@ -136,9 +136,9 @@ async function signIdentity(
   opts: { secret?: string; expiresIn?: string; iat?: number } = {},
 ): Promise<string> {
   const b = new jose.SignJWT({
-    aud: "https://mail.agent-native.com/_agent-native/identity/callback",
+    aud: "https://mail.jami.studio/_agent-native/identity/callback",
     redirect_uri:
-      "https://mail.agent-native.com/_agent-native/identity/callback",
+      "https://mail.jami.studio/_agent-native/identity/callback",
     ...claims,
   })
     .setProtectedHeader({ alg: "HS256" })
@@ -203,7 +203,7 @@ describe("identity SSO — /login", () => {
     const u = new URL(loc);
     expect(u.searchParams.get("app")).toBe("mail");
     expect(u.searchParams.get("redirect_uri")).toBe(
-      "https://mail.agent-native.com/_agent-native/identity/callback",
+      "https://mail.jami.studio/_agent-native/identity/callback",
     );
     expect(u.searchParams.get("state")).toBeTruthy();
     expect(stateRows.size).toBe(1);
@@ -276,9 +276,9 @@ describe("identity SSO — /callback rejects bad tokens", () => {
       email: "x@y.com",
       scope: "identity",
       jti: "wrong-aud",
-      aud: "https://calendar.agent-native.com/_agent-native/identity/callback",
+      aud: "https://calendar.jami.studio/_agent-native/identity/callback",
       redirect_uri:
-        "https://calendar.agent-native.com/_agent-native/identity/callback",
+        "https://calendar.jami.studio/_agent-native/identity/callback",
     });
     const res = await handleIdentitySso(
       ev({ path: `/callback?token=${token}&state=${state}` }),

@@ -7,7 +7,7 @@ import { getCallbackOrigin } from "./frame.js";
 import { useBuilderConnectFlow } from "./settings/useBuilderStatus.js";
 import { cn } from "./utils.js";
 
-const DESKTOP_DOWNLOAD_URL = "https://www.agent-native.com/download";
+const DESKTOP_DOWNLOAD_URL = "https://www.jami.studio/download";
 const CODE_CHANGE_FALLBACK_DETAIL =
   "Edit locally or use Jami Studio to edit this code in the cloud and continue customizing the app any way you like.";
 const CODE_CHANGE_FALLBACK_TEXT = `This requires a code change. ${CODE_CHANGE_FALLBACK_DETAIL}`;

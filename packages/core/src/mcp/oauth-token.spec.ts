@@ -193,11 +193,11 @@ describe("signMcpOAuthAccessToken + verifyMcpOAuthAccessToken round-trip", () =>
 
 describe("verifyMcpOAuthAccessToken — audience array (host-drift tolerance)", () => {
   it("verifies when the token audience is the second entry in the array", async () => {
-    const ALT_RESOURCE = "https://plan.agent-native.com/_agent-native/mcp";
+    const ALT_RESOURCE = "https://plan.jami.studio/_agent-native/mcp";
     const token = await signMcpOAuthAccessToken({
       ...baseSign,
       resource: ALT_RESOURCE,
-      issuer: "https://plan.agent-native.com",
+      issuer: "https://plan.jami.studio",
     });
     // Token was minted for ALT_RESOURCE; request now arrives via RESOURCE.
     // Passing both as an array must accept the token.
@@ -214,7 +214,7 @@ describe("verifyMcpOAuthAccessToken — audience array (host-drift tolerance)", 
     // Primary resource is RESOURCE; alt is something else entirely.
     const result = await verifyMcpOAuthAccessToken(token, [
       RESOURCE,
-      "https://other.agent-native.com/_agent-native/mcp",
+      "https://other.jami.studio/_agent-native/mcp",
     ]);
     expect(result).not.toBeNull();
   });

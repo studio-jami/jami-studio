@@ -180,7 +180,7 @@ const READINESS_REVIEWED_KEY = "clips:readiness-reviewed";
 // Prod points at the hosted Clips instance. User can override from Settings.
 const DEFAULT_URL = import.meta.env.DEV
   ? "http://localhost:8094"
-  : "https://clips.agent-native.com";
+  : "https://clips.jami.studio";
 
 function resolveDesktopThumbnailUrl(
   rawUrl: string | null | undefined,

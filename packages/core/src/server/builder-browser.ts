@@ -358,7 +358,7 @@ function isAllowedBrowserReturnUrl(urlString: string): boolean {
       hostname === "builder.codes" ||
       hostname.endsWith(".builder.codes");
     const isAgentNativeDomain =
-      hostname === "agent-native.com" || hostname.endsWith(".agent-native.com");
+      hostname === "jami.studio" || hostname.endsWith(".jami.studio");
     return (
       isAllowedProtocol &&
       (isLocalhost || isBuilderDomain || isAgentNativeDomain)
@@ -445,7 +445,7 @@ function isBuilderCliAuthAllowedOrigin(origin: string | null | undefined) {
     const isBuilderDomain =
       hostname === "builder.io" || hostname.endsWith(".builder.io");
     const isAgentNativeDomain =
-      hostname === "agent-native.com" || hostname.endsWith(".agent-native.com");
+      hostname === "jami.studio" || hostname.endsWith(".jami.studio");
     return (
       isAllowedProtocol &&
       (isLocalhost || isBuilderDomain || isAgentNativeDomain)
@@ -704,7 +704,7 @@ export function getBuilderBrowserOriginForEvent(event: H3Event): string {
 
 /**
  * Builder's /cli-auth page currently only accepts localhost, *.builder.io,
- * *.agent-native.com, or builder: redirect_url destinations. Preview hosts
+ * *.jami.studio, or builder: redirect_url destinations. Preview hosts
  * such as *.builderio.xyz and *.builder.codes are valid app origins for us,
  * but Builder rejects them and falls back to http://localhost:10110/auth.
  * Use a configured public gateway for the callback in those cases while
@@ -723,7 +723,7 @@ export function getBuilderCliAuthCallbackOriginForEvent(
   // http://localhost:10110/auth default (ERR_CONNECTION_REFUSED). In local dev
   // the app is also reachable at http://localhost:<PORT> — an origin Builder
   // accepts and a same-machine browser can reach — so use that for the callback
-  // instead of a broken redirect. (Production origins are *.agent-native.com,
+  // instead of a broken redirect. (Production origins are *.jami.studio,
   // which pass the allow-list above and never reach here.)
   return localBuilderCliAuthCallbackOrigin() ?? previewOrigin;
 }
@@ -1224,7 +1224,7 @@ function normalizeBuilderBranchUrl(value: unknown): string {
  * cloud sandbox and writes code to a branch; the returned URL opens that
  * branch in the Visual Editor so the user can watch progress.
  *
- * Spec: https://www.builder.io/c/docs/agents-run-api
+ * Spec: https://www.jami.studio/c/docs/agents-run-api
  */
 export async function runBuilderAgent(
   args: RunBuilderAgentArgs,

@@ -8,7 +8,7 @@
  * that runs browser-only / SSR-incompatible logic at module scope throws here
  * instead of in production.
  *
- * Background: agent-native.com (and forms/slides/clips/videos/…) all 502'd in
+ * Background: jami.studio (and forms/slides/clips/videos/…) all 502'd in
  * prod because `@excalidraw/excalidraw` (which touches `window` at module load)
  * leaked into the Nitro server bundle and threw
  * `ReferenceError: window is not defined` at cold-start. Nothing in CI caught it

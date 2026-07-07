@@ -164,7 +164,7 @@ npx @agent-native/core@latest recap doctor
 يمكن لأي مالك أو مسؤول للمؤسسة إدراجها أو إبطالها. Mint One (مالك/مسؤول المؤسسة فقط):
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 يقوم الأمر بالمصادقة عليك في المتصفح، ثم يطبع رمز الخدمة المميز
@@ -177,7 +177,7 @@ npx @agent-native/core@latest connect https://plan.agent-native.com --service-to
 ملف رمز النشر المميز الذي يستطيع `npx @agent-native/core@latest recap setup` قراءته:
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ npx @agent-native/core@latest recap setup
 | `VISUAL_RECAP_MODEL`     | كل CLI الافتراضي                | متغير. دبابيس النموذج - على سبيل المثال. `gpt-5.5` لـ Codex، أو معرف طراز Claude. يستخدم Unset الإعداد الافتراضي الخاص بـ CLI.                             |
 | `VISUAL_RECAP_REASONING` | الإعداد الافتراضي لكل نموذج     | متغير. عمق الاستدلال: `none`، أو `minimal`، أو `low`، أو `medium`، أو `high`، أو `xhigh`. ينطبق على الواجهة الخلفية Codex.                                 |
 | `RECAP_CLI_VERSION`      | `latest`                        | متغير. تثبيت إصدار `@agent-native/core` CLI الذي يقوم سير العمل بتثبيته - على سبيل المثال. `1.5.0`. انظر [Version pinning](#version-pinning-copy-variant). |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com` | سرية. فقط عند الاستضافة الذاتية لتطبيق الخطط على مصدر مختلف.                                                                                               |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio` | سرية. فقط عند الاستضافة الذاتية لتطبيق الخطط على مصدر مختلف.                                                                                               |
 
 يكتشف سير العمل تلقائيًا كيفية استدعاء مساعده CLI (المصدر المحلي داخل هذا monorepo، `@agent-native/core` المنشور في مكان آخر)، لذا لا يوجد متغير `RECAP_CLI` لتعيينه.
 

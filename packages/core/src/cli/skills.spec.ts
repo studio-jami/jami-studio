@@ -57,8 +57,8 @@ function writeContentAppSkillFixture(root: string): string {
         displayName: "Content",
         description: "Edit docs, blogs, resources, and MDX content.",
         hosted: {
-          url: "https://content.agent-native.com",
-          mcpUrl: "https://content.agent-native.com/_agent-native/mcp",
+          url: "https://content.jami.studio",
+          mcpUrl: "https://content.jami.studio/_agent-native/mcp",
         },
         mcp: {
           serverName: "agent-native-content",
@@ -246,7 +246,7 @@ describe("agent-native skills", () => {
 
       expect(result.mcpClients).toEqual([]);
       expect(result.connectCommand).toBe(
-        "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope user",
+        "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope user",
       );
       expect(fs.existsSync(path.join(codexHome, "config.toml"))).toBe(false);
     } finally {
@@ -279,7 +279,7 @@ describe("agent-native skills", () => {
     expect(runConnect).not.toHaveBeenCalled();
     expect(result.connected).toBe(false);
     expect(result.connectCommand).toBe(
-      "npx @agent-native/core@latest connect https://assets.agent-native.com --client claude-code --scope project",
+      "npx @agent-native/core@latest connect https://assets.jami.studio --client claude-code --scope project",
     );
   });
 
@@ -299,7 +299,7 @@ describe("agent-native skills", () => {
 
     expect(result.connected).toBe(true);
     expect(runConnect).toHaveBeenCalledWith([
-      "https://assets.agent-native.com",
+      "https://assets.jami.studio",
       "--client",
       "claude-code,codex,cowork,cursor,opencode,github-copilot",
       "--scope",
@@ -340,7 +340,7 @@ describe("agent-native skills", () => {
     expect(spinner.clear).toHaveBeenCalledTimes(1);
     expect(connectLog).toEqual(["Authenticating Assets…"]);
     expect(runConnect).toHaveBeenCalledWith([
-      "https://assets.agent-native.com",
+      "https://assets.jami.studio",
       "--client",
       "claude-code",
       "--scope",
@@ -577,7 +577,7 @@ describe("agent-native skills", () => {
     expect(result.written).toContain(skillDir);
     expect(fs.existsSync(path.join(skillDir, "SKILL.md"))).toBe(true);
     expect(result.mcpUrl).toBe(
-      "https://design.agent-native.com/_agent-native/mcp",
+      "https://design.jami.studio/_agent-native/mcp",
     );
   });
 
@@ -605,7 +605,7 @@ describe("agent-native skills", () => {
       "npx @agent-native/core@latest design connect",
     );
     expect(result.mcpUrl).toBe(
-      "https://design.agent-native.com/_agent-native/mcp",
+      "https://design.jami.studio/_agent-native/mcp",
     );
   });
 
@@ -650,11 +650,11 @@ describe("agent-native skills", () => {
         ]),
       );
       expect(result.mcpUrl).toBe(
-        "https://plan.agent-native.com/_agent-native/mcp",
+        "https://plan.jami.studio/_agent-native/mcp",
       );
       expect(fs.existsSync(path.join(codexHome, "config.toml"))).toBe(false);
       expect(result.commands).toContain(
-        "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope project",
+        "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope project",
       );
       expect(materializedVisualPlan).toContain("pass it as `planText`");
       expect(materializedVisualPlan).toContain("contentPatches");
@@ -1054,7 +1054,7 @@ describe("agent-native skills", () => {
     expect(
       JSON.parse(fs.readFileSync(path.join(root, ".mcp.json"), "utf-8"))
         .mcpServers["agent-native-assets"].url,
-    ).toBe("https://assets.agent-native.com/_agent-native/mcp");
+    ).toBe("https://assets.jami.studio/_agent-native/mcp");
   });
 
   it("installs visual-plan into Claude Code user skills idempotently", async () => {
@@ -1084,7 +1084,7 @@ describe("agent-native skills", () => {
       expect(result.skillNames).toEqual(["visual-plan"]);
       expect(result.planMode).toBe("hosted");
       expect(result.mcpUrl).toBe(
-        "https://plan.agent-native.com/_agent-native/mcp",
+        "https://plan.jami.studio/_agent-native/mcp",
       );
       expect(result.written).toContain(skillDir);
       expect(fs.existsSync(path.join(skillDir, "old.txt"))).toBe(false);
@@ -1101,7 +1101,7 @@ describe("agent-native skills", () => {
         source: "agent-native",
         appSkillId: "visual-plans",
         skillName: "visual-plan",
-        mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+        mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
         planMode: "hosted",
         installCommand: "npx @agent-native/core@latest skills add visual-plan",
         updateCommand:
@@ -1268,12 +1268,12 @@ describe("agent-native skills", () => {
       expect(
         JSON.parse(fs.readFileSync(path.join(home, ".claude.json"), "utf-8"))
           .mcpServers["agent-native-assets"].url,
-      ).toBe("https://assets.agent-native.com/_agent-native/mcp");
+      ).toBe("https://assets.jami.studio/_agent-native/mcp");
       // Install also authenticates the hosted connector in one step.
       expect(runConnect).toHaveBeenCalledTimes(1);
       expect(runConnect.mock.calls[0][0]).toEqual(
         expect.arrayContaining([
-          "https://assets.agent-native.com",
+          "https://assets.jami.studio",
           "--client",
           "codex,claude-code",
         ]),
@@ -1342,7 +1342,7 @@ describe("agent-native skills", () => {
 
     expect(promptGithubAction).toHaveBeenCalledTimes(1);
     expect(promptGithubAction.mock.calls[0]?.[0]).toMatchObject({
-      docsUrl: "https://www.agent-native.com/docs/pr-visual-recap",
+      docsUrl: "https://www.jami.studio/docs/pr-visual-recap",
     });
     const workflow = path.join(
       root,
@@ -2029,7 +2029,7 @@ describe("agent-native skills", () => {
           displayName: "Agent-Native Plans",
           skillName: "visual-plan",
           contentHash: "old",
-          mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+          mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
           installedAt: "2026-01-01T00:00:00.000Z",
           updateCommand:
             "npx @agent-native/core@latest skills update visual-plan",
@@ -2114,7 +2114,7 @@ describe("agent-native skills", () => {
           displayName: "Agent-Native Plans",
           skillName: "visual-plan",
           contentHash: "old",
-          mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+          mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
           installedAt: "2026-01-01T00:00:00.000Z",
           updateCommand:
             "npx @agent-native/core@latest skills update visual-plan",
@@ -2340,7 +2340,7 @@ describe("agent-native skills", () => {
       const codexConfig = path.join(codexHome, "config.toml");
       expect(fs.existsSync(codexConfig)).toBe(false);
       expect(result.commands).toContain(
-        "npx @agent-native/core@latest connect https://assets.agent-native.com --client codex --scope user",
+        "npx @agent-native/core@latest connect https://assets.jami.studio --client codex --scope user",
       );
       expect(fs.existsSync(path.join(home, ".codex", "config.toml"))).toBe(
         false,
@@ -2419,7 +2419,7 @@ describe("agent-native skills", () => {
       const result = JSON.parse(stdout.join(""));
       expect(result.id).toBe("assets");
       expect(result.mcpUrl).toBe(
-        "https://assets.agent-native.com/_agent-native/mcp",
+        "https://assets.jami.studio/_agent-native/mcp",
       );
       expect(stderr.join("")).toBe("");
     } finally {

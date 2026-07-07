@@ -233,14 +233,14 @@ MCP 端点支持标准远程 MCP OAuth 以及现有的不记名令牌后备：
 对于支持 OAuth 的 MCP 主机，配置不带静态标头的远程服务器 URL：
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 第一个未经身份验证的 MCP 请求收到：
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 发现端点：

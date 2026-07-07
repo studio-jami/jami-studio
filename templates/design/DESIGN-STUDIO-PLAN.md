@@ -11,7 +11,7 @@
 >   inline designs.**
 >
 > Visual source of truth: the published visual plan
-> <https://plan.agent-native.com/plans/plan-88dc4a09fb0c46bc> (workbench, motion
+> <https://plan.jami.studio/plans/plan-88dc4a09fb0c46bc> (workbench, motion
 > dock, tokens, states, review, extensions). Its artboards are the acceptance
 > references for the panels below.
 

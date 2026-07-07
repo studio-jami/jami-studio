@@ -233,14 +233,14 @@ Der MCP-Endpunkt unterstützt den Standard-Remote-MCP OAuth sowie den vorhandene
 Konfigurieren Sie für OAuth-fähige MCP-Hosts den Remote-Server URL ohne statische Header:
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 Die erste nicht authentifizierte MCP-Anfrage erhält:
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 Erkennungsendpunkte:

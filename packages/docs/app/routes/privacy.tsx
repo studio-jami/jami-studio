@@ -110,7 +110,7 @@ export default function PrivacyPage() {
         <p>
           {t("legal.privacy.paragraphs.scope2Prefix")}{" "}
           <a
-            href="https://www.builder.io/legal/privacy"
+            href="https://www.jami.studio/legal/privacy"
             className="font-medium text-[var(--fg)] underline decoration-[var(--docs-border)] underline-offset-4 transition hover:text-[var(--docs-accent)]"
           >
             {t("legal.privacy.links.builderPrivacy")}
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
         <p>
           {t("legal.privacy.paragraphs.clipsAnchor")}{" "}
           <code className="rounded border border-[var(--code-border)] bg-[var(--code-bg)] px-1.5 py-0.5 text-sm text-[var(--fg)]">
-            https://www.agent-native.com/privacy#clips-chrome-extension
+            https://www.jami.studio/privacy#clips-chrome-extension
           </code>
           .
         </p>
@@ -183,7 +183,7 @@ export default function PrivacyPage() {
         <p>
           {t("legal.privacy.paragraphs.changes2Prefix")}{" "}
           <a
-            href="https://www.builder.io/legal/privacy"
+            href="https://www.jami.studio/legal/privacy"
             className="font-medium text-[var(--fg)] underline decoration-[var(--docs-border)] underline-offset-4 transition hover:text-[var(--docs-accent)]"
           >
             {t("legal.privacy.links.builderPrivacyFull")}

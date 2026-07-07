@@ -279,7 +279,7 @@ export async function runDbHealthProbe(
   };
 }
 const DEFAULT_BUILDER_WAITLIST_FORM_ID = "DYTHuM0jlV";
-const DEFAULT_BUILDER_WAITLIST_FORMS_ORIGIN = "https://forms.agent-native.com";
+const DEFAULT_BUILDER_WAITLIST_FORMS_ORIGIN = "https://forms.jami.studio";
 const BUILDER_WAITLIST_FORM_SOURCE = "connect_builder_card";
 const BUILDER_WAITLIST_DEFAULT_USE_CASE = "builder_agent_background_coding";
 const BUILDER_WAITLIST_USE_CASES = new Set([
@@ -345,7 +345,7 @@ function normalizeHttpOrigin(value: string): string | null {
 function isAgentNativeHostedRequest(event: H3Event): boolean {
   const hostname = getRequestURL(event).hostname.toLowerCase();
   return (
-    hostname === "agent-native.com" || hostname.endsWith(".agent-native.com")
+    hostname === "jami.studio" || hostname.endsWith(".jami.studio")
   );
 }
 

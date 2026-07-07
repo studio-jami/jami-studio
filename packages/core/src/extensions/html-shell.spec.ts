@@ -25,7 +25,7 @@ describe("buildExtensionHtml", () => {
       `frame-ancestors ${EXTENSION_FRAME_ANCESTORS}`,
     );
     expect(EXTENSION_IFRAME_CSP).not.toContain("frame-ancestors *");
-    expect(EXTENSION_FRAME_ANCESTORS).toContain("https://*.agent-native.com");
+    expect(EXTENSION_FRAME_ANCESTORS).toContain("https://*.jami.studio");
     expect(EXTENSION_FRAME_ANCESTORS).toContain(
       "https://*.claudemcpcontent.com",
     );

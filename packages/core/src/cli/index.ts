@@ -161,7 +161,7 @@ Sentry.init({
 }
 
 const FEEDBACK_URL =
-  "https://forms.agent-native.com/f/agent-native-feedback/_16ewV?source=cli";
+  "https://forms.jami.studio/f/agent-native-feedback/_16ewV?source=cli";
 const BUGS_URL = "https://github.com/BuilderIO/agent-native/issues";
 
 const command = process.argv[2];

@@ -123,14 +123,14 @@ describe("defineAction", () => {
         resource: {
           title: "Review draft",
           html: "<!doctype html><html><body>Review</body></html>",
-          csp: { connectDomains: ["https://mail.agent-native.com"] },
+          csp: { connectDomains: ["https://mail.jami.studio"] },
         },
       },
       run: async () => "ok",
     });
     expect(action.mcpApp?.resource.title).toBe("Review draft");
     expect(action.mcpApp?.resource.csp).toEqual({
-      connectDomains: ["https://mail.agent-native.com"],
+      connectDomains: ["https://mail.jami.studio"],
     });
   });
 

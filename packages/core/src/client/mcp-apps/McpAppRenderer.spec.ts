@@ -122,7 +122,7 @@ describe("McpAppRenderer security helpers", () => {
     const openSpy = vi.spyOn(window, "open").mockReturnValue(null);
     const payload = mcpAppPayload({
       resourceHtml: "<!doctype html><html><body>Static widget</body></html>",
-      openUrl: "https://plan.agent-native.com/plans/plan-123",
+      openUrl: "https://plan.jami.studio/plans/plan-123",
     });
 
     await act(async () => {
@@ -154,7 +154,7 @@ describe("McpAppRenderer security helpers", () => {
     });
 
     expect(openSpy).toHaveBeenCalledWith(
-      "https://plan.agent-native.com/plans/plan-123",
+      "https://plan.jami.studio/plans/plan-123",
       "_blank",
       "noopener,noreferrer",
     );
@@ -164,7 +164,7 @@ describe("McpAppRenderer security helpers", () => {
     vi.useFakeTimers();
     const payload = mcpAppPayload({
       resourceHtml: "<!doctype html><html><body>Inline app</body></html>",
-      openUrl: "https://plan.agent-native.com/plans/plan-123",
+      openUrl: "https://plan.jami.studio/plans/plan-123",
     });
 
     await act(async () => {

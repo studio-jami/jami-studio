@@ -38,7 +38,7 @@ describe("getOnboardingHtml", () => {
     it("env set → injects exactly one conditional SSO entry pointing at /identity/login", () => {
       vi.stubEnv(
         "AGENT_NATIVE_IDENTITY_HUB_URL",
-        "https://dispatch.agent-native.com",
+        "https://dispatch.jami.studio",
       );
       const html = getOnboardingHtml();
       expect(html).toContain('id="identity-sso-btn"');
@@ -147,21 +147,21 @@ describe("getOnboardingHtml", () => {
   it("omits hosted terms and privacy links on unhosted email signup", () => {
     const html = getOnboardingHtml();
 
-    expect(html).not.toContain("https://www.agent-native.com/terms");
-    expect(html).not.toContain("https://www.agent-native.com/privacy");
+    expect(html).not.toContain("https://www.jami.studio/terms");
+    expect(html).not.toContain("https://www.jami.studio/privacy");
     expect(html).toContain(".legal-note");
   });
 
   it("shows a secondary terms and privacy notice on hosted email signup", () => {
     const html = getOnboardingHtml({
-      requestHost: "calendar.agent-native.com",
+      requestHost: "calendar.jami.studio",
     });
 
     expect(html).toContain('data-i18n="legalPrefix"');
-    expect(html).toContain('href="https://www.agent-native.com/terms"');
+    expect(html).toContain('href="https://www.jami.studio/terms"');
     expect(html).toContain('data-i18n="legalTerms">Terms</a>');
     expect(html).toContain(
-      'href="https://www.agent-native.com/privacy" target="_blank" rel="noreferrer"',
+      'href="https://www.jami.studio/privacy" target="_blank" rel="noreferrer"',
     );
     expect(html).toContain('data-i18n="legalPrivacy">Privacy Policy</a>');
     expect(html).toContain(".legal-note");
@@ -169,7 +169,7 @@ describe("getOnboardingHtml", () => {
 
   it("renders a locale picker that shares the app locale preference", () => {
     const html = getOnboardingHtml({
-      requestHost: "forms.agent-native.com",
+      requestHost: "forms.jami.studio",
     });
 
     expect(html).toContain('id="auth-locale-trigger"');
@@ -188,7 +188,7 @@ describe("getOnboardingHtml", () => {
 
   it("localizes built-in Forms auth marketing copy from the locale picker", () => {
     const html = getOnboardingHtml({
-      requestHost: "forms.agent-native.com",
+      requestHost: "forms.jami.studio",
     });
 
     expect(html).toContain('data-marketing-field="tagline"');
@@ -219,7 +219,7 @@ describe("getOnboardingHtml", () => {
 
   it("shows a quiet local-files escape hatch on hosted Plan signup", () => {
     const html = getOnboardingHtml({
-      requestHost: "plan.agent-native.com",
+      requestHost: "plan.jami.studio",
     });
 
     expect(html).toContain('class="signup-local-mode-note"');
@@ -235,7 +235,7 @@ describe("getOnboardingHtml", () => {
 
   it("keeps the local-files escape hatch off other hosted signup pages", () => {
     const html = getOnboardingHtml({
-      requestHost: "calendar.agent-native.com",
+      requestHost: "calendar.jami.studio",
     });
 
     expect(html).not.toContain('id="signup-local-mode-note"');
@@ -260,7 +260,7 @@ describe("getOnboardingHtml", () => {
 
   it("uses branded first-party marketing from the request host", () => {
     const html = getOnboardingHtml({
-      requestHost: "dispatch.agent-native.com",
+      requestHost: "dispatch.jami.studio",
     });
 
     expect(html).toContain('class="marketing-panel"');
@@ -288,7 +288,7 @@ describe("getOnboardingHtml", () => {
         runLocalCommand: command,
       },
       googleSignInNotice: {
-        host: "mail.agent-native.com",
+        host: "mail.jami.studio",
         title: "Google may show a warning",
         body: "Google may ask you to confirm before continuing.",
         continueLabel: "Continue to Google",
@@ -330,7 +330,7 @@ describe("getOnboardingHtml", () => {
 
     for (const slug of coreSlugs) {
       const html = getOnboardingHtml({
-        requestHost: `${slug}.agent-native.com`,
+        requestHost: `${slug}.jami.studio`,
       });
 
       expect(html).toContain('class="marketing-panel"');

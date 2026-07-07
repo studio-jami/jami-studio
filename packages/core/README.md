@@ -33,7 +33,7 @@ It installs the skills, writes shared `.agents` skill folders for agents that su
 - **`/visual-plan`** — before the agent writes code, it opens a structured, reviewable plan document instead of a wall of text: inline diagrams, UI wireframes and prototypes, file-by-file implementation maps, and annotations you can comment on and approve.
 - **`/visual-recap`** — after changes land, it turns a PR or git diff into a high-altitude visual recap: schema, API, and file changes rendered as grounded before/after blocks with a shareable review link, instead of scrolling a raw diff.
 
-See the **[Skills Guide](https://agent-native.com/docs/skills-guide#app-backed-skills)** for more skills and local installs.
+See the **[Skills Guide](https://jami.studio/docs/skills-guide#app-backed-skills)** for more skills and local installs.
 
 ## Templates
 
@@ -45,7 +45,7 @@ Start from a complete, production-grade SaaS app — cloneable, not scaffolded. 
 
 **Clips**
 
-<a href="https://agent-native.com/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F678be5a501a14ab8a508e5f7bc92c468?format=webp&width=800" alt="Clips template" width="100%" /></a>
+<a href="https://jami.studio/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F678be5a501a14ab8a508e5f7bc92c468?format=webp&width=800" alt="Clips template" width="100%" /></a>
 
 **Agent-Native Loom**
 
@@ -56,7 +56,7 @@ Record your screen with auto-transcripts, shareable links, and an agent that sum
 
 **Plans**
 
-<a href="https://agent-native.com/templates/plan"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800" alt="Plans template" width="100%" /></a>
+<a href="https://jami.studio/templates/plan"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800" alt="Plans template" width="100%" /></a>
 
 **Visual plan mode for coding agents**
 
@@ -67,7 +67,7 @@ Install `/visual-plan` and `/visual-recap` so your coding agent can plan before 
 
 **Mail**
 
-<a href="https://agent-native.com/templates/mail"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6f49a81c404d4242b33317491eac7575?format=webp&width=800" alt="Mail template" width="100%" /></a>
+<a href="https://jami.studio/templates/mail"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6f49a81c404d4242b33317491eac7575?format=webp&width=800" alt="Mail template" width="100%" /></a>
 
 **Agent-Native Mail, Superhuman**
 
@@ -80,7 +80,7 @@ Superhuman-style email client with keyboard shortcuts, AI triage, and a fully cu
 
 **Calendar**
 
-<a href="https://agent-native.com/templates/calendar"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ffb6c3b483ca24ab3b6c3a758aeceef4c?format=webp&width=800" alt="Calendar template" width="100%" /></a>
+<a href="https://jami.studio/templates/calendar"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ffb6c3b483ca24ab3b6c3a758aeceef4c?format=webp&width=800" alt="Calendar template" width="100%" /></a>
 
 **Agent-Native Google Calendar, Calendly**
 
@@ -91,7 +91,7 @@ Manage events, sync with Google Calendar, and share a public booking page with A
 
 **Content**
 
-<a href="https://agent-native.com/templates/content"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800" alt="Content template" width="100%" /></a>
+<a href="https://jami.studio/templates/content"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800" alt="Content template" width="100%" /></a>
 
 **Agent-Native Notion, Google Docs**
 
@@ -102,7 +102,7 @@ Write and organize content with an agent that knows your brand and publishing wo
 
 **Slides**
 
-<a href="https://agent-native.com/templates/slides"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800" alt="Slides template" width="100%" /></a>
+<a href="https://jami.studio/templates/slides"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800" alt="Slides template" width="100%" /></a>
 
 **Agent-Native Google Slides, Pitch**
 
@@ -115,7 +115,7 @@ Generate and edit React-based presentations via prompt or point-and-click.
 
 **Analytics**
 
-<a href="https://agent-native.com/templates/analytics"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800" alt="Analytics template" width="100%" /></a>
+<a href="https://jami.studio/templates/analytics"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800" alt="Analytics template" width="100%" /></a>
 
 **Agent-Native Amplitude, Mixpanel**
 
@@ -126,7 +126,7 @@ Connect analytics data sources, prompt for real charts, and build reusable dashb
 
 **Design**
 
-<a href="https://agent-native.com/templates/design"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800" alt="Design template" width="100%" /></a>
+<a href="https://jami.studio/templates/design"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800" alt="Design template" width="100%" /></a>
 
 **Agent-Native Figma, Canva**
 
@@ -139,7 +139,7 @@ Create and edit visual designs by prompt or by hand, with the agent as your co-d
 
 **Dispatch**
 
-<a href="https://agent-native.com/templates/dispatch"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F104b3ad8d1dc461aa33ab9bff37a4482?format=webp&width=800" alt="Dispatch template" width="100%" /></a>
+<a href="https://jami.studio/templates/dispatch"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F104b3ad8d1dc461aa33ab9bff37a4482?format=webp&width=800" alt="Dispatch template" width="100%" /></a>
 
 **Mission control for agent-native apps**
 
@@ -150,7 +150,7 @@ Message, manage, and delegate to agents from Slack, Telegram, or the web. Dispat
 
 **Forms**
 
-<a href="https://agent-native.com/templates/forms"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F190c3fabd51f4c1bba5aa4e091ad4e9b?format=webp&width=800" alt="Forms template" width="100%" /></a>
+<a href="https://jami.studio/templates/forms"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F190c3fabd51f4c1bba5aa4e091ad4e9b?format=webp&width=800" alt="Forms template" width="100%" /></a>
 
 **Agent-Native Typeform**
 
@@ -161,7 +161,7 @@ Generate forms from a prompt, branch logic with the agent, and own every respons
 
 **Brain**
 
-<a href="https://agent-native.com/templates/brain"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F9c9fe3b5b9494e33803cd3f494cba356?format=webp&width=800" alt="Brain template" width="100%" /></a>
+<a href="https://jami.studio/templates/brain"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F9c9fe3b5b9494e33803cd3f494cba356?format=webp&width=800" alt="Brain template" width="100%" /></a>
 
 **Agent-Native company memory**
 
@@ -174,7 +174,7 @@ Ask questions over cited company knowledge from approved Slack, meetings, transc
 
 **Assets**
 
-<a href="https://agent-native.com/templates/assets"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F769092170a14474f998cbca47384f891?format=webp&width=800" alt="Assets template" width="100%" /></a>
+<a href="https://jami.studio/templates/assets"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F769092170a14474f998cbca47384f891?format=webp&width=800" alt="Assets template" width="100%" /></a>
 
 **Agent-Native asset library**
 
@@ -195,7 +195,7 @@ pnpm install
 pnpm dev
 ```
 
-The CLI shows a multi-select picker so you can include as many templates as you want in one workspace. Pick Mail + Calendar + Forms and you get all three apps wired up and sharing auth in one go. Or browse the **[template gallery](https://agent-native.com/templates)** for live demos.
+The CLI shows a multi-select picker so you can include as many templates as you want in one workspace. Pick Mail + Calendar + Forms and you get all three apps wired up and sharing auth in one go. Or browse the **[template gallery](https://jami.studio/templates)** for live demos.
 
 Want a single app, no monorepo? Use `--standalone`:
 
@@ -235,7 +235,7 @@ npx @agent-native/core@latest deploy
 # https://your-agents.com/forms/*      → forms
 ```
 
-Same-origin deploy means a **shared login session** across every app and **zero-config cross-app A2A** — tag `@mail` from the calendar's agent chat and it just works (no JWT signing, no CORS). Full details at **[agent-native.com/docs/multi-app-workspace](https://agent-native.com/docs/multi-app-workspace)**.
+Same-origin deploy means a **shared login session** across every app and **zero-config cross-app A2A** — tag `@mail` from the calendar's agent chat and it just works (no JWT signing, no CORS). Full details at **[jami.studio/docs/multi-app-workspace](https://jami.studio/docs/multi-app-workspace)**.
 
 ## The Best of Both Worlds
 
@@ -252,7 +252,7 @@ Join the **[Discord](https://discord.gg/qm82StQ2NC)** to ask questions, share wh
 
 ## Docs
 
-Full documentation at **[agent-native.com](https://agent-native.com)**.
+Full documentation at **[jami.studio](https://jami.studio)**.
 
 ## License
 

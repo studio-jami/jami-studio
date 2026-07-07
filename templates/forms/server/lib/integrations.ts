@@ -70,8 +70,8 @@ function clientSurfaceLabel(surface: string): string {
 
 /**
  * Friendly app name derived from a feedback page URL, so a reviewer can tell at
- * a glance which app the feedback came from. `plan.agent-native.com` → "Plan",
- * `analytics.agent-native.com` → "Analytics". Returns null when the host isn't a
+ * a glance which app the feedback came from. `plan.jami.studio` → "Plan",
+ * `analytics.jami.studio` → "Analytics". Returns null when the host isn't a
  * recognizable per-app subdomain (the full URL still carries the page).
  */
 function appLabelFromUrl(pageUrl: string): string | null {

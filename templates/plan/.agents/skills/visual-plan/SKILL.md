@@ -441,7 +441,7 @@ installed slash commands. If you only need one command, use
 `create-visual-questions`) are MCP tools reachable from `/visual-plan`, not
 separate slash commands. Pass `--no-connect` to register the connector without
 authenticating, then run
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 whenever you are ready, or choose a narrower `--client`. Auth and MCP tool
 loading are per client config/session.
 
@@ -465,5 +465,5 @@ If a Plans tool returns `needs auth`, `Unauthorized`, or `Session terminated`, d
 not keep retrying it — stop and give the user the per-client reconnect step from
 `references/connection.md`, then continue once the connector is available.
 
-Hosted default: connect `https://plan.agent-native.com/_agent-native/mcp`. Do
+Hosted default: connect `https://plan.jami.studio/_agent-native/mcp`. Do
 not put shared secrets in skill files.

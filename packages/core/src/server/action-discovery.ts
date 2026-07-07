@@ -507,7 +507,7 @@ export async function autoDiscoverActions(
       `[autoDiscoverActions] WARNING: No template actions found! ` +
         `The agent will have no template-specific tools. ` +
         `If in production, switch from autoDiscoverActions to loadActionsFromStaticRegistry. ` +
-        `See: https://docs.agent-native.com/actions#static-registry`,
+        `See: https://docs.jami.studio/actions#static-registry`,
     );
   }
 

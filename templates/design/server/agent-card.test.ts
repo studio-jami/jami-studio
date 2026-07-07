@@ -45,7 +45,7 @@ describe("design agent card", () => {
           })),
           streaming: true,
         },
-        "https://design.agent-native.com",
+        "https://design.jami.studio",
       );
 
       expect(card.name).toBe("Design");

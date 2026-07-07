@@ -77,11 +77,11 @@ describe("resolveAuthCookieNamespace", () => {
     });
   });
 
-  it("isolates first-party agent-native.com apps even when COOKIE_DOMAIN is configured", () => {
+  it("isolates first-party jami.studio apps even when COOKIE_DOMAIN is configured", () => {
     const namespace = resolveAuthCookieNamespace({
       NODE_ENV: "production",
       APP_NAME: "mail",
-      COOKIE_DOMAIN: ".agent-native.com",
+      COOKIE_DOMAIN: ".jami.studio",
     });
 
     expect(namespace).toMatchObject({
@@ -92,7 +92,7 @@ describe("resolveAuthCookieNamespace", () => {
     });
     expect(namespace.frameworkCookieNamesToClear).toContain("an_session");
     expect(namespace.frameworkCookieDomainsToClear).toContain(
-      ".agent-native.com",
+      ".jami.studio",
     );
   });
 
@@ -100,8 +100,8 @@ describe("resolveAuthCookieNamespace", () => {
     expect(
       resolveAuthCookieNamespace({
         NODE_ENV: "production",
-        COOKIE_DOMAIN: ".agent-native.com",
-        APP_URL: "https://slides.agent-native.com",
+        COOKIE_DOMAIN: ".jami.studio",
+        APP_URL: "https://slides.jami.studio",
       }),
     ).toMatchObject({
       frameworkCookieName: "an_session_slides",
@@ -115,8 +115,8 @@ describe("resolveAuthCookieNamespace", () => {
       expect(
         resolveAuthCookieNamespace({
           NODE_ENV: "production",
-          COOKIE_DOMAIN: ".agent-native.com",
-          [key]: "https://mail.agent-native.com",
+          COOKIE_DOMAIN: ".jami.studio",
+          [key]: "https://mail.jami.studio",
         }),
       ).toMatchObject({
         frameworkCookieName: "an_session_mail",
@@ -129,7 +129,7 @@ describe("resolveAuthCookieNamespace", () => {
     expect(() =>
       resolveAuthCookieNamespace({
         NODE_ENV: "production",
-        COOKIE_DOMAIN: ".agent-native.com",
+        COOKIE_DOMAIN: ".jami.studio",
       }),
     ).toThrow(/requires an app identifier/);
   });
@@ -138,14 +138,14 @@ describe("resolveAuthCookieNamespace", () => {
     expect(
       resolveAuthCookieNamespace({
         NODE_ENV: "production",
-        COOKIE_DOMAIN: ".agent-native.com",
+        COOKIE_DOMAIN: ".jami.studio",
         AGENT_NATIVE_SHARE_COOKIE_DOMAIN: "1",
       }),
     ).toMatchObject({
       frameworkCookieName: "an_session",
-      frameworkCookieDomain: ".agent-native.com",
+      frameworkCookieDomain: ".jami.studio",
       betterAuthCookiePrefix: "an",
-      betterAuthCookieDomain: ".agent-native.com",
+      betterAuthCookieDomain: ".jami.studio",
     });
   });
 });

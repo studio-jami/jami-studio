@@ -2,7 +2,7 @@
  * MotionDock — bottom motion timeline dock for the Design Studio (§6.3).
  *
  * Matches the motion artboard at
- * https://plan.agent-native.com/plans/plan-88dc4a09fb0c46bc:
+ * https://plan.jami.studio/plans/plan-88dc4a09fb0c46bc:
  * - Full-width dock beneath the canvas when opened from the Layers footer.
  * - Left sidebar: animated layer rows with property sub-rows.
  * - Center: time ruler + diamond keyframes on a track grid.

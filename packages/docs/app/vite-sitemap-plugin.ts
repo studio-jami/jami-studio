@@ -21,7 +21,7 @@ import {
 } from "../lib/docs-source";
 import enUS from "./i18n/en-US";
 
-export const SITE_URL = "https://www.agent-native.com";
+export const SITE_URL = "https://www.jami.studio";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**

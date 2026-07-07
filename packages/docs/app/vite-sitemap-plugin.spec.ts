@@ -51,9 +51,9 @@ describe("docs agent web generation", () => {
   it("uses the production www canonical origin in sitemap entries", () => {
     const sitemap = buildSitemapXml(["/", "/docs"]);
 
-    expect(SITE_URL).toBe("https://www.agent-native.com");
-    expect(sitemap).toContain("<loc>https://www.agent-native.com/</loc>");
-    expect(sitemap).toContain("<loc>https://www.agent-native.com/docs</loc>");
+    expect(SITE_URL).toBe("https://www.jami.studio");
+    expect(sitemap).toContain("<loc>https://www.jami.studio/</loc>");
+    expect(sitemap).toContain("<loc>https://www.jami.studio/docs</loc>");
   });
 
   it(

@@ -233,14 +233,14 @@ MCP एंडपॉइंट मानक रिमोट MCP OAuth प्लस
 OAuth-सक्षम MCP होस्ट के लिए, बिना किसी स्थिर हेडर के रिमोट सर्वर URL को कॉन्फ़िगर करें:
 
 ```bash
-claude mcp add --transport http agent-native https://dispatch.agent-native.com/_agent-native/mcp
+claude mcp add --transport http agent-native https://dispatch.jami.studio/_agent-native/mcp
 ```
 
 पहला अप्रमाणित MCP अनुरोध प्राप्त होता है:
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer resource_metadata="https://dispatch.agent-native.com/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
+WWW-Authenticate: Bearer resource_metadata="https://dispatch.jami.studio/.well-known/oauth-protected-resource", scope="mcp:read mcp:write mcp:apps"
 ```
 
 खोज समापन बिंदु:

@@ -928,7 +928,7 @@ async function _doEnsureTable(): Promise<void> {
   // runs once per DB (ON CONFLICT DO NOTHING), so a localhost URL written
   // during a dev run sticks forever — including when that DB is later used
   // by a prod deploy and the override wins over the built-in's prod URL.
-  // (Verified problem: `dispatch.agent-native.com` had every remote-agents
+  // (Verified problem: `dispatch.jami.studio` had every remote-agents
   // entry pointing at localhost from an early-seed run, breaking call-agent
   // outbound from Lambda for ~12h before this was caught.)
   try {

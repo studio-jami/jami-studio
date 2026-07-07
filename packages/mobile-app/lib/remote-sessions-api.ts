@@ -30,7 +30,7 @@ export const REMOTE_SESSIONS_ENDPOINTS = {
 
 const dispatchApp = TEMPLATE_APPS.find((app) => app.id === "dispatch");
 export const DEFAULT_REMOTE_RELAY_BASE_URL =
-  dispatchApp?.url || "https://dispatch.agent-native.com";
+  dispatchApp?.url || "https://dispatch.jami.studio";
 
 export type RemoteHostStatus = "online" | "offline" | "busy" | "unknown";
 export type RemoteRunStatus =

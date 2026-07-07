@@ -7,7 +7,7 @@ const rows = [
     data: JSON.stringify({ msg: "anonymous" }),
     submittedAt: "2026-06-27T12:00:00.000Z",
     ip: null,
-    submitterEmail: "anon-abc123@agent-native.com",
+    submitterEmail: "anon-abc123@jami.studio",
     pageUrl: null,
     clientSurface: null,
   },
@@ -90,7 +90,7 @@ describe("export-responses action", () => {
     });
 
     const csv = String(fsMock.writeFileSync.mock.calls[0]?.[1] ?? "");
-    expect(csv).not.toContain("anon-abc123@agent-native.com");
+    expect(csv).not.toContain("anon-abc123@jami.studio");
     expect(csv).toContain("real-user@example.com");
   });
 

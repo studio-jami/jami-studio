@@ -1,7 +1,7 @@
 /**
  * `/_agent-native/mcp/connect` — frictionless external-agent connection.
  *
- * A logged-in user on a deployed agent-native app (e.g. mail.agent-native.com)
+ * A logged-in user on a deployed agent-native app (e.g. mail.jami.studio)
  * mints a per-user, scoped, revocable MCP bearer token WITHOUT ever copying a
  * shared deployment secret. Two surfaces:
  *

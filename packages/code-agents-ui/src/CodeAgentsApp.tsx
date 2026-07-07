@@ -246,7 +246,7 @@ const DEFAULT_CODE_AGENT_MODEL_OPTIONS: CodeAgentModelOption[] = [
 const CODE_AGENT_MODEL_SELECTION_KEY = "agent-native-code:model-selection";
 const CODE_AGENT_VIEWED_RUN_IDS_KEY = "agent-native-code:viewed-run-ids";
 const CODE_AGENT_PINNED_AT_METADATA_KEY = "pinnedAt";
-const DEFAULT_REMOTE_RELAY_URL = "https://dispatch.agent-native.com";
+const DEFAULT_REMOTE_RELAY_URL = "https://dispatch.jami.studio";
 
 function appUrlForRemotePairing(app: AppConfig): string {
   if ((app.mode ?? "prod") === "dev") {

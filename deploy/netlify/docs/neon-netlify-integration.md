@@ -78,7 +78,7 @@ in each template's `server/plugins/db.ts` — additive SQL only
 
 - **Agent-Native Plans DNS/TLS.** The Plans Neon project and Netlify site are
   configured and included in the preview-branch workflows. To complete the
-  public cutover, `plan.agent-native.com` should resolve as a DNS-only CNAME to
+  public cutover, `plan.jami.studio` should resolve as a DNS-only CNAME to
   `agent-native-plan.netlify.app`; then provision/verify TLS in Netlify.
 
 - **PR visual recap publishing.** PR automation can publish org-gated visual

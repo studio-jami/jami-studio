@@ -222,7 +222,7 @@ import { EmbeddedApp } from "@agent-native/embedding";
 export function AssetPickerDialog({ close }) {
   return (
     <EmbeddedApp
-      url="https://assets.agent-native.com/picker"
+      url="https://assets.jami.studio/picker"
       className="h-full w-full"
       onLoad={(ref) => {
         ref.postMessage("configure", {
@@ -264,7 +264,7 @@ Assets also emits `chooseImage` as a compatibility alias for older image-picker
 hosts; new integrations should listen for `chooseAsset`.
 
 For hosted first-party apps, enable Cross-App SSO with Dispatch as the identity
-hub so `content.agent-native.com` and `assets.agent-native.com` link users by
+hub so `content.jami.studio` and `assets.jami.studio` link users by
 verified email. Iframe launches should still use short-lived, route-scoped
 embed sessions when they need third-party-cookie resilience; normal app cookies
 are not a complete embed auth story on their own.
@@ -275,11 +275,11 @@ streaming text over A2A:
 ```ts
 import { getA2AUrl, getMcpUrl, sendMessage } from "@agent-native/embedding";
 
-getMcpUrl("https://assets.agent-native.com");
-getA2AUrl("https://assets.agent-native.com");
+getMcpUrl("https://assets.jami.studio");
+getA2AUrl("https://assets.jami.studio");
 
 for await (const chunk of sendMessage(
-  "https://assets.agent-native.com",
+  "https://assets.jami.studio",
   "Generate a blog hero",
 )) {
   append(chunk);

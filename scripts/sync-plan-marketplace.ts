@@ -240,7 +240,7 @@ async function expectedFiles(): Promise<GeneratedFile[]> {
           description: manifest.description,
           author: {
             name: "Agent-Native",
-            url: "https://agent-native.com",
+            url: "https://jami.studio",
           },
           homepage: manifest.hosted.url,
           repository: "https://github.com/BuilderIO/agent-native",
@@ -262,7 +262,7 @@ async function expectedFiles(): Promise<GeneratedFile[]> {
           description: manifest.description,
           author: {
             name: "Agent-Native",
-            url: "https://agent-native.com",
+            url: "https://jami.studio",
           },
           homepage: manifest.hosted.url,
           license: "MIT",

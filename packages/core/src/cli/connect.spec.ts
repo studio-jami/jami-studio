@@ -60,8 +60,8 @@ function fakeJwt(sub: string): string {
 
 describe("parseConnectArgs", () => {
   it("parses the positional url and defaults", () => {
-    const p = parseConnectArgs(["https://mail.agent-native.com"]);
-    expect(p.url).toBe("https://mail.agent-native.com");
+    const p = parseConnectArgs(["https://mail.jami.studio"]);
+    expect(p.url).toBe("https://mail.jami.studio");
     expect(p.client).toBe("all");
     expect(p.clientExplicit).toBe(false);
     expect(p.scope).toBe("user");
@@ -113,10 +113,10 @@ describe("parseConnectArgs", () => {
 
   it("parses reconnect and reauth modes", () => {
     expect(
-      parseConnectArgs(["reconnect", "https://plan.agent-native.com"]),
+      parseConnectArgs(["reconnect", "https://plan.jami.studio"]),
     ).toMatchObject({
       mode: "reconnect",
-      url: "https://plan.agent-native.com",
+      url: "https://plan.jami.studio",
     });
     expect(
       parseConnectArgs(["reauth", "--name", "agent-native-plan"]),
@@ -128,12 +128,12 @@ describe("parseConnectArgs", () => {
 
   it("parses --service-token and --ttl-days", () => {
     const p = parseConnectArgs([
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
       "--service-token",
       "pr-recap",
       "--ttl-days=90",
     ]);
-    expect(p.url).toBe("https://plan.agent-native.com");
+    expect(p.url).toBe("https://plan.jami.studio");
     expect(p.serviceToken).toBe("pr-recap");
     expect(p.ttlDays).toBe(90);
     expect(p.token).toBeUndefined();
@@ -141,18 +141,18 @@ describe("parseConnectArgs", () => {
 
   it("parses --full-catalog", () => {
     const p = parseConnectArgs([
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
       "--full-catalog",
       "--client",
       "codex",
     ]);
-    expect(p.url).toBe("https://plan.agent-native.com");
+    expect(p.url).toBe("https://plan.jami.studio");
     expect(p.fullCatalog).toBe(true);
     expect(p.client).toBe("codex");
   });
 
   it("defaults fullCatalog to undefined when flag is absent", () => {
-    const p = parseConnectArgs(["https://plan.agent-native.com"]);
+    const p = parseConnectArgs(["https://plan.jami.studio"]);
     expect(p.fullCatalog).toBeUndefined();
   });
 });
@@ -163,11 +163,11 @@ describe("parseConnectArgs", () => {
 
 describe("normalizeUrl", () => {
   it("strips trailing slashes and keeps the origin", () => {
-    expect(normalizeUrl("https://mail.agent-native.com/")).toBe(
-      "https://mail.agent-native.com",
+    expect(normalizeUrl("https://mail.jami.studio/")).toBe(
+      "https://mail.jami.studio",
     );
-    expect(normalizeUrl("https://mail.agent-native.com///")).toBe(
-      "https://mail.agent-native.com",
+    expect(normalizeUrl("https://mail.jami.studio///")).toBe(
+      "https://mail.jami.studio",
     );
     expect(normalizeUrl("  http://localhost:3000  ")).toBe(
       "http://localhost:3000",
@@ -179,7 +179,7 @@ describe("normalizeUrl", () => {
   });
 
   it("rejects non-URLs", () => {
-    expect(() => normalizeUrl("mail.agent-native.com")).toThrow(
+    expect(() => normalizeUrl("mail.jami.studio")).toThrow(
       /Not a valid URL/,
     );
   });
@@ -191,7 +191,7 @@ describe("normalizeUrl", () => {
   });
 
   it("rejects plaintext HTTP for non-loopback hosts", () => {
-    expect(() => normalizeUrl("http://mail.agent-native.com")).toThrow(
+    expect(() => normalizeUrl("http://mail.jami.studio")).toThrow(
       /Refusing plaintext HTTP/,
     );
     expect(normalizeUrl("http://127.0.0.1:3000/app")).toBe(
@@ -555,7 +555,7 @@ describe("writeConfigs", () => {
     const written = writeConfigs(
       ["claude-code"],
       "agent-native-mail",
-      "https://mail.agent-native.com/_agent-native/mcp",
+      "https://mail.jami.studio/_agent-native/mcp",
       "tok-1",
       "project",
       root,
@@ -565,7 +565,7 @@ describe("writeConfigs", () => {
     const cfg = JSON.parse(fs.readFileSync(file, "utf-8"));
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
       headers: { Authorization: "Bearer tok-1" },
     });
   });
@@ -594,7 +594,7 @@ describe("writeConfigs", () => {
     writeConfigs(
       ["claude-code"],
       "agent-native-mail",
-      "https://mail.agent-native.com/_agent-native/mcp",
+      "https://mail.jami.studio/_agent-native/mcp",
       "tok-1",
       "project",
       root,
@@ -602,7 +602,7 @@ describe("writeConfigs", () => {
     writeConfigs(
       ["claude-code"],
       "agent-native-mail",
-      "https://mail.agent-native.com/_agent-native/mcp",
+      "https://mail.jami.studio/_agent-native/mcp",
       "tok-2",
       "project",
       root,
@@ -625,7 +625,7 @@ describe("writeConfigs", () => {
     writeConfigs(
       ["claude-code"],
       "agent-native-mail",
-      "https://mail.agent-native.com/_agent-native/mcp",
+      "https://mail.jami.studio/_agent-native/mcp",
       "tok-1",
       "project",
       root,
@@ -647,7 +647,7 @@ describe("writeConfigs", () => {
       const written = writeConfigs(
         ["codex"],
         "agent-native-mail",
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
         "tok-1",
         "project",
         root,
@@ -657,14 +657,14 @@ describe("writeConfigs", () => {
       const toml = fs.readFileSync(f, "utf-8");
       expect(toml).toContain('[mcp_servers."agent-native-mail"]');
       expect(toml).toContain(
-        'url = "https://mail.agent-native.com/_agent-native/mcp"',
+        'url = "https://mail.jami.studio/_agent-native/mcp"',
       );
       expect(toml).toContain('"Authorization" = "Bearer tok-1"');
       // Re-run is idempotent (single block).
       writeConfigs(
         ["codex"],
         "agent-native-mail",
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
         "tok-2",
         "project",
         root,
@@ -711,7 +711,7 @@ describe("writeConfigs", () => {
       const written = writeConfigs(
         ["codex"],
         'agent.native "mail"',
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
         "tok-1",
         "project",
         root,
@@ -738,7 +738,7 @@ describe("writeConfigs", () => {
       writeConfigs(
         ["codex"],
         "agent-native-mail",
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
         "tok-1",
         "project",
         root,
@@ -747,7 +747,7 @@ describe("writeConfigs", () => {
       expect(toml).not.toContain("[mcp_servers.agent-native-mail]");
       expect(toml).toContain('[mcp_servers."agent-native-mail"]');
       expect(toml).toContain(
-        'url = "https://mail.agent-native.com/_agent-native/mcp"',
+        'url = "https://mail.jami.studio/_agent-native/mcp"',
       );
     } finally {
       process.env.HOME = HOME;
@@ -811,7 +811,7 @@ describe("runConnect", () => {
     vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
     await runConnect([
-      "https://mail.agent-native.com",
+      "https://mail.jami.studio",
       "--client",
       "claude-code",
       "--scope",
@@ -826,7 +826,7 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
       headers: {
         Authorization: "Bearer tok-fallback",
       },
@@ -841,12 +841,12 @@ describe("runConnect", () => {
     process.chdir(root);
 
     try {
-      await runConnect(["https://plan.agent-native.com", "--client", "codex"], {
+      await runConnect(["https://plan.jami.studio", "--client", "codex"], {
         fetchImpl: makeFetch([
           {
             status: "approved",
             token: "tok-plan-device",
-            mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
             serverName: "agent-native-plan",
           },
         ]),
@@ -879,7 +879,7 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."custom-plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer old-token" }',
         "",
       ].join("\n"),
@@ -888,13 +888,13 @@ describe("runConnect", () => {
 
     try {
       await runConnect(
-        ["reconnect", "https://plan.agent-native.com", "--client", "codex"],
+        ["reconnect", "https://plan.jami.studio", "--client", "codex"],
         {
           fetchImpl: makeFetch([
             {
               status: "approved",
               token: "new-token",
-              mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+              mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
               serverName: "agent-native-plan",
             },
           ]),
@@ -926,7 +926,7 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         "",
       ].join("\n"),
       "utf-8",
@@ -934,13 +934,13 @@ describe("runConnect", () => {
 
     try {
       await runConnect(
-        ["reconnect", "https://plan.agent-native.com", "--client", "codex"],
+        ["reconnect", "https://plan.jami.studio", "--client", "codex"],
         {
           fetchImpl: makeFetch([
             {
               status: "approved",
               token: "fresh-token",
-              mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+              mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
               serverName: "plan",
             },
           ]),
@@ -971,7 +971,7 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."agent-native-plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer stale-token" }',
         "",
       ].join("\n"),
@@ -980,13 +980,13 @@ describe("runConnect", () => {
 
     try {
       await runConnect(
-        ["reconnect", "https://plan.agent-native.com", "--client", "codex"],
+        ["reconnect", "https://plan.jami.studio", "--client", "codex"],
         {
           fetchImpl: makeFetch([
             {
               status: "approved",
               token: "fresh-token",
-              mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+              mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
               serverName: "agent-native-plan",
             },
           ]),
@@ -1018,15 +1018,15 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."agent-native-plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer stale-1" }',
         "",
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer stale-2" }',
         "",
         '[mcp_servers."agent-native-plans"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer stale-3" }',
         "",
       ].join("\n"),
@@ -1041,12 +1041,12 @@ describe("runConnect", () => {
     });
 
     try {
-      await runConnect(["reconnect", "https://plan.agent-native.com"], {
+      await runConnect(["reconnect", "https://plan.jami.studio"], {
         fetchImpl: makeFetch([
           {
             status: "approved",
             token: "fresh-token",
-            mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
             serverName: "agent-native-plan",
           },
         ]),
@@ -1089,7 +1089,7 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer stale-token" }',
         "",
       ].join("\n"),
@@ -1105,7 +1105,7 @@ describe("runConnect", () => {
       await runConnect(
         [
           "reconnect",
-          "https://plan.agent-native.com",
+          "https://plan.jami.studio",
           "--client",
           "codex,cowork",
         ],
@@ -1114,7 +1114,7 @@ describe("runConnect", () => {
             {
               status: "approved",
               token: "fresh-token",
-              mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+              mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
               serverName: "plan",
             },
           ]),
@@ -1132,7 +1132,7 @@ describe("runConnect", () => {
         "Did not touch Claude Cowork because no matching MCP entry was found.",
       );
       expect(combined).toContain(
-        "connect https://plan.agent-native.com --client CLIENT --scope user",
+        "connect https://plan.jami.studio --client CLIENT --scope user",
       );
       expect(combined).not.toContain("<client>");
       expect(combined).toContain("Reconnected Plan MCP");
@@ -1155,7 +1155,7 @@ describe("runConnect", () => {
 
     try {
       await runConnect(
-        ["reconnect", "https://plan.agent-native.com", "--client", "codex"],
+        ["reconnect", "https://plan.jami.studio", "--client", "codex"],
         {
           fetchImpl,
           sleep: noopSleep,
@@ -1196,7 +1196,7 @@ describe("runConnect", () => {
     process.chdir(root);
 
     await runConnect([
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
       "--client",
       "codex",
       "--scope",
@@ -1209,7 +1209,7 @@ describe("runConnect", () => {
     const canonical = JSON.parse(fs.readFileSync(planPublishPath, "utf-8"));
     // Shape consumed by templates/plan/server/lib/plan-publish.ts.
     expect(canonical).toMatchObject({
-      url: "https://plan.agent-native.com",
+      url: "https://plan.jami.studio",
       token: "tok-plan-publish",
     });
     expect(typeof canonical.updatedAt).toBe("string");
@@ -1224,7 +1224,7 @@ describe("runConnect", () => {
     // iterates apps in arbitrary order) could silently replace the canonical
     // Plans token with the wrong URL+token, breaking publish-visual-plan.
     await runConnect([
-      "https://mail.agent-native.com",
+      "https://mail.jami.studio",
       "--client",
       "codex",
       "--scope",
@@ -1246,7 +1246,7 @@ describe("runConnect", () => {
     );
 
     await runConnect([
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
       "--client",
       "codex",
       "--scope",
@@ -1257,7 +1257,7 @@ describe("runConnect", () => {
 
     const canonical = JSON.parse(fs.readFileSync(planPublishPath, "utf-8"));
     expect(canonical.keepMe).toBe("yes");
-    expect(canonical.url).toBe("https://plan.agent-native.com");
+    expect(canonical.url).toBe("https://plan.jami.studio");
     expect(canonical.token).toBe("tok-new");
   });
 
@@ -1286,14 +1286,14 @@ describe("runConnect", () => {
       {
         status: "approved",
         token: "tok-publish-mint",
-        mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+        mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
         serverName: "agent-native-plan",
       },
     ]);
 
     await runConnect(
       [
-        "https://plan.agent-native.com",
+        "https://plan.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1306,7 +1306,7 @@ describe("runConnect", () => {
     // OAuth clients get a supplemental device-flow mint for the publish store.
     const canonical = JSON.parse(fs.readFileSync(planPublishPath, "utf-8"));
     expect(canonical).toMatchObject({
-      url: "https://plan.agent-native.com",
+      url: "https://plan.jami.studio",
       token: "tok-publish-mint",
     });
     // The Claude Code MCP entry itself must NOT have a bearer header.
@@ -1315,7 +1315,7 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers.plan).toEqual({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -1332,7 +1332,7 @@ describe("runConnect", () => {
       if (String(url).endsWith("/.well-known/oauth-protected-resource")) {
         return new Response(
           JSON.stringify({
-            resource: "https://plan.agent-native.com/_agent-native/mcp",
+            resource: "https://plan.jami.studio/_agent-native/mcp",
           }),
           { status: 200, headers: { "content-type": "application/json" } },
         );
@@ -1346,7 +1346,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://plan.agent-native.com",
+        "https://plan.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1368,12 +1368,12 @@ describe("runConnect", () => {
     process.chdir(root);
     const fetchImpl = vi.fn(async (url: string, init?: RequestInit) => {
       expect(String(url)).toBe(
-        "https://mail.agent-native.com/.well-known/oauth-protected-resource",
+        "https://mail.jami.studio/.well-known/oauth-protected-resource",
       );
       expect(init?.method).toBe("GET");
       return new Response(
         JSON.stringify({
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
         }),
         { status: 200, headers: { "content-type": "application/json" } },
       );
@@ -1382,7 +1382,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1399,7 +1399,7 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -1408,11 +1408,11 @@ describe("runConnect", () => {
     process.chdir(root);
     const fetchImpl = vi.fn(async (url: string) => {
       expect(String(url)).toBe(
-        "https://mail.agent-native.com/.well-known/oauth-protected-resource",
+        "https://mail.jami.studio/.well-known/oauth-protected-resource",
       );
       return new Response(
         JSON.stringify({
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
         }),
         { status: 200, headers: { "content-type": "application/json" } },
       );
@@ -1420,7 +1420,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
         "--client",
         "claude-code",
         "--scope",
@@ -1435,7 +1435,7 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -1448,7 +1448,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1471,7 +1471,7 @@ describe("runConnect", () => {
           mcpServers: {
             "agent-native-mail": {
               type: "http",
-              url: "https://mail.agent-native.com/_agent-native/mcp",
+              url: "https://mail.jami.studio/_agent-native/mcp",
               headers: { Authorization: "Bearer old-connect-token" },
             },
           },
@@ -1489,7 +1489,7 @@ describe("runConnect", () => {
     const fetchImpl = vi.fn(async () => {
       return new Response(
         JSON.stringify({
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
         }),
         { status: 200, headers: { "content-type": "application/json" } },
       );
@@ -1497,7 +1497,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1512,7 +1512,7 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
     });
     const joinedOutput = output.join("");
     expect(joinedOutput).toContain("Replaced legacy bearer headers");
@@ -1529,7 +1529,7 @@ describe("runConnect", () => {
       {
         status: "approved",
         token: "tok-device",
-        mcpUrl: "https://mail.agent-native.com/_agent-native/mcp",
+        mcpUrl: "https://mail.jami.studio/_agent-native/mcp",
         serverName: "agent-native-mail",
       },
     ]);
@@ -1537,7 +1537,7 @@ describe("runConnect", () => {
     try {
       await runConnect(
         [
-          "https://mail.agent-native.com",
+          "https://mail.jami.studio",
           "--client",
           "all",
           "--scope",
@@ -1552,7 +1552,7 @@ describe("runConnect", () => {
       );
       expect(claudeCfg.mcpServers["agent-native-mail"]).toEqual({
         type: "http",
-        url: "https://mail.agent-native.com/_agent-native/mcp",
+        url: "https://mail.jami.studio/_agent-native/mcp",
       });
       const codexToml = fs.readFileSync(
         path.join(home, ".codex", "config.toml"),
@@ -1583,9 +1583,9 @@ describe("runConnect", () => {
           JSON.stringify({
             device_code: "dev-123",
             user_code: "WXYZ-1234",
-            verification_uri: "https://mail.agent-native.com/connect",
+            verification_uri: "https://mail.jami.studio/connect",
             verification_uri_complete:
-              "https://mail.agent-native.com/connect?code=WXYZ-1234",
+              "https://mail.jami.studio/connect?code=WXYZ-1234",
             interval: 1,
             expires_in: 600,
           }),
@@ -1597,7 +1597,7 @@ describe("runConnect", () => {
           JSON.stringify({
             status: "approved",
             token: "tok-device",
-            mcpUrl: "https://mail.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://mail.jami.studio/_agent-native/mcp",
             serverName: "agent-native-mail",
           }),
           { status: 200, headers: { "content-type": "application/json" } },
@@ -1609,7 +1609,7 @@ describe("runConnect", () => {
     try {
       await runConnect(
         [
-          "https://mail.agent-native.com",
+          "https://mail.jami.studio",
           "--client",
           "all",
           "--scope",
@@ -1647,7 +1647,7 @@ describe("runConnect", () => {
     try {
       await runConnect(
         [
-          "https://mail.agent-native.com",
+          "https://mail.jami.studio",
           "--scope",
           "project",
           "--token",
@@ -1701,7 +1701,7 @@ describe("runConnect", () => {
     try {
       await runConnect(
         [
-          "https://mail.agent-native.com",
+          "https://mail.jami.studio",
           "--scope",
           "project",
           "--token",
@@ -1739,7 +1739,7 @@ describe("runConnect", () => {
 
     await runConnect(
       [
-        "https://mail.agent-native.com",
+        "https://mail.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -1789,14 +1789,14 @@ describe("runConnect", () => {
     );
     expect(cfg.mcpServers["agent-native-calendar"]).toEqual({
       type: "http",
-      url: "https://calendar.agent-native.com/_agent-native/mcp",
+      url: "https://calendar.jami.studio/_agent-native/mcp",
       headers: {
         Authorization: "Bearer tok",
       },
     });
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
       headers: {
         Authorization: "Bearer tok",
       },
@@ -1831,7 +1831,7 @@ describe("runConnect", () => {
           mcpServers: {
             "agent-native-mail": {
               type: "http",
-              url: "https://mail.agent-native.com/_agent-native/mcp",
+              url: "https://mail.jami.studio/_agent-native/mcp",
               headers: {
                 Authorization: `Bearer ${fakeJwt("u@example.com")}`,
               },
@@ -1879,7 +1879,7 @@ describe("runConnect", () => {
       expect.objectContaining({
         kind: "json",
         entry: expect.objectContaining({
-          url: "https://mail.agent-native.com/_agent-native/mcp",
+          url: "https://mail.jami.studio/_agent-native/mcp",
         }),
       }),
     ]);
@@ -1900,7 +1900,7 @@ describe("runConnect", () => {
     cfg = JSON.parse(fs.readFileSync(path.join(root, ".mcp.json"), "utf-8"));
     expect(cfg.mcpServers["agent-native-mail"]).toEqual({
       type: "http",
-      url: "https://mail.agent-native.com/_agent-native/mcp",
+      url: "https://mail.jami.studio/_agent-native/mcp",
       headers: {
         Authorization: `Bearer ${fakeJwt("u@example.com")}`,
       },
@@ -1918,7 +1918,7 @@ describe("runConnect", () => {
       codexFile,
       [
         '[mcp_servers."agent-native-mail"]',
-        'url = "https://mail.agent-native.com/_agent-native/mcp"',
+        'url = "https://mail.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer prod-token" }',
         "",
       ].join("\n"),
@@ -1960,7 +1960,7 @@ describe("runConnect", () => {
 
       toml = fs.readFileSync(codexFile, "utf-8");
       expect(toml).toContain(
-        'url = "https://mail.agent-native.com/_agent-native/mcp"',
+        'url = "https://mail.jami.studio/_agent-native/mcp"',
       );
       expect(toml).toContain('"Authorization" = "Bearer prod-token"');
     } finally {
@@ -2178,7 +2178,7 @@ describe("reconnect — URL-based discovery", () => {
       codexFile,
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer old-token" }',
         "",
       ].join("\n"),
@@ -2191,7 +2191,7 @@ describe("reconnect — URL-based discovery", () => {
           {
             status: "approved",
             token: "refreshed-token",
-            mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
             serverName: "plan",
           },
         ]),
@@ -2221,11 +2221,11 @@ describe("reconnect — URL-based discovery", () => {
           mcpServers: {
             plan: {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "agent-native-plans": {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
           },
         },
@@ -2236,7 +2236,7 @@ describe("reconnect — URL-based discovery", () => {
     );
 
     await runConnect([
-      "https://plan.agent-native.com",
+      "https://plan.jami.studio",
       "--client",
       "claude-code",
       "--scope",
@@ -2254,7 +2254,7 @@ describe("reconnect — URL-based discovery", () => {
     // Canonical entry should be present and updated.
     expect(cfg.mcpServers["plan"]).toMatchObject({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
     // Alias duplicate must have been removed.
     expect(cfg.mcpServers).not.toHaveProperty("agent-native-plans");
@@ -2270,11 +2270,11 @@ describe("reconnect — URL-based discovery", () => {
           mcpServers: {
             plan: {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "agent-native-plans": {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
           },
         },
@@ -2297,9 +2297,9 @@ describe("reconnect — URL-based discovery", () => {
           JSON.stringify({
             device_code: "dev-123",
             user_code: "WXYZ-1234",
-            verification_uri: "https://plan.agent-native.com/connect",
+            verification_uri: "https://plan.jami.studio/connect",
             verification_uri_complete:
-              "https://plan.agent-native.com/connect?code=WXYZ-1234",
+              "https://plan.jami.studio/connect?code=WXYZ-1234",
             interval: 1,
             expires_in: 600,
           }),
@@ -2311,7 +2311,7 @@ describe("reconnect — URL-based discovery", () => {
           JSON.stringify({
             status: "approved",
             token: "tok-fallback",
-            mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
             serverName: "plan",
           }),
           { status: 200, headers: { "content-type": "application/json" } },
@@ -2323,7 +2323,7 @@ describe("reconnect — URL-based discovery", () => {
     await runConnect(
       [
         "reconnect",
-        "https://plan.agent-native.com",
+        "https://plan.jami.studio",
         "--client",
         "claude-code",
         "--scope",
@@ -2338,7 +2338,7 @@ describe("reconnect — URL-based discovery", () => {
     );
     expect(cfg.mcpServers.plan).toMatchObject({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
       headers: {
         Authorization: "Bearer tok-fallback",
       },
@@ -2362,15 +2362,15 @@ describe("reconnect — URL-based discovery", () => {
       codexFile,
       [
         '[mcp_servers."agent-native-plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer old1" }',
         "",
         '[mcp_servers."agent-native-plans"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer old2" }',
         "",
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer old3" }',
         "",
       ].join("\n"),
@@ -2383,7 +2383,7 @@ describe("reconnect — URL-based discovery", () => {
           {
             status: "approved",
             token: "refreshed-token",
-            mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+            mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
             serverName: "plan",
           },
         ]),
@@ -2417,11 +2417,11 @@ describe("reconnect — URL-based discovery", () => {
           mcpServers: {
             plan: {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "agent-native-mail": {
               type: "http",
-              url: "https://mail.agent-native.com/_agent-native/mcp",
+              url: "https://mail.jami.studio/_agent-native/mcp",
             },
           },
         },
@@ -2445,8 +2445,8 @@ describe("reconnect — URL-based discovery", () => {
       expect(process.exitCode).toBe(1);
       const combined = errLines.join("");
       // Should mention both apps.
-      expect(combined).toContain("plan.agent-native.com");
-      expect(combined).toContain("mail.agent-native.com");
+      expect(combined).toContain("plan.jami.studio");
+      expect(combined).toContain("mail.jami.studio");
       // Should include paste-ready reconnect hints.
       expect(combined).toMatch(/npx -y @agent-native\/core@latest reconnect/);
     } finally {

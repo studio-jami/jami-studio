@@ -86,7 +86,7 @@ function installFetch({
   return { fetchMock, analyticsCalls };
 }
 
-function installBrowser(url = "https://mail.agent-native.com/inbox") {
+function installBrowser(url = "https://mail.jami.studio/inbox") {
   const parsed = new URL(url);
   const location = {
     href: parsed.href,
@@ -172,9 +172,9 @@ describe("browser analytics pageviews", () => {
       properties: {
         app: "agent-native-mail",
         template: "mail",
-        url: "https://mail.agent-native.com/inbox",
+        url: "https://mail.jami.studio/inbox",
         path: "/inbox",
-        hostname: "mail.agent-native.com",
+        hostname: "mail.jami.studio",
         referrer: "https://builder.io/start?token=%3Credacted%3E&utm=ok",
         title: "Inbox",
         navigation_type: "load",
@@ -360,7 +360,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/templates/calendar",
+        url: "https://www.jami.studio/templates/calendar",
       },
     });
 
@@ -382,7 +382,7 @@ describe("browser analytics pageviews", () => {
         values: [{ type: "Error", value: "Unauthorized" }],
       },
       request: {
-        url: "https://mail.agent-native.com/inbox/message-1",
+        url: "https://mail.jami.studio/inbox/message-1",
       },
     });
 
@@ -412,7 +412,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/",
+        url: "https://www.jami.studio/",
       },
     });
 
@@ -436,7 +436,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/",
+        url: "https://www.jami.studio/",
       },
     };
     expect(options.beforeSend(eventWithAppFrame)).toBe(eventWithAppFrame);
@@ -466,7 +466,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/ja-JP",
+        url: "https://www.jami.studio/ja-JP",
       },
     });
 
@@ -496,7 +496,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/skills",
+        url: "https://www.jami.studio/skills",
       },
     });
 
@@ -520,7 +520,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/skills",
+        url: "https://www.jami.studio/skills",
       },
     };
     expect(options.beforeSend(eventWithAppFrame)).toBe(eventWithAppFrame);
@@ -538,7 +538,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://mail.agent-native.com/inbox",
+        url: "https://mail.jami.studio/inbox",
       },
     };
     expect(options.beforeSend(nonDocsEvent)).toBe(nonDocsEvent);
@@ -556,7 +556,7 @@ describe("browser analytics pageviews", () => {
     const options = sentryMock.init.mock.calls[0][0];
     const result = options.beforeSend({
       tags: {
-        url: "https://www.agent-native.com/templates/clips",
+        url: "https://www.jami.studio/templates/clips",
       },
       exception: {
         values: [
@@ -594,7 +594,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/docs",
+        url: "https://www.jami.studio/docs",
       },
     });
 
@@ -602,7 +602,7 @@ describe("browser analytics pageviews", () => {
   });
 
   it("drops reasonless signal abort browser requests from Sentry", async () => {
-    installBrowser("https://www.agent-native.com/templates");
+    installBrowser("https://www.jami.studio/templates");
     (window as any).__AGENT_NATIVE_CONFIG__ = {
       sentryDsn: "https://public@example/4511270423822336",
       sentryEnvironment: "production",
@@ -621,7 +621,7 @@ describe("browser analytics pageviews", () => {
         ],
       },
       request: {
-        url: "https://www.agent-native.com/templates",
+        url: "https://www.jami.studio/templates",
       },
     });
 

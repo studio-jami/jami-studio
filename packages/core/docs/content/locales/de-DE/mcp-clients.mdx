@@ -146,7 +146,7 @@ Erstellen Sie `mcp.config.json` in Ihrem Workspace-Root (oder in einem einzelnen
 
 ```jsonc
 {
-  "$schema": "https://agent-native.com/schema/mcp.config.json",
+  "$schema": "https://jami.studio/schema/mcp.config.json",
   "servers": {
     "claude-in-chrome": {
       "command": "claude-in-chrome-mcp",
@@ -177,7 +177,7 @@ Die Form ist klein: eine nach Server-ID verschlüsselte `servers`-Karte, wobei j
   filename="mcp.config.json"
   language="jsonc"
   code={
-    '{\n  "$schema": "https://agent-native.com/schema/mcp.config.json",\n  "servers": {\n    "claude-in-chrome": {\n      "command": "claude-in-chrome-mcp",\n      "args": [],\n      "env": { "LOG_LEVEL": "info" }\n    },\n    "filesystem": {\n      "command": "npx",\n      "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/me/projects"]\n    }\n  }\n}'
+    '{\n  "$schema": "https://jami.studio/schema/mcp.config.json",\n  "servers": {\n    "claude-in-chrome": {\n      "command": "claude-in-chrome-mcp",\n      "args": [],\n      "env": { "LOG_LEVEL": "info" }\n    },\n    "filesystem": {\n      "command": "npx",\n      "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/me/projects"]\n    }\n  }\n}'
   }
   annotations={[
     {

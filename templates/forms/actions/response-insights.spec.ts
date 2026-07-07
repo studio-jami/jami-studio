@@ -148,7 +148,7 @@ describe("response-insights action", () => {
       {
         ...responses[0]!,
         submitterEmail:
-          "anon-ee79aaee-98e2-452a-9476-5205713803c0@agent-native.com",
+          "anon-ee79aaee-98e2-452a-9476-5205713803c0@jami.studio",
       },
     ]);
 

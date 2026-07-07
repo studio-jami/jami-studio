@@ -12,7 +12,7 @@ La aplicación **Plan** de Agent-Native se envía como un paquete instalable. Un
 Una instalación te ofrece:
 
 - **Tres skills**: `/visual-plan` (el punto de entrada canónico), `/visual-recap` y `/visualize-repo`.
-- **El conector del plan MCP**: registrado en la aplicación alojada en `https://plan.agent-native.com` (extremo MCP `https://plan.agent-native.com/_agent-native/mcp`, nombre de servidor `plan`).
+- **El conector del plan MCP**: registrado en la aplicación alojada en `https://plan.jami.studio` (extremo MCP `https://plan.jami.studio/_agent-native/mcp`, nombre de servidor `plan`).
 
 <Diagram id="doc-block-1i4grvb" title="Tres rutas, un paquete" summary={"El CLI universal, el complemento de Claude Code y el complemento de Codex instalan las mismas skills de Plan más el conector de Plan alojado."}>
 
@@ -43,7 +43,7 @@ Una instalación te ofrece:
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-box">
     Plan MCP connector<br /><small class="diagram-muted"
-      >plan.agent-native.com/_agent-native/mcp</small
+      >plan.jami.studio/_agent-native/mcp</small
     >
   </div>
 </div>
@@ -88,7 +88,7 @@ de larga duración (valor predeterminado de 30 días, actualización progresiva 
 cuando sucede, la solución ligera es:
 
 ```bash
-npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex
+npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex
 ```
 
 `reconnect` busca y actualiza el conector mediante URL para el local seleccionado
@@ -204,7 +204,7 @@ npx @agent-native/core@latest skills add visual-plan
 Esto instala `visual-plan` más las skills complementarias `visual-recap` y `visualize-repo`, luego registra el conector `plan` y ejecuta la autenticación (solicitud de OAuth para uso compartido alojado/respaldado por cuenta). Flags útiles:
 
 - `--client codex|claude-code|claude-code-cli|cowork|all`: para qué agentes locales escribir la configuración de MCP (predeterminado `all`).
-- `--no-connect`: registra el conector sin autenticar; ejecute `npx @agent-native/core@latest connect https://plan.agent-native.com --client all` más tarde o elija un `--client` más estrecho.
+- `--no-connect`: registra el conector sin autenticar; ejecute `npx @agent-native/core@latest connect https://plan.jami.studio --client all` más tarde o elija un `--client` más estrecho.
 - `--mode hosted|local-files|self-hosted`: elija el uso compartido alojado, archivos MDX totalmente locales o su propia aplicación Plan.
 - `--mcp-url <url>`: apunta el conector a un origen personalizado (un túnel ngrok, un servidor de desarrollo local o una implementación autohospedada) en lugar del predeterminado alojado.
 - `--with-github-action`: escriba también la acción PR Visual Recap GitHub (consulte [PR Visual Recap](/docs/pr-visual-recap)).
@@ -251,9 +251,9 @@ codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth en el navegador
 ```
 
-Después de la instalación, **inicie un nuevo subproceso Codex** para que las herramientas skills y MCP se carguen en la sesión. El complemento incluye un conector exclusivo para URL (`[mcp_servers.plan]` → `https://plan.agent-native.com/_agent-native/mcp`); `codex mcp login plan` ejecuta el flujo OAuth. La ruta universal CLI anterior también funciona para Codex (`npx @agent-native/core@latest skills add visual-plan --client codex`) si prefiere un comando que instale y autentique juntos, o cuando desea archivos locales o modo autohospedado.
+Después de la instalación, **inicie un nuevo subproceso Codex** para que las herramientas skills y MCP se carguen en la sesión. El complemento incluye un conector exclusivo para URL (`[mcp_servers.plan]` → `https://plan.jami.studio/_agent-native/mcp`); `codex mcp login plan` ejecuta el flujo OAuth. La ruta universal CLI anterior también funciona para Codex (`npx @agent-native/core@latest skills add visual-plan --client codex`) si prefiere un comando que instale y autentique juntos, o cuando desea archivos locales o modo autohospedado.
 
-> **Instalaciones anteriores:** si su configuración todavía tiene una entrada `agent-native-plans` que apunta al mismo URL, ejecutando `npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex` para Codex, o el mismo comando con su `--client` de destino, lo consolida con el nombre canónico `plan`.
+> **Instalaciones anteriores:** si su configuración todavía tiene una entrada `agent-native-plans` que apunta al mismo URL, ejecutando `npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex` para Codex, o el mismo comando con su `--client` de destino, lo consolida con el nombre canónico `plan`.
 
 ## Actualizaciones {#updates}
 

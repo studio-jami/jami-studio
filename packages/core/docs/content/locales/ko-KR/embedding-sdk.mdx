@@ -222,7 +222,7 @@ import { EmbeddedApp } from "@agent-native/embedding";
 export function AssetPickerDialog({ close }) {
   return (
     <EmbeddedApp
-      url="https://assets.agent-native.com/picker"
+      url="https://assets.jami.studio/picker"
       className="h-full w-full"
       onLoad={(ref) => {
         ref.postMessage("configure", {
@@ -264,7 +264,7 @@ sendEmbeddedAppMessage("chooseAsset", {
 호스트; 새로운 통합은 `chooseAsset`를 수신해야 합니다.
 
 호스팅된 자사 앱의 경우 Dispatch를 ID로 사용하여 Cross-App SSO를 활성화합니다.
-허브이므로 `content.agent-native.com` 및 `assets.agent-native.com`가 사용자를 연결합니다
+허브이므로 `content.jami.studio` 및 `assets.jami.studio`가 사용자를 연결합니다
 이메일이 확인되었습니다. Iframe 실행은 여전히 단기 경로 범위를 사용해야 합니다.
 타사 쿠키 복원력이 필요할 때 세션을 삽입하세요. 일반 앱 쿠키
 그 자체로는 완전한 삽입 인증 스토리가 아닙니다.
@@ -275,11 +275,11 @@ A2A를 통한 텍스트 스트리밍:
 ```ts
 import { getA2AUrl, getMcpUrl, sendMessage } from "@agent-native/embedding";
 
-getMcpUrl("https://assets.agent-native.com");
-getA2AUrl("https://assets.agent-native.com");
+getMcpUrl("https://assets.jami.studio");
+getA2AUrl("https://assets.jami.studio");
 
 for await (const chunk of sendMessage(
-  "https://assets.agent-native.com",
+  "https://assets.jami.studio",
   "Generate a blog hero",
 )) {
   append(chunk);

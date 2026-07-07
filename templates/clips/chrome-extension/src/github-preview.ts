@@ -2,8 +2,8 @@ import { captureExtensionError, initExtensionSentry } from "./sentry";
 
 initExtensionSentry("github-preview");
 
-const DEFAULT_HOST = "clips.agent-native.com";
-const CLIPS_HOSTS = new Set(["clips.agent-native.com"]);
+const DEFAULT_HOST = "clips.jami.studio";
+const CLIPS_HOSTS = new Set(["clips.jami.studio"]);
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
 type PreviewParams = {

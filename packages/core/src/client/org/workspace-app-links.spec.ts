@@ -17,7 +17,7 @@ describe("org switcher app links", () => {
       name: "Dispatch",
       icon: "MessageCircle",
       isDispatch: true,
-      href: "https://dispatch.agent-native.com/overview",
+      href: "https://dispatch.jami.studio/overview",
     });
     expect(apps.find((app) => app.id === "brain")?.icon).toBe("Brain");
     expect(apps.find((app) => app.id === "analytics")?.icon).toBe("BarChart2");

@@ -129,7 +129,7 @@ Datenbank-/Origin-Freigabeanmeldung und Apps, die nicht isoliert bleiben:
 | Eigenständige App                                 | Isoliert pro App durch Slug (`APP_NAME` oder Paketname im lokalen Entwickler); stabiles `an`-Präfix in der Produktion                           |
 | Arbeitsbereichsmodus (`AGENT_NATIVE_WORKSPACE=1`) | Ein gemeinsamer Bereich – Arbeitsbereichs-Apps teilen sich einen Ursprung und eine Datenbank                                                    |
 | Benutzerdefinierte Subdomains derselben Datenbank | Aktivieren Sie freigegebene Cookies mit `COOKIE_DOMAIN`                                                                                         |
-| Vom Erstanbieter gehostet (`*.agent-native.com`)  | Isolierter Namespace pro App (jede hat ihre eigene Authentifizierungsdatenbank); `COOKIE_DOMAIN=.agent-native.com` wird standardmäßig ignoriert |
+| Vom Erstanbieter gehostet (`*.jami.studio`)  | Isolierter Namespace pro App (jede hat ihre eigene Authentifizierungsdatenbank); `COOKIE_DOMAIN=.jami.studio` wird standardmäßig ignoriert |
 
 Von Erstanbietern gehostete Apps verfügen jeweils über eine eigene Authentifizierungsdatenbank, also App-übergreifende Anmeldung
 läuft über [Cross-App SSO](/docs/cross-app-sso) und nicht über ein gemeinsames Cookie.
@@ -219,7 +219,7 @@ Durch die Konfiguration dieser Variablen wird niemals eine Token-Anmeldeseite f�
 Der MCP-Endpunkt jeder App kann als standardmäßig geschützte MCP-Ressource fungieren. OAuth-fähige Clients können nur mit dem Remote-MCP URL:
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
 ```
 
 Nicht authentifizierte MCP-Anfragen geben eine `WWW-Authenticate`-Herausforderung zurück, die auf `/.well-known/oauth-protected-resource` verweist. Der Client erkennt dann die OAuth-Metadaten der App, registriert dynamisch einen öffentlichen Client, öffnet die Autorisierungsseite der App und tauscht einen Autorisierungscode mit PKCE für Zugriffs- und Aktualisierungstoken aus.

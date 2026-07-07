@@ -25,14 +25,14 @@ const REQUIRED_PLATFORM_KEYS = [
 ];
 
 const INERT_PLATFORM = {
-  url: "https://clips.agent-native.com/download",
+  url: "https://clips.jami.studio/download",
   signature: "updates-disabled",
 };
 
 const INERT_MANIFEST = {
   version: "0.0.0",
   notes:
-    "Automatic updates are temporarily unavailable. Download the latest Clips installer from https://clips.agent-native.com/download.",
+    "Automatic updates are temporarily unavailable. Download the latest Clips installer from https://clips.jami.studio/download.",
   pub_date: "2026-05-04T00:00:00Z",
   platforms: {
     "darwin-aarch64-app": INERT_PLATFORM,

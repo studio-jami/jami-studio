@@ -268,7 +268,7 @@ export interface AuthOptions {
   };
   /**
    * Optional email signup legal copy for the built-in login page.
-   * Leave unset to use Agent Native links only on `*.agent-native.com` hosts,
+   * Leave unset to use Agent Native links only on `*.jami.studio` hosts,
    * pass false to suppress, or pass URLs for custom/self-hosted policies.
    */
   signupLegalNotice?: OnboardingHtmlOptions["signupLegalNotice"];
@@ -316,7 +316,7 @@ export interface AuthOptions {
  *
  * Cross-subdomain exception: when `COOKIE_DOMAIN` is set for a custom domain,
  * use the unsuffixed `an_session` and emit `Domain=<COOKIE_DOMAIN>` so the
- * cookie is shared across every subdomain. First-party `*.agent-native.com`
+ * cookie is shared across every subdomain. First-party `*.jami.studio`
  * apps are deliberately excluded from that behavior by default because each
  * hosted app has its own auth database; they use Dispatch identity federation
  * instead of a shared browser cookie.

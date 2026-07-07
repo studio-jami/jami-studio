@@ -94,7 +94,7 @@ function dispatchSelfBaseUrl(): string {
   if (configured) return withConfiguredBasePath(configured);
 
   return process.env.NODE_ENV === "production"
-    ? "https://dispatch.agent-native.com"
+    ? "https://dispatch.jami.studio"
     : "http://localhost:8092";
 }
 

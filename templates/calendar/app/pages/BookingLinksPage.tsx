@@ -127,7 +127,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-const PRODUCTION_DOMAIN = "calendar.agent-native.com";
+const PRODUCTION_DOMAIN = "calendar.jami.studio";
 const PREVIEW_COLLAPSED_STORAGE_KEY = "calendar.bookingLinks.previewCollapsed";
 const BRAND_LINK_CLASS = "font-semibold text-[#00B5FF] hover:text-[#33C4FF]";
 const BRAND_ICON_LINK_CLASS =

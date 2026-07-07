@@ -123,7 +123,7 @@ describe("recurring jobs runtime startup", () => {
     expect(
       shouldDisableRecurringJobsRuntime({
         NODE_ENV: "production",
-        APP_URL: "https://design.agent-native.com",
+        APP_URL: "https://design.jami.studio",
       }),
     ).toBe(false);
   });

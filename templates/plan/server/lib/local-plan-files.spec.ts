@@ -116,10 +116,10 @@ describe("local-plan-files", () => {
     );
     expect(planMdx).toContain("Local sync flow");
     expect(planMdx).toContain(
-      "# Visual plan: open https://plan.agent-native.com/plans/plan_local1 in a browser for the canvas and review UI.",
+      "# Visual plan: open https://plan.jami.studio/plans/plan_local1 in a browser for the canvas and review UI.",
     );
     expect(planMdx).toContain(
-      'visualUrl: "https://plan.agent-native.com/plans/plan_local1"',
+      'visualUrl: "https://plan.jami.studio/plans/plan_local1"',
     );
     expect(planMdx).not.toMatch(/^planId:/m);
     expect(planMdx).not.toMatch(/^source:/m);

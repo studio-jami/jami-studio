@@ -6924,7 +6924,7 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
 
           if (skills.length === 0) {
             result.hint =
-              "No skills found. Add skill files under skills/ in Resources. Learn more: https://agent-native.com/docs/resources#skills";
+              "No skills found. Add skill files under skills/ in Resources. Learn more: https://jami.studio/docs/resources#skills";
           }
 
           return result;

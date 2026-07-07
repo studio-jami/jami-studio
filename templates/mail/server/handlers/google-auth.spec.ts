@@ -108,7 +108,7 @@ describe("Mail Google auth-url handlers", () => {
     );
     mocks.isElectron.mockReturnValue(false);
     mocks.resolveOAuthRedirectUri.mockReturnValue(
-      "https://mail.agent-native.com/_agent-native/google/callback",
+      "https://mail.jami.studio/_agent-native/google/callback",
     );
     mocks.encodeOAuthState.mockReturnValue("encoded-state");
     mocks.safeReturnPath.mockImplementation((value: string) => value);

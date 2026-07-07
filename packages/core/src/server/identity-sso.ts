@@ -1,7 +1,7 @@
 /**
  * Cross-app SSO ("Sign in with Agent-Native") — the CLIENT side.
  *
- * Each hosted `*.agent-native.com` app has its OWN Better Auth user store
+ * Each hosted `*.jami.studio` app has its OWN Better Auth user store
  * (a separate database per app). This module lets an app federate sign-in to
  * an identity authority (Dispatch) so a user logged in there can land in this
  * app without re-entering credentials.
@@ -12,7 +12,7 @@
  *   - UNSET  → `isIdentitySsoEnabled()` is false. The route handler 404s, the
  *     auth-guard bypass does not apply, and the login page renders no SSO
  *     button. Existing auth is byte-for-byte unchanged.
- *   - SET    (e.g. `https://dispatch.agent-native.com`) → two routes mount:
+ *   - SET    (e.g. `https://dispatch.jami.studio`) → two routes mount:
  *       GET /_agent-native/identity/login
  *         302 → `<HUB>/_agent-native/identity/authorize?app=<id>
  *                 &redirect_uri=<thisOrigin>/_agent-native/identity/callback

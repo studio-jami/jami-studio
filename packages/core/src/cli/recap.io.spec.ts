@@ -207,7 +207,7 @@ describe("uploadRecapImage — success on first try (fake fetch)", () => {
         response: () =>
           jsonResp({
             imageUrl:
-              "https://plan.agent-native.com/_agent-native/recap-image/" +
+              "https://plan.jami.studio/_agent-native/recap-image/" +
               `${"a".repeat(64)}.png`,
           }),
       },
@@ -215,7 +215,7 @@ describe("uploadRecapImage — success on first try (fake fetch)", () => {
     const waitedOn: string[] = [];
 
     const result = await uploadRecapImage({
-      appUrl: "https://plan.agent-native.com",
+      appUrl: "https://plan.jami.studio",
       token: "tok-test",
       pngPath,
       cacheKey: "28162728843-1",
@@ -227,7 +227,7 @@ describe("uploadRecapImage — success on first try (fake fetch)", () => {
     });
 
     expect(result).toBe(
-      "https://plan.agent-native.com/_agent-native/recap-image/" +
+      "https://plan.jami.studio/_agent-native/recap-image/" +
         `${"a".repeat(64)}.png?v=28162728843-1`,
     );
     expect(waitedOn).toEqual([result]);
@@ -491,7 +491,7 @@ describe("runShot — playwright not available", () => {
 
     try {
       await runShot(
-        { url: "https://plan.agent-native.com/recaps/abc123" },
+        { url: "https://plan.jami.studio/recaps/abc123" },
         () => Promise.reject(new Error("Cannot find module 'playwright'")),
       );
 
@@ -516,7 +516,7 @@ describe("runShot — playwright not available", () => {
 
     try {
       await runShot(
-        { url: "https://plan.agent-native.com/recaps/abc123" },
+        { url: "https://plan.jami.studio/recaps/abc123" },
         () => Promise.reject(new Error("playwright missing")),
       );
       expect(exitSpy).not.toHaveBeenCalled();
@@ -577,7 +577,7 @@ describe("runShot — playwright not available", () => {
     try {
       await runShot(
         {
-          url: "https://plan.agent-native.com/recaps/abc123?foo=bar#section-a",
+          url: "https://plan.jami.studio/recaps/abc123?foo=bar#section-a",
           out: shotPath,
         },
         async () => ({ chromium: fakeChromium as never }),
@@ -589,7 +589,7 @@ describe("runShot — playwright not available", () => {
       });
       expect(viewportSizes[0]).toEqual({ width: 950, height: 1500 });
       expect(gotoUrls[0]).toBe(
-        "https://plan.agent-native.com/recaps/abc123?foo=bar&recapScreenshot=1#section-a",
+        "https://plan.jami.studio/recaps/abc123?foo=bar&recapScreenshot=1#section-a",
       );
       expect(evaluateCalls.join("\n")).toContain('style.zoom = "100%"');
       expect(evaluateCalls.join("\n")).toContain(".plan-document-shell");
@@ -618,7 +618,7 @@ describe("runShot — playwright not available", () => {
         {
           url: "https://evil.example.com/recaps/abc123",
           token: "secret-tok",
-          "app-url": "https://plan.agent-native.com",
+          "app-url": "https://plan.jami.studio",
         },
         async () => {
           importCalled = true;

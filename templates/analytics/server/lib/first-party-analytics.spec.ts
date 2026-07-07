@@ -31,7 +31,7 @@ describe("resolveAnalyticsEventDimensions", () => {
           agent_native_template: "plan",
         },
         context: {},
-        hostname: "mail.agent-native.com",
+        hostname: "mail.jami.studio",
       }),
     ).toEqual({ app: "analytics", template: "docs" });
   });

@@ -90,7 +90,7 @@ let _pendingSentryUser: SentryUser | null | undefined = undefined;
 let _pendingSentryOrgId: string | null | undefined = undefined;
 
 const AGENT_NATIVE_ANALYTICS_DEFAULT_ENDPOINT =
-  "https://analytics.agent-native.com/track";
+  "https://analytics.jami.studio/track";
 const PAGEVIEW_TRACKING_STATE_KEY = Symbol.for(
   "agent-native.client.pageviewTracking",
 );
@@ -602,8 +602,8 @@ function isAgentNativeDocsUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     return (
-      parsed.hostname === "www.agent-native.com" ||
-      parsed.hostname === "agent-native.com"
+      parsed.hostname === "www.jami.studio" ||
+      parsed.hostname === "jami.studio"
     );
   } catch {
     return false;

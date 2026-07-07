@@ -843,7 +843,7 @@ app.on("open-url", (event, url) => {
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
 const UPDATE_FOCUS_CHECK_MIN_INTERVAL_MS = 15 * 60 * 1000;
 const DEFAULT_DESKTOP_UPDATE_FEED_URL =
-  "https://agent-native.com/api/desktop-updates";
+  "https://jami.studio/api/desktop-updates";
 const DESKTOP_UPDATE_FEED_URL = (
   process.env.AGENT_NATIVE_DESKTOP_UPDATE_FEED_URL ||
   DEFAULT_DESKTOP_UPDATE_FEED_URL
@@ -8815,7 +8815,7 @@ function installApplicationMenu() {
           { type: "separator" as const },
           {
             label: "Learn More",
-            click: () => void shell.openExternal("https://agent-native.com"),
+            click: () => void shell.openExternal("https://jami.studio"),
           },
         ],
   };

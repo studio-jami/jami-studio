@@ -14,19 +14,19 @@ import {
 describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
   describe("accepts first-party + localhost", () => {
     it("accepts https first-party subdomains", () => {
-      expect(isAllowedRedirectUri("https://mail.agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("https://mail.jami.studio/cb")).toBe(
         true,
       );
       expect(
-        isAllowedRedirectUri("https://calendar.agent-native.com/auth/callback"),
+        isAllowedRedirectUri("https://calendar.jami.studio/auth/callback"),
       ).toBe(true);
       expect(
-        isAllowedRedirectUri("https://analytics.agent-native.com/x?a=1#frag"),
+        isAllowedRedirectUri("https://analytics.jami.studio/x?a=1#frag"),
       ).toBe(true);
     });
 
     it("accepts deep first-party subdomains", () => {
-      expect(isAllowedRedirectUri("https://a.b.c.agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("https://a.b.c.jami.studio/cb")).toBe(
         true,
       );
     });
@@ -53,25 +53,25 @@ describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
       expect(isAllowedRedirectUri("https://evil.com/")).toBe(false);
     });
 
-    it("rejects suffix-spoof: agent-native.com.evil.com", () => {
-      expect(isAllowedRedirectUri("https://agent-native.com.evil.com/cb")).toBe(
+    it("rejects suffix-spoof: jami.studio.evil.com", () => {
+      expect(isAllowedRedirectUri("https://jami.studio.evil.com/cb")).toBe(
         false,
       );
     });
 
     it("rejects prefix/substring-spoof hosts", () => {
-      expect(isAllowedRedirectUri("https://evil-agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("https://evil-jami.studio/cb")).toBe(
         false,
       );
-      expect(isAllowedRedirectUri("https://notagent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("https://notjami.studio/cb")).toBe(
         false,
       );
       // bare apex is intentionally NOT allowed (apps are subdomains)
-      expect(isAllowedRedirectUri("https://agent-native.com/cb")).toBe(false);
+      expect(isAllowedRedirectUri("https://jami.studio/cb")).toBe(false);
     });
 
     it("rejects non-https for non-loopback hosts", () => {
-      expect(isAllowedRedirectUri("http://mail.agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("http://mail.jami.studio/cb")).toBe(
         false,
       );
     });
@@ -83,7 +83,7 @@ describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
       expect(isAllowedRedirectUri("data:text/html;base64,PHNjcmlwdD4=")).toBe(
         false,
       );
-      expect(isAllowedRedirectUri("ftp://mail.agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("ftp://mail.jami.studio/cb")).toBe(
         false,
       );
     });
@@ -92,20 +92,20 @@ describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
       // userinfo host is good, but the URL parser host is good too — the
       // credential form is still an exfil/obfuscation vector, reject it.
       expect(
-        isAllowedRedirectUri("https://attacker@mail.agent-native.com/cb"),
+        isAllowedRedirectUri("https://attacker@mail.jami.studio/cb"),
       ).toBe(false);
-      expect(isAllowedRedirectUri("https://u:p@mail.agent-native.com/cb")).toBe(
+      expect(isAllowedRedirectUri("https://u:p@mail.jami.studio/cb")).toBe(
         false,
       );
       // Classic trick: real host in userinfo, evil host is the real host.
       expect(
-        isAllowedRedirectUri("https://mail.agent-native.com@evil.com/cb"),
+        isAllowedRedirectUri("https://mail.jami.studio@evil.com/cb"),
       ).toBe(false);
     });
 
     it("rejects relative / non-absolute / empty / non-string", () => {
       expect(isAllowedRedirectUri("/relative/path")).toBe(false);
-      expect(isAllowedRedirectUri("mail.agent-native.com/cb")).toBe(false);
+      expect(isAllowedRedirectUri("mail.jami.studio/cb")).toBe(false);
       expect(isAllowedRedirectUri("")).toBe(false);
       expect(isAllowedRedirectUri(undefined)).toBe(false);
       expect(isAllowedRedirectUri(null)).toBe(false);
@@ -120,18 +120,18 @@ describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
     it("rejects control chars (CRLF header injection / NUL / DEL)", () => {
       expect(
         isAllowedRedirectUri(
-          "https://mail.agent-native.com/cb\r\nSet-Cookie: x=1",
+          "https://mail.jami.studio/cb\r\nSet-Cookie: x=1",
         ),
       ).toBe(false);
       // NUL and DEL bytes via escapes so this source stays plain ASCII.
       expect(
         isAllowedRedirectUri(
-          "https://mail.agent-native.com/cb" + String.fromCharCode(0),
+          "https://mail.jami.studio/cb" + String.fromCharCode(0),
         ),
       ).toBe(false);
       expect(
         isAllowedRedirectUri(
-          "https://mail.agent-native.com/cb" + String.fromCharCode(127),
+          "https://mail.jami.studio/cb" + String.fromCharCode(127),
         ),
       ).toBe(false);
     });
@@ -152,8 +152,8 @@ describe("isAllowedRedirectUri — the critical open-redirect guard", () => {
     });
   });
 
-  it("default allowlist is exactly .agent-native.com", () => {
-    expect(DEFAULT_ALLOWED_HOST_SUFFIXES).toEqual([".agent-native.com"]);
+  it("default allowlist is exactly .jami.studio", () => {
+    expect(DEFAULT_ALLOWED_HOST_SUFFIXES).toEqual([".jami.studio"]);
   });
 });
 
@@ -216,12 +216,12 @@ describe("token TTL", () => {
 describe("buildRedirectLocation — token + state placement", () => {
   it("appends token and state as query params, preserving existing query", () => {
     const loc = buildRedirectLocation(
-      "https://mail.agent-native.com/cb?keep=1",
+      "https://mail.jami.studio/cb?keep=1",
       "JWT.HERE.SIG",
       "opaque-state-123",
     );
     const u = new URL(loc);
-    expect(u.origin).toBe("https://mail.agent-native.com");
+    expect(u.origin).toBe("https://mail.jami.studio");
     expect(u.pathname).toBe("/cb");
     expect(u.searchParams.get("keep")).toBe("1");
     expect(u.searchParams.get("token")).toBe("JWT.HERE.SIG");
@@ -230,7 +230,7 @@ describe("buildRedirectLocation — token + state placement", () => {
 
   it("omits state when not provided but always includes token", () => {
     const loc = buildRedirectLocation(
-      "https://calendar.agent-native.com/auth",
+      "https://calendar.jami.studio/auth",
       "TKN",
       null,
     );
@@ -242,7 +242,7 @@ describe("buildRedirectLocation — token + state placement", () => {
   it("does not mutate / re-encode an opaque state value's identity", () => {
     const state = "a+b/c=d&e";
     const loc = buildRedirectLocation(
-      "https://mail.agent-native.com/cb",
+      "https://mail.jami.studio/cb",
       "TKN",
       state,
     );

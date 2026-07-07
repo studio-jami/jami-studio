@@ -3133,7 +3133,7 @@ describe("createAgentChatAdapter", () => {
       error: true,
       status: 404,
       message:
-        "Cannot find any route matching [POST] https://design.agent-native.com/_agent-native/agent-chat",
+        "Cannot find any route matching [POST] https://design.jami.studio/_agent-native/agent-chat",
     };
     const fetchSpy = vi.fn(async (url: string, init?: RequestInit) => {
       if (url === "/_agent-native/agent-chat" && init?.method === "POST") {

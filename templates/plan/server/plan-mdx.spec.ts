@@ -212,10 +212,10 @@ describe("plan MDX source adapter", () => {
 
     expect(folder["plan.mdx"]).toContain('title: "Checkout review flow"');
     expect(folder["plan.mdx"]).toContain(
-      "# Visual plan: open https://plan.agent-native.com/plans/plan_test in a browser for the canvas and review UI.",
+      "# Visual plan: open https://plan.jami.studio/plans/plan_test in a browser for the canvas and review UI.",
     );
     expect(folder["plan.mdx"]).toContain(
-      'visualUrl: "https://plan.agent-native.com/plans/plan_test"',
+      'visualUrl: "https://plan.jami.studio/plans/plan_test"',
     );
     expect(folder["plan.mdx"]).not.toMatch(/^planId:/m);
     expect(folder["plan.mdx"]).not.toMatch(/^source:/m);
@@ -223,7 +223,7 @@ describe("plan MDX source adapter", () => {
     expect(folder["plan.mdx"]).toContain("<ImplementationMap");
     expect(folder["canvas.mdx"]).toContain("<DesignBoard");
     expect(folder["canvas.mdx"]).toContain(
-      "{/* Canvas source. Open https://plan.agent-native.com/plans/plan_test */}",
+      "{/* Canvas source. Open https://plan.jami.studio/plans/plan_test */}",
     );
     expect(folder["canvas.mdx"]).toContain("\n  <Section");
     expect(folder["canvas.mdx"]).toContain("\n    <Artboard");

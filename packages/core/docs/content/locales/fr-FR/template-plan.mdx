@@ -39,7 +39,7 @@ agent de la même manière.
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
   <div class="diagram-panel center">
     Connecteur MCP Plan<br /><small class="diagram-muted"
-      >plan.agent-native.com</small
+      >plan.jami.studio</small
     >
   </div>
   <div class="diagram-arrow diagram-muted" aria-hidden="true">&rarr;</div>
@@ -114,7 +114,7 @@ La commande installe trois commandes : `/visual-plan`, `/visual-recap` et `/visu
 
 Si vous utilisez un hôte basé sur le chat qui accepte directement les connecteurs MCP URL
 (plutôt qu'un client configuré avec CLI), connectez le connecteur Plans hébergés à
-`https://plan.agent-native.com/_agent-native/mcp` : voir [MCP Clients](/docs/mcp-clients) pour la configuration spécifique au client.
+`https://plan.jami.studio/_agent-native/mcp` : voir [MCP Clients](/docs/mcp-clients) pour la configuration spécifique au client.
 
 L'authentification consiste en une connexion unique au navigateur lors de la configuration : c'est prévu, et c'est le cas
 est ce qui permet à l'agent de persister et de partager les plans qu'il génère. Quelle est l'authentification
@@ -136,7 +136,7 @@ npx @agent-native/core@latest skills add visual-plan
 ```
 
 Passez `--no-connect` pour enregistrer le connecteur sans vous authentifier, puis exécutez
-`npx @agent-native/core@latest connect https://plan.agent-native.com --client all`
+`npx @agent-native/core@latest connect https://plan.jami.studio --client all`
 quand vous êtes prêt, ou choisissez un `--client` plus étroit :
 
 ```bash
@@ -253,7 +253,7 @@ Le partage et les commentaires sont les workflows qui nécessitent un compte :
   examen multi-appareils ou d'équipe) nécessite une connexion. La connexion à Google apparaît lorsque
   les variables d'environnement Google OAuth standard sont configurées.
 
-Le connecteur Plans hébergé se trouve sur `https://plan.agent-native.com/_agent-native/mcp`.
+Le connecteur Plans hébergé se trouve sur `https://plan.jami.studio/_agent-native/mcp`.
 Ne mettez jamais de secrets partagés dans les fichiers de compétences.
 
 ## Mode de confidentialité des fichiers locaux {#local-files}
@@ -290,7 +290,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 ```
 
 Le pont URL ressemble à
-`https://plan.agent-native.com/local-plans/<slug>?bridge=http://127.0.0.1:...`.
+`https://plan.jami.studio/local-plans/<slug>?bridge=http://127.0.0.1:...`.
 La page est la visionneuse de plan normale, mais le navigateur récupère `plan.mdx`,
 `canvas.mdx`, `prototype.mdx`, `.plan-state.json` et éléments d'image locaux de
 le pont localhost. Le contenu du plan n'est pas écrit dans la base de données hébergée et est
@@ -430,7 +430,7 @@ touchez les fichiers locaux.
 
 Si un outil Plans renvoie jamais `needs auth`, `Unauthorized` ou `Session
 terminated`, ne réessayez pas. Authentifier le connecteur avec
-`npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+`npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`
 pour Codex, ou réexécutez `/mcp` → **Authentifier** sur un hôte compatible OAuth. Démarrer un
 nouveau thread Codex ou redémarrez/rechargez le client concerné avant d'attendre l'outil
 registre à mettre à jour.
@@ -451,8 +451,8 @@ pnpm dev
 
 La compétence basée sur l'application hébergée utilise :
 
-- Application : `https://plan.agent-native.com`
-- MCP: `https://plan.agent-native.com/_agent-native/mcp`
+- Application : `https://plan.jami.studio`
+- MCP: `https://plan.jami.studio/_agent-native/mcp`
 
 Le modèle local est utile lorsque vous développez Plans lui-même, testez la persistance locale ou exécutez une surface de révision entièrement auto-hébergée.
 

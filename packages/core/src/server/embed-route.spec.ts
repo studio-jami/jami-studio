@@ -180,7 +180,7 @@ describe("createEmbedStartRouteHandler", () => {
   it.each([
     "https://520ba469ac5783c72c33d79bea940871.claudemcpcontent.com",
     "https://claude.ai",
-    "https://design.agent-native.com",
+    "https://design.jami.studio",
     "https://shakira-professor-conscious-frederick-trycloudflare-com.web-sandbox.oaiusercontent.com",
   ])(
     "returns the signed app route directly for %s transplant fetches",

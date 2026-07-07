@@ -127,7 +127,7 @@ describe("buildRawEmail — CRLF header injection", () => {
 
 describe("bodyToHtml", () => {
   it("renders angle-bracket pasted URLs without leaking escaped delimiters", () => {
-    const url = "https://calendar.agent-native.com/book/steve/meeting";
+    const url = "https://calendar.jami.studio/book/steve/meeting";
     const html = bodyToHtml(`Can we Zoom this week? <${url}>`);
 
     expect(html).toContain(`href="${url}"`);

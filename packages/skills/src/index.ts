@@ -1564,7 +1564,7 @@ function escapeRegExp(value: string): string {
 }
 
 const PR_VISUAL_RECAP_DOCS_URL =
-  "https://www.agent-native.com/docs/pr-visual-recap";
+  "https://www.jami.studio/docs/pr-visual-recap";
 
 function prVisualRecapWorkflowPath(baseDir: string): string {
   return path.join(baseDir, ".github", "workflows", "pr-visual-recap.yml");

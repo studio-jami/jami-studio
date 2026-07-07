@@ -38,19 +38,19 @@ not run postinstall scripts or register MCP connectors, so the hosted MCP
 connector must be added separately:
 
 ```bash
-npx @agent-native/core@latest connect https://assets.agent-native.com --client claude-code
+npx @agent-native/core@latest connect https://assets.jami.studio --client claude-code
 ```
 
 For cross-app workspace access, connect Dispatch instead:
 
 ```bash
-npx @agent-native/core@latest connect https://dispatch.agent-native.com --client claude-code
+npx @agent-native/core@latest connect https://dispatch.jami.studio --client claude-code
 ```
 
 OAuth-capable hosts can add this remote MCP URL directly:
 
 ```text
-https://assets.agent-native.com/_agent-native/mcp
+https://assets.jami.studio/_agent-native/mcp
 ```
 
 ## Use The Picker
@@ -76,7 +76,7 @@ inline MCP App rendering there.
 Prefer the `open-asset-picker` tool for browser fallback links. If a CLI host has
 the skill instructions but has not exposed the MCP tool namespace yet, use the
 Assets browser fallback URL shape rather than switching to a generic generator:
-`https://assets.agent-native.com/library?mediaType=image&prompt=...&autoGenerate=1&count=3`.
+`https://assets.jami.studio/library?mediaType=image&prompt=...&autoGenerate=1&count=3`.
 When reporting the final selected image in Codex or Claude Code, include the
 asset link and, if an inline preview is important, download the selected
 `previewUrl`/`downloadUrl` to a local temp image and embed that absolute local
@@ -108,7 +108,7 @@ dimensions, `presetId`, and `sessionId` when present.
   connector/session error, do not keep retrying the tool. Stop and give the user
   the reconnect step: in Claude Code run `/mcp` and choose
   Authenticate/Reconnect for the Assets connector; from any terminal run
-  `npx -y @agent-native/core@latest reconnect https://assets.agent-native.com` — this
+  `npx -y @agent-native/core@latest reconnect https://assets.jami.studio` — this
   re-authenticates WITHOUT reinstalling. Never reinstall from scratch just to
   fix auth. Continue once the connector is available.
 - Do not hand-roll MCP HTTP requests with curl from the agent session. Use the

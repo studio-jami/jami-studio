@@ -767,12 +767,12 @@ const KNOWN_AGENT_NATIVE_ARTIFACT_HOSTS: Record<
   ReferencedArtifactKind,
   ReadonlySet<string>
 > = {
-  deck: new Set(["slides.agent-native.com"]),
-  design: new Set(["design.agent-native.com"]),
-  document: new Set(["content.agent-native.com"]),
-  dashboard: new Set(["analytics.agent-native.com"]),
-  analysis: new Set(["analytics.agent-native.com"]),
-  image: new Set(["assets.agent-native.com", "images.agent-native.com"]),
+  deck: new Set(["slides.jami.studio"]),
+  design: new Set(["design.jami.studio"]),
+  document: new Set(["content.jami.studio"]),
+  dashboard: new Set(["analytics.jami.studio"]),
+  analysis: new Set(["analytics.jami.studio"]),
+  image: new Set(["assets.jami.studio", "images.jami.studio"]),
 };
 
 function safeHostnameFromOrigin(

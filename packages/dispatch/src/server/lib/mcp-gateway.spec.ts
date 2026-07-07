@@ -162,14 +162,14 @@ describe("Dispatch MCP gateway app discovery", () => {
         id: "mail",
         name: "Mail",
         description: "Mail",
-        url: "https://mail.agent-native.com/inbox",
+        url: "https://mail.jami.studio/inbox",
         color: "#2563EB",
       },
       {
         id: "bad-url",
         name: "Bad URL",
         description: "Invalid manifest URL",
-        url: "mail.agent-native.com",
+        url: "mail.jami.studio",
         color: "#111827",
       },
       {
@@ -203,7 +203,7 @@ describe("Dispatch MCP gateway app discovery", () => {
     expect(origins).toEqual([
       "http://localhost:8092",
       "http://localhost:8086",
-      "https://mail.agent-native.com",
+      "https://mail.jami.studio",
     ]);
     expect(apps.map((app) => app.id)).toEqual([
       "dispatch",
@@ -218,7 +218,7 @@ describe("Dispatch MCP gateway app discovery", () => {
         id: "bad-url",
         name: "Bad URL",
         description: "Invalid manifest URL",
-        url: "mail.agent-native.com",
+        url: "mail.jami.studio",
         color: "#111827",
       },
     ]);
@@ -494,14 +494,14 @@ describe("createGrantedDispatchMcpEmbedSession", () => {
         id: "bad-url",
         name: "Bad URL",
         description: "Invalid manifest URL",
-        url: "mail.agent-native.com",
+        url: "mail.jami.studio",
         color: "#111827",
       },
       {
         id: "mail",
         name: "Mail",
         description: "Mail",
-        url: "https://mail.agent-native.com",
+        url: "https://mail.jami.studio",
         color: "#2563EB",
       },
     ]);
@@ -513,14 +513,14 @@ describe("createGrantedDispatchMcpEmbedSession", () => {
       },
       () =>
         createGrantedDispatchMcpEmbedSession({
-          url: "https://mail.agent-native.com/inbox",
+          url: "https://mail.jami.studio/inbox",
         }),
     );
 
     expect(mocks.managerConstructor).toHaveBeenCalledWith({
       servers: {
         target: expect.objectContaining({
-          url: "https://mail.agent-native.com/_agent-native/mcp",
+          url: "https://mail.jami.studio/_agent-native/mcp",
         }),
       },
     });

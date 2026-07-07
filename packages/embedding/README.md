@@ -7,7 +7,7 @@ apps.
 import { EmbeddedApp } from "@agent-native/embedding";
 
 <EmbeddedApp
-  url="https://assets.agent-native.com/picker"
+  url="https://assets.jami.studio/picker"
   onLoad={(ref) => {
     ref.postMessage("configure", { accept: ["image/*"] });
   }}
@@ -34,11 +34,11 @@ Agent helpers:
 ```ts
 import { getA2AUrl, getMcpUrl, sendMessage } from "@agent-native/embedding";
 
-console.log(getMcpUrl("https://assets.agent-native.com"));
-console.log(getA2AUrl("https://assets.agent-native.com"));
+console.log(getMcpUrl("https://assets.jami.studio"));
+console.log(getA2AUrl("https://assets.jami.studio"));
 
 for await (const chunk of sendMessage(
-  "https://assets.agent-native.com",
+  "https://assets.jami.studio",
   "Generate a blog hero",
 )) {
   process.stdout.write(chunk);

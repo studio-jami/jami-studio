@@ -26,7 +26,7 @@ bubble, controls). `web_accessible_resources` stays `<all_urls>` — that is **n
 a host permission and does not trigger the review.
 
 Declared permissions: `activeTab`, `debugger`, `offscreen`, `scripting`,
-`storage`. Host permissions: only the configured Clips app + `forms.agent-native.com`
+`storage`. Host permissions: only the configured Clips app + `forms.jami.studio`
 
 - `localhost`/`127.0.0.1`.
 - `https://github.com/*` is content-script scoped for link previews only.

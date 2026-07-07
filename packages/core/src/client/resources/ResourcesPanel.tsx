@@ -75,7 +75,7 @@ import {
   type Resource,
 } from "./use-resources.js";
 
-const WORKSPACE_DOCS_URL = "https://agent-native.com/docs/workspace";
+const WORKSPACE_DOCS_URL = "https://jami.studio/docs/workspace";
 const LOCAL_WORKSPACE_RESOURCE_METADATA_SOURCE = "local-workspace-resource";
 
 // ─── Create Menu (unified + button) ────────────────────────────────────────

@@ -7,7 +7,7 @@ import {
 } from "@agent-native/core/shared";
 import type { MetaDescriptor } from "react-router";
 
-const SITE_URL = "https://www.agent-native.com";
+const SITE_URL = "https://www.jami.studio";
 const DOCS_SOCIAL_IMAGE_ACCENT = "Jami Studio Docs";
 
 export const DEFAULT_SOCIAL_IMAGE = AGENT_NATIVE_DEFAULT_SOCIAL_IMAGE;

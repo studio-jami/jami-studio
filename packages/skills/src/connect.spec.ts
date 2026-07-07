@@ -68,10 +68,10 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "agent-native-plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       aliases: ["agent-native-plans"],
       authMode: "oauth",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const result = await registerMcpServer({
@@ -90,12 +90,12 @@ describe("registerMcpServer", () => {
     const alias = claudeJson.mcpServers["agent-native-plans"];
     expect(main).toMatchObject({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
     expect(main.headers).toBeUndefined();
     expect(alias).toMatchObject({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
     expect(alias.headers).toBeUndefined();
 
@@ -110,9 +110,9 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "oauth",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const result = await registerMcpServer({
@@ -127,7 +127,7 @@ describe("registerMcpServer", () => {
       fs.readFileSync(path.join(baseDir, ".cursor", "mcp.json"), "utf-8"),
     );
     expect(cursorConfig.mcpServers.plan).toEqual({
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
 
     const opencodeConfig = JSON.parse(
@@ -135,7 +135,7 @@ describe("registerMcpServer", () => {
     );
     expect(opencodeConfig.mcp.plan).toEqual({
       type: "remote",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
       enabled: true,
     });
 
@@ -144,7 +144,7 @@ describe("registerMcpServer", () => {
     );
     expect(copilotConfig.servers.plan).toEqual({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
 
     expect(result.authenticated).toBe(false);
@@ -158,9 +158,9 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "device",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const fetchImpl = mockFetch([
@@ -169,9 +169,9 @@ describe("registerMcpServer", () => {
         json: {
           device_code: "dev-123",
           user_code: "ABCD-EFGH",
-          verification_uri: "https://plan.agent-native.com/connect",
+          verification_uri: "https://plan.jami.studio/connect",
           verification_uri_complete:
-            "https://plan.agent-native.com/connect?code=ABCD-EFGH",
+            "https://plan.jami.studio/connect?code=ABCD-EFGH",
           interval: 1,
           expires_in: 600,
         },
@@ -181,7 +181,7 @@ describe("registerMcpServer", () => {
         json: {
           status: "approved",
           token: "minted-bearer-token",
-          mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+          mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
           serverName: "plan",
         },
       },
@@ -199,7 +199,7 @@ describe("registerMcpServer", () => {
     const toml = fs.readFileSync(path.join(codexHome, "config.toml"), "utf-8");
     expect(toml).toContain('[mcp_servers."plan"]');
     expect(toml).toContain(
-      'url = "https://plan.agent-native.com/_agent-native/mcp"',
+      'url = "https://plan.jami.studio/_agent-native/mcp"',
     );
     expect(toml).toContain("Bearer minted-bearer-token");
     expect(result.authenticated).toBe(true);
@@ -210,9 +210,9 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "device",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const fetchImpl = mockFetch([
@@ -221,9 +221,9 @@ describe("registerMcpServer", () => {
         json: {
           device_code: "dev-123",
           user_code: "ABCD-EFGH",
-          verification_uri: "https://plan.agent-native.com/connect",
+          verification_uri: "https://plan.jami.studio/connect",
           verification_uri_complete:
-            "https://plan.agent-native.com/connect?code=ABCD-EFGH",
+            "https://plan.jami.studio/connect?code=ABCD-EFGH",
           interval: 1,
           expires_in: 600,
         },
@@ -233,7 +233,7 @@ describe("registerMcpServer", () => {
         json: {
           status: "approved",
           token: "minted-bearer-token",
-          mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+          mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
           serverName: "plan",
         },
       },
@@ -271,9 +271,9 @@ describe("registerMcpServer", () => {
     const logs: string[] = [];
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "device",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const fetchImpl = mockFetch([
@@ -282,9 +282,9 @@ describe("registerMcpServer", () => {
         json: {
           device_code: "dev-123",
           user_code: "ABCD-EFGH",
-          verification_uri: "https://plan.agent-native.com/connect",
+          verification_uri: "https://plan.jami.studio/connect",
           verification_uri_complete:
-            "https://plan.agent-native.com/connect?code=ABCD-EFGH",
+            "https://plan.jami.studio/connect?code=ABCD-EFGH",
           interval: 1,
           expires_in: 600,
         },
@@ -316,9 +316,9 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "device",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
     let nowMs = 0;
     const sleeps: number[] = [];
@@ -329,9 +329,9 @@ describe("registerMcpServer", () => {
         json: {
           device_code: "dev-123",
           user_code: "ABCD-EFGH",
-          verification_uri: "https://plan.agent-native.com/connect",
+          verification_uri: "https://plan.jami.studio/connect",
           verification_uri_complete:
-            "https://plan.agent-native.com/connect?code=ABCD-EFGH",
+            "https://plan.jami.studio/connect?code=ABCD-EFGH",
           interval: 5,
           expires_in: 600,
         },
@@ -376,9 +376,9 @@ describe("registerMcpServer", () => {
     const baseDir = tmpDir();
     const descriptor: McpDescriptor = {
       serverName: "agent-native-context-xray",
-      mcpUrl: "https://xray.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://xray.jami.studio/_agent-native/mcp",
       authMode: "none",
-      hostedUrl: "https://xray.agent-native.com",
+      hostedUrl: "https://xray.jami.studio",
     };
 
     // Pass a fetch that throws — proves authMode "none" never hits the network.
@@ -401,7 +401,7 @@ describe("registerMcpServer", () => {
     const entry = claudeJson.mcpServers["agent-native-context-xray"];
     expect(entry).toMatchObject({
       type: "http",
-      url: "https://xray.agent-native.com/_agent-native/mcp",
+      url: "https://xray.jami.studio/_agent-native/mcp",
     });
     expect(entry.headers).toBeUndefined();
 
@@ -423,7 +423,7 @@ describe("registerMcpServer", () => {
       path.join(codexHome, "config.toml"),
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         'http_headers = { "Authorization" = "Bearer existing-token" }',
         "",
       ].join("\n"),
@@ -431,9 +431,9 @@ describe("registerMcpServer", () => {
     );
     const descriptor: McpDescriptor = {
       serverName: "plan",
-      mcpUrl: "https://plan.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
       authMode: "device",
-      hostedUrl: "https://plan.agent-native.com",
+      hostedUrl: "https://plan.jami.studio",
     };
 
     const fetchImpl = (async () => {
@@ -460,7 +460,7 @@ describe("registerMcpServer", () => {
       "Codex: skipped MCP config because this client needs a bearer token.",
     );
     expect(guidance).toContain(
-      "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope user",
+      "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope user",
     );
   });
 
@@ -476,9 +476,9 @@ describe("registerMcpServer", () => {
 
     const descriptor: McpDescriptor = {
       serverName: "agent-native-x",
-      mcpUrl: "https://x.agent-native.com/_agent-native/mcp",
+      mcpUrl: "https://x.jami.studio/_agent-native/mcp",
       authMode: "none",
-      hostedUrl: "https://x.agent-native.com",
+      hostedUrl: "https://x.jami.studio",
     };
 
     const result = await registerMcpServer({

@@ -15,7 +15,7 @@
  * panel falls back to read-only.
  *
  * Layout matches the Review artboard in the canonical plan visual:
- *   <https://plan.agent-native.com/plans/plan-88dc4a09fb0c46bc>
+ *   <https://plan.jami.studio/plans/plan-88dc4a09fb0c46bc>
  *
  * shadcn/ui primitives + Tabler icons throughout.  No emojis.
  */

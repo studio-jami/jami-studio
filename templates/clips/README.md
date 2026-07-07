@@ -4,7 +4,7 @@ An open-source, agent-native alternative to Loom, Granola, and Wispr Flow rolled
 into one app. Screen recording, calendar-synced meeting notes, and push-to-talk
 voice dictation — all transcribed, searchable, and yours to own.
 
-**Live app: [clips.agent-native.com](https://clips.agent-native.com)**
+**Live app: [clips.jami.studio](https://clips.jami.studio)**
 
 The agent transcribes, titles, summarizes, and indexes everything you capture,
 then lets you ask "find the clip where we discussed the rollout plan" across every
@@ -34,4 +34,4 @@ pnpm dev
 
 Clips needs a video storage backend (Jami Studio or an S3-compatible bucket)
 before recordings can upload — see the docs for setup.
-Full docs: [agent-native.com/docs/template-clips](https://agent-native.com/docs/template-clips).
+Full docs: [jami.studio/docs/template-clips](https://jami.studio/docs/template-clips).

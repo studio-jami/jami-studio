@@ -116,7 +116,7 @@ export function BackgroundAgentSection() {
             desktop app or your local clone for code changes.
           </p>
           <a
-            href="https://www.agent-native.com/download"
+            href="https://www.jami.studio/download"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 rounded bg-accent px-2 py-1 text-[10px] font-medium text-foreground hover:bg-accent/80"

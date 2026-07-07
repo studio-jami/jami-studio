@@ -266,14 +266,14 @@ Resolve the URL in this order:
 1. Use the absolute URL the create tool RETURNS — `openLink.webUrl`, else the
    `visualUrl` in the returned `plan.mdx` frontmatter, else `url`/`path`
    resolved against the MCP server's own origin (for the hosted MCP that is
-   `https://plan.agent-native.com`). This always points at the database that has
+   `https://plan.jami.studio`). This always points at the database that has
    the plan.
 2. Use a `localhost`/dev origin ONLY when the recap was created through a Plan
    MCP bound to that same origin — i.e. that MCP's url is
    `http://localhost:<port>/_agent-native/mcp`. Creating through the hosted MCP
    and linking to localhost is the exact mismatch that 404s.
 3. If only a plan id is available, build the MCP origin's absolute URL
-   (hosted: `https://plan.agent-native.com/plans/<id>`) and say it was inferred.
+   (hosted: `https://plan.jami.studio/plans/<id>`) and say it was inferred.
 
 If the user wants to review on localhost but the recap was created through the
 hosted MCP, say so plainly: the local dev server cannot see it. To view a recap

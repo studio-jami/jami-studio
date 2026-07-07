@@ -7,9 +7,9 @@ const TIMEOUT = 10_000;
 const CHECKPOINT_ENV = {
   ...process.env,
   GIT_AUTHOR_NAME: "agent-native",
-  GIT_AUTHOR_EMAIL: "noreply@agent-native.com",
+  GIT_AUTHOR_EMAIL: "noreply@jami.studio",
   GIT_COMMITTER_NAME: "agent-native",
-  GIT_COMMITTER_EMAIL: "noreply@agent-native.com",
+  GIT_COMMITTER_EMAIL: "noreply@jami.studio",
 };
 
 export function isGitRepo(cwd: string): boolean {

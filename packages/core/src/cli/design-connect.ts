@@ -1417,7 +1417,7 @@ function resolveAuthToken(): string | undefined {
  * server row.  This is a best-effort call: failures are logged but do not
  * abort the bridge process.
  *
- * @param appUrl - Deployed design app base URL (e.g. https://design.agent-native.com)
+ * @param appUrl - Deployed design app base URL (e.g. https://design.jami.studio)
  * @param bridge - The running bridge returned by startDesignConnectBridge
  * @param authToken - Optional bearer token for the authenticated action route
  */

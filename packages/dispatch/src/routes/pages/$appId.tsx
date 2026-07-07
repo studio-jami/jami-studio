@@ -54,7 +54,7 @@ export function meta() {
  * Built-in template fallback: when no workspace manifest is available
  * (framework dev with each template on its own port, hosted dispatch with
  * no sibling apps), redirect to the matching first-party template's deploy
- * URL — `http://localhost:<devPort>` in dev, `https://<id>.agent-native.com`
+ * URL — `http://localhost:<devPort>` in dev, `https://<id>.jami.studio`
  * in production. Without this, a user visiting `/forms` on dispatch is
  * forced to sign in (auth guard) and then lands on this route's "Page not
  * found" pane after the post-login reload.

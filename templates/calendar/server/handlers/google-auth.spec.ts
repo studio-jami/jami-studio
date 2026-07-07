@@ -98,7 +98,7 @@ describe("Calendar Google auth-url handler", () => {
     );
     mocks.isElectron.mockReturnValue(false);
     mocks.resolveOAuthRedirectUri.mockReturnValue(
-      "https://calendar.agent-native.com/_agent-native/google/callback",
+      "https://calendar.jami.studio/_agent-native/google/callback",
     );
     mocks.resolveSecret.mockImplementation(async (key: string) => {
       if (key === "GOOGLE_CLIENT_ID") return "calendar-client-id";
@@ -162,7 +162,7 @@ describe("Calendar Google auth-url handler", () => {
     );
     expect(mocks.getAuthUrl).toHaveBeenCalledWith(
       undefined,
-      "https://calendar.agent-native.com/_agent-native/google/callback",
+      "https://calendar.jami.studio/_agent-native/google/callback",
       "encoded-state",
       "owner@example.com",
       "org-123",
@@ -179,7 +179,7 @@ describe("Calendar Google auth-url handler", () => {
     });
     mocks.decodeOAuthState.mockReturnValue({
       redirectUri:
-        "https://calendar.agent-native.com/_agent-native/google/callback",
+        "https://calendar.jami.studio/_agent-native/google/callback",
       owner: "owner@example.com",
       orgId: "org-123",
       desktop: true,
@@ -199,7 +199,7 @@ describe("Calendar Google auth-url handler", () => {
     expect(mocks.exchangeCode).toHaveBeenCalledWith(
       "google-code",
       undefined,
-      "https://calendar.agent-native.com/_agent-native/google/callback",
+      "https://calendar.jami.studio/_agent-native/google/callback",
       "owner@example.com",
       "org-123",
     );
@@ -236,7 +236,7 @@ describe("Calendar Google auth-url handler", () => {
     mocks.getSession.mockResolvedValue(null);
     mocks.decodeOAuthState.mockReturnValue({
       redirectUri:
-        "https://calendar.agent-native.com/_agent-native/google/add-account/callback",
+        "https://calendar.jami.studio/_agent-native/google/add-account/callback",
       owner: "owner@example.com",
       orgId: "org-123",
       desktop: true,
@@ -251,7 +251,7 @@ describe("Calendar Google auth-url handler", () => {
     expect(mocks.exchangeCode).toHaveBeenCalledWith(
       "google-code",
       undefined,
-      "https://calendar.agent-native.com/_agent-native/google/add-account/callback",
+      "https://calendar.jami.studio/_agent-native/google/add-account/callback",
       "owner@example.com",
       "org-123",
     );

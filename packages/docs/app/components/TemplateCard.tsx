@@ -14,7 +14,7 @@ export const templates = [
     slug: "clips",
     cliCommand:
       "npx @agent-native/core@latest create my-clips-app --template clips",
-    demoUrl: "https://clips.agent-native.com",
+    demoUrl: "https://clips.jami.studio",
     color: "#0EA5E9",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800",
@@ -23,7 +23,7 @@ export const templates = [
     name: "Plans",
     slug: "plan",
     cliCommand: "npx @agent-native/core@latest skills add visual-plan",
-    demoUrl: "https://plan.agent-native.com",
+    demoUrl: "https://plan.jami.studio",
     color: "#52525B",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800",
@@ -33,7 +33,7 @@ export const templates = [
     slug: "design",
     cliCommand:
       "npx @agent-native/core@latest create my-design-app --template design",
-    demoUrl: "https://design.agent-native.com",
+    demoUrl: "https://design.jami.studio",
     color: "#F472B6",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800",
@@ -43,7 +43,7 @@ export const templates = [
     slug: "content",
     cliCommand:
       "npx @agent-native/core@latest create my-content-app --template content",
-    demoUrl: "https://content.agent-native.com",
+    demoUrl: "https://content.jami.studio",
     color: "#7928ca",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800",
@@ -53,7 +53,7 @@ export const templates = [
     slug: "slides",
     cliCommand:
       "npx @agent-native/core@latest create my-slides-app --template slides",
-    demoUrl: "https://slides.agent-native.com",
+    demoUrl: "https://slides.jami.studio",
     color: "#f59e0b",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800",
@@ -63,7 +63,7 @@ export const templates = [
     slug: "analytics",
     cliCommand:
       "npx @agent-native/core@latest create my-analytics-app --template analytics",
-    demoUrl: "https://analytics.agent-native.com",
+    demoUrl: "https://analytics.jami.studio",
     color: "var(--docs-accent)",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800",
@@ -73,7 +73,7 @@ export const templates = [
     slug: "mail",
     cliCommand:
       "npx @agent-native/core@latest create my-mail-app --template mail",
-    demoUrl: "https://mail.agent-native.com",
+    demoUrl: "https://mail.jami.studio",
     color: "#0ea5e9",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6f49a81c404d4242b33317491eac7575?format=webp&width=800",
@@ -83,7 +83,7 @@ export const templates = [
     slug: "forms",
     cliCommand:
       "npx @agent-native/core@latest create my-forms-app --template forms",
-    demoUrl: "https://forms.agent-native.com",
+    demoUrl: "https://forms.jami.studio",
     color: "#06B6D4",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F190c3fabd51f4c1bba5aa4e091ad4e9b?format=webp&width=800",
@@ -93,7 +93,7 @@ export const templates = [
     slug: "brain",
     cliCommand:
       "npx @agent-native/core@latest create my-brain-app --template brain",
-    demoUrl: "https://brain.agent-native.com",
+    demoUrl: "https://brain.jami.studio",
     color: "#8B5CF6",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F9c9fe3b5b9494e33803cd3f494cba356?format=webp&width=800",
@@ -103,7 +103,7 @@ export const templates = [
     slug: "assets",
     cliCommand:
       "npx @agent-native/core@latest create my-assets-app --template assets",
-    demoUrl: "https://assets.agent-native.com",
+    demoUrl: "https://assets.jami.studio",
     color: "#0F766E",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F769092170a14474f998cbca47384f891?format=webp&width=800",
@@ -113,7 +113,7 @@ export const templates = [
     slug: "calendar",
     cliCommand:
       "npx @agent-native/core@latest create my-calendar-app --template calendar",
-    demoUrl: "https://calendar.agent-native.com",
+    demoUrl: "https://calendar.jami.studio",
     color: "#10b981",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ffb6c3b483ca24ab3b6c3a758aeceef4c?format=webp&width=800",
@@ -123,7 +123,7 @@ export const templates = [
     slug: "dispatch",
     cliCommand:
       "npx @agent-native/core@latest create my-dispatch-app --template dispatch",
-    demoUrl: "https://dispatch.agent-native.com",
+    demoUrl: "https://dispatch.jami.studio",
     color: "#14B8A6",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F104b3ad8d1dc461aa33ab9bff37a4482?format=webp&width=800",
@@ -133,7 +133,7 @@ export const templates = [
     slug: "chat",
     cliCommand:
       "npx @agent-native/core@latest create my-chat-app --template chat",
-    demoUrl: "https://chat.agent-native.com",
+    demoUrl: "https://chat.jami.studio",
     color: "#18181B",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6b36dc596fca4799815fa34c31e1c406",

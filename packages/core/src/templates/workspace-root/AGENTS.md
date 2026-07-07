@@ -100,9 +100,9 @@ workspace root to refresh framework-provided shared skills and repair
 - Treat first-party apps such as Mail, Calendar, Analytics, Brain, Assets, and Dispatch as
   existing hosted/connected neighbors available through links and A2A/default
   connected agents. For example, Mail, Calendar, Analytics, Brain, and Assets already exist at
-  `https://mail.agent-native.com`, `https://calendar.agent-native.com`, and
-  `https://analytics.agent-native.com`, `https://brain.agent-native.com`, and
-  `https://assets.agent-native.com`.
+  `https://mail.jami.studio`, `https://calendar.jami.studio`, and
+  `https://analytics.jami.studio`, `https://brain.jami.studio`, and
+  `https://assets.jami.studio`.
 - If a new app needs to use Mail, Calendar, Analytics, Brain, Assets, or similar first-party
   data/agents, build only the genuinely new workflow and delegate/link to those
   existing apps. Do not create wrapper apps, child apps, nested template copies,

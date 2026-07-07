@@ -163,11 +163,11 @@ describe("verifyA2ABearerToken — reuses the A2A peer auth recipe", () => {
 
 describe("toA2aUrl", () => {
   it("appends the canonical agent-native A2A endpoint path", () => {
-    expect(toA2aUrl("https://mail.agent-native.com")).toBe(
-      "https://mail.agent-native.com/_agent-native/a2a",
+    expect(toA2aUrl("https://mail.jami.studio")).toBe(
+      "https://mail.jami.studio/_agent-native/a2a",
     );
-    expect(toA2aUrl("https://mail.agent-native.com/")).toBe(
-      "https://mail.agent-native.com/_agent-native/a2a",
+    expect(toA2aUrl("https://mail.jami.studio/")).toBe(
+      "https://mail.jami.studio/_agent-native/a2a",
     );
   });
 });
@@ -181,22 +181,22 @@ describe("buildOrgAppsResponse", () => {
         {
           id: "dispatch",
           name: "Dispatch",
-          url: "https://dispatch.agent-native.com",
+          url: "https://dispatch.jami.studio",
         },
         {
           id: "mail",
           name: "Mail",
           description: "Agent-native email",
-          url: "https://mail.agent-native.com/",
+          url: "https://mail.jami.studio/",
         },
         {
           id: "calendar",
           name: "Calendar",
-          url: "https://calendar.agent-native.com",
+          url: "https://calendar.jami.studio",
         },
-        { id: "mail", name: "Mail dup", url: "https://mail.agent-native.com" },
+        { id: "mail", name: "Mail dup", url: "https://mail.jami.studio" },
         { id: "bad", name: "Bad scheme", url: "ftp://nope" },
-        { id: "", name: "Empty id", url: "https://x.agent-native.com" },
+        { id: "", name: "Empty id", url: "https://x.jami.studio" },
       ],
     });
 
@@ -207,8 +207,8 @@ describe("buildOrgAppsResponse", () => {
     expect(mail).toEqual({
       id: "mail",
       name: "Mail",
-      url: "https://mail.agent-native.com",
-      a2aUrl: "https://mail.agent-native.com/_agent-native/a2a",
+      url: "https://mail.jami.studio",
+      a2aUrl: "https://mail.jami.studio/_agent-native/a2a",
       capabilities: "Agent-native email",
     });
     const cal = res.apps.find((a) => a.id === "calendar")!;

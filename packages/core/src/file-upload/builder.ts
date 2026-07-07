@@ -226,7 +226,7 @@ async function uploadSmallFile(url: URL, init: RequestInit): Promise<Response> {
  * so connecting Builder once (via the sidebar "Connect Builder" action)
  * automatically enables file uploads.
  *
- * Upload API: https://www.builder.io/c/docs/upload-api
+ * Upload API: https://www.jami.studio/c/docs/upload-api
  */
 export const builderFileUploadProvider: FileUploadProvider = {
   id: "builder",

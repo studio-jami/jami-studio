@@ -67,7 +67,7 @@ interface ImageResizeState {
 const MIN_IMAGE_WIDTH = 160;
 const MAX_AGENT_IMAGE_DIMENSION = 1600;
 const ALT_TEXT_CONTEXT_WORD_LIMIT = 250;
-const DEFAULT_ASSETS_PICKER_URL = "https://assets.agent-native.com/picker";
+const DEFAULT_ASSETS_PICKER_URL = "https://assets.jami.studio/picker";
 
 interface PickedAssetImagePayload {
   url?: unknown;

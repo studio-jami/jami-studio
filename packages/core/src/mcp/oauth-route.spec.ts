@@ -130,7 +130,7 @@ function event(
   return {
     method: opts.method ?? "GET",
     headers: {
-      host: "mail.agent-native.com",
+      host: "mail.jami.studio",
       "x-forwarded-proto": "https",
       ...(opts.headers ?? {}),
     },
@@ -169,27 +169,27 @@ describe("MCP OAuth route", () => {
     const protectedRes = handleMcpOAuthProtectedResourceMetadata(event());
     expect(protectedRes.status).toBe(200);
     await expect(protectedRes.json()).resolves.toMatchObject({
-      resource: "https://mail.agent-native.com/_agent-native/mcp",
-      authorization_servers: ["https://mail.agent-native.com"],
+      resource: "https://mail.jami.studio/_agent-native/mcp",
+      authorization_servers: ["https://mail.jami.studio"],
       scopes_supported: ["mcp:read", "mcp:write", "mcp:apps"],
     });
 
     const authRes = handleMcpOAuthAuthorizationServerMetadata(event());
     await expect(authRes.json()).resolves.toMatchObject({
-      issuer: "https://mail.agent-native.com",
+      issuer: "https://mail.jami.studio",
       authorization_endpoint:
-        "https://mail.agent-native.com/_agent-native/mcp/oauth/authorize",
+        "https://mail.jami.studio/_agent-native/mcp/oauth/authorize",
       token_endpoint:
-        "https://mail.agent-native.com/_agent-native/mcp/oauth/token",
+        "https://mail.jami.studio/_agent-native/mcp/oauth/token",
       registration_endpoint:
-        "https://mail.agent-native.com/_agent-native/mcp/oauth/register",
+        "https://mail.jami.studio/_agent-native/mcp/oauth/register",
       code_challenge_methods_supported: ["S256"],
       token_endpoint_auth_methods_supported: ["none"],
     });
   });
 
   it("prefers configured public URL over forwarded request headers for OAuth resource", async () => {
-    process.env.APP_URL = "https://plan.agent-native.com";
+    process.env.APP_URL = "https://plan.jami.studio";
     const protectedRes = handleMcpOAuthProtectedResourceMetadata(
       event({
         headers: {
@@ -200,8 +200,8 @@ describe("MCP OAuth route", () => {
       }),
     );
     await expect(protectedRes.json()).resolves.toMatchObject({
-      resource: "https://plan.agent-native.com/_agent-native/mcp",
-      authorization_servers: ["https://plan.agent-native.com"],
+      resource: "https://plan.jami.studio/_agent-native/mcp",
+      authorization_servers: ["https://plan.jami.studio"],
     });
 
     const authRes = handleMcpOAuthAuthorizationServerMetadata(
@@ -214,9 +214,9 @@ describe("MCP OAuth route", () => {
       }),
     );
     await expect(authRes.json()).resolves.toMatchObject({
-      issuer: "https://plan.agent-native.com",
+      issuer: "https://plan.jami.studio",
       token_endpoint:
-        "https://plan.agent-native.com/_agent-native/mcp/oauth/token",
+        "https://plan.jami.studio/_agent-native/mcp/oauth/token",
     });
   });
 
@@ -324,7 +324,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge("v".repeat(50)),
           code_challenge_method: "S256",
         },
@@ -355,7 +355,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           scope: "mcp:read mcp:apps",
           state: "state-123",
           code_challenge: challenge(verifier),
@@ -377,7 +377,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           scope: "mcp:read mcp:apps",
           state: "state-123",
           code_challenge: challenge(verifier),
@@ -417,7 +417,7 @@ describe("MCP OAuth route", () => {
     await expect(
       verifyMcpOAuthAccessToken(
         body.access_token,
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
       ),
     ).resolves.toMatchObject({
       userEmail: "steve@example.com",
@@ -450,7 +450,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: deepLink,
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           scope: "mcp:read mcp:apps",
           state: "state-xyz",
           code_challenge: challenge(verifier),
@@ -472,7 +472,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: deepLink,
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           scope: "mcp:read mcp:apps",
           state: "state-xyz",
           code_challenge: challenge(verifier),
@@ -519,7 +519,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -538,7 +538,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -568,7 +568,7 @@ describe("MCP OAuth route", () => {
     await expect(
       verifyMcpOAuthAccessToken(
         body.access_token,
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
       ),
     ).resolves.toMatchObject({
       userEmail: "steve@example.com",
@@ -596,7 +596,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           scope: "mcp:typo",
           code_challenge: challenge("v".repeat(50)),
           code_challenge_method: "S256",
@@ -624,7 +624,7 @@ describe("MCP OAuth route", () => {
       )
     ).json();
     const verifier = "v".repeat(50);
-    const resource = "https://mail.agent-native.com/dispatch/_agent-native/mcp";
+    const resource = "https://mail.jami.studio/dispatch/_agent-native/mcp";
     const consent = await handleMcpOAuth(
       event({
         query: {
@@ -647,7 +647,7 @@ describe("MCP OAuth route", () => {
     const authorize = await handleMcpOAuth(
       event({
         method: "POST",
-        headers: { origin: "https://mail.agent-native.com" },
+        headers: { origin: "https://mail.jami.studio" },
         body: {
           decision: "approve",
           response_type: "code",
@@ -686,7 +686,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -706,7 +706,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -749,7 +749,7 @@ describe("MCP OAuth route", () => {
     await expect(
       verifyMcpOAuthAccessToken(
         body.access_token,
-        "https://mail.agent-native.com/_agent-native/mcp",
+        "https://mail.jami.studio/_agent-native/mcp",
       ),
     ).resolves.toMatchObject({
       userEmail: "steve@example.com",
@@ -795,7 +795,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -814,7 +814,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -878,7 +878,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -897,7 +897,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -982,7 +982,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -1001,7 +1001,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -1048,7 +1048,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -1067,7 +1067,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,
@@ -1127,7 +1127,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
         },
@@ -1146,7 +1146,7 @@ describe("MCP OAuth route", () => {
           response_type: "code",
           client_id: client.client_id,
           redirect_uri: "http://localhost:5555/callback",
-          resource: "https://mail.agent-native.com/_agent-native/mcp",
+          resource: "https://mail.jami.studio/_agent-native/mcp",
           code_challenge: challenge(verifier),
           code_challenge_method: "S256",
           consent_token: consentToken,

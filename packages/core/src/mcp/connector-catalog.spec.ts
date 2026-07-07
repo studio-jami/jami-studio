@@ -130,13 +130,13 @@ function makeEvent(opts: {
   ip?: string;
 }): any {
   const headers: Record<string, string> = {
-    host: "plan.agent-native.com",
+    host: "plan.jami.studio",
     "x-forwarded-proto": "https",
     accept: "application/json, text/event-stream",
     "content-type": "application/json",
     ...opts.headers,
   };
-  const reqUrl = "https://plan.agent-native.com/";
+  const reqUrl = "https://plan.jami.studio/";
   const webReq = new Request(reqUrl, { method: "POST", headers });
   return {
     method: "POST",
@@ -173,8 +173,8 @@ async function signOAuthToken(
     ownerEmail: "alice@example.com",
     clientId: "agent-native-connect",
     scope: "mcp:read mcp:write",
-    resource: "https://plan.agent-native.com/_agent-native/mcp",
-    issuer: "https://plan.agent-native.com",
+    resource: "https://plan.jami.studio/_agent-native/mcp",
+    issuer: "https://plan.jami.studio",
     ...extra,
   });
 }
@@ -301,13 +301,13 @@ vi.mock("../server/auth.js", () => ({
 }));
 
 vi.mock("../mcp/oauth-route.js", () => ({
-  getMcpOAuthResource: () => "https://plan.agent-native.com/_agent-native/mcp",
+  getMcpOAuthResource: () => "https://plan.jami.studio/_agent-native/mcp",
   getMcpOAuthAudiences: () => [
-    "https://plan.agent-native.com/_agent-native/mcp",
+    "https://plan.jami.studio/_agent-native/mcp",
   ],
-  getMcpOAuthIssuer: () => "https://plan.agent-native.com",
+  getMcpOAuthIssuer: () => "https://plan.jami.studio",
   getMcpOAuthProtectedResourceMetadataUrl: () =>
-    "https://plan.agent-native.com/.well-known/oauth-protected-resource",
+    "https://plan.jami.studio/.well-known/oauth-protected-resource",
   buildMcpOAuthChallenge: () => 'Bearer realm="plan"',
 }));
 

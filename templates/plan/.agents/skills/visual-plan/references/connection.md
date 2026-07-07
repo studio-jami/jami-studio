@@ -32,7 +32,7 @@ assume the user must re-authenticate. Stop and give the user the exact restore
 step for their current client:
 
 - **Codex / Codex Desktop:** run
-  `npx -y @agent-native/core@latest reconnect https://plan.agent-native.com --client codex`
+  `npx -y @agent-native/core@latest reconnect https://plan.jami.studio --client codex`
   and start a new Codex session.
 - **Claude Code:** run `/mcp` and choose Authenticate/Reconnect, or run the same
   reconnect command with `--client claude-code` and restart Claude.

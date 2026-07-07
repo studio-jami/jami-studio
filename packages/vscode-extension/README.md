@@ -1,6 +1,6 @@
 # Jami Studio for VS Code
 
-[Jami Studio](https://www.agent-native.com/docs) opens Jami Studio app surfaces
+[Jami Studio](https://www.jami.studio/docs) opens Jami Studio app surfaces
 inside VS Code: visual plans, visual recaps, and Design canvases next to the
 files being changed. It also connects your workspace to Agent-Native MCP apps so
 agents like Claude Code, Codex, and GitHub Copilot can create and open those
@@ -33,18 +33,18 @@ raw line-by-line review.
 ![Visual recap review surface animation](https://raw.githubusercontent.com/BuilderIO/skills/main/media/visual-recap.gif)
 
 Visual plans and recaps are MDX, customizable with your own components, and
-viewed with the [Agent-Native Plans app](https://www.agent-native.com/docs/template-plan).
+viewed with the [Agent-Native Plans app](https://www.jami.studio/docs/template-plan).
 [Source here](https://github.com/BuilderIO/agent-native/).
 
 ## `/visual-edit`
 
 Open a running local app in
-[Jami Studio Design](https://www.agent-native.com/docs/template-design) as
+[Jami Studio Design](https://www.jami.studio/docs/template-design) as
 URL-backed iframe screens for visual editing, route-state review, and flow
 comparison.
 
 The extension's **Agent Native: Open Design Canvas** command starts the local
-Design bridge for the current workspace and opens `https://design.agent-native.com`
+Design bridge for the current workspace and opens `https://design.jami.studio`
 in the VS Code side panel so you can choose the localhost connection directly.
 
 ## What this extension adds
@@ -94,7 +94,7 @@ npx @agent-native/skills@latest add
 External agents can open a focused Agent Native app view with:
 
 ```text
-vscode://builder.agent-native/open?url=https%3A%2F%2Fdesign.agent-native.com
+vscode://builder.agent-native/open?url=https%3A%2F%2Fdesign.jami.studio
 ```
 
 The embedded URL must be `http` or `https`.

@@ -164,7 +164,7 @@ npx @agent-native/core@latest recap doctor
 कोई भी संगठन स्वामी या व्यवस्थापक इसे सूचीबद्ध या रद्द कर सकता है। टकसाल एक (केवल संगठन स्वामी/व्यवस्थापक):
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 कमांड आपको ब्राउज़र में प्रमाणित करता है, फिर सेवा टोकन प्रिंट करता है
@@ -177,7 +177,7 @@ npx @agent-native/core@latest connect https://plan.agent-native.com --service-to
 प्रकाशन-टोकन फ़ाइल जिसे `npx @agent-native/core@latest recap setup` पढ़ सकता है:
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ npx @agent-native/core@latest recap setup
 | `VISUAL_RECAP_MODEL`     | प्रत्येक CLI का डिफ़ॉल्ट        | चर। मॉडल को पिन करें - उदा. Codex के लिए `gpt-5.5`, या Claude मॉडल आईडी। अनसेट CLI के स्वयं के डिफ़ॉल्ट का उपयोग करता है।                                   |
 | `VISUAL_RECAP_REASONING` | प्रत्येक मॉडल का डिफ़ॉल्ट       | परिवर्तनीय. तर्क की गहराई: `none`, `minimal`, `low`, `medium`, `high`, या `xhigh`। Codex बैकएंड पर लागू होता है।                                            |
 | `RECAP_CLI_VERSION`      | `latest`                        | चर। वर्कफ़्लो इंस्टॉल होने पर `@agent-native/core` CLI संस्करण को पिन करें - उदाहरण के लिए `1.5.0`. [Version pinning](#version-pinning-copy-variant) देखें. |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com` | गुप्त. केवल तभी जब प्लान्स ऐप को किसी भिन्न मूल पर स्वयं-होस्ट किया जाए।                                                                                    |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio` | गुप्त. केवल तभी जब प्लान्स ऐप को किसी भिन्न मूल पर स्वयं-होस्ट किया जाए।                                                                                    |
 
 वर्कफ़्लो स्वचालित रूप से पता लगाता है कि इसके सहायक CLI (इस मोनोरेपो के अंदर स्थानीय स्रोत, कहीं और प्रकाशित `@agent-native/core`) को कैसे लागू किया जाए, इसलिए सेट करने के लिए कोई `RECAP_CLI` वेरिएबल नहीं है।
 

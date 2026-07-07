@@ -47,7 +47,7 @@ export interface UploadedFile {
   dataUrl?: string;
 }
 
-const DEFAULT_ASSETS_PICKER_URL = "https://assets.agent-native.com/picker";
+const DEFAULT_ASSETS_PICKER_URL = "https://assets.jami.studio/picker";
 const RAW_CHAT_IMAGE_ATTACHMENT_BYTES = 512 * 1024;
 const MAX_TOTAL_CHAT_IMAGE_DATA_URL_BYTES = 3_000_000;
 const DEFAULT_MAX_CHAT_IMAGE_DATA_URL_BYTES = 1_250_000;

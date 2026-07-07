@@ -285,9 +285,9 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 const STORAGE_KEY_PREFIX = "clips-share-pw-";
 const CLIPS_SOURCE_URL =
   "https://github.com/BuilderIO/agent-native/tree/main/templates/clips";
-const CLIPS_TEMPLATE_URL = "https://www.agent-native.com/templates/clips";
+const CLIPS_TEMPLATE_URL = "https://www.jami.studio/templates/clips";
 const CLIPS_AGENT_DOCS_URL =
-  "https://www.agent-native.com/docs/template-clips#agent-readable-clips";
+  "https://www.jami.studio/docs/template-clips#agent-readable-clips";
 const UPLOAD_STUCK_TIMEOUT_MS = 5 * 60 * 1000;
 const PROCESSING_STUCK_TIMEOUT_MS = 2 * 60 * 1000;
 

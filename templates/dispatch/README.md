@@ -4,7 +4,7 @@ The agent-native workspace control plane — a central Slack/Telegram inbox, a
 secrets vault, scheduled jobs, approvals, and an orchestrator agent that delegates
 work to the right specialist app over A2A.
 
-**Live app: [dispatch.agent-native.com](https://dispatch.agent-native.com)**
+**Live app: [dispatch.jami.studio](https://dispatch.jami.studio)**
 
 Where other templates are domain apps (Mail, Calendar, Analytics, Brain),
 Dispatch is the app you run _alongside_ them to coordinate everything. It routes
@@ -31,4 +31,4 @@ pnpm install
 pnpm dev
 ```
 
-Full docs: [agent-native.com/docs/template-dispatch](https://agent-native.com/docs/template-dispatch).
+Full docs: [jami.studio/docs/template-dispatch](https://jami.studio/docs/template-dispatch).

@@ -8,7 +8,7 @@ import {
 describe("capture install options", () => {
   it("enables the published Chrome extension on supported first-party/local hosts", () => {
     expect(
-      supportsPublishedClipsChromeExtensionHost("clips.agent-native.com"),
+      supportsPublishedClipsChromeExtensionHost("clips.jami.studio"),
     ).toBe(true);
     expect(supportsPublishedClipsChromeExtensionHost("localhost")).toBe(true);
     expect(supportsPublishedClipsChromeExtensionHost("127.0.0.1")).toBe(true);
@@ -33,7 +33,7 @@ describe("capture install options", () => {
     expect(
       resolveClipsChromeExtensionEnabled({
         enabledSetting: "off",
-        hostname: "clips.agent-native.com",
+        hostname: "clips.jami.studio",
       }),
     ).toBe(false);
   });

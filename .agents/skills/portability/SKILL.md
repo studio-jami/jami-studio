@@ -90,7 +90,7 @@ All server code uses H3/Nitro: `defineEventHandler`, `readBody`, `getMethod`, `s
 
 Files like `netlify.toml`, `wrangler.toml`, `vercel.json`, and `netlify/functions/` must NOT appear in the CLI scaffold source (`packages/core/src/templates/`) — apps generated for users stay hosting-agnostic, with platform configuration living in CI/hosting dashboards.
 
-**Exception:** this monorepo's own first-party deployed apps (`templates/*/netlify.toml`, the root `wrangler-*.toml` files) are deployment artifacts of _this_ repo (mail.agent-native.com, etc.) and are expected to exist. Do not delete them as if they were accidental cruft — the rule above is about what gets scaffolded into a new app, not about this repo's deploy configs.
+**Exception:** this monorepo's own first-party deployed apps (`templates/*/netlify.toml`, the root `wrangler-*.toml` files) are deployment artifacts of _this_ repo (mail.jami.studio, etc.) and are expected to exist. Do not delete them as if they were accidental cruft — the rule above is about what gets scaffolded into a new app, not about this repo's deploy configs.
 
 ### No Node APIs in server routes/plugins
 

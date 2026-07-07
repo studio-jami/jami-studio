@@ -129,7 +129,7 @@ Connexion aux bases de données/partages d'origine et applications qui ne resten
 | Application autonome                                           | Isolé par application par slug (`APP_NAME` ou nom du package dans le développement local) ; préfixe `an` stable en production                                 |
 | Mode Espace de travail (`AGENT_NATIVE_WORKSPACE=1`)            | Un domaine partagé : les applications d'espace de travail partagent une origine et une base de données                                                        |
 | Sous-domaines personnalisés de la même base de données         | Activer les cookies partagés avec `COOKIE_DOMAIN`                                                                                                             |
-| Hébergé par un fournisseur propriétaire (`*.agent-native.com`) | Espace de noms isolé par application (chacune possède sa propre base de données d'authentification) ; `COOKIE_DOMAIN=.agent-native.com` est ignoré par défaut |
+| Hébergé par un fournisseur propriétaire (`*.jami.studio`) | Espace de noms isolé par application (chacune possède sa propre base de données d'authentification) ; `COOKIE_DOMAIN=.jami.studio` est ignoré par défaut |
 
 Les applications hébergées par des propriétaires possèdent chacune leur propre base de données d'authentification, donc la connexion entre applications
 passe par [Cross-App SSO](/docs/cross-app-sso) plutôt que par un cookie partagé.
@@ -219,7 +219,7 @@ La configuration de ces variables ne génère jamais de page de connexion par je
 Le point de terminaison MCP de chaque application peut agir comme une ressource MCP protégée standard. Les clients compatibles OAuth peuvent être configurés uniquement avec le MCP URL distant :
 
 ```text
-https://mail.agent-native.com/_agent-native/mcp
+https://mail.jami.studio/_agent-native/mcp
 ```
 
 Les requêtes MCP non authentifiées renvoient un défi `WWW-Authenticate` pointant vers `/.well-known/oauth-protected-resource`. Le client découvre ensuite les métadonnées OAuth de l'application, enregistre dynamiquement un client public, ouvre la page d'autorisation de l'application et échange un code d'autorisation avec PKCE pour les jetons d'accès et d'actualisation.

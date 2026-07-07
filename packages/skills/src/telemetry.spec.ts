@@ -106,7 +106,7 @@ describe("createCliTelemetry", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe("https://analytics.agent-native.com/track");
+    expect(url).toBe("https://analytics.jami.studio/track");
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.publicKey).toBe("anpk_unit_test_key");
     expect(body.event).toBe("skills_cli skills selected");

@@ -2,8 +2,8 @@
   "name": "agent-native-visual-plans",
   "version": "1.0.0+codex.2295bc688bad",
   "description": "Create rich interactive visual plans, recaps, and repo-native visual docs with diagrams, file maps, annotated code and diffs, API/schema summaries, feedback, and HTML export.",
-  "author": { "name": "Agent-Native", "url": "https://agent-native.com" },
-  "homepage": "https://plan.agent-native.com",
+  "author": { "name": "Agent-Native", "url": "https://jami.studio" },
+  "homepage": "https://plan.jami.studio",
   "license": "MIT",
   "keywords": [
     "agent-native",
@@ -21,7 +21,7 @@
     "developerName": "Agent-Native",
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],
-    "websiteURL": "https://plan.agent-native.com",
+    "websiteURL": "https://plan.jami.studio",
     "defaultPrompt": [
       "Open Agent-Native Plan where useful",
       "Use Agent-Native Plan for app-backed workflows",

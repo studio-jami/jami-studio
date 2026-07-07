@@ -44,7 +44,7 @@ export default defineAction({
       .string()
       .optional()
       .describe(
-        "Optional app origin such as https://design.agent-native.com. Used to return an absolute raw-code URL.",
+        "Optional app origin such as https://design.jami.studio. Used to return an absolute raw-code URL.",
       ),
     format: z
       .enum(["markdown", "json"])

@@ -101,7 +101,7 @@ deferred.
 
 ## Cross-App Use
 
-- Hosted default: connect `https://assets.agent-native.com/_agent-native/mcp`.
+- Hosted default: connect `https://assets.jami.studio/_agent-native/mcp`.
   Do not put shared secrets in skill files.
 - Local customization: run `npx @agent-native/core@latest app-skill launch --local` from the
   Assets app-skill manifest, or pass `--into <path>` for editable source.

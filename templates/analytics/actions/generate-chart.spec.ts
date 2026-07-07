@@ -94,7 +94,7 @@ describe("signed SVG media URLs", () => {
     const url = signedSvgMediaUrl("signed-chart.svg", svg);
     expect(url).toMatch(/^\/api\/media\/signed-chart\.svg\?/);
 
-    const parsed = new URL(url!, "https://analytics.agent-native.com");
+    const parsed = new URL(url!, "https://analytics.jami.studio");
     expect(
       readSignedSvgMediaPayload(
         "signed-chart.svg",
@@ -107,7 +107,7 @@ describe("signed SVG media URLs", () => {
   it("rejects tampered signed SVG payloads", () => {
     vi.stubEnv("A2A_SECRET", "test-secret");
     const url = signedSvgMediaUrl("chart.svg", "<svg></svg>");
-    const parsed = new URL(url!, "https://analytics.agent-native.com");
+    const parsed = new URL(url!, "https://analytics.jami.studio");
     const payload = `${parsed.searchParams.get("svg")}x`;
 
     expect(

@@ -2,7 +2,7 @@
  * Best-effort install-funnel telemetry for the skills CLI.
  *
  * Events are POSTed to the first-party Agent Native Analytics endpoint
- * (analytics.agent-native.com/track) using a PUBLIC, write-only key — the same
+ * (analytics.jami.studio/track) using a PUBLIC, write-only key — the same
  * mechanism every agent-native app uses to report client-side events. Nothing
  * here ever blocks or throws into the install flow: sends are fire-and-forget
  * and `flush()` awaits any in-flight requests with a short cap before exit.
@@ -25,7 +25,7 @@ import path from "node:path";
 // guard:allow-public-key -- first-party analytics write key is public by design.
 const EMBEDDED_PUBLIC_KEY =
   "anpk_dc523e34b99bc34d76e82d94c46593544e4a8509a4bfc93c";
-const DEFAULT_ENDPOINT = "https://analytics.agent-native.com/track";
+const DEFAULT_ENDPOINT = "https://analytics.jami.studio/track";
 const FLUSH_TIMEOUT_MS = 1500;
 
 export interface CliTelemetryOptions {

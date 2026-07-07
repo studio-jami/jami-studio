@@ -4,8 +4,8 @@
   "displayName": "Content",
   "description": "Edit docs, blogs, resources, and MDX content through the Content app, including repo-backed Local File Mode.",
   "hosted": {
-    "url": "https://content.agent-native.com",
-    "mcpUrl": "https://content.agent-native.com/_agent-native/mcp"
+    "url": "https://content.jami.studio",
+    "mcpUrl": "https://content.jami.studio/_agent-native/mcp"
   },
   "mcp": {
     "serverName": "agent-native-content"

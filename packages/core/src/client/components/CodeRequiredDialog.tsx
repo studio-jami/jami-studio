@@ -13,7 +13,7 @@ import { agentNativePath } from "../api-path.js";
 import { useT } from "../i18n.js";
 import { withBuilderConnectTrackingParams } from "../settings/useBuilderStatus.js";
 
-const DESKTOP_DOWNLOAD_URL = "https://www.agent-native.com/download";
+const DESKTOP_DOWNLOAD_URL = "https://www.jami.studio/download";
 
 export interface CodeRequiredDialogProps {
   open: boolean;

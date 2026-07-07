@@ -269,7 +269,7 @@ describe("writeHttpEntryForClient", () => {
     const returned = writeHttpEntryForClient(
       "cursor",
       "plan",
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       undefined,
       dir,
       "project",
@@ -278,7 +278,7 @@ describe("writeHttpEntryForClient", () => {
     expect(returned).toBe(path.join(dir, ".cursor", "mcp.json"));
     const written = JSON.parse(fs.readFileSync(returned, "utf-8"));
     expect(written.mcpServers.plan).toEqual({
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
     expect(hasJsonMcpEntryForClient("cursor", returned, "plan")).toBe(true);
   });
@@ -288,7 +288,7 @@ describe("writeHttpEntryForClient", () => {
     const returned = writeHttpEntryForClient(
       "opencode",
       "plan",
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "tok_abc",
       dir,
       "project",
@@ -298,7 +298,7 @@ describe("writeHttpEntryForClient", () => {
     const written = JSON.parse(fs.readFileSync(returned, "utf-8"));
     expect(written.mcp.plan).toEqual({
       type: "remote",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
       enabled: true,
       headers: { Authorization: "Bearer tok_abc" },
     });
@@ -310,7 +310,7 @@ describe("writeHttpEntryForClient", () => {
     const returned = writeHttpEntryForClient(
       "github-copilot",
       "plan",
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "tok_abc",
       dir,
       "project",
@@ -320,7 +320,7 @@ describe("writeHttpEntryForClient", () => {
     const written = JSON.parse(fs.readFileSync(returned, "utf-8"));
     expect(written.servers.plan).toEqual({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
       requestInit: { headers: { Authorization: "Bearer tok_abc" } },
     });
     expect(hasJsonMcpEntryForClient("github-copilot", returned, "plan")).toBe(
@@ -423,15 +423,15 @@ describe("removeJsonSameUrlDuplicates", () => {
           mcpServers: {
             plan: {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "agent-native-plans": {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "agent-native-plan": {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
             "other-server": {
               type: "http",
@@ -447,7 +447,7 @@ describe("removeJsonSameUrlDuplicates", () => {
 
     const removed = removeJsonSameUrlDuplicates(
       file,
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "plan",
     );
 
@@ -469,7 +469,7 @@ describe("removeJsonSameUrlDuplicates", () => {
           mcpServers: {
             plan: {
               type: "http",
-              url: "https://plan.agent-native.com/_agent-native/mcp",
+              url: "https://plan.jami.studio/_agent-native/mcp",
             },
           },
         },
@@ -481,7 +481,7 @@ describe("removeJsonSameUrlDuplicates", () => {
 
     const removed = removeJsonSameUrlDuplicates(
       file,
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "plan",
     );
 
@@ -543,10 +543,10 @@ describe("removeCodexSameUrlDuplicates", () => {
       file,
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         "",
         '[mcp_servers."agent-native-plans"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         "",
         "[mcp_servers.other]",
         'url = "https://other.example.com/mcp"',
@@ -557,7 +557,7 @@ describe("removeCodexSameUrlDuplicates", () => {
 
     const removed = removeCodexSameUrlDuplicates(
       file,
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "plan",
     );
 
@@ -603,10 +603,10 @@ describe("removeCodexSameUrlDuplicates", () => {
       file,
       [
         '[mcp_servers."plan"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         "",
         '[mcp_servers."agent-native-plans"]',
-        'url = "https://plan.agent-native.com/_agent-native/mcp"',
+        'url = "https://plan.jami.studio/_agent-native/mcp"',
         "",
         '[mcp_servers."agent-native-plans".http_headers]',
         'Authorization = "Bearer stale-token"',
@@ -620,7 +620,7 @@ describe("removeCodexSameUrlDuplicates", () => {
 
     const removed = removeCodexSameUrlDuplicates(
       file,
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
       "plan",
     );
 
@@ -640,7 +640,7 @@ describe("removeCodexSameUrlDuplicates", () => {
 // ---------------------------------------------------------------------------
 
 describe("writeCodexBlock", () => {
-  const PLAN_URL = "https://plan.agent-native.com/_agent-native/mcp";
+  const PLAN_URL = "https://plan.jami.studio/_agent-native/mcp";
 
   it("removes a stale standalone sub-table so a re-install never duplicates a key", () => {
     // Repro of the real bug: a `[mcp_servers.plan.http_headers]` sub-table sat

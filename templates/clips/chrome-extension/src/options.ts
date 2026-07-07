@@ -13,7 +13,7 @@ type ExtensionSettings = {
 };
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
-  clipsBaseUrl: "https://clips.agent-native.com",
+  clipsBaseUrl: "https://clips.jami.studio",
   captureSurface: "browser",
   includeCamera: true,
   includeMicrophone: true,

@@ -62,7 +62,7 @@ describe("installSkills MCP registration", () => {
     expect(result.mcpServers).toHaveLength(1);
     expect(result.mcpServers[0].serverName).toBe("plan");
     expect(result.mcpServers[0].mcpUrl).toBe(
-      "https://plan.agent-native.com/_agent-native/mcp",
+      "https://plan.jami.studio/_agent-native/mcp",
     );
 
     const config = JSON.parse(
@@ -70,12 +70,12 @@ describe("installSkills MCP registration", () => {
     );
     expect(config.mcpServers.plan).toEqual({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
     // alias registered too, pointing at the same URL, URL-only (no headers)
     expect(config.mcpServers["agent-native-plans"]).toEqual({
       type: "http",
-      url: "https://plan.agent-native.com/_agent-native/mcp",
+      url: "https://plan.jami.studio/_agent-native/mcp",
     });
   });
 
@@ -165,7 +165,7 @@ describe("installSkills MCP registration", () => {
     expect(fs.existsSync(path.join(codexHome, "config.toml"))).toBe(false);
     expect(result.mcpServers[0]?.files).toEqual([]);
     expect(result.mcpServers[0]?.guidance.join("\n")).toContain(
-      "npx @agent-native/core@latest connect https://plan.agent-native.com --client codex --scope project",
+      "npx @agent-native/core@latest connect https://plan.jami.studio --client codex --scope project",
     );
   });
 

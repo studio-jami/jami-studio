@@ -34,7 +34,7 @@ interface ResolveCatchAllTargetOptions {
  *    (framework dev with each template on its own port, hosted dispatch
  *    with no sibling apps), return the matching template's deploy URL —
  *    dev URL in development (e.g. http://localhost:8084 for forms), prod
- *    URL in production (e.g. https://forms.agent-native.com).
+ *    URL in production (e.g. https://forms.jami.studio).
  *
  * Returns `null` if neither lookup matches, letting the route render its
  * "Page not found" pane.

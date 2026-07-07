@@ -2,7 +2,7 @@ import { captureExtensionError, initExtensionSentry } from "./sentry";
 
 initExtensionSentry("background");
 
-const DEFAULT_CLIPS_BASE_URL = "https://clips.agent-native.com";
+const DEFAULT_CLIPS_BASE_URL = "https://clips.jami.studio";
 const DEBUGGER_PROTOCOL_VERSION = "1.3";
 const MAX_CONSOLE_LOGS = 400;
 const MAX_NETWORK_REQUESTS = 400;

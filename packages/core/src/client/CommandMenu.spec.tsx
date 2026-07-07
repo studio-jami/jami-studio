@@ -14,7 +14,7 @@ const DOCS: CommandMenuDoc[] = [
   {
     title: "Use the Chrome extension for browser logs",
     description: "Record a tab with console logs and fetch/XHR diagnostics.",
-    href: "https://www.agent-native.com/docs/template-clips#browser-logs-and-developer-diagnostics",
+    href: "https://www.jami.studio/docs/template-clips#browser-logs-and-developer-diagnostics",
     keywords: ["logs", "developer logs", "network diagnostics"],
   },
 ];

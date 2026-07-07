@@ -92,7 +92,7 @@ separate those jobs; use it, and hold this bar:
 
 ## Cross-App Use
 
-- Hosted default: connect `https://design.agent-native.com/_agent-native/mcp`.
+- Hosted default: connect `https://design.jami.studio/_agent-native/mcp`.
   Do not put shared secrets in skill files.
 - For CLI/code-editor clients, keep any `npx @agent-native/core@latest connect` command
   running until browser authorization finishes. Stopping it early can leave the
@@ -107,7 +107,7 @@ separate those jobs; use it, and hold this bar:
   another connector/session error, do not keep retrying the tool. Stop and give
   the user the reconnect step: in Claude Code run `/mcp` and choose
   Authenticate/Reconnect for the Design connector; from any terminal run
-  `npx -y @agent-native/core@latest reconnect https://design.agent-native.com` — this
+  `npx -y @agent-native/core@latest reconnect https://design.jami.studio` — this
   re-authenticates WITHOUT reinstalling. Never reinstall from scratch just to fix
   auth. Continue once the connector is available.
 - Do not hand-roll MCP HTTP requests with curl from the agent session. Use the

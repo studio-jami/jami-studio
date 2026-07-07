@@ -7,7 +7,7 @@ const rows = [
     data: JSON.stringify({ msg: "anonymous" }),
     submittedAt: "2026-06-27T12:00:00.000Z",
     ip: null,
-    submitterEmail: "anon-abc123@agent-native.com",
+    submitterEmail: "anon-abc123@jami.studio",
     pageUrl: null,
     clientSurface: null,
   },

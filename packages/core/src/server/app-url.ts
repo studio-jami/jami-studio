@@ -12,7 +12,7 @@ import path from "node:path";
  *   2. Incoming request's origin (when an H3Event is available)
  *   3. First-party template `prodUrl` from the registry (matched by
  *      package.json name) — lets deployed first-party apps (mail,
- *      calendar, analytics, …) use e.g. `analytics.agent-native.com`
+ *      calendar, analytics, …) use e.g. `analytics.jami.studio`
  *      instead of their Netlify preview hostname.
  *   4. Platform-injected URL (Netlify `URL`, Vercel `VERCEL_URL`) —
  *      automatically set by the hosting platform, so user-deployed apps

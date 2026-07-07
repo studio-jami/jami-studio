@@ -7,7 +7,7 @@ food, estimates calories and macros, and keeps your daily stats up to date.
 > **Internal/experimental template.** Macros is not shown in the public template
 > pickers. It exists as a reference app and demo.
 
-**Live app: [macros.agent-native.com](https://macros.agent-native.com)**
+**Live app: [macros.jami.studio](https://macros.jami.studio)**
 
 ## Features
 

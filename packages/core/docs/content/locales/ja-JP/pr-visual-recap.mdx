@@ -164,7 +164,7 @@ npx @agent-native/core@latest recap doctor
 組織の所有者または管理者は誰でも、組織をリストしたり取り消したりできます。 1 つを作成します (組織所有者/管理者のみ):
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --service-token pr-recap
+npx @agent-native/core@latest connect https://plan.jami.studio --service-token pr-recap
 ```
 
 コマンドはブラウザでユーザーを認証し、サービス トークンを出力します
@@ -177,7 +177,7 @@ npx @agent-native/core@latest connect https://plan.agent-native.com --service-to
 `npx @agent-native/core@latest recap setup` が読み取ることができる発行トークン ファイル:
 
 ```bash
-npx @agent-native/core@latest connect https://plan.agent-native.com --client codex
+npx @agent-native/core@latest connect https://plan.jami.studio --client codex
 npx @agent-native/core@latest recap setup
 ```
 
@@ -194,7 +194,7 @@ npx @agent-native/core@latest recap setup
 | `VISUAL_RECAP_MODEL`     | 各 CLI のデフォルト             | 変数。モデルを固定します — 例: Codex の場合は `gpt-5.5`、または Claude モデル ID。設定を解除すると、CLI 独自のデフォルトが使用されます。                               |
 | `VISUAL_RECAP_REASONING` | 各モデルのデフォルト            | 変数。推論の深さ: `none`、`minimal`、`low`、`medium`、`high`、または `xhigh`。 Codex バックエンドに適用されます。                                                      |
 | `RECAP_CLI_VERSION`      | `latest`                        | 変数。ワークフローがインストールする `@agent-native/core` CLI バージョンを固定します。 `1.5.0`。 [Version pinning](#version-pinning-copy-variant) を参照してください。 |
-| `PLAN_RECAP_APP_URL`     | `https://plan.agent-native.com` | 秘密。プラン アプリを別のオリジンで自己ホストする場合のみ。                                                                                                            |
+| `PLAN_RECAP_APP_URL`     | `https://plan.jami.studio` | 秘密。プラン アプリを別のオリジンで自己ホストする場合のみ。                                                                                                            |
 
 ワークフローはヘルパー CLI (このモノリポジ内のローカル ソース、他の場所で公開された `@agent-native/core`) を呼び出す方法を自動検出するため、`RECAP_CLI` 変数を設定する必要はありません。
 

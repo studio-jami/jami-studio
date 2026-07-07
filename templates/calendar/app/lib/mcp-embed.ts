@@ -2,7 +2,7 @@
  * MCP embed surface detection for Calendar.
  *
  * When the Calendar UI is rendered inside an MCP host's iframe (ChatGPT /
- * Claude.ai render `*.agent-native.com` through their own sandboxed wrapper
+ * Claude.ai render `*.jami.studio` through their own sandboxed wrapper
  * with strict COEP/CORP headers), cross-origin third-party images
  * (`googleusercontent.com` avatars, etc.) get blocked at the browser level
  * and produce noisy console errors. Templates that ship images that work

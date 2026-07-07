@@ -11,7 +11,7 @@
  * Plans app. The local server's `publish-visual-plan` action reads the exact
  * same file (see `templates/plan/server/lib/plan-publish.ts`):
  *
- *   { "url": "https://plan.agent-native.com", "token": "<bearer>" }
+ *   { "url": "https://plan.jami.studio", "token": "<bearer>" }
  *
  * This mirrors the existing device-token precedent in
  * `code-agent-connector.ts` (`~/.agent-native/remote-device.json`): home-dir
@@ -44,7 +44,7 @@ export function planPublishConfigPath(): string {
 /**
  * Whether `url`'s host is the first-party Agent-Native Plans app whose token
  * we should mirror to the canonical publish file. Only the hosted Plans app
- * (`plan.agent-native.com`) qualifies — mirroring tokens for other
+ * (`plan.jami.studio`) qualifies — mirroring tokens for other
  * agent-native subdomains (assets, mail, …) would silently overwrite the
  * canonical Plans endpoint with the wrong URL+token each time `connect --all`
  * runs last-write-wins. A custom self-hosted origin (ngrok, localhost, a
@@ -54,7 +54,7 @@ export function planPublishConfigPath(): string {
 export function isFirstPartyPlanHost(url: string): boolean {
   try {
     const host = new URL(url).hostname.toLowerCase();
-    return host === "plan.agent-native.com";
+    return host === "plan.jami.studio";
   } catch {
     return false;
   }

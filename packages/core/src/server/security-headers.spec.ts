@@ -25,7 +25,7 @@ describe("createSecurityHeadersMiddleware", () => {
       );
       app.use(router);
 
-      const res = await app.request("https://assets.agent-native.com/library");
+      const res = await app.request("https://assets.jami.studio/library");
 
       expect(res.headers.get("X-Frame-Options")).toBeNull();
       expect(res.headers.get("Content-Security-Policy")).toBeNull();
@@ -117,7 +117,7 @@ describe("createSecurityHeadersMiddleware", () => {
     );
     app.use(router);
 
-    const res = await app.request("https://assets.agent-native.com/library", {
+    const res = await app.request("https://assets.jami.studio/library", {
       headers: {
         "sec-fetch-dest": "iframe",
       },

@@ -271,7 +271,7 @@ describe("A2A continuation processor", () => {
           parts: [
             {
               type: "text",
-              text: "The Design agent returned https://design.agent-native.com/design/design_fake",
+              text: "The Design agent returned https://design.jami.studio/design/design_fake",
             },
           ],
         },
@@ -309,10 +309,10 @@ describe("A2A continuation processor", () => {
             {
               type: "text",
               text: [
-                "Design ready: https://design.agent-native.com/design/design_real",
+                "Design ready: https://design.jami.studio/design/design_real",
                 "",
                 "Artifacts:",
-                "- Design: https://design.agent-native.com/design/design_real (ID: design_real, 1 file)",
+                "- Design: https://design.jami.studio/design/design_real (ID: design_real, 1 file)",
               ].join("\n"),
             },
           ],
@@ -330,7 +330,7 @@ describe("A2A continuation processor", () => {
     expect(sendResponse).toHaveBeenCalledWith(
       expect.objectContaining({
         text: expect.stringContaining(
-          "https://design.agent-native.com/design/design_real",
+          "https://design.jami.studio/design/design_real",
         ),
       }),
       expect.any(Object),

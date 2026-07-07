@@ -47,7 +47,7 @@ describe("slides app URLs", () => {
 
   it("falls back to the first-party Slides host when no app URL is configured", () => {
     expect(getDeckUrl("deck-3")).toBe(
-      "https://slides.agent-native.com/deck/deck-3",
+      "https://slides.jami.studio/deck/deck-3",
     );
   });
 });
