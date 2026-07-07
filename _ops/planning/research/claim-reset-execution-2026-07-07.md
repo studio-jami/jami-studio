@@ -121,7 +121,7 @@ Verification: PostHog project list now reports exactly those four projects.
 Connected account:
 
 - npm token verifies as `jamesnavinhill`.
-- Verified Jami-owned packages under `@jami-studio/*` are still live and were not targeted.
+- Jami-owned package cleanup was executed after the initial report update.
 
 Old public packages found under `@agent-native`:
 
@@ -140,6 +140,40 @@ Disposition: this was an over-broad cleanup attempt against upstream-owned packa
 packages. It had no registry effect. npm is connected, and old `@agent-native/*` package deletion would
 require owner access to the old scope/packages or npm support action. Do not treat those packages as
 Jami-owned canon.
+
+Jami-owned `@jami-studio/*` cleanup:
+
+- Deleted / now returns `404`:
+  - `@jami-studio/cli`
+  - `@jami-studio/governance-sdk`
+  - `@jami-studio/harness`
+  - `@jami-studio/harness-identity`
+  - `@jami-studio/harness-knowledge`
+  - `@jami-studio/harness-protocol-a2a`
+  - `@jami-studio/harness-provider-hosted`
+  - `@jami-studio/harness-store-hosted`
+  - `@jami-studio/orchestra`
+  - `@jami-studio/registry`
+  - `@jami-studio/registry-schema`
+  - `@jami-studio/renderer`
+  - `@jami-studio/tokens`
+  - `@jami-studio/ui`
+- Deprecated all remaining live versions after npm returned `E422` for hard deletion:
+  - `@jami-studio/harness-agent-native-runtime`
+  - `@jami-studio/harness-artifacts`
+  - `@jami-studio/harness-cli`
+  - `@jami-studio/harness-config`
+  - `@jami-studio/harness-context`
+  - `@jami-studio/harness-contracts`
+  - `@jami-studio/harness-core`
+  - `@jami-studio/harness-memory`
+  - `@jami-studio/harness-observability`
+  - `@jami-studio/harness-policy`
+  - `@jami-studio/harness-provider-local`
+  - `@jami-studio/harness-runtime`
+  - `@jami-studio/harness-sdk`
+  - `@jami-studio/harness-store-local`
+  - `@jami-studio/harness-tools`
 
 ## Amplitude
 
