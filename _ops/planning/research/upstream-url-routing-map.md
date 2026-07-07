@@ -74,7 +74,7 @@ totals (a single file can hold many). ~4,000 refs across ~40 distinct hosts.
 
 ---
 
-## Family B — `*.agent-native.com` (our hosted app fleet)
+## Family B — `*.agent-native.com` (our hosted app fleet) **OUTDATED: multi-sub-domain demo foled into one**
 
 One subdomain per template = the app's hosted URL. These live mostly in skill markdown, plugin MCP
 manifests, dispatch fallback URLs, docs demo links, and `.spec.ts` fixtures. **All 🟡 REPOINT** to the
