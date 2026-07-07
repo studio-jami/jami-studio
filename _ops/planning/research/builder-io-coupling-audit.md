@@ -186,7 +186,34 @@ tools + a marketplace entry.
 - Only real dependency: **hosting the MCP endpoints** = the fleet-hosting decision, not a plugin problem.
 - Cosmetic follow-ups: `author: "Agent-Native"` + `repository: BuilderIO/agent-native` still in manifests.
   Format is Anthropic's spec (MIT here); we author within it. **No scaffolds yet.**
+### Deployment / frame / payments direction — leanings, NOT final (2026-07-07)
 
+**Deployment shape — collapse the subdomain demo fleet to ONE origin.**
+- The per-app subdomains (`*.jami.studio`) are the upstream **showcase** shape — each template an
+  independent standalone deploy, federated via Dispatch SSO. The framework's recommended prod shape is
+  the opposite: `npx @agent-native/core deploy` = **one origin, many apps** under path prefixes
+  (`your-agents.com/mail/*`) → **same-origin shared login + zero-config cross-app A2A** (no CORS/JWT
+  between siblings). **Lean: adopt single-origin path-prefix** for our fleet; keep per-app independent
+  deploy available. Staying out of naming/slug weeds for now.
+- `packages/docs` is the www **landing + docs + template gallery** (our main slug). Consumers deploy
+  their own products from the **published packages** into clean repos — they don't fork this monorepo.
+
+**Frame / cloud — keep the shell, REPLACE the cloud.**
+- `packages/frame` (`@agent-native/frame` — the embeddable agent-panel + app-iframe shell) =
+  **reusable, ours → KEEP.** Generic protocol in `frame.ts`.
+- Builder.io "visual editing in production" cloud = Builder's hosted SaaS → **REPLACE.** The only tie-in
+  is [builder-frame.ts](packages/core/src/client/builder-frame.ts) (ancestor-origin trust for
+  `builder.io`/`builder.my`) + the "Connect Builder.io" CTA — decouple those, and use the cloud as the
+  **reference** to stand up our own cloud-frame later (host the frame + agent w/ fs access + commit-back;
+  the shell is already ours).
+
+**Payments — Stripe via the provider-API substrate.**
+- No dedicated payments module today; **Stripe is already cataloged** in
+  [provider-api/index.ts](packages/core/src/provider-api/index.ts) (`STRIPE_SECRET_KEY`, full API +
+  OpenAPI spec). **Lean: aim Stripe**, called through `provider-api-request`; may grow into a fuller
+  app-level payments feature (checkout / webhooks / subscriptions) on top of that seam later.
+
+> Status: leanings — single-origin deploy, REPLACE Builder cloud (keep frame shell), Stripe-first payments.
 ---
 
 ## Layer C — Hosted fleet endpoints (`*.agent-native.com`)
