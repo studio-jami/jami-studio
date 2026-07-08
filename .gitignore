@@ -28,6 +28,7 @@ packages/core/corpus/
 RAMBLINGS.md
 FUSION-APPS.md
 node-compile-cache/
+_ops/*
 
 # Application state data files (ephemeral, may contain secrets)
 **/application-state/*.json
