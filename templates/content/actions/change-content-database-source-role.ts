@@ -417,6 +417,7 @@ export default defineAction({
         now,
         message: read.message,
         syncState: "linked",
+        builderModelFields,
       });
 
       const latestSources = await db

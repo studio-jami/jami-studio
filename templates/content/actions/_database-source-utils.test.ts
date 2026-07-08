@@ -15,6 +15,7 @@ import {
   builderBodyHydrationAttemptIsTerminal,
   builderBodyNeedsSourceComponentWrite,
   builderBodyHydrationVersion,
+  bulkChunkSizeForColumnCount,
   builderCmsEntryAlreadyRepresented,
   buildMockBodyChange,
   buildMockFieldChange,
@@ -24,6 +25,7 @@ import {
   normalizeSourceFederation,
   normalizeSourceFreshness,
   serializeBuilderCmsSourceReadMetadataRecord,
+  serializeSourceMetadataRecord,
   sourceValuesForSnapshot,
   sourceValuesForSeededSourceRow,
   sourceChangeSetKey,
@@ -76,6 +78,14 @@ function item(id: string, title: string): ContentDatabaseItem {
 }
 
 describe("database source helpers", () => {
+  it("sizes bulk chunks from the D1 parameter budget and column count", () => {
+    expect(bulkChunkSizeForColumnCount(15, "d1")).toBe(6);
+    expect(bulkChunkSizeForColumnCount(13, "d1")).toBe(6);
+    expect(bulkChunkSizeForColumnCount(2, "d1")).toBe(45);
+    expect(bulkChunkSizeForColumnCount(1, "d1")).toBe(90);
+    expect(bulkChunkSizeForColumnCount(15, "postgres")).toBe(60);
+  });
+
   it("serializes queued Builder body hydration with an unset item status as pending", () => {
     expect(
       serializeBodyHydration(
@@ -167,6 +177,51 @@ describe("database source helpers", () => {
       lastReadNextOffset: 100,
       sourceFetchState: "fetching",
     });
+  });
+
+  it("preserves existing Builder model fields during metadata rewrites", () => {
+    const existingMetadataJson = JSON.stringify({
+      builderModelFields: [
+        {
+          name: "topics",
+          label: "Topics",
+          type: "list",
+          inputType: "tags",
+          required: false,
+          options: ["Headless CMS"],
+        },
+      ],
+    });
+
+    expect(
+      JSON.parse(
+        serializeSourceMetadataRecord({
+          sourceType: "builder-cms",
+          sourceTable: "blog-article",
+          existingMetadataJson,
+        }),
+      ).builderModelFields,
+    ).toEqual([
+      {
+        name: "topics",
+        label: "Topics",
+        type: "list",
+        inputType: "tags",
+        required: false,
+        options: ["Headless CMS"],
+      },
+    ]);
+    expect(
+      JSON.parse(
+        serializeBuilderCmsSourceReadMetadataRecord({
+          sourceTable: "blog-article",
+          readState: "live",
+          entryCount: 1,
+          matchedRowCount: 1,
+          existingMetadataJson,
+        }),
+      ).builderModelFields?.[0]?.name,
+    ).toBe("topics");
   });
 
   it("creates a mock field change for text properties", () => {

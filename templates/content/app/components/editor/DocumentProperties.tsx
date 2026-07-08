@@ -440,7 +440,7 @@ function personInitials(value: string) {
   );
 }
 
-function PersonPill({ value }: { value: string }) {
+export function PersonPill({ value }: { value: string }) {
   return (
     <span className="inline-flex max-w-full items-center gap-1.5 rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground">
       <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-background text-[9px] font-semibold text-muted-foreground">
@@ -851,16 +851,20 @@ function PropertyRow({
 
 // Mirror of the server's propertyTypeForSourceField — keep in sync. Used to
 // gate which source fields can bind into a column (type compatibility).
-function propertyTypeForSourceFieldType(
+export function propertyTypeForSourceFieldType(
   sourceFieldType: string,
 ): DocumentPropertyType {
-  if (sourceFieldType === "number") return "number";
-  if (sourceFieldType === "datetime" || sourceFieldType === "date") {
+  const normalized = sourceFieldType.trim().toLowerCase();
+  if (normalized === "number") return "number";
+  if (normalized === "datetime" || normalized === "date") {
     return "date";
   }
-  if (sourceFieldType === "url") return "url";
-  if (sourceFieldType === "boolean" || sourceFieldType === "checkbox") {
+  if (normalized === "url") return "url";
+  if (normalized === "boolean" || normalized === "checkbox") {
     return "checkbox";
+  }
+  if (normalized === "tags" || normalized === "multi_select") {
+    return "multi_select";
   }
   return "text";
 }
@@ -2781,33 +2785,39 @@ export function AddProperty({
                     name: group.source.sourceName,
                   })}
                 </div>
-                {group.fields.map((field) => (
-                  <button
-                    key={field.id}
-                    type="button"
-                    aria-label={t("editor.properties.sourceField", {
-                      name: field.sourceFieldLabel,
-                    })}
-                    disabled={isAddingProperty}
-                    aria-busy={pendingSourceFieldId === field.id}
-                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent disabled:opacity-50"
-                    onClick={() => void addFromSourceField(field.id)}
-                  >
-                    {pendingSourceFieldId === field.id ? (
-                      <Spinner className="size-4 shrink-0 text-muted-foreground" />
-                    ) : (
-                      <IconLink className="size-4 shrink-0 text-muted-foreground" />
-                    )}
-                    <span className="min-w-0 flex-1 truncate">
-                      {field.sourceFieldLabel}
-                    </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {group.source.metadata.federation?.role === "secondary"
-                        ? t("editor.properties.federated")
-                        : t("editor.properties.source")}
-                    </span>
-                  </button>
-                ))}
+                {group.fields.map((field) => {
+                  const SourceFieldIcon =
+                    TYPE_ICONS[
+                      propertyTypeForSourceFieldType(field.sourceFieldType)
+                    ];
+                  return (
+                    <button
+                      key={field.id}
+                      type="button"
+                      aria-label={t("editor.properties.sourceField", {
+                        name: field.sourceFieldLabel,
+                      })}
+                      disabled={isAddingProperty}
+                      aria-busy={pendingSourceFieldId === field.id}
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent disabled:opacity-50"
+                      onClick={() => void addFromSourceField(field.id)}
+                    >
+                      {pendingSourceFieldId === field.id ? (
+                        <Spinner className="size-4 shrink-0 text-muted-foreground" />
+                      ) : (
+                        <SourceFieldIcon className="size-4 shrink-0 text-muted-foreground" />
+                      )}
+                      <span className="min-w-0 flex-1 truncate">
+                        {field.sourceFieldLabel}
+                      </span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {group.source.metadata.federation?.role === "secondary"
+                          ? t("editor.properties.federated")
+                          : t("editor.properties.source")}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             ))}
             {filteredPropertyTypes.length === 0 ? (
