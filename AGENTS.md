@@ -11,6 +11,8 @@ read the relevant skill before changing that area.
   stash, or otherwise move branches unless the user explicitly asks for that exact
   branch operation in the current task.
 - Never add `Co-Authored-By` or other agent attribution to commits.
+- When you commit repository changes, push the branch to its tracked remote in
+  the same work unit unless the user explicitly says not to push.
 - PRs use the current branch unless the user explicitly requests a new branch.
   PRs are ready for review by default, not drafts, unless requested.
 - Never use `[codex]`, `codex`, or similar agent labels in user-visible GitHub
