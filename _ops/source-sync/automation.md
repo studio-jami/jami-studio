@@ -64,8 +64,9 @@ The `Source sync intake` workflow creates or updates `sync/intake/<source-sha>`
 from `sync/staging`, commits an intake packet, and opens a PR into
 `sync/staging`.
 
-The packet is not the curated patch yet. It is the handoff point for the
-pre-merge agent.
+The packet is the handoff point for the pre-merge agent. The agent should accept
+upstream by default, strip or adapt obvious takeover contradictions, update the
+notes, and leave a PR that can merge into `sync/staging`.
 
 ## Recommendation
 

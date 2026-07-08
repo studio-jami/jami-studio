@@ -8,7 +8,10 @@
 
 ## Protected Decisions
 
-Automation must flag, not auto-port, changes that affect:
+Automation must strip or adapt obvious takeover contradictions before anything
+lands in `sync/staging`. It must flag anything ambiguous for human review.
+
+Protected areas are:
 
 - `.github/workflows/**`
 - `deploy/netlify/**`
@@ -20,7 +23,8 @@ Automation must flag, not auto-port, changes that affect:
 ## Registry Lane
 
 Registry changes are special. They are likely useful because Jami expects to own
-the registry surface, but they still need review until the takeover is complete.
+the registry surface. They should flow through the sync lab by default, with
+notes when they touch ownership, publishing, or public catalog assumptions.
 
 Registry lane paths are listed in `fixtures/registry-paths.json`.
 
@@ -34,7 +38,14 @@ Each report should include:
 - changed-file counts by lane
 - protected-path changes
 - merge conflicts from a dry merge analysis
-- a recommended handling note
+- a recommended contradiction-filter note
+
+## Intake Posture
+
+`sync/intake/<source-sha>` should accept upstream source by default. Size alone
+is not a reason to defer. The intake agent should remove or adapt only obvious
+Jami contradictions: workflows, publishing/deploy ownership, root repo identity,
+and private takeover operations.
 
 ## Hard Rules
 

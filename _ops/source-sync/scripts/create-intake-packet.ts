@@ -138,7 +138,7 @@ function writePacket({
 
 ## Agent Job
 
-Prepare a curated upstream patch for Jami Studio.
+Prepare a curated upstream intake merge for Jami Studio.
 
 Read these first:
 
@@ -146,16 +146,24 @@ Read these first:
 - \`_ops/source-sync/policy.md\`
 - \`${reportPath}\`
 
-Do not merge upstream wholesale.
+Accept upstream source by default on this branch. The branch separation is the
+safety layer; size alone is not a reason to defer.
 
-Port useful upstream changes by lane, keep commits small, and preserve Jami
-takeover decisions. If a lane is too broad or risky, document the deferral in
-this folder instead of forcing it through.
+Strip or adapt only obvious Jami takeover contradictions:
+
+- inherited Builder GitHub workflows
+- Builder publish, deploy, billing, or dispatch automation
+- root repo identity, branding, domain, legal, OAuth, or ownership assumptions
+- changes that delete or replace Jami \`_ops/source-sync\` machinery
+
+If a decision is ambiguous, document it in this folder for human review instead
+of silently dropping upstream code.
 
 ## Expected Output
 
-- Curated commits on this intake branch.
-- Notes for accepted, rejected, and deferred upstream changes.
+- Upstream merged into this intake branch with contradictions stripped or
+  adapted.
+- Notes for accepted, adapted, and human-review-needed changes.
 - A PR from this branch into \`${baseBranch}\`.
 `;
   writeFileSync(packetPath, body, "utf8");

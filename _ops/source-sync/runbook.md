@@ -37,6 +37,10 @@ operational assumptions to flow into Jami `main` by accident.
 
 6. Run the pre-merge agent on `sync/intake/<source-sha>`.
 
+   - Accept upstream source by default.
+   - Strip or adapt only obvious Jami takeover contradictions.
+   - Do not defer only because the upstream delta is large.
+
 7. Merge accepted intake work into `sync/staging`.
 
 8. Human-review or port curated changes from `sync/staging` into `main` or

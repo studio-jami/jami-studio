@@ -24,18 +24,23 @@ These are the first-pass rules. Update them as we learn the upstream rhythm.
 
 ## Likely Good Intake
 
+- upstream source changes merged into `sync/intake/**`
 - isolated bug fixes
 - security hardening
 - performance fixes
 - test fixes that cover real behavior
-- registry/template catalog updates, after review
+- registry/template catalog updates
 - reusable framework improvements that do not assume Builder infrastructure
 
-## Usually Defer
+## Strip Or Adapt
 
-- version package commits
 - release automation
 - Netlify or Builder deploy routing changes
 - Builder-owned service integrations unless we are actively replacing that
   surface
-- broad content/source-sync changes until reviewed as their own lane
+- root repo identity files when upstream would restore Builder ownership
+- inherited Builder GitHub workflows
+- `_ops/source-sync/**` when upstream would delete or replace Jami operations
+
+Do not defer only because a change is large. The sync branches are the safety
+layer.

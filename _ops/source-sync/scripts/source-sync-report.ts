@@ -221,9 +221,9 @@ function main() {
 
 ## Recommendation
 
-Do not merge source directly into Jami \`main\`. Review protected-path changes
-first, port high-value upstream changes by lane, and keep Jami takeover decisions
-intact unless explicitly reversed.
+Do not merge source directly into Jami \`main\`. For \`sync/intake/**\`, accept
+upstream by default and strip or adapt only obvious takeover contradictions.
+Keep Jami takeover decisions intact unless explicitly reversed.
 
 ## Changed Files By Area
 
