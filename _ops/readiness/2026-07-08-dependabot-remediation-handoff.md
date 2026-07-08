@@ -176,9 +176,10 @@ Remediation executed. Results by alert:
 
 | Alert | Package | Action | Result |
 | --- | --- | --- | --- |
-| #1 | `@anthropic-ai/sdk` | Root `pnpm.overrides` already pinned `>=0.91.1`; refreshed the stale `pnpm-lock.yaml` so it resolves `0.91.1`. | Fixed |
+| #1 | `@anthropic-ai/sdk` | Root `pnpm.overrides` already pinned `>=0.91.1`; refreshed the stale `pnpm-lock.yaml` so it resolves `0.91.1`. The override alone did not close the alert (Dependabot flags the `^0.90.0` manifest range), so also bumped the `packages/core/package.json` declaration to `^0.91.1`. | Fixed |
 | #2, #3 | `nitro` | Bumped `packages/core/package.json` from `3.0.260415-beta` to patched `3.0.260429-beta` (all `nitro` versions are beta; chose the exact patched beta for minimal change). | Fixed |
 | #40 | `esbuild` | Bumped direct dep in `templates/design/package.json` from `^0.27.7` to `^0.28.1`. Left the separate transitive `esbuild@<=0.24.2` override untouched. | Fixed |
+| #24 | `esbuild` | **Blocked upstream / not reachable.** New alert surfaced after the re-scan for a *development-scope, transitive* esbuild (`0.27.3` / `0.27.7`) pulled through `tsup` and `tsx`/`esbuild-kit`. `tsup` (including latest `8.5.1`) pins `esbuild ^0.27.0`, so it cannot take `0.28.1`; forcing it via override would violate that constraint and risk breaking every tsup-based package build. The advisory affects esbuild's **dev server** on Windows, which these bundler libraries do not run — not in the execution path. Deferred pending a `tsup` release that accepts esbuild `0.28`. | Deferred |
 | #38 | `rustls-webpki` | `cargo`-derived version+checksum bump `0.103.12` -> `0.103.13` in `templates/clips/desktop/src-tauri/Cargo.lock`. | Fixed |
 | #39 | `tar` | Version+checksum bump `0.4.45` -> `0.4.46` in the same `Cargo.lock`. | Fixed |
 | #36 | `glib` | **Blocked upstream.** `gtk 0.18.2` requires `glib ^0.18`, pinned by `tauri 2.11.2`'s GTK (Linux-only) stack; cannot accept `0.20.0`. Fix requires the Tauri / gtk-rs ecosystem to move to glib 0.20 (out of our control). Not reachable on Windows/macOS builds. | Deferred |
@@ -189,4 +190,4 @@ Notes:
 - The Cargo.lock edits were applied surgically (version + checksum only). A raw `cargo update -p ... --precise` also re-unified unrelated `windows-sys` versions; that churn was reverted so the diff stays limited to security movement. `cargo tree --locked --target all` exits `0`, confirming the edited lockfile is coherent.
 - `packages/core` gained a patch changeset (`.changeset/nitro-security-bump.md`) for the Nitro bump.
 - The workspace `postinstall` build fails on Windows with `'cp' is not recognized` — a known pre-existing issue already tracked by the `windows-install-builds` changeset, unrelated to this remediation. Lockfile refresh still completes (verified).
-- Follow-up: re-run `gh api repos/studio-jami/jami-studio/dependabot/alerts` after push; expect #1, #2, #3, #38, #39, #40 to close and #36 (glib) + #37 (rand) to remain until Tauri advances.
+- Follow-up: re-run `gh api repos/studio-jami/jami-studio/dependabot/alerts` after push. First push closed #2, #3, #38, #39, #40. #1 required the additional manifest bump above. The re-scan surfaced #24 (transitive dev esbuild). Remaining deferred/upstream-blocked: #24 (esbuild via tsup), #36 (glib), #37 (rand) — all pending upstream (tauri 2.11.2 / tsup) advancing.

@@ -237,7 +237,7 @@
   "dependencies": {
     "@agent-native/toolkit": "workspace:*",
     "@amplitude/analytics-browser": "^2.41.1",
-    "@anthropic-ai/sdk": "^0.90.0",
+    "@anthropic-ai/sdk": "^0.91.1",
     "@anthropic-ai/tokenizer": "0.0.4",
     "@assistant-ui/react": "^0.12.19",
     "@assistant-ui/react-markdown": "^0.12.6",
