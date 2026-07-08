@@ -40,6 +40,23 @@ import { flushOpenDocumentEditorToSql } from "./_document-flush.js";
 
 type FetchLike = typeof fetch;
 
+function builderDocsReadProgress(args: {
+  limit: number;
+  count: number;
+  readMode: "builder-api" | "none";
+}): BuilderCmsReadResult["progress"] {
+  return {
+    requestedLimit: args.limit,
+    pageSize: args.limit,
+    startOffset: 0,
+    nextOffset: args.count,
+    fetchedEntryCount: args.count,
+    hasMore: false,
+    partial: false,
+    readMode: args.readMode,
+  };
+}
+
 export interface BuilderDocsFilesInput {
   path?: string | null;
   files?: Record<string, string> | null;
@@ -87,7 +104,7 @@ async function requireBuilderDocsPrivateKey() {
   const privateKey = await readBuilderPrivateKey();
   if (!privateKey) {
     throw new Error(
-      "Jami Studio docs MDX sync requires a Jami Studio private credential scoped to the current user/org.",
+      "Builder docs MDX sync requires a Builder private credential scoped to the current user/org.",
     );
   }
   return privateKey;
@@ -187,9 +204,7 @@ async function postBuilderMcp(args: {
   });
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(
-      `Jami Studio MCP request failed with HTTP ${response.status}.`,
-    );
+    throw new Error(`Builder MCP request failed with HTTP ${response.status}.`);
   }
   return {
     json: JSON.parse(text) as Record<string, unknown>,
@@ -264,7 +279,12 @@ async function readBuilderDocsPublishedEntries(args: {
       entries: [],
       fetchedAt,
       message:
-        "Jami Studio docs list skipped because BUILDER_PUBLIC_KEY is not configured.",
+        "Builder docs list skipped because BUILDER_PUBLIC_KEY is not configured.",
+      progress: builderDocsReadProgress({
+        limit: args.limit,
+        count: 0,
+        readMode: "none",
+      }),
     };
   }
 
@@ -289,8 +309,13 @@ async function readBuilderDocsPublishedEntries(args: {
       fetchedAt,
       message:
         error instanceof Error
-          ? `Jami Studio docs list failed: ${error.message}`
-          : "Jami Studio docs list failed.",
+          ? `Builder docs list failed: ${error.message}`
+          : "Builder docs list failed.",
+      progress: builderDocsReadProgress({
+        limit: args.limit,
+        count: 0,
+        readMode: "builder-api",
+      }),
     };
   }
 
@@ -299,18 +324,29 @@ async function readBuilderDocsPublishedEntries(args: {
       state: "error",
       entries: [],
       fetchedAt,
-      message: `Jami Studio docs list failed with HTTP ${response.status}.`,
+      message: `Builder docs list failed with HTTP ${response.status}.`,
+      progress: builderDocsReadProgress({
+        limit: args.limit,
+        count: 0,
+        readMode: "builder-api",
+      }),
     };
   }
 
   const json = (await response.json()) as unknown;
+  const entries = entryArrayFromResponse(json)
+    .map((entry) => normalizeBuilderCmsApiEntry(entry, args.model))
+    .filter((entry): entry is BuilderCmsSourceEntry => Boolean(entry));
   return {
     state: "live",
-    entries: entryArrayFromResponse(json)
-      .map((entry) => normalizeBuilderCmsApiEntry(entry, args.model))
-      .filter((entry): entry is BuilderCmsSourceEntry => Boolean(entry)),
+    entries,
     fetchedAt,
     message: null,
+    progress: builderDocsReadProgress({
+      limit: args.limit,
+      count: entries.length,
+      readMode: "builder-api",
+    }),
   };
 }
 
@@ -351,7 +387,7 @@ async function readFullBuilderDocsEntryViaMcp(args: {
   const entry = fullEntryFromToolResponse(contentJson, args.model);
   if (!entry) {
     throw new Error(
-      `Jami Studio entry ${args.model}/${args.entryId} was not found.`,
+      `Builder entry ${args.model}/${args.entryId} was not found.`,
     );
   }
   return entry;
@@ -576,9 +612,7 @@ function singleBuilderMdxPath(
 ) {
   if (explicit) {
     if (!Object.prototype.hasOwnProperty.call(files, explicit)) {
-      throw new Error(
-        `Jami Studio MDX file not found in files map: ${explicit}`,
-      );
+      throw new Error(`Builder MDX file not found in files map: ${explicit}`);
     }
     return explicit;
   }
@@ -700,7 +734,7 @@ async function readBuilderDocumentSidecars(documentId: string) {
     const actualHash = stableHash(row.content);
     if (actualHash !== row.contentHash) {
       throw new Error(
-        `Jami Studio raw sidecar cache hash mismatch for ${row.path}: expected ${row.contentHash}, got ${actualHash}.`,
+        `Builder raw sidecar cache hash mismatch for ${row.path}: expected ${row.contentHash}, got ${actualHash}.`,
       );
     }
     sidecars[row.path] = row.content;
@@ -734,20 +768,18 @@ async function getDocumentMdxSource(
     sourceUpdatedAt?: string | null;
   };
   if (document.sourceMode !== BUILDER_DOCS_MDX_SOURCE_MODE) {
-    throw new Error(
-      `Document "${documentId}" is not a Jami Studio MDX document.`,
-    );
+    throw new Error(`Document "${documentId}" is not a Builder MDX document.`);
   }
   const model = modelFromBuilderSourceKind(document.sourceKind);
   const sourceRoot = parseBuilderSourceRootPath(document.sourceRootPath);
   if (!model || !sourceRoot) {
     throw new Error(
-      `Document "${documentId}" is missing Jami Studio source metadata.`,
+      `Document "${documentId}" is missing Builder source metadata.`,
     );
   }
   if (!sourceRoot.blocksHash) {
     throw new Error(
-      `Document "${documentId}" is missing Jami Studio blocksHash metadata. Pull the Jami Studio entry again before checking or pushing.`,
+      `Document "${documentId}" is missing Builder blocksHash metadata. Pull the Builder entry again before checking or pushing.`,
     );
   }
   const sourceHash = sourceRoot.sourceHash;
@@ -819,9 +851,7 @@ export async function checkBuilderDocsSource(args: {
     localBlocksHash = local.blocksHash;
   } catch (error) {
     blockers.push(
-      error instanceof Error
-        ? error.message
-        : "Could not parse Jami Studio MDX.",
+      error instanceof Error ? error.message : "Could not parse Builder MDX.",
     );
   }
 
@@ -840,24 +870,24 @@ export async function checkBuilderDocsSource(args: {
     resolved.mdx.metadata.lastUpdated !== remoteLastUpdated
   ) {
     blockers.push(
-      `Remote Jami Studio entry changed since pull (${resolved.mdx.metadata.lastUpdated} -> ${remoteLastUpdated}). Pull again before pushing.`,
+      `Remote Builder entry changed since pull (${resolved.mdx.metadata.lastUpdated} -> ${remoteLastUpdated}). Pull again before pushing.`,
     );
   } else if (
     resolved.mdx.metadata.sourceHash &&
     remoteSourceHash !== resolved.mdx.metadata.sourceHash
   ) {
-    blockers.push("Remote Jami Studio source hash changed since pull.");
+    blockers.push("Remote Builder source hash changed since pull.");
   }
   if (
     resolved.mdx.metadata.blocksHash &&
     remoteBlocksHash !== resolved.mdx.metadata.blocksHash
   ) {
-    blockers.push("Remote Jami Studio blocks changed since pull.");
+    blockers.push("Remote Builder blocks changed since pull.");
   }
 
   if (Object.keys(resolved.sidecars).length === 0) {
     warnings.push(
-      "No raw sidecars were available; push will be blocked for existing Jami Studio blocks.",
+      "No raw sidecars were available; push will be blocked for existing Builder blocks.",
     );
   }
 
@@ -884,7 +914,7 @@ export async function pushBuilderDocsSource(args: {
   const resolved = await resolveBuilderDocsSource(args);
   if (resolved.mdx.metadata.model !== BUILDER_CMS_SAFE_WRITE_MODEL) {
     check.blockers.push(
-      `Live Jami Studio docs pushes are currently allowed only for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
+      `Live Builder docs pushes are currently allowed only for ${BUILDER_CMS_SAFE_WRITE_MODEL}.`,
     );
   }
   if (check.blockers.length > 0) {

@@ -98,6 +98,8 @@ export interface DocumentUpdateRequest {
   content?: string;
   icon?: string | null;
   isFavorite?: boolean;
+  loadedUpdatedAt?: string;
+  loadedContentWasEmpty?: boolean;
 }
 
 export interface DocumentUpdateResponse extends Document {
@@ -587,6 +589,12 @@ export interface ContentDatabaseSource {
     liveReadConfigured?: boolean;
     lastReadEntryCount?: number;
     lastReadMatchedRowCount?: number;
+    lastReadLimit?: number;
+    lastReadFetchedEntryCount?: number;
+    lastReadPartial?: boolean;
+    lastReadHasMore?: boolean;
+    lastReadNextOffset?: number;
+    sourceFetchState?: "idle" | "fetching" | "error";
     allowDraftWrites?: boolean;
     allowPublishWrites?: boolean;
     allowedWriteModes?: ContentDatabaseSourcePushMode[];
@@ -814,6 +822,7 @@ export interface RefreshContentDatabaseSourceRequest {
   databaseId?: string;
   documentId?: string;
   sourceId?: string;
+  fullRefresh?: boolean;
 }
 
 export interface DisconnectContentDatabaseSourceRequest {
@@ -826,6 +835,8 @@ export interface AddContentDatabaseSourceFieldPropertyRequest {
   databaseId?: string;
   documentId?: string;
   sourceFieldId: string;
+  sourceId?: string;
+  sourceFieldKey?: string;
 }
 
 export interface BindContentDatabaseSourceFieldRequest {
@@ -883,6 +894,16 @@ export interface ExecuteBuilderSourceExecutionRequest {
   confirmUnpublish?: boolean;
 }
 
+export interface PrepareBuilderSourceReviewRequest {
+  databaseId?: string;
+  documentId?: string;
+  sourceId?: string;
+  changeSetIds?: string[];
+  pushModeConfirmation?: ContentDatabaseSourcePushMode;
+  publicationTransition?: BuilderCmsPublicationTransitionIntent;
+  confirmUnpublish?: boolean;
+}
+
 export interface ExecuteBuilderSourceBatchTransition {
   publicationTransition?: BuilderCmsPublicationTransitionIntent;
   confirmUnpublish?: boolean;
@@ -927,13 +948,58 @@ export interface SetContentDatabaseSourceWriteModeRequest {
   allowPublishWrites?: boolean;
 }
 
-export interface PrepareBuilderSourceReviewRequest {
+export type StageBuilderSourceBulkUpdateRowStatus =
+  | "staged"
+  | "unchanged"
+  | "blocked";
+
+export interface StageBuilderSourceBulkUpdateFieldRequest {
+  propertyId?: string;
+  localFieldKey?: string;
+  sourceFieldKey?: string;
+  value: DocumentPropertyValue;
+}
+
+export interface StageBuilderSourceBulkUpdateRequest {
   databaseId?: string;
   documentId?: string;
   sourceId?: string;
-  pushModeConfirmation?: ContentDatabaseSourcePushMode;
-  publicationTransition?: BuilderCmsPublicationTransitionIntent;
-  confirmUnpublish?: boolean;
+  itemIds?: string[];
+  documentIds?: string[];
+  field: StageBuilderSourceBulkUpdateFieldRequest;
+  dryRun?: boolean;
+}
+
+export interface StageBuilderSourceBulkUpdateRowResult {
+  itemId: string;
+  documentId: string;
+  title: string;
+  status: StageBuilderSourceBulkUpdateRowStatus;
+  message?: string;
+  changeSetId?: string;
+  fieldChange?: ContentDatabaseSourceFieldChange;
+}
+
+export interface StageBuilderSourceBulkUpdateResponse {
+  dryRun: boolean;
+  databaseId: string;
+  documentId: string;
+  sourceId: string;
+  field: {
+    propertyId: string | null;
+    propertyName: string | null;
+    localFieldKey: string;
+    sourceFieldKey: string;
+    sourceFieldLabel: string;
+  };
+  summary: {
+    total: number;
+    staged: number;
+    unchanged: number;
+    blocked: number;
+  };
+  rows: StageBuilderSourceBulkUpdateRowResult[];
+  review: ContentDatabaseSourceReviewPayload | null;
 }
 
 export type BuilderCmsWriteEffect =
@@ -962,6 +1028,8 @@ export interface ContentDatabaseSourceReviewPayload {
   summary: string;
   sourceName: string;
   sourceTable: string;
+  totalRowCount?: number;
+  preparedRowLimit?: number;
   pushMode: ContentDatabaseSourcePushMode;
   dryRunOnly: boolean;
   liveWritesEnabled: boolean;

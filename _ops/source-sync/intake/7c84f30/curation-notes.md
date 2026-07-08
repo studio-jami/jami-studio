@@ -20,17 +20,20 @@ Jami contradictions. Size alone is not a reason to defer in `sync/intake` or
 
 ## Full Merge Handling
 
-The remaining upstream delta should be merged into this intake branch. During
-that merge, keep upstream code by default and strip or adapt only takeover
+The remaining upstream delta was merged into this intake branch with upstream
+accepted by default. The curation pass only stripped or adapted takeover
 contradictions:
 
-- keep Jami source-sync workflows and `_ops/source-sync`
-- keep inherited Builder workflows disabled
-- keep Jami deploy relocation decisions
-- preserve Jami identity/domain/repo ownership decisions
-- avoid importing upstream agent attribution trailers
+- kept Jami source-sync workflows and `_ops/source-sync`
+- kept inherited Builder workflows out of `.github/workflows`
+- preserved Jami root `README.md`, root `package.json`, and `.gitignore`
+- advanced `packages/skills` to the upstream version while keeping the Jami
+  package description
+- accepted Content template conflicts from upstream because they are product
+  code, not takeover wiring
 
 ## Notes
 
-Cherry-picked upstream commits were committed with Jami-owned curated messages
-and without upstream agent co-author trailers.
+Earlier cherry-picked upstream commits were committed with Jami-owned curated
+messages and without upstream agent co-author trailers. The final upstream merge
+uses a Jami-owned merge commit message.
