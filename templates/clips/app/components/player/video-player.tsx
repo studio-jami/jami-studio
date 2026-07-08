@@ -464,6 +464,23 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       bumpControls();
       setPlayError(null);
 
+      if (
+        !hasPlaybackStarted &&
+        (!startMs || startMs <= 0) &&
+        ((initialVisibleFrameSeekedRef.current && v.currentTime > 0.05) ||
+          // The WebM duration probe seeks to 1e10. If Chrome never resolves the
+          // durationchange, first play must rewind instead of starting there.
+          v.currentTime > 1e7)
+      ) {
+        try {
+          v.currentTime = 0;
+          setCurrentMs(0);
+        } catch {
+          // If the browser refuses the rewind, continue with the normal play
+          // attempt; playback is still better than blocking on a cosmetic seek.
+        }
+      }
+
       // A <video> element left in an error state (network/decode/unsupported
       // format) will just re-reject on `.play()` forever — it needs `.load()`
       // to reset `readyState`/`error` and re-fetch the source before playback
