@@ -5,7 +5,7 @@
   "description": "Agent Native desktop app",
   "homepage": "https://jami.studio",
   "bugs": {
-    "url": "https://github.com/BuilderIO/agent-native/issues"
+    "url": "https://github.com/studio-jami/jami-studio/issues"
   },
   "author": {
     "name": "Jami Studio, Inc",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/BuilderIO/agent-native",
+    "url": "https://github.com/studio-jami/jami-studio",
     "directory": "packages/desktop-app"
   },
   "main": "out/main/index.js",

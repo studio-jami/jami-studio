@@ -8,8 +8,8 @@
 ## Getting Started
 
 ```bash
-git clone https://github.com/BuilderIO/agent-native.git
-cd agent-native
+git clone https://github.com/studio-jami/jami-studio.git
+cd jami-studio
 pnpm install
 ```
 

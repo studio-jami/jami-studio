@@ -7,7 +7,7 @@ agents like Claude Code, Codex, and GitHub Copilot can create and open those
 surfaces directly.
 
 Plans come from two skills — `/visual-plan` and `/visual-recap` — in the
-open-source [Jami Studio/skills](https://github.com/BuilderIO/skills) repo.
+open-source [Jami Studio skills](https://github.com/studio-jami/skills) repo.
 
 ## `/visual-plan`
 
@@ -18,7 +18,7 @@ Solves for plans that are too important to bury in chat. The output is
 scannable, commentable, and intuitive enough for a human to approve before code
 changes start.
 
-![Visual plan review surface](https://raw.githubusercontent.com/BuilderIO/skills/main/media/visual-plan.png)
+![Visual plan review surface](https://raw.githubusercontent.com/studio-jami/skills/main/media/visual-plan.png)
 
 ## `/visual-recap`
 
@@ -30,11 +30,11 @@ Solves for diffs that hide the shape of the change. Reviewers can understand
 contracts, architecture moves, schema changes, and UI impact before diving into
 raw line-by-line review.
 
-![Visual recap review surface animation](https://raw.githubusercontent.com/BuilderIO/skills/main/media/visual-recap.gif)
+![Visual recap review surface animation](https://raw.githubusercontent.com/studio-jami/skills/main/media/visual-recap.gif)
 
 Visual plans and recaps are MDX, customizable with your own components, and
 viewed with the [Agent-Native Plans app](https://www.jami.studio/docs/template-plan).
-[Source here](https://github.com/BuilderIO/agent-native/).
+[Source here](https://github.com/studio-jami/jami-studio/).
 
 ## `/visual-edit`
 
@@ -64,13 +64,8 @@ Without it, an agent's plan link opens in a separate browser tab. With it:
 
 ## Install
 
-Install
-[Jami Studio](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
-from the Visual Studio Marketplace, or run:
-
-```bash
-code --install-extension Jami Studio.agent-native
-```
+Marketplace publishing is pending the Jami Studio publisher account cutover.
+For local development, build the extension from this workspace.
 
 To add the `/visual-plan`, `/visual-recap`, and `/visual-edit` skills to your
 coding agent:

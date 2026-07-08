@@ -2,11 +2,11 @@
   "name": "@agent-native/docs",
   "private": true,
   "bugs": {
-    "url": "https://github.com/BuilderIO/agent-native/issues"
+    "url": "https://github.com/studio-jami/jami-studio/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/BuilderIO/agent-native",
+    "url": "https://github.com/studio-jami/jami-studio",
     "directory": "packages/docs"
   },
   "type": "module",

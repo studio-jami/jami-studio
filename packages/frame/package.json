@@ -3,14 +3,14 @@
   "version": "0.1.154",
   "private": true,
   "description": "Local dev frame — agent chat + CLI sidebar with app iframe",
-  "homepage": "https://github.com/BuilderIO/agent-native#readme",
+  "homepage": "https://github.com/studio-jami/jami-studio#readme",
   "bugs": {
-    "url": "https://github.com/BuilderIO/agent-native/issues"
+    "url": "https://github.com/studio-jami/jami-studio/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BuilderIO/agent-native",
+    "url": "https://github.com/studio-jami/jami-studio",
     "directory": "packages/frame"
   },
   "files": [

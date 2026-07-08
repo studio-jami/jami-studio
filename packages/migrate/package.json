@@ -2,14 +2,14 @@
   "name": "@agent-native/migrate",
   "version": "0.0.7",
   "description": "Migration Workbench engine for moving existing apps to agent-native with verifiable, resumable migration runs.",
-  "homepage": "https://github.com/BuilderIO/agent-native#readme",
+  "homepage": "https://github.com/studio-jami/jami-studio#readme",
   "bugs": {
-    "url": "https://github.com/BuilderIO/agent-native/issues"
+    "url": "https://github.com/studio-jami/jami-studio/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BuilderIO/agent-native",
+    "url": "https://github.com/studio-jami/jami-studio",
     "directory": "packages/migrate"
   },
   "files": [
