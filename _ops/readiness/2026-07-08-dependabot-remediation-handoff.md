@@ -169,3 +169,24 @@ git commit -m "Update Nitro for Dependabot advisories"
 - Do not use `pnpm audit fix` blindly; this repo has many workspaces and package catalogs.
 - Prefer targeted package manager updates so review stays understandable.
 - If an alert remains because the patched version is beta or blocked by an upstream dependency, record the reason in this file or a follow-up readiness note.
+
+## Outcome (2026-07-08)
+
+Remediation executed. Results by alert:
+
+| Alert | Package | Action | Result |
+| --- | --- | --- | --- |
+| #1 | `@anthropic-ai/sdk` | Root `pnpm.overrides` already pinned `>=0.91.1`; refreshed the stale `pnpm-lock.yaml` so it resolves `0.91.1`. | Fixed |
+| #2, #3 | `nitro` | Bumped `packages/core/package.json` from `3.0.260415-beta` to patched `3.0.260429-beta` (all `nitro` versions are beta; chose the exact patched beta for minimal change). | Fixed |
+| #40 | `esbuild` | Bumped direct dep in `templates/design/package.json` from `^0.27.7` to `^0.28.1`. Left the separate transitive `esbuild@<=0.24.2` override untouched. | Fixed |
+| #38 | `rustls-webpki` | `cargo`-derived version+checksum bump `0.103.12` -> `0.103.13` in `templates/clips/desktop/src-tauri/Cargo.lock`. | Fixed |
+| #39 | `tar` | Version+checksum bump `0.4.45` -> `0.4.46` in the same `Cargo.lock`. | Fixed |
+| #36 | `glib` | **Blocked upstream.** `gtk 0.18.2` requires `glib ^0.18`, pinned by `tauri 2.11.2`'s GTK (Linux-only) stack; cannot accept `0.20.0`. Fix requires the Tauri / gtk-rs ecosystem to move to glib 0.20 (out of our control). Not reachable on Windows/macOS builds. | Deferred |
+| #37 | `rand` | **Blocked upstream.** The vulnerable `rand 0.7.3` is a build-only dep pulled through `phf_generator 0.8.0 -> phf_codegen -> selectors 0.24.0 -> kuchikiki 0.8.8-speedreader -> tauri-utils 2.9.2`; `phf_generator 0.8.0` requires `rand ^0.7`. Cannot bump without the Tauri build toolchain advancing. Low severity, build-time only. | Deferred |
+
+Notes:
+
+- The Cargo.lock edits were applied surgically (version + checksum only). A raw `cargo update -p ... --precise` also re-unified unrelated `windows-sys` versions; that churn was reverted so the diff stays limited to security movement. `cargo tree --locked --target all` exits `0`, confirming the edited lockfile is coherent.
+- `packages/core` gained a patch changeset (`.changeset/nitro-security-bump.md`) for the Nitro bump.
+- The workspace `postinstall` build fails on Windows with `'cp' is not recognized` — a known pre-existing issue already tracked by the `windows-install-builds` changeset, unrelated to this remediation. Lockfile refresh still completes (verified).
+- Follow-up: re-run `gh api repos/studio-jami/jami-studio/dependabot/alerts` after push; expect #1, #2, #3, #38, #39, #40 to close and #36 (glib) + #37 (rand) to remain until Tauri advances.
