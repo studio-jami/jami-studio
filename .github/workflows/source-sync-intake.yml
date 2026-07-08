@@ -1,0 +1,62 @@
+name: Source sync intake
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: Sync branch that receives curated intake
+        required: false
+        default: sync/staging
+      source_ref:
+        description: Source ref to intake from
+        required: false
+        default: source/main
+      create_pr:
+        description: Open a PR into the base branch
+        required: false
+        default: "true"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: source-sync-intake
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    name: Prepare intake branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Jami repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "jami-source-sync"
+          git config user.email "source-sync@users.noreply.github.com"
+
+      - name: Configure remotes
+        run: |
+          git remote add source https://github.com/studio-jami/agent-native-source.git
+          git fetch source main
+          git fetch origin "${{ inputs.base_branch }}"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prepare intake packet
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          args=(--base "${{ inputs.base_branch }}" --source "${{ inputs.source_ref }}")
+          if [ "${{ inputs.create_pr }}" = "true" ]; then
+            args+=(--create-pr)
+          fi
+          node --experimental-strip-types _ops/source-sync/scripts/create-intake-packet.ts "${args[@]}"

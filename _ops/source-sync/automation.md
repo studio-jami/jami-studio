@@ -56,8 +56,19 @@ Builder upstream changes
 This avoids spending Action minutes when nothing changed and keeps reports or
 intake PRs bite-sized.
 
+### 5. Intake Branch
+
+Current scaffold.
+
+The `Source sync intake` workflow creates or updates `sync/intake/<source-sha>`
+from `sync/staging`, commits an intake packet, and opens a PR into
+`sync/staging`.
+
+The packet is not the curated patch yet. It is the handoff point for the
+pre-merge agent.
+
 ## Recommendation
 
-Use manual mode while we tune rules. Then test manual issue creation. After
-that, add source-pushed dispatch from `agent-native-source`. Use hourly schedule
-only as a fallback if dispatch becomes awkward.
+Use manual mode while we tune rules. Then test intake PR creation. After that,
+add source-pushed dispatch from `agent-native-source`. Use hourly schedule only
+as a fallback if dispatch becomes awkward.

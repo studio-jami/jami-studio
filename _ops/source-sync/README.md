@@ -68,6 +68,12 @@ pnpm source-sync:report
 
 Reports are written to `_ops/source-sync/reports/`.
 
+Prepare the intake branch and PR packet:
+
+```sh
+pnpm source-sync:intake -- --create-pr
+```
+
 ## Automation
 
 The GitHub workflow is manual by default. It can optionally create an issue when

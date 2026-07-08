@@ -73,6 +73,7 @@
     "sync:plan-marketplace": "tsx scripts/sync-plan-marketplace.ts",
     "sync:plan-skills": "tsx scripts/sync-plan-skills.ts",
     "source-sync:refresh": "node --experimental-strip-types _ops/source-sync/scripts/refresh-source-fork.ts",
+    "source-sync:intake": "node --experimental-strip-types _ops/source-sync/scripts/create-intake-packet.ts",
     "source-sync:report": "node --experimental-strip-types _ops/source-sync/scripts/source-sync-report.ts",
     "changeset": "changeset",
     "changeset:add": "changeset add",

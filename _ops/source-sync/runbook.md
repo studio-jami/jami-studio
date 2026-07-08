@@ -29,11 +29,17 @@ operational assumptions to flow into Jami `main` by accident.
      over that surface.
    - Conflict files should be handled by domain, not mechanically.
 
-5. Port selected changes into `sync/intake/<source-sha>`.
+5. Create the intake packet:
 
-6. Merge accepted intake work into `sync/staging`.
+   ```sh
+   pnpm source-sync:intake -- --create-pr
+   ```
 
-7. Human-review or port curated changes from `sync/staging` into `main` or
+6. Run the pre-merge agent on `sync/intake/<source-sha>`.
+
+7. Merge accepted intake work into `sync/staging`.
+
+8. Human-review or port curated changes from `sync/staging` into `main` or
    `preview`.
 
 ## Do Not
