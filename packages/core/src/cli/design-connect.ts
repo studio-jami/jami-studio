@@ -33,6 +33,16 @@ const BRIDGE_OPERATIONS = [
 
 type BridgeOperation = (typeof BRIDGE_OPERATIONS)[number];
 
+const SERVER_REGISTRATION_BRIDGE_OPERATIONS = new Set<BridgeOperation>([
+  "select",
+  "resolveNodeToFile",
+  "readFile",
+  "applyEdit",
+  "writeFile",
+  "captureSnapshot",
+  "captureState",
+]);
+
 /** Additive manifest capability flags advertised alongside the operation list. */
 const MANIFEST_CAPABILITIES = {
   listFiles: true,
@@ -507,6 +517,47 @@ function sendJson(
   res.end(`${JSON.stringify(body, null, 2)}\n`);
 }
 
+function sendText(
+  res: ServerResponse,
+  statusCode: number,
+  body: string,
+  contentType: string,
+) {
+  res.writeHead(statusCode, {
+    "content-type": contentType,
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET, POST, OPTIONS",
+    "access-control-allow-headers": "content-type, x-bridge-token",
+    "access-control-allow-private-network": "true",
+  });
+  res.end(body);
+}
+
+function sendBytes(
+  res: ServerResponse,
+  statusCode: number,
+  body: Buffer,
+  headers: Headers,
+) {
+  const responseHeaders: Record<string, string> = {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+    "access-control-allow-headers": "content-type, x-bridge-token",
+    "access-control-allow-private-network": "true",
+  };
+  for (const name of [
+    "content-type",
+    "cache-control",
+    "etag",
+    "last-modified",
+  ]) {
+    const value = headers.get(name);
+    if (value) responseHeaders[name] = value;
+  }
+  res.writeHead(statusCode, responseHeaders);
+  res.end(body);
+}
+
 function sameOrigin(a: string, b: string): boolean {
   try {
     return new URL(a).origin === new URL(b).origin;
@@ -527,6 +578,23 @@ function resolvePreviewSnapshotUrl(
   }
   if (!sameOrigin(parsed.toString(), base)) {
     throw new Error("Snapshot URL must stay on the connected dev server.");
+  }
+  return parsed.toString();
+}
+
+function resolvePreviewProxyUrl(
+  devServerUrl: string,
+  requestUrl: string | undefined,
+): string {
+  const base = normalizeHttpUrl(devServerUrl);
+  const parsedRequest = new URL(requestUrl ?? "/", base);
+  const parsed = new URL(
+    `${parsedRequest.pathname}${parsedRequest.search}`,
+    `${base}/`,
+  );
+  parsed.hash = "";
+  if (!sameOrigin(parsed.toString(), base)) {
+    throw new Error("Proxy URL must stay on the connected dev server.");
   }
   return parsed.toString();
 }
@@ -577,6 +645,113 @@ async function fetchPreviewSnapshot(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function fetchPreviewProxyResource(
+  devServerUrl: string,
+  targetUrl: string,
+  redirects = 0,
+): Promise<{
+  url: string;
+  status: number;
+  headers: Headers;
+  body: Buffer;
+}> {
+  if (redirects > 5) {
+    throw new Error("Too many redirects while proxying preview resource.");
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const response = await fetch(targetUrl, {
+      method: "GET",
+      redirect: "manual",
+      signal: controller.signal,
+    });
+    const location = response.headers.get("location");
+    if (location && response.status >= 300 && response.status < 400) {
+      const redirected = new URL(location, targetUrl);
+      redirected.hash = "";
+      if (!sameOrigin(redirected.toString(), devServerUrl)) {
+        throw new Error("Proxy redirect left the connected dev server.");
+      }
+      return fetchPreviewProxyResource(
+        devServerUrl,
+        redirected.toString(),
+        redirects + 1,
+      );
+    }
+    return {
+      url: response.url || targetUrl,
+      status: response.status,
+      headers: response.headers,
+      body: Buffer.from(await response.arrayBuffer()),
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function addLiveEditBaseHref(html: string, href: string): string {
+  const escapedHref = href.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  const baseTag = `<base href="${escapedHref}">`;
+  if (/<base\b/i.test(html)) return html;
+  if (/<head\b[^>]*>/i.test(html)) {
+    return html.replace(/<head\b[^>]*>/i, (match) => `${match}${baseTag}`);
+  }
+  if (/<html\b[^>]*>/i.test(html)) {
+    return html.replace(
+      /<html\b[^>]*>/i,
+      (match) => `${match}<head>${baseTag}</head>`,
+    );
+  }
+  return `<!DOCTYPE html><html><head>${baseTag}<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>${html}</body></html>`;
+}
+
+/**
+ * Rewrite the iframe path to the real target route before the proxied app's
+ * bundle runs. The bridge serves snapshots from its own `/live-edit` path, so a
+ * client-side-routed SPA would otherwise boot at "/live-edit", match no route,
+ * and render its 404. A synchronous inline script in `<head>` runs during parse
+ * (before deferred module bundles), so `history.replaceState` lands the SPA on
+ * the intended route. Assets still resolve via the injected `<base href>`.
+ */
+function injectPreBootLocationShim(html: string, targetPath: string): string {
+  const path = targetPath.trim();
+  if (!path || path === "/live-edit") return html;
+  const shim = `<script data-agent-native-live-edit-location>
+(function(){try{var p=${JSON.stringify(path)};if(p&&(location.pathname+location.search)!==p){history.replaceState(null,"",p);}}catch(e){}})();
+</script>`;
+  if (/<head\b[^>]*>/i.test(html)) {
+    return html.replace(/<head\b[^>]*>/i, (match) => `${match}${shim}`);
+  }
+  if (/<html\b[^>]*>/i.test(html)) {
+    return html.replace(
+      /<html\b[^>]*>/i,
+      (match) => `${match}<head>${shim}</head>`,
+    );
+  }
+  return `${shim}${html}`;
+}
+
+function injectLiveEditBridge(
+  html: string,
+  baseHref: string,
+  script: string,
+  targetPath: string,
+) {
+  const withBase = injectPreBootLocationShim(
+    addLiveEditBaseHref(html, baseHref),
+    targetPath,
+  );
+  if (!script) return withBase;
+  if (withBase.includes("</body>")) {
+    return withBase.replace("</body>", `${script}</body>`);
+  }
+  if (withBase.includes("</html>")) {
+    return withBase.replace("</html>", `${script}</html>`);
+  }
+  return `${withBase}${script}`;
 }
 
 /** Read the full request body as a UTF-8 string. */
@@ -1046,6 +1221,7 @@ export async function startDesignConnectBridge(
   // an unauthenticated caller cannot read it.  The server-side grant action
   // obtains it out-of-band (via the exported bridge reference).
   const bridgeToken = crypto.randomBytes(32).toString("hex");
+  let liveEditBridgeScript = "";
 
   const server = http.createServer(
     (req: IncomingMessage, res: ServerResponse) => {
@@ -1075,6 +1251,104 @@ export async function startDesignConnectBridge(
       }
       if (pathname === "/health") {
         sendJson(res, 200, { ok: true, source: manifest.source });
+        return;
+      }
+      if (pathname === "/live-edit-bridge") {
+        if (req.method !== "POST") {
+          sendJson(res, 405, { ok: false, error: "method not allowed" });
+          return;
+        }
+        const tokenHeader = req.headers["x-bridge-token"];
+        const providedToken =
+          typeof tokenHeader === "string" ? tokenHeader : "";
+        let tokenValid = false;
+        try {
+          tokenValid =
+            providedToken.length === bridgeToken.length &&
+            crypto.timingSafeEqual(
+              Buffer.from(providedToken, "utf8"),
+              Buffer.from(bridgeToken, "utf8"),
+            );
+        } catch {
+          tokenValid = false;
+        }
+        if (!tokenValid) {
+          sendJson(res, 401, {
+            ok: false,
+            error: "invalid or missing bridge token",
+          });
+          return;
+        }
+        void (async () => {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw) as Record<string, unknown>;
+            const script =
+              typeof body["script"] === "string" ? body["script"] : "";
+            if (!script.includes("agent-native:editor-chrome-ready")) {
+              sendJson(res, 400, {
+                ok: false,
+                error: "script must install the Agent Native editor bridge",
+              });
+              return;
+            }
+            liveEditBridgeScript = script;
+            sendJson(res, 200, { ok: true });
+          } catch (err: unknown) {
+            sendJson(res, 400, {
+              ok: false,
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+        })();
+        return;
+      }
+      if (pathname === "/live-edit") {
+        if (req.method !== "GET") {
+          sendJson(res, 405, { ok: false, error: "method not allowed" });
+          return;
+        }
+        void (async () => {
+          try {
+            const requestUrl = new URL(req.url ?? "/", manifest.bridgeUrl);
+            const targetUrl = resolvePreviewSnapshotUrl(
+              manifest.devServerUrl,
+              requestUrl.searchParams.get("url") ??
+                requestUrl.searchParams.get("path"),
+            );
+            const snapshot = await fetchPreviewSnapshot(
+              manifest.devServerUrl,
+              targetUrl,
+            );
+            const includeEditorBridge =
+              requestUrl.searchParams.get("bridge") !== "0";
+            // The dev server route the SPA must boot on (e.g. "/todo"), taken
+            // from the resolved snapshot target rather than the bridge's own
+            // "/live-edit" request path.
+            const targetParsed = new URL(targetUrl);
+            const targetPath =
+              `${targetParsed.pathname}${targetParsed.search}` || "/";
+            const html = injectLiveEditBridge(
+              snapshot.html,
+              new URL("/", manifest.bridgeUrl).toString(),
+              includeEditorBridge ? liveEditBridgeScript : "",
+              targetPath,
+            );
+            sendText(
+              res,
+              snapshot.status >= 400 ? snapshot.status : 200,
+              html,
+              snapshot.contentType.includes("html")
+                ? snapshot.contentType
+                : "text/html; charset=utf-8",
+            );
+          } catch (err: unknown) {
+            sendJson(res, 400, {
+              ok: false,
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+        })();
         return;
       }
       if (pathname === "/snapshot") {
@@ -1356,6 +1630,33 @@ export async function startDesignConnectBridge(
         return;
       }
 
+      if (req.method === "GET" || req.method === "HEAD") {
+        void (async () => {
+          try {
+            const targetUrl = resolvePreviewProxyUrl(
+              manifest.devServerUrl,
+              req.url,
+            );
+            const proxied = await fetchPreviewProxyResource(
+              manifest.devServerUrl,
+              targetUrl,
+            );
+            sendBytes(
+              res,
+              proxied.status >= 400 ? proxied.status : 200,
+              req.method === "HEAD" ? Buffer.alloc(0) : proxied.body,
+              proxied.headers,
+            );
+          } catch (err: unknown) {
+            sendJson(res, 400, {
+              ok: false,
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+        })();
+        return;
+      }
+
       sendJson(res, 404, { ok: false, error: "not found" });
     },
   );
@@ -1432,7 +1733,9 @@ export async function registerConnectionWithServer(
     devServerUrl: manifest.devServerUrl,
     bridgeUrl: manifest.bridgeUrl,
     rootPath: manifest.rootPath,
-    capabilities: manifest.capabilities,
+    capabilities: manifest.capabilities.filter((capability) =>
+      SERVER_REGISTRATION_BRIDGE_OPERATIONS.has(capability.operation),
+    ),
     routeManifest: {
       version: 1 as const,
       sourceType: "localhost" as const,
@@ -1635,15 +1938,18 @@ export async function runDesign(argv: string[]) {
   console.error(`Routes:   ${manifest.routeCount}`);
   console.error(`Dev URL:  ${manifest.devServerUrl}`);
 
-  // Self-register with the design app server (best-effort).  When an app URL
-  // is available (via --app-url or env var) the CLI POSTs the bridge token to
-  // connect-localhost so the server row stores the real token.  Without this
-  // step grant-localhost-write-consent would mint a different token, causing
-  // every bridge write to return 401.
+  // Self-register with the design app server (best-effort): POST the bridge
+  // token to connect-localhost so the server row stores the real token. Without
+  // it, the bridge and server tokens diverge and every write returns 401.
   const appUrl = resolveAppUrl(parsed.appUrl);
   if (appUrl) {
-    const authToken = resolveAuthToken();
-    void registerConnectionWithServer(appUrl, bridge, authToken);
+    void registerConnectionWithServer(appUrl, bridge, resolveAuthToken());
+  } else {
+    // No app URL means the token never reaches the DB — surface it instead of
+    // silently skipping, since live-edit will then 401.
+    console.error(
+      "[design connect] No app URL resolved (pass --app-url or set AGENT_NATIVE_URL); skipping self-registration — live-edit will fail to authorize.",
+    );
   }
 
   return await new Promise<number>((resolve) => {

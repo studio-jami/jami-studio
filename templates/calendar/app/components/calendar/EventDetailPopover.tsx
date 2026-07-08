@@ -1,4 +1,5 @@
 import { sendToAgentChat, useT } from "@agent-native/core/client";
+import { ExtensionSlot } from "@agent-native/core/client/extensions";
 import type {
   CalendarEvent,
   FindTimeSlot,
@@ -92,6 +93,73 @@ import {
 } from "@/lib/event-form-utils";
 import { markPopoverInteractOutside } from "@/lib/popover-click-guard";
 import { shortcutModifierLabel } from "@/lib/utils";
+
+const ZOOM_AFTER_CONNECT_EVENT_ID_KEY = "calendar.zoomAfterConnectEventId";
+const ZOOM_AFTER_CONNECT_MAX_AGE_MS = 10 * 60 * 1000;
+
+function buildEventDetailSlotContext(event: CalendarEvent) {
+  return {
+    eventId: event.id,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    startTimeZone: event.startTimeZone,
+    endTimeZone: event.endTimeZone,
+    location: event.location,
+    accountEmail: event.accountEmail,
+    attendees: (event.attendees ?? []).map((attendee) => ({
+      email: attendee.email,
+      displayName: attendee.displayName,
+      responseStatus: attendee.responseStatus,
+      organizer: attendee.organizer,
+      optional: attendee.optional,
+      timeZone: attendee.timeZone,
+      self: attendee.self,
+    })),
+  };
+}
+
+function getStoredZoomAfterConnectEventId(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = window.sessionStorage.getItem(
+      ZOOM_AFTER_CONNECT_EVENT_ID_KEY,
+    );
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as {
+      eventId?: unknown;
+      startedAt?: unknown;
+    };
+    if (
+      typeof parsed.eventId === "string" &&
+      typeof parsed.startedAt === "number" &&
+      Date.now() - parsed.startedAt < ZOOM_AFTER_CONNECT_MAX_AGE_MS
+    ) {
+      return parsed.eventId;
+    }
+    window.sessionStorage.removeItem(ZOOM_AFTER_CONNECT_EVENT_ID_KEY);
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function setStoredZoomAfterConnectEventId(eventId: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (eventId) {
+      window.sessionStorage.setItem(
+        ZOOM_AFTER_CONNECT_EVENT_ID_KEY,
+        JSON.stringify({ eventId, startedAt: Date.now() }),
+      );
+    } else {
+      window.sessionStorage.removeItem(ZOOM_AFTER_CONNECT_EVENT_ID_KEY);
+    }
+  } catch {
+    // Storage can be unavailable in locked-down browsers; in-memory state still
+    // handles the normal popup path.
+  }
+}
 
 function formatDuration(start: string, end: string): string {
   const totalMinutes = differenceInMinutes(parseISO(end), parseISO(start));
@@ -249,6 +317,12 @@ function mergeAttendeesForPrompt(
       email,
       displayName: attendee.displayName ?? current?.displayName,
       photoUrl: attendee.photoUrl ?? current?.photoUrl,
+      optional:
+        attendee.optional === true
+          ? true
+          : attendee.optional === false
+            ? undefined
+            : current?.optional,
     });
   }
 
@@ -403,6 +477,9 @@ export function EventDetailPopover({
   const [pendingVideoProvider, setPendingVideoProvider] = useState<
     "meet" | "zoom" | null
   >(null);
+  const [zoomAfterConnectEventId, setZoomAfterConnectEventId] = useState<
+    string | null
+  >(() => getStoredZoomAfterConnectEventId());
   const isOverlay = !!event.overlayEmail;
   const ownerLabel = event.ownerName || event.overlayEmail;
 
@@ -686,45 +763,73 @@ export function EventDetailPopover({
     })();
   }, [event, isDraft, onDraftUpdate, promptGuestNotification, updateEvent]);
 
+  const addZoomToConnectedEvent = useCallback(() => {
+    if (!event.id || updateEvent.isPending) return;
+
+    if (isDraft) {
+      onDraftUpdate?.(event.id, { addZoom: true, addGoogleMeet: false });
+      return;
+    }
+
+    setPendingVideoProvider("zoom");
+    void (async () => {
+      const updates = { addZoom: true };
+      const guestNotification = await promptGuestNotification({
+        event,
+        action: "update",
+        updates,
+      });
+      if (!guestNotification) {
+        setPendingVideoProvider(null);
+        return;
+      }
+      updateEvent.mutate(
+        {
+          id: event.id,
+          accountEmail: event.accountEmail,
+          ...updates,
+          ...guestNotification,
+        },
+        {
+          onSuccess: () => toast(t("eventForm.zoomAdded")),
+          onError: (error) =>
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : t("eventForm.zoomAddFailed"),
+            ),
+          onSettled: () => setPendingVideoProvider(null),
+        },
+      );
+    })();
+  }, [event, isDraft, onDraftUpdate, promptGuestNotification, t, updateEvent]);
+
+  useEffect(() => {
+    if (
+      !zoomStatus.data?.connected ||
+      !zoomAfterConnectEventId ||
+      zoomAfterConnectEventId !== event.id ||
+      updateEvent.isPending
+    ) {
+      return;
+    }
+
+    setZoomAfterConnectEventId(null);
+    setStoredZoomAfterConnectEventId(null);
+    addZoomToConnectedEvent();
+  }, [
+    addZoomToConnectedEvent,
+    event.id,
+    updateEvent.isPending,
+    zoomAfterConnectEventId,
+    zoomStatus.data?.connected,
+  ]);
+
   const handleAddZoom = useCallback(() => {
     if (!event.id || updateEvent.isPending || connectZoom.isPending) return;
 
     if (zoomStatus.data?.connected) {
-      if (isDraft) {
-        onDraftUpdate?.(event.id, { addZoom: true, addGoogleMeet: false });
-        return;
-      }
-      setPendingVideoProvider("zoom");
-      void (async () => {
-        const updates = { addZoom: true };
-        const guestNotification = await promptGuestNotification({
-          event,
-          action: "update",
-          updates,
-        });
-        if (!guestNotification) {
-          setPendingVideoProvider(null);
-          return;
-        }
-        updateEvent.mutate(
-          {
-            id: event.id,
-            accountEmail: event.accountEmail,
-            ...updates,
-            ...guestNotification,
-          },
-          {
-            onSuccess: () => toast(t("eventForm.zoomAdded")),
-            onError: (error) =>
-              toast.error(
-                error instanceof Error
-                  ? error.message
-                  : t("eventForm.zoomAddFailed"),
-              ),
-            onSettled: () => setPendingVideoProvider(null),
-          },
-        );
-      })();
+      addZoomToConnectedEvent();
       return;
     }
 
@@ -733,21 +838,25 @@ export function EventDetailPopover({
       return;
     }
 
+    setZoomAfterConnectEventId(event.id);
+    setStoredZoomAfterConnectEventId(event.id);
     connectZoom.mutate(undefined, {
       onSuccess: () => toast(t("eventForm.zoomConnectionOpened")),
-      onError: (error) =>
+      onError: (error) => {
+        setZoomAfterConnectEventId(null);
+        setStoredZoomAfterConnectEventId(null);
         toast.error(
           error instanceof Error
             ? error.message
             : t("eventForm.zoomConnectFailed"),
-        ),
+        );
+      },
     });
   }, [
+    addZoomToConnectedEvent,
     connectZoom,
     event,
-    isDraft,
-    onDraftUpdate,
-    promptGuestNotification,
+    t,
     updateEvent,
     zoomStatus.data?.configured,
     zoomStatus.data?.connected,
@@ -859,6 +968,7 @@ export function EventDetailPopover({
           email: attendee.email,
           displayName: attendee.displayName,
           photoUrl: attendee.photoUrl,
+          optional: attendee.optional === true ? true : undefined,
         })),
     [event.accountEmail, event.attendees],
   );
@@ -924,6 +1034,7 @@ export function EventDetailPopover({
         email,
         displayName: attendee.displayName,
         photoUrl: attendee.photoUrl,
+        ...(attendee.optional === true ? { optional: true as const } : {}),
       };
 
       if (isDraft) {
@@ -933,6 +1044,27 @@ export function EventDetailPopover({
       }
     },
     [event.attendees, isDraft, saveField],
+  );
+
+  const handleToggleAttendeeOptional = useCallback(
+    (email: string, optional: boolean) => {
+      const existing = event.attendees || [];
+      const key = email.trim().toLowerCase();
+      if (!existing.some((attendee) => attendee.email.toLowerCase() === key)) {
+        return;
+      }
+      saveField({
+        attendees: existing.map((attendee) =>
+          attendee.email.toLowerCase() === key
+            ? {
+                ...attendee,
+                optional: optional ? true : undefined,
+              }
+            : attendee,
+        ),
+      });
+    },
+    [event.attendees, saveField],
   );
 
   const handleSaveMeetingLink = useCallback(() => {
@@ -1526,7 +1658,11 @@ export function EventDetailPopover({
 
             {/* Attendees — always shown */}
             {event.attendees && event.attendees.length > 0 ? (
-              <EventAttendeesSection event={event} />
+              <EventAttendeesSection
+                event={event}
+                canEditOptional={!isOverlay}
+                onToggleOptional={handleToggleAttendeeOptional}
+              />
             ) : !isOverlay ? (
               <div className="px-4 py-1">
                 <div className="flex items-start gap-3">
@@ -1567,6 +1703,15 @@ export function EventDetailPopover({
                 </div>
               </>
             )}
+
+            <div className="mx-4 my-2 border-t border-border/50" />
+            <div className="px-4 py-1">
+              <ExtensionSlot
+                id="calendar.event-detail.bottom"
+                context={buildEventDetailSlotContext(event)}
+                showEmptyAffordance
+              />
+            </div>
 
             {/* Meeting link */}
             {meetingLink ? (

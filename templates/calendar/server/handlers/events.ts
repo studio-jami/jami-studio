@@ -9,6 +9,7 @@ import {
   type H3Event,
 } from "h3";
 
+import { ensureOrganizerInAttendees } from "../../actions/event-action-helpers.js";
 import type { CalendarEvent } from "../../shared/api.js";
 import { getGoogleEventColorHex } from "../../shared/google-event-colors.js";
 import {
@@ -181,6 +182,7 @@ export const getEvent = defineEventHandler(async (event: H3Event) => {
             responseStatus: a.responseStatus || undefined,
             organizer: a.organizer || undefined,
             self: a.self || undefined,
+            optional: a.optional === true ? true : undefined,
           })),
           remindersUseDefault: evt.reminders?.useDefault ?? true,
           reminders: evt.reminders?.overrides?.map((r: any) => ({
@@ -270,6 +272,9 @@ export const createEvent = defineEventHandler(async (event: H3Event) => {
       id: "",
       source: "google",
       accountEmail: acctEmail,
+      // Match Google Calendar UI: when inviting guests, include the
+      // organizer/self email in attendees so they appear in Guests.
+      attendees: ensureOrganizerInAttendees(eventBody.attendees, acctEmail),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -301,7 +306,7 @@ export const createEvent = defineEventHandler(async (event: H3Event) => {
           title: calEvent.title || eventBody.title || "",
           startTime: calEvent.start,
           endTime: calEvent.end,
-          attendees: eventBody.attendees ?? [],
+          attendees: calEvent.attendees ?? [],
           createdBy: email,
         },
         { owner: email },

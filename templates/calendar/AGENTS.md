@@ -43,6 +43,16 @@ Detailed event, availability, booking, storage, and UI rules live in
   co-hosts to the created Google Calendar event.
 - Keep scheduling answers concrete: exact dates, time zones, conflicts, and
   assumptions.
+- Event detail (panel and popover) exposes `calendar.event-detail.bottom` as an
+  `ExtensionSlot`. Extensions render as widgets there with `slotContext`
+  (eventId, title, start/end, timezones, location, attendees, accountEmail).
+  For inline adornments next to each guest email (e.g. local times), prefer the
+  first-party attendee timezone UI / `set-attendee-timezone` settings, or a
+  source edit — do not claim the slot can inject per-row UI.
+- Use `get-attendee-timezones` / `set-attendee-timezone` to read or save
+  per-guest IANA timezone overrides (`attendee-timezones` user setting). The UI
+  shows each guest's local event-start time when a timezone is known (self from
+  the event/browser zone; others from `attendee.timeZone` or the override map).
 - Use `rsvp-event` for invitation responses. Pass `note` when the user wants a
   visible RSVP comment on a declined or tentative response; pass an empty note to
   clear an existing RSVP comment.
@@ -50,6 +60,9 @@ Detailed event, availability, booking, storage, and UI rules live in
   `addAttendees` so existing RSVP notes/statuses are preserved. Use
   `scope: "all"` only when the user wants a recurring-event guest change applied
   to the whole series.
+- Pass `optional: true` on an attendee object to mark someone optional when
+  creating, drafting, or adding guests. To change optional/required after the
+  fact, replace the full `attendees` list with `optional` set on that guest.
 
 ## Application State
 

@@ -1,10 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  buildReplayMarkers,
   fetchSessionReplayPlayback,
+  filterReplayMarkers,
   replayPayloadEvents,
+  replayViewportAt,
   replayViewportDimensions,
   sanitizeReplayEvents,
+  sanitizeReplayViewportEvents,
 } from "./SessionDetailPage";
 
 const originalFetch = globalThis.fetch;
@@ -290,7 +294,7 @@ describe("session replay sanitization", () => {
     expect(event?.data.texts[1].value).toBe("Normal page copy");
   });
 
-  it("derives viewport dimensions from the first replay meta event", () => {
+  it("derives viewport dimensions from the latest sane meta or resize event", () => {
     expect(
       replayViewportDimensions([
         { type: 4, timestamp: 1000, data: { width: 1280.4, height: 720.2 } },
@@ -301,6 +305,80 @@ describe("session replay sanitization", () => {
         { type: 4, timestamp: 1000, data: { width: 0, height: 720 } },
       ]),
     ).toBeNull();
+    expect(
+      replayViewportDimensions([
+        { type: 4, timestamp: 1000, data: { width: 4800, height: 900 } },
+        { type: 4, timestamp: 1500, data: { width: 1440, height: 900 } },
+      ]),
+    ).toEqual({ width: 1440, height: 900 });
+    expect(
+      replayViewportDimensions([
+        { type: 4, timestamp: 1000, data: { width: 1440, height: 900 } },
+        {
+          type: 3,
+          timestamp: 1600,
+          data: { source: 4, width: 1280, height: 800 },
+        },
+      ]),
+    ).toEqual({ width: 1280, height: 800 });
+    // Absurd multi-monitor spans are clamped (preserve height, shrink width)
+    // instead of discarded, so the stage still has a usable frame.
+    expect(
+      replayViewportDimensions([
+        { type: 4, timestamp: 1000, data: { width: 4800, height: 900 } },
+      ]),
+    ).toEqual({ width: 2205, height: 900 });
+    // 21:9 ultrawide (~2.33) is allowed; multi-monitor spans are clamped.
+    expect(
+      replayViewportDimensions([
+        { type: 4, timestamp: 1000, data: { width: 2560, height: 1080 } },
+      ]),
+    ).toEqual({ width: 2560, height: 1080 });
+    expect(
+      replayViewportDimensions([
+        { type: 4, timestamp: 1000, data: { width: 3840, height: 1080 } },
+      ]),
+    ).toEqual({ width: 2646, height: 1080 });
+  });
+
+  it("rewrites absurd meta dimensions before playback", () => {
+    const sanitized = sanitizeReplayViewportEvents(
+      [
+        { type: 4, timestamp: 1000, data: { width: 4800, height: 900 } },
+        {
+          type: 3,
+          timestamp: 1100,
+          data: { source: 4, width: 5000, height: 800 },
+        },
+        { type: 4, timestamp: 1200, data: { width: 1440, height: 900 } },
+      ],
+      { width: 1024, height: 640 },
+    );
+    // Clamp preserves height; does not force the 1024×640 fallback.
+    expect(sanitized[0]?.data).toMatchObject({ width: 2205, height: 900 });
+    expect(sanitized[1]?.data).toMatchObject({ width: 1960, height: 800 });
+    expect(sanitized[2]?.data).toMatchObject({ width: 1440, height: 900 });
+  });
+
+  it("picks the viewport that was active at a playback offset", () => {
+    const events = [
+      { type: 4, timestamp: 1000, data: { width: 1280, height: 720 } },
+      {
+        type: 3,
+        timestamp: 2500,
+        data: { source: 4, width: 1440, height: 900 },
+      },
+      { type: 4, timestamp: 4000, data: { width: 1024, height: 768 } },
+    ];
+    expect(replayViewportAt(events, 0)).toEqual({ width: 1280, height: 720 });
+    expect(replayViewportAt(events, 1600)).toEqual({
+      width: 1440,
+      height: 900,
+    });
+    expect(replayViewportAt(events, 3500)).toEqual({
+      width: 1024,
+      height: 768,
+    });
   });
 
   it("normalizes scoped chunk route payloads into replay event arrays", () => {
@@ -312,6 +390,93 @@ describe("session replay sanitization", () => {
     expect(replayPayloadEvents({ type: 5, timestamp: 2000 })).toEqual([
       { type: 5, timestamp: 2000 },
     ]);
+  });
+});
+
+describe("session replay timeline markers", () => {
+  it("keeps network diagnostics out of the event timeline", () => {
+    const markers = buildReplayMarkers([
+      {
+        type: 4,
+        timestamp: 1_000,
+        data: { width: 1280, height: 720, href: "https://app.example.test/" },
+      },
+      {
+        type: 5,
+        timestamp: 1_500,
+        data: {
+          tag: "agent-native.network",
+          payload: {
+            api: "fetch",
+            method: "GET",
+            url: "https://api.example.test/noisy",
+            status: 200,
+            ok: true,
+          },
+        },
+      },
+      {
+        type: 3,
+        timestamp: 2_000,
+        data: { source: 2, type: 2, id: 7, x: 24, y: 32 },
+      },
+    ]);
+
+    expect(markers.map((marker) => marker.kind)).toEqual([
+      "navigation",
+      "click",
+    ]);
+  });
+
+  it("keeps only warning and error console diagnostics in the event timeline", () => {
+    const markers = buildReplayMarkers([
+      { type: 4, timestamp: 1_000, data: { width: 1280, height: 720 } },
+      {
+        type: 5,
+        timestamp: 1_100,
+        data: {
+          tag: "agent-native.console",
+          payload: { level: "log", message: "routine" },
+        },
+      },
+      {
+        type: 5,
+        timestamp: 1_200,
+        data: {
+          tag: "agent-native.console",
+          payload: { level: "error", message: "boom" },
+        },
+      },
+    ]);
+
+    expect(markers).toHaveLength(1);
+    expect(markers[0]).toMatchObject({
+      kind: "console",
+      severity: "error",
+      detail: "boom",
+    });
+  });
+
+  it("filters timeline markers by label and detail text", () => {
+    const markers = buildReplayMarkers([
+      {
+        type: 4,
+        timestamp: 1_000,
+        data: { width: 1280, height: 720, href: "https://app.example.test/" },
+      },
+      {
+        type: 3,
+        timestamp: 2_000,
+        data: { source: 2, type: 2, id: 7, x: 24, y: 32 },
+      },
+    ]);
+    expect(filterReplayMarkers(markers, "navigate").map((m) => m.kind)).toEqual(
+      ["navigation"],
+    );
+    expect(filterReplayMarkers(markers, "x 24").map((m) => m.kind)).toEqual([
+      "click",
+    ]);
+    expect(filterReplayMarkers(markers, "missing")).toEqual([]);
   });
 });
 

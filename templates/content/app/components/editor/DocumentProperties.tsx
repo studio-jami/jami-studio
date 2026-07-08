@@ -440,7 +440,7 @@ function personInitials(value: string) {
   );
 }
 
-function PersonPill({ value }: { value: string }) {
+export function PersonPill({ value }: { value: string }) {
   return (
     <span className="inline-flex max-w-full items-center gap-1.5 rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground">
       <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-background text-[9px] font-semibold text-muted-foreground">
@@ -851,16 +851,20 @@ function PropertyRow({
 
 // Mirror of the server's propertyTypeForSourceField — keep in sync. Used to
 // gate which source fields can bind into a column (type compatibility).
-function propertyTypeForSourceFieldType(
+export function propertyTypeForSourceFieldType(
   sourceFieldType: string,
 ): DocumentPropertyType {
-  if (sourceFieldType === "number") return "number";
-  if (sourceFieldType === "datetime" || sourceFieldType === "date") {
+  const normalized = sourceFieldType.trim().toLowerCase();
+  if (normalized === "number") return "number";
+  if (normalized === "datetime" || normalized === "date") {
     return "date";
   }
-  if (sourceFieldType === "url") return "url";
-  if (sourceFieldType === "boolean" || sourceFieldType === "checkbox") {
+  if (normalized === "url") return "url";
+  if (normalized === "boolean" || normalized === "checkbox") {
     return "checkbox";
+  }
+  if (normalized === "tags" || normalized === "multi_select") {
+    return "multi_select";
   }
   return "text";
 }
@@ -1523,11 +1527,13 @@ function PropertyOptionSettingsRow({
 export function PropertyValuePopover({
   property,
   documentId,
+  databaseDocumentId = documentId,
   children,
   portalled = true,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId?: string;
   children: React.ReactNode;
   portalled?: boolean;
 }) {
@@ -1551,6 +1557,7 @@ export function PropertyValuePopover({
         <PropertyValueEditor
           property={property}
           documentId={documentId}
+          databaseDocumentId={databaseDocumentId}
           onDone={() => setOpen(false)}
         />
       </PopoverContent>
@@ -1561,10 +1568,12 @@ export function PropertyValuePopover({
 function PropertyValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const type = property.definition.type;
@@ -1573,6 +1582,7 @@ function PropertyValueEditor({
       <OptionValueEditor
         property={property}
         documentId={documentId}
+        databaseDocumentId={databaseDocumentId}
         onDone={onDone}
       />
     );
@@ -1583,6 +1593,7 @@ function PropertyValueEditor({
       <CheckboxValueEditor
         property={property}
         documentId={documentId}
+        databaseDocumentId={databaseDocumentId}
         onDone={onDone}
       />
     );
@@ -1593,6 +1604,7 @@ function PropertyValueEditor({
       <DateValueEditor
         property={property}
         documentId={documentId}
+        databaseDocumentId={databaseDocumentId}
         onDone={onDone}
       />
     );
@@ -1603,6 +1615,7 @@ function PropertyValueEditor({
       <PersonValueEditor
         property={property}
         documentId={documentId}
+        databaseDocumentId={databaseDocumentId}
         onDone={onDone}
       />
     );
@@ -1613,6 +1626,7 @@ function PropertyValueEditor({
       <FilesMediaValueEditor
         property={property}
         documentId={documentId}
+        databaseDocumentId={databaseDocumentId}
         onDone={onDone}
       />
     );
@@ -1622,6 +1636,7 @@ function PropertyValueEditor({
     <ScalarValueEditor
       property={property}
       documentId={documentId}
+      databaseDocumentId={databaseDocumentId}
       onDone={onDone}
     />
   );
@@ -1630,14 +1645,16 @@ function PropertyValueEditor({
 function PersonValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const mutation = useSetDocumentProperty(documentId);
+  const mutation = useSetDocumentProperty(documentId, databaseDocumentId);
   const { session } = useSession();
   const [people, setPeople] = useState(() => personItems(property.value));
   const [query, setQuery] = useState("");
@@ -1829,14 +1846,16 @@ function PersonValueEditor({
 function FilesMediaValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const mutation = useSetDocumentProperty(documentId);
+  const mutation = useSetDocumentProperty(documentId, databaseDocumentId);
   const [items, setItems] = useState(() => filesMediaItems(property.value));
   const [linkValue, setLinkValue] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -2036,14 +2055,16 @@ function FilesMediaValueEditor({
 function DateValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const mutation = useSetDocumentProperty(documentId);
+  const mutation = useSetDocumentProperty(documentId, databaseDocumentId);
   const [includeTime, setIncludeTime] = useState(
     documentPropertyDateIncludesTime(property.value),
   );
@@ -2249,14 +2270,16 @@ function DateValueEditor({
 function ScalarValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const mutation = useSetDocumentProperty(documentId);
+  const mutation = useSetDocumentProperty(documentId, databaseDocumentId);
   const type = property.definition.type;
   const inputType =
     type === "number"
@@ -2357,14 +2380,16 @@ function ScalarValueEditor({
 function CheckboxValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const mutation = useSetDocumentProperty(documentId);
+  const mutation = useSetDocumentProperty(documentId, databaseDocumentId);
   const checked = Boolean(property.value);
 
   return (
@@ -2396,15 +2421,20 @@ function CheckboxValueEditor({
 function OptionValueEditor({
   property,
   documentId,
+  databaseDocumentId,
   onDone,
 }: {
   property: DocumentProperty;
   documentId: string;
+  databaseDocumentId: string;
   onDone: () => void;
 }) {
   const t = useT();
-  const setValue = useSetDocumentProperty(documentId);
-  const configure = useConfigureDocumentProperty(documentId);
+  const setValue = useSetDocumentProperty(documentId, databaseDocumentId);
+  const configure = useConfigureDocumentProperty(
+    documentId,
+    databaseDocumentId,
+  );
   const options = property.definition.options.options ?? [];
   const [optionQuery, setOptionQuery] = useState("");
   const filteredOptions = filterPropertyOptions(options, optionQuery);
@@ -2621,6 +2651,17 @@ export function AddProperty({
     }))
     .filter((group) => group.fields.length > 0);
   const addPropertySearchInputRef = useRef<HTMLInputElement>(null);
+  const [pendingPropertyType, setPendingPropertyType] =
+    useState<DocumentPropertyType | null>(null);
+  const [pendingSourceFieldId, setPendingSourceFieldId] = useState<
+    string | null
+  >(null);
+  const [addPropertyError, setAddPropertyError] = useState<string | null>(null);
+  const isAddingProperty =
+    configure.isPending ||
+    addSourceFieldProperty.isPending ||
+    pendingPropertyType !== null ||
+    pendingSourceFieldId !== null;
 
   useEffect(() => {
     if (!open) return;
@@ -2632,27 +2673,49 @@ export function AddProperty({
   }, [open]);
 
   function closeAddPropertyPicker() {
+    if (isAddingProperty) return;
     setTypeQuery("");
+    setAddPropertyError(null);
     setOpen(false);
   }
 
   async function add(type: DocumentPropertyType) {
     const label = t(`editor.propertyTypes.${type}`);
-    await configure.mutateAsync({
-      documentId,
-      name: label,
-      type,
-      options: defaultPropertyOptions(type),
-    });
-    closeAddPropertyPicker();
+    setPendingPropertyType(type);
+    setPendingSourceFieldId(null);
+    setAddPropertyError(null);
+    try {
+      await configure.mutateAsync({
+        documentId,
+        name: label,
+        type,
+        options: defaultPropertyOptions(type),
+      });
+      setTypeQuery("");
+      setOpen(false);
+    } catch (error) {
+      setAddPropertyError(error instanceof Error ? error.message : "");
+    } finally {
+      setPendingPropertyType(null);
+    }
   }
 
   async function addFromSourceField(sourceFieldId: string) {
-    await addSourceFieldProperty.mutateAsync({
-      documentId,
-      sourceFieldId,
-    });
-    closeAddPropertyPicker();
+    setPendingSourceFieldId(sourceFieldId);
+    setPendingPropertyType(null);
+    setAddPropertyError(null);
+    try {
+      await addSourceFieldProperty.mutateAsync({
+        documentId,
+        sourceFieldId,
+      });
+      setTypeQuery("");
+      setOpen(false);
+    } catch (error) {
+      setAddPropertyError(error instanceof Error ? error.message : "");
+    } finally {
+      setPendingSourceFieldId(null);
+    }
   }
 
   return (
@@ -2661,7 +2724,7 @@ export function AddProperty({
       onOpenChange={(nextOpen) => {
         if (nextOpen) {
           setOpen(true);
-        } else {
+        } else if (!isAddingProperty) {
           closeAddPropertyPicker();
         }
       }}
@@ -2722,28 +2785,39 @@ export function AddProperty({
                     name: group.source.sourceName,
                   })}
                 </div>
-                {group.fields.map((field) => (
-                  <button
-                    key={field.id}
-                    type="button"
-                    aria-label={t("editor.properties.sourceField", {
-                      name: field.sourceFieldLabel,
-                    })}
-                    disabled={addSourceFieldProperty.isPending}
-                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent disabled:opacity-50"
-                    onClick={() => void addFromSourceField(field.id)}
-                  >
-                    <IconLink className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="min-w-0 flex-1 truncate">
-                      {field.sourceFieldLabel}
-                    </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {group.source.metadata.federation?.role === "secondary"
-                        ? t("editor.properties.federated")
-                        : t("editor.properties.source")}
-                    </span>
-                  </button>
-                ))}
+                {group.fields.map((field) => {
+                  const SourceFieldIcon =
+                    TYPE_ICONS[
+                      propertyTypeForSourceFieldType(field.sourceFieldType)
+                    ];
+                  return (
+                    <button
+                      key={field.id}
+                      type="button"
+                      aria-label={t("editor.properties.sourceField", {
+                        name: field.sourceFieldLabel,
+                      })}
+                      disabled={isAddingProperty}
+                      aria-busy={pendingSourceFieldId === field.id}
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent disabled:opacity-50"
+                      onClick={() => void addFromSourceField(field.id)}
+                    >
+                      {pendingSourceFieldId === field.id ? (
+                        <Spinner className="size-4 shrink-0 text-muted-foreground" />
+                      ) : (
+                        <SourceFieldIcon className="size-4 shrink-0 text-muted-foreground" />
+                      )}
+                      <span className="min-w-0 flex-1 truncate">
+                        {field.sourceFieldLabel}
+                      </span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {group.source.metadata.federation?.role === "secondary"
+                          ? t("editor.properties.federated")
+                          : t("editor.properties.source")}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             ))}
             {filteredPropertyTypes.length === 0 ? (
@@ -2761,10 +2835,15 @@ export function AddProperty({
                     type: t(`editor.propertyTypes.${type}`),
                   })}
                   className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent"
-                  disabled={configure.isPending}
+                  disabled={isAddingProperty}
+                  aria-busy={pendingPropertyType === type}
                   onClick={() => void add(type)}
                 >
-                  <Icon className="size-4 text-muted-foreground" />
+                  {pendingPropertyType === type ? (
+                    <Spinner className="size-4 text-muted-foreground" />
+                  ) : (
+                    <Icon className="size-4 text-muted-foreground" />
+                  )}
                   <span className="flex-1">
                     {t(`editor.propertyTypes.${type}`)}
                   </span>
@@ -2776,6 +2855,15 @@ export function AddProperty({
                 </button>
               );
             })}
+            {addPropertyError !== null ? (
+              <div
+                role="alert"
+                className="px-2 py-1.5 text-xs text-destructive"
+              >
+                {t("editor.properties.addPropertyFailed")}
+                {addPropertyError ? ` ${addPropertyError}` : null}
+              </div>
+            ) : null}
           </div>
         </div>
       </PopoverContent>
