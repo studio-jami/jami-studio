@@ -28,7 +28,7 @@ out.push("and skill. For a curated index, see llms.txt.");
 out.push("");
 for (const file of files) {
   if (file.endsWith("llms-full.txt")) continue;
-  const rel = relative(docsDir, file);
+  const rel = relative(docsDir, file).replaceAll("\\", "/");
   out.push(`\n---\n## ${rel}\n`);
   out.push(readFileSync(file, "utf8"));
 }
