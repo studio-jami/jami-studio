@@ -2,66 +2,72 @@
 
 ## Summary
 
-- Base ref: `HEAD` (8a4d80c27a1c72d545885ca35c782edc3aff693b)
-- Source ref: `source/main` (7c84f30b17d743f241dcf9c27e4d9db0c9dc0a8c)
+- Base ref: `HEAD` (ba949d8d59af0efbb8225ad34e59d5cd47c9b9ee)
+- Source ref: `source/main` (9b8ee99b8d19f8228d282d089cc420fbb45de8d4)
 - Merge base: `8b75a5e2f2d7f1a0db62397c9d8ec7eaaa921066`
-- Base-only commits: 21
-- Source-only commits: 92
-- Changed files from base to source: 1527
-- Protected-path changes: 106
+- Base-only commits: 33
+- Source-only commits: 113
+- Changed files from base to source: 1996
+- Protected-path changes: 132
 - Registry-lane changes: 29
-- Dry-merge conflicts: 11
+- Dry-merge conflicts: 17
 
 ## Recommendation
 
-Do not merge source directly into Jami `main`. Review protected-path changes
-first, port high-value upstream changes by lane, and keep Jami takeover decisions
-intact unless explicitly reversed.
+Do not merge source directly into Jami `main`. For `sync/intake/**`, accept
+upstream by default and strip or adapt only obvious takeover contradictions.
+Keep Jami takeover decisions intact unless explicitly reversed.
 
 ## Changed Files By Area
 
-- packages/core: 749
-- templates/clips: 143
-- templates/content: 120
-- templates/design: 116
-- packages/docs: 43
-- templates/analytics: 35
-- templates/slides: 34
-- templates/calendar: 31
-- templates/plan: 31
-- templates/assets: 23
-- templates/mail: 22
-- scripts: 21
-- .github: 20
-- .agents: 15
-- templates/forms: 15
+- packages/core: 806
+- templates/clips: 177
+- templates/analytics: 162
+- templates/content: 142
+- templates/design: 140
+- packages/dispatch: 102
+- templates/slides: 52
+- packages/docs: 44
+- templates/calendar: 43
+- templates/plan: 38
+- templates/mail: 30
+- templates/assets: 29
+- scripts: 23
+- .github: 22
+- _ops: 18
+- templates/forms: 18
+- .agents: 17
+- templates/dispatch: 17
 - packages/skills: 12
-- packages/dispatch: 10
-- templates/dispatch: 9
+- templates/chat: 8
 - packages/vscode-extension: 7
+- templates/brain: 7
 - packages/desktop-app: 6
 - skills: 6
+- templates/macros: 6
 - plans: 5
 - templates/.retired: 5
-- templates/brain: 5
-- templates/chat: 5
-- packages/toolkit: 3
-- templates/macros: 3
+- packages/scheduling: 4
+- packages/toolkit: 4
+- packages/code-agents-ui: 3
+- packages/pinpoint: 3
+- .changeset: 2
+- .claude-plugin: 2
 - docs: 2
-- packages/scheduling: 2
+- packages/embedding: 2
+- packages/frame: 2
+- packages/mobile-app: 2
+- packages/shared-app-config: 2
 -  .video-bakeoff: 1
-- .claude-plugin: 1
 - .gitignore: 1
+- .screenshots: 1
 - agent-native.json: 1
 - AGENTS.md: 1
 - deploy: 1
+- DEVELOPMENT.md: 1
 - package.json: 1
-- packages/code-agents-ui: 1
-- packages/embedding: 1
-- packages/frame: 1
-- packages/mobile-app: 1
-- packages/pinpoint: 1
-- packages/shared-app-config: 1
+- packages/migrate: 1
+- pnpm-lock.yaml: 1
 - pnpm-workspace.yaml: 1
 - PORT-GUIDE-design-followups.md: 1
 - README.md: 1
@@ -81,6 +87,8 @@ intact unless explicitly reversed.
 
 ## Protected-Path Changes
 
+- D .changeset/clean-jami-metadata.md
+- D .changeset/windows-install-builds.md
 - A .github/workflows/auto-merge-version-packages.yml
 - A .github/workflows/auto-publish.yml
 - R098 .github/workflows/cancel-active-netlify-previews.yml
@@ -99,12 +107,33 @@ intact unless explicitly reversed.
 - A .github/workflows/pr-visual-recap-reusable.yml
 - A .github/workflows/pr-visual-recap.yml
 - R097 .github/workflows/promote-netlify-deploy.yml
+- D .github/workflows/source-sync-intake.yml
+- D .github/workflows/source-sync-review.yml
 - A .github/workflows/sync-builder-starter.yml
 - A .github/workflows/sync-public-skills.yml
 - M AGENTS.md
 - M README.md
+- D _ops/planning/research/capabilities/2026-07-08-jami-studio-capability-deep-dive.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-07-08-realtime-voice-video-avatar-feasibility.md
+- D _ops/planning/roadmaps/real-time/2026-07-08-realtime-voice-avatar-roadmap.md
+- D _ops/readiness/2026-07-08-inherited-hardening-triage.md
+- D _ops/readiness/2026-07-08-takeoff-audit.md
+- D _ops/source-sync/README.md
+- D _ops/source-sync/automation.md
+- D _ops/source-sync/fixtures/protected-paths.json
+- D _ops/source-sync/fixtures/registry-paths.json
+- D _ops/source-sync/hard-rules.md
+- D _ops/source-sync/policy.md
+- D _ops/source-sync/reports/2026-07-08-upstream-sync.md
+- D _ops/source-sync/reports/README.md
+- D _ops/source-sync/runbook.md
+- D _ops/source-sync/scripts/create-intake-packet.ts
+- D _ops/source-sync/scripts/refresh-source-fork.ts
+- D _ops/source-sync/scripts/source-sync-report.ts
+- D _ops/source-sync/whats-left.md
 - D deploy/netlify/netlify-sites.json
 - M package.json
+- M packages/core/src/cli/add.ts
 - M packages/core/src/cli/app-skill.spec.ts
 - M packages/core/src/cli/app-skill.ts
 - M packages/core/src/cli/connect.spec.ts
@@ -130,9 +159,12 @@ intact unless explicitly reversed.
 - M packages/core/src/cli/skills.ts
 - M packages/core/src/cli/telemetry.ts
 - M packages/core/src/cli/templates-meta.ts
+- M packages/core/src/cli/workspace-dev.spec.ts
+- M packages/core/src/cli/workspace-dev.ts
 - M packages/core/src/cli/workspacify.ts
 - M packages/docs/app/root.tsx
 - M packages/docs/app/seo.ts
+- M pnpm-lock.yaml
 - M templates/analytics/AGENTS.md
 - M templates/analytics/README.md
 - M templates/analytics/netlify.toml
@@ -175,18 +207,7 @@ intact unless explicitly reversed.
 - M templates/macros/AGENTS.md
 - M templates/macros/README.md
 - M templates/macros/netlify.toml
-- M templates/mail/AGENTS.md
-- M templates/mail/README.md
-- M templates/mail/netlify.toml
-- M templates/plan/AGENTS.md
-- M templates/plan/DEVELOPING.md
-- M templates/plan/README.md
-- M templates/plan/netlify.toml
-- M templates/slides/AGENTS.md
-- M templates/slides/DEVELOPING.md
-- M templates/slides/README.md
-- M templates/slides/netlify.toml
-- M templates/videos/netlify.toml
+- ...and 12 more
 
 ## Registry-Lane Changes
 
@@ -222,8 +243,13 @@ intact unless explicitly reversed.
 
 ## Dry-Merge Conflicts
 
+- tree.
+- tree.
 - README.md
+- packages/code-agents-ui/package.json
+- packages/core/src/client/analytics.ts
 - packages/skills/package.json
+- templates/clips/actions/lib/audio-only-transcription.ts
 - templates/content/AGENTS.md
 - templates/content/actions/_builder-cms-read-client.ts
 - templates/content/actions/_builder-docs-client.ts
@@ -233,23 +259,45 @@ intact unless explicitly reversed.
 - templates/content/app/i18n-data.ts
 - templates/content/app/i18n/zh-TW.ts
 - templates/content/parity/matrix.md
+- templates/slides/app/components/editor/ImageDropPromptPopover.tsx
 
 ## Upstream Commits
 
+- 9b8ee99b8 Fix hosted Builder source sync batching
+- b8ac445a4 chore: version packages [skip netlify] (#1964)
+- 823d63557 Ship scheduled runs and template workflow fixes (#1963)
+- 0fda561d1 Improve Content database saved view filters (#1960)
+- eeb433efa chore: version packages [skip netlify] (#1962)
+- 942165f22 fix: design live-edit bridge token auth, SPA routing, and agent write-consent prompt (#1956)
+- bda16de42 chore: version packages [skip netlify] (#1961)
+- e310ac1b8 Add monitoring and settings improvements (#1957)
+- 0af629708 Merge pull request #1941 from BuilderIO/codex/content-builder-source-field-fidelity
 - 7c84f30b1 Fix Clips first-play startup (#1955)
 - b43ea6523 chore: version packages [skip netlify] (#1954)
 - bba733221 Harden background agent run routing (#1953)
 - 14110434f Open Clips chapter regeneration in chat (#1952)
 - 75cdd0894 chore: version packages [skip netlify] (#1951)
 - d6153fdcb Fix deploy guards and analytics reliability (#1949)
+- c0daaf2f7 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - e4f6237d6 chore: version packages [skip netlify] (#1950)
+- db8049254 fix(content): align source binding and bulk tag clearing
+- bb2a41af2 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - 3995e4e8c Simplify Dispatch overview to chat and apps (#1946)
+- 8ad8f66b5 fix(content): preserve Builder source option fidelity
+- 175c3928f Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - 02fa4462a chore: version packages [skip netlify] (#1948)
+- 381d2526a Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - a1db61099 Fix Netlify deploy routing guard (#1947)
+- 0a85c8aa1 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - e87e59b19 chore: version packages [skip netlify] (#1945)
+- 8dfd45859 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
+- fb6ad1bde Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
 - 1de8510eb Fix Netlify deploy routing and docs CTA (#1944)
 - eb4473002 chore: version packages [skip netlify] (#1943)
+- 561a67502 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-field-fidelity
+- 8455a7a31 chore(content): format Builder source changelog
 - 8940011c6 chore: version packages [skip netlify] (#1942)
+- 1acb143e3 fix(content): preserve Builder source tag fields
 - 3c7adac3e Add docs build-from-scratch CTA (#1940)
 - f6ecee29f Design app: drag-and-drop hardening — reorder feedback, drop targeting, data-integrity fixes from real-data deep testing (#1932)
 - 34ef171de chore: version packages [skip netlify] (#1939)
@@ -275,24 +323,3 @@ intact unless explicitly reversed.
 - 76082417e Merge pull request #1819 from BuilderIO/codex/clips-media-reliability
 - d6389a1b1 Fix wrong duration for paused fullscreen recordings (#1925)
 - 4eefc760d Fix: Clips Chrome extension recordings survive a tab refresh (#1927)
-- 3b6e08dec chore: version packages [skip netlify] (#1928)
-- 9595eca87 Merge pull request #1759 from BuilderIO/codex/builder-docs-blog-scale-baseline
-- f018fac14 Merge main into clips media reliability
-- 0663eaa27 Merge origin/main before merging Builder scale PR
-- 5fec28cb9 Move New Recording button above library clips (#1904)
-- f79e2209e Merge pull request #1907 from BuilderIO/ai_main_57aaaeed2b0d4c0a94eb
-- 8df0a592e Clips: release camera on stop, parallel chunk uploads (#1813)
-- 6d7ef3dfc Fix Content database tests after merge
-- 5cef80891 Merge origin/main into builder docs blog scale baseline
-- b24d08a09 Avoid phantom Builder body change sets
-- 69e1e387f Defer collab presence state updates
-- 600435a4c Fix Builder open-row body hydration tail
-- 890f65b04 Merge remote-tracking branch 'origin/main' into codex/builder-docs-blog-scale-baseline
-- 66ffcd933 Starved open-row hydration recovers; client aborts are not 500s; defer parent editor callbacks
-- 8976a2847 A client can only clear content it actually loaded
-- 30186761f Harden Builder bulk update staging
-- 16f742976 No Continue button during healthy sync; defer the collab seed setContent
-- f5f5ae2b1 Open-row promotion can no longer hydrate a document to empty
-- 7e3bd9f57 fix: keep read-only banner fully non-blocking (no pointer-events-auto)
-- e03c0b0c5 fix: sort ReadOnlyDesignBanner import alphabetically (oxfmt)
-- 4335925f4 Move read-only banner to bottom and use info styling
