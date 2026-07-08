@@ -1,5 +1,92 @@
 # @agent-native/core
 
+## 0.90.11
+
+### Patch Changes
+
+- bba7332: Keep agent-chat workers on the hosted foreground timeout unless they are actually running inside a background function, preventing misrouted workers from being killed as stale runs.
+- bba7332: Fix "The model returned an empty response" on hard/long-context chat turns: interactive chat now resolves max_output_tokens to min(model ceiling, 32K) instead of the flat 4096-8192 per-engine defaults, Anthropic/Gemini numeric thinking budgets are clamped to always leave real output headroom under max_tokens, and the empty-final-response retry now raises the token ceiling and steps reasoning effort down a tier (with the retry budget raised from 1 to 2 attempts) instead of re-issuing the identical doomed request.
+- bba7332: Stop misrouted agent-chat workers from taking the large background Neon connection pool. `isBackgroundFunctionPoolContext()` no longer trusts the dispatch marker (`__AGENT_NATIVE_BACKGROUND_RUNTIME_EXPECTED__`) — a worker dispatched toward a `-background` URL but routed onto the ~60s synchronous function would otherwise open the 8-connection worker pool while running as one of many warm sync-function instances, exhausting the Neon pooled endpoint (connection terminated / statement timeouts / failed heartbeat writes surfacing as stale runs). Only the genuine `-background` runtime marker (set at cold start) unlocks the larger pool now, mirroring the same proof-of-landing tightening applied to the worker soft-timeout.
+
+## 0.90.10
+
+### Patch Changes
+
+- d6153fd: Remove extra root padding from borderless wireframe blocks and tighten the Toolkit docs hero wireframe header.
+- d6153fd: Retry reasoning-only empty agent responses once before surfacing the manual retry message.
+- d6153fd: Fix Netlify single-template deploy previews by keeping Nitro's `preferStatic` true (so `/assets/*` is served from `dist`) and stripping the harmful default-function URL rewrite that is incompatible with `config.path: "/*"`.
+- d6153fd: Enable first-party session replay by default for signed-in hosted users when Agent Native Analytics is configured, while preserving explicit replay opt-outs.
+- d6153fd: Let Builder video uploads request stable URLs while allowing asynchronous compression, so Clips can keep a single media URL without disabling compression.
+
+## 0.90.9
+
+### Patch Changes
+
+- a1db610: Fix Netlify single-template deploy previews by keeping Nitro's `preferStatic` true (so `/assets/*` is served from `dist`) and stripping the harmful default-function URL rewrite that is incompatible with `config.path: "/*"`.
+
+## 0.90.8
+
+### Patch Changes
+
+- 1de8510: Allow public Builder waitlist signups to submit an explicit email address for docs build-online CTAs.
+- 1de8510: Emit and require a Netlify fallback redirect so single-template deploys route dynamic app requests to the server function instead of publishing platform 404s.
+
+## 0.90.7
+
+### Patch Changes
+
+- 3c7adac: Allow public Builder waitlist signups to submit an explicit email address for docs build-online CTAs.
+- 3c7adac: Fail Netlify builds when the generated output is missing the catch-all server function needed to serve the app.
+
+## 0.90.6
+
+### Patch Changes
+
+- f6ecee2: Stop unnecessary re-renders driven by collaborative-doc awareness traffic and coalesce SSE-driven query invalidation. `useCollaborativeDoc`'s `activeUsers`/`agentPresent` now only produce a new identity when the deduped active-user set actually changes, instead of on every awareness broadcast (cursor jiggles, unchanged re-published presence state); `useDbSync` batches SSE/poll-driven `invalidateQueries` calls into at most one flush per 250ms instead of one per event. Interaction-critical events (agent navigation, `__set_url__`, and guided questions app-state writes) bypass the coalesce window and flush immediately, so agent-driven navigation and prompts are never delayed by batching.
+
+## 0.90.5
+
+### Patch Changes
+
+- 3da78df: Classify BYO-provider rate limits (HTTP 429) as retryable. The native Anthropic and AI-SDK engines now forward the provider HTTP status as a structured `http_<status>` errorCode + `statusCode` for every failure (not just 401), so a bare "429 status code (no body)" surfaces as `http_429`. `isRetryableError` also matches `http_429` and bare `429` messages. Previously a directly-connected provider key that Anthropic rate-limited failed hard instead of backing off and retrying like the Builder gateway path does, and rate-limited runs can now auto-continue.
+- 3da78df: Fix localhost Design bridge self-registration so capability payloads match the Design server action and bridge tokens can be persisted.
+- 3da78df: Make hosted foreground agent turns continue from the server by default, so switching tabs or closing the browser no longer leaves long runs dependent on a client-side auto-continue POST.
+
+## 0.90.4
+
+### Patch Changes
+
+- 9f396bc: Fail closed for unregistered History/Review resource types, allocate unique version numbers atomically, verify resolve/consume update counts, and prefer server snapshots over client-supplied ones.
+- 9f396bc: Add live visual-edit bridge support for localhost apps so Design can render editable live iframes instead of static HTML snapshots.
+- 9f396bc: Expire sticky provider auth-failure markers, skip rejected deploy env keys during engine auto-detect, and clear failure markers from the legacy save-key path.
+- 9f396bc: Keep React Router build packages installed for scaffolded app builds and report missing build dependencies before spawning the CLI.
+
+## 0.90.3
+
+### Patch Changes
+
+- ec523c4: Allow Builder transcription callers to override the request timeout so long-running media workflows can avoid premature aborts.
+- ec523c4: Skip saved model provider keys after auth failures so chats can fall back to Builder credentials instead of repeatedly retrying rejected BYO keys.
+- ec523c4: Add a Builder upload option for internal recording artifacts to skip asset-library registration.
+- ec523c4: Show the current sharing visibility icon directly in shared ShareButton triggers and use the users-group glyph for organization visibility.
+- ec523c4: Add first-class Toolkit docs plus reusable History, Comments/Review, Org/Team, Setup/Connections, and Command/Navigation kit primitives.
+- Updated dependencies [ec523c4]
+  - @agent-native/toolkit@0.4.2
+
+## 0.90.2
+
+### Patch Changes
+
+- 74d3e5a: Prevent client fetch storms during high-volume background mutations: `useActionMutation` accepts `skipActionQueryInvalidation` so background mutations can perform narrow invalidation instead of refetching every action query, `useDbSync` accepts `suppressActionInvalidationFor` to skip whole-action-cache invalidation for named high-volume action sync events, and action-query retries are bounded to one attempt for network-level failures (Chrome reports connection-pool exhaustion as a generic fetch failure, so unbounded retries sustained the storm).
+- 16f7429: Defer collaborative rich-markdown seed writes to a timer task so initial Y.Doc seeding does not call `setContent` from React lifecycle.
+- 254f061: Defer agent-authored URL navigation out of React effects to avoid lifecycle flushSync warnings.
+- 69e1e38: Defer collaborative awareness presence updates so editor creation does not trigger React render-time state warnings.
+- 8976a28: Log framework route failures with route, status, message, and development stacks before returning JSON errors.
+- d61ca0c: The collaborative reconcile applies external content on a timer task instead of a microtask, so `setContent` can no longer run inside a React lifecycle flush ("flushSync was called from inside a lifecycle method" console errors during collab reconciliation).
+- 66ffcd9: Treat client-aborted framework route requests as disconnects instead of logging and returning 500 errors.
+- a74a885: `useDbSync` batches consisting entirely of suppressed action events (via `suppressActionInvalidationFor`) now skip the fixed framework invalidation list (extension, slot, tool, and app-state keys) as well as the whole-action-cache invalidation — high-volume background mutations no longer refetch framework queries on every poll tick. Events are still forwarded to `onEvent` and per-source change versions still bump.
+- d44ad4e: Concurrent top-level async transactions on the better-sqlite3 driver are serialized per connection. Previously a transaction starting while another was open saw `inTransaction` and opened a savepoint inside the other task's transaction, which then committed out from under it ("no such savepoint" 500s under concurrent reads/writes). Same-task nesting is detected via AsyncLocalStorage and keeps the direct savepoint path.
+
 ## 0.90.1
 
 ### Patch Changes

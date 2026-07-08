@@ -28,6 +28,8 @@ import {
 } from "./_database-source-utils.js";
 import { getContentDatabaseResponse } from "./_database-utils.js";
 
+export const BUILDER_SOURCE_REVIEW_PREPARE_LIMIT = 100;
+
 function riskRank(level: ContentDatabaseSourceRiskLevel) {
   if (level === "high") return 3;
   if (level === "medium") return 2;
@@ -39,6 +41,12 @@ function maxRisk(
   next: ContentDatabaseSourceRiskLevel,
 ) {
   return riskRank(next) > riskRank(current) ? next : current;
+}
+
+function reviewPreparePriority(changeSet: ContentDatabaseSourceChangeSet) {
+  if (changeSet.state === "pending_push") return 0;
+  if (changeSet.state === "staged_revision") return 1;
+  return 2;
 }
 
 function parsePayload(value: string) {
@@ -139,13 +147,15 @@ export function buildBuilderSourceReviewPayload(args: {
   const pushMode = args.source.metadata.pushMode ?? "autosave";
   const summary =
     rows.length === 1
-      ? `1 Jami Studio row has changes ready to review.`
-      : `${rows.length} Jami Studio rows have changes ready to review.`;
+      ? `1 Builder row has changes ready to review.`
+      : `${rows.length} Builder rows have changes ready to review.`;
 
   return {
     summary,
     sourceName: args.source.sourceName,
     sourceTable: args.source.sourceTable,
+    totalRowCount: args.changeSets.length,
+    preparedRowLimit: args.changeSets.length,
     pushMode,
     dryRunOnly: !args.source.capabilities.liveWritesEnabled,
     liveWritesEnabled: args.source.capabilities.liveWritesEnabled,
@@ -156,22 +166,22 @@ export function buildBuilderSourceReviewPayload(args: {
       status: resultStatus,
       message:
         resultStatus === "succeeded"
-          ? "Pushed to Jami Studio and reconciled locally."
+          ? "Pushed to Builder and reconciled locally."
           : resultStatus === "failed"
-            ? "Jami Studio push failed. The change remains retryable."
+            ? "Builder push failed. The change remains retryable."
             : resultStatus === "running"
-              ? "Jami Studio push is running."
+              ? "Builder push is running."
               : resultStatus === "validated"
                 ? args.source.capabilities.liveWritesEnabled
                   ? hasExecutionEvidence
-                    ? "Push checked successfully. Ready to send to Jami Studio."
-                    : "Ready to send to Jami Studio."
-                  : "Push checked successfully. Nothing was sent to Jami Studio."
+                    ? "Push checked successfully. Ready to send to Builder."
+                    : "Ready to send to Builder."
+                  : "Push checked successfully. Nothing was sent to Builder."
                 : resultStatus === "blocked"
-                  ? "Push needs attention before anything can be sent to Jami Studio."
+                  ? "Push needs attention before anything can be sent to Builder."
                   : resultStatus === "stale"
                     ? "Push needs a fresh review because the plan changed."
-                    : "Jami Studio writes are off in this local build. Push will check the update only.",
+                    : "Builder writes are off in this local build. Push will check the update only.",
     },
   };
 }
@@ -199,14 +209,8 @@ async function approveChangeSetForReview(args: {
   });
   const db = getDb();
   const summary = args.changeSet.summary
-    .replace(
-      /^Pending local Jami Studio CMS/,
-      "Reviewing local Jami Studio CMS",
-    )
-    .replace(
-      /^Staged local-only Jami Studio CMS/,
-      "Reviewing local Jami Studio CMS",
-    );
+    .replace(/^Pending local Builder CMS/, "Reviewing local Builder CMS")
+    .replace(/^Staged local-only Builder CMS/, "Reviewing local Builder CMS");
 
   if (existing) {
     await db
@@ -234,7 +238,7 @@ async function approveChangeSetForReview(args: {
         decision: "approved",
         stateFrom: existing.state,
         stateTo: "approved",
-        note: "Approved by Jami Studio update review.",
+        note: "Approved by Builder update review.",
         createdAt: args.now,
       });
     }
@@ -270,7 +274,7 @@ async function approveChangeSetForReview(args: {
     decision: "approved",
     stateFrom: "pending_push",
     stateTo: "approved",
-    note: "Approved by Jami Studio update review.",
+    note: "Approved by Builder update review.",
     createdAt: args.now,
   });
   return changeSetId;
@@ -370,7 +374,7 @@ async function upsertExecutionGate(args: {
 
 export default defineAction({
   description:
-    "Prepare one local Jami Studio CMS review payload from pending outbound changes. This approves, prepares, and validates a dry-run plan, but never calls Jami Studio APIs.",
+    "Prepare one local Builder CMS review payload from pending outbound changes. This approves, prepares, and validates a dry-run plan, but never calls Builder APIs.",
   schema: z.object({
     databaseId: z.string().optional().describe("Database ID"),
     documentId: z.string().optional().describe("Database document/page ID"),
@@ -378,6 +382,11 @@ export default defineAction({
       .string()
       .optional()
       .describe("Target source ID (defaults to the primary source)"),
+    changeSetIds: z
+      .array(z.string())
+      .max(BUILDER_SOURCE_REVIEW_PREPARE_LIMIT)
+      .optional()
+      .describe("Optional bounded set of Builder change-set IDs to prepare"),
     pushModeConfirmation: z
       .enum(["autosave", "draft", "publish"])
       .optional()
@@ -403,20 +412,35 @@ export default defineAction({
       args.sourceId,
     );
     if (!snapshot || snapshot.sourceType !== "builder-cms") {
-      throw new Error(
-        "Attach a Jami Studio CMS source before reviewing updates.",
-      );
+      throw new Error("Attach a Builder CMS source before reviewing updates.");
     }
-    const reviewableChanges = snapshot.changeSets.filter(
+    const requestedIds = new Set(args.changeSetIds ?? []);
+    const allReviewableChanges = snapshot.changeSets.filter(
       (changeSet) =>
         changeSet.direction === "outbound" &&
         (changeSet.state === "pending_push" ||
           changeSet.state === "staged_revision" ||
-          changeSet.state === "approved"),
+          changeSet.state === "approved") &&
+        (requestedIds.size === 0 || requestedIds.has(changeSet.id)),
     );
-    if (reviewableChanges.length === 0) {
-      throw new Error("No pending local Jami Studio changes to review.");
+    if (
+      requestedIds.size > 0 &&
+      allReviewableChanges.length !== requestedIds.size
+    ) {
+      const foundIds = new Set(
+        allReviewableChanges.map((changeSet) => changeSet.id),
+      );
+      const missingIds = [...requestedIds].filter((id) => !foundIds.has(id));
+      throw new Error(
+        `Requested Builder change-set is not reviewable: ${missingIds.join(", ")}.`,
+      );
     }
+    if (allReviewableChanges.length === 0) {
+      throw new Error("No pending local Builder changes to review.");
+    }
+    const reviewableChanges = [...allReviewableChanges]
+      .sort((a, b) => reviewPreparePriority(a) - reviewPreparePriority(b))
+      .slice(0, BUILDER_SOURCE_REVIEW_PREPARE_LIMIT);
 
     const now = new Date().toISOString();
     const reviewerEmail =
@@ -438,7 +462,7 @@ export default defineAction({
       database,
       args.sourceId,
     );
-    if (!approvedSnapshot) throw new Error("Jami Studio source disappeared.");
+    if (!approvedSnapshot) throw new Error("Builder source disappeared.");
     const approvedChangeSets = approvedSnapshot.changeSets.filter(
       (changeSet) =>
         approvedIds.includes(changeSet.id) && changeSet.state === "approved",
@@ -464,7 +488,7 @@ export default defineAction({
       database,
       args.sourceId,
     );
-    if (!reviewedSnapshot) throw new Error("Jami Studio source disappeared.");
+    if (!reviewedSnapshot) throw new Error("Builder source disappeared.");
     // Build the review payload from the TARGET source snapshot, not
     // response.source (which is always the primary). Re-read after the gate
     // upsert so newly validated/blocked/stale execution rows are visible to
@@ -474,12 +498,16 @@ export default defineAction({
     );
     const response = await getContentDatabaseResponse(database.id);
 
+    const review = buildBuilderSourceReviewPayload({
+      source: reviewedSnapshot,
+      changeSets: reviewedChangeSets,
+    });
+    review.totalRowCount = allReviewableChanges.length;
+    review.preparedRowLimit = BUILDER_SOURCE_REVIEW_PREPARE_LIMIT;
+
     return {
       ...response,
-      review: buildBuilderSourceReviewPayload({
-        source: reviewedSnapshot,
-        changeSets: reviewedChangeSets,
-      }),
+      review,
     };
   },
 });

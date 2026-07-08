@@ -25,14 +25,45 @@ const databaseMessages = {
   back: "Back",
   bestWhenSameKindAdditionalRows:
     "Best when this collection has the same kind of records and should appear as additional rows.",
-  builderSpace: "Jami Studio space",
-  builderUpdateFailed: "Jami Studio update failed",
-  builderWriteModeWasNotChanged: "Jami Studio write mode was not changed",
-  builderBodiesReadyLocally: "Jami Studio article bodies are ready locally.",
+  builderSpace: "Builder space",
+  builderBulkUpdateNotStaged: "Builder bulk update not staged",
+  builderBulkUpdateStaged: "Builder bulk update staged",
+  builderUpdateFailed: "Builder update failed",
+  builderWriteModeWasNotChanged: "Builder write mode was not changed",
+  builderBodiesReadyLocally: "Builder article bodies are ready locally.",
   builderBodiesQueued: "{{count}} queued",
   builderBodySync: "Body sync",
   builderBodySyncFailed: "{{count}} failed",
+  builderBodySyncFailedNotice:
+    "This article's body could not be synced from Builder",
+  builderBodySyncFailedDescription:
+    "The row stays editable, but the Builder body did not finish syncing. Review the article content before publishing or pushing changes.",
+  builderBodySyncing: "Content is still syncing from Builder",
+  builderBodySyncingDescription:
+    "Editing is paused until the Builder body finishes syncing, so the existing article content is not overwritten.",
   builderBodiesHydrated: "{{hydrated}} of {{total}} bodies hydrated",
+  builderReviewShowingRows:
+    "Showing {{shown}} of {{total}} Builder rows for this review.",
+  builderReviewShowMore: "Show more",
+  builderReviewRemainingBatches:
+    "Review again after this batch to prepare the remaining Builder changes.",
+  builderBodiesSyncingProgress: "Syncing {{hydrated}} of {{total}} bodies.",
+  builderBodiesSyncFinishedWithFailures:
+    "{{hydrated}} of {{total}} bodies synced. {{failed}} failed.",
+  builderRowsFetched: "{{count}} Builder rows fetched",
+  builderRowsFetchedBodiesSyncing:
+    "{{rows}} rows fetched. Syncing {{hydrated}} of {{total}} bodies.",
+  builderRowsFetchedBodiesSyncFinishedWithFailures:
+    "{{rows}} rows fetched. {{hydrated}} of {{total}} bodies synced. {{failed}} failed.",
+  builderRowsFetchedSyncingBodies:
+    "Builder rows are fetched. Article bodies are still syncing.",
+  builderRowsFetchingMore: "fetching more rows",
+  builderRowsFetchFailed: "row fetch needs attention",
+  builderRowsFetchedSoFar: "{{count}} rows fetched so far.",
+  builderRowsFinishingUp: "Builder rows are finishing up.",
+  builderRowsLoadingBackground:
+    "Builder is still loading rows in the background.",
+  builderRowsLoadingHitSnag: "Builder row loading hit a snag.",
   checkingForMatchingFields: "Checking for matching fields...",
   checkingHowTheseRecordsMatch: "Checking how these records match...",
   chooseFields: "Choose fields",
@@ -82,6 +113,7 @@ const databaseMessages = {
   nextMonth: "Next month",
   nextTimelineRange: "Next timeline range",
   noRowsMatchThisView: "No rows match this view",
+  editFilesForSelectedRows: "Edit files for selected rows",
   oneFileOrMediaLinkPerLine: "One file or media link per line",
   previewPageTitle: "Preview page title",
   pickDetailsBecomeColumns:
@@ -94,7 +126,7 @@ const databaseMessages = {
   row: "Row",
   rowOptions: "Row options",
   search: "Search",
-  searchBuilderModels: "Search Jami Studio models",
+  searchBuilderModels: "Search Builder models",
   searchGroupProperties: "Search group properties",
   searchModels: "Search models",
   searchOptions: "Search options",
@@ -131,12 +163,12 @@ const databaseMessages = {
   attached: "Attached",
   bodyDiff: "Body diff",
   builderIsntConnectedGoBackToConnectYour:
-    "Jami Studio isn’t connected. Go back to connect your account first.",
+    "Builder isn’t connected. Go back to connect your account first.",
   calculate: "Calculate",
   calendarBy: "Calendar by",
   cancel: "Cancel",
   checked: "Checked",
-  checkingBuilderConnection: "Checking Jami Studio connection",
+  checkingBuilderConnection: "Checking Builder connection",
   clear: "Clear",
   clearAll: "Clear all",
   clearFilters: "Clear filters",
@@ -148,7 +180,7 @@ const databaseMessages = {
   collapseAllGroups: "Collapse all groups",
   color: "Color",
   connectYourBuilderAccountToBrowseItsSpaces:
-    "Connect your Jami Studio account to browse its spaces and models.",
+    "Connect your Builder account to browse its spaces and models.",
   connectedSources: "Connected sources",
   couldntSyncRetry: "Couldn’t sync · Retry",
   databasePagePreview: "Database page preview",
@@ -181,7 +213,7 @@ const databaseMessages = {
   list: "List",
   liveWritesOn: "Live writes on",
   loadingBoard: "Loading board",
-  loadingBuilderModels: "Loading Jami Studio models",
+  loadingBuilderModels: "Loading Builder models",
   loadingCalendar: "Loading calendar",
   loadingDatabase: "Loading database",
   loadingGallery: "Loading gallery",
@@ -193,7 +225,7 @@ const databaseMessages = {
   newSourceNormalize: "New source · normalize",
   newView: "New view",
   noBuilderModelsWereFoundInThisSpace:
-    "No Jami Studio models were found in this space.",
+    "No Builder models were found in this space.",
   noDatabasePageSelected: "No database page selected.",
   noDate: "No date",
   noEditableProperties: "No editable properties",
@@ -204,9 +236,10 @@ const databaseMessages = {
   noOtherDatabasesAvailableToAdd: "No other databases available to add.",
   noPropertiesFound: "No properties found",
   none: "None",
-  notMappedToBuilder: "Not mapped to Jami Studio.",
+  notMappedToBuilder: "Not mapped to Builder.",
   openPage: "Open page",
   openPagesIn: "Open pages in",
+  opening: "Opening...",
   previewThisDatabasePageWithoutLeavingTheDatabase:
     "Preview this database page without leaving the database.",
   properties: "Properties",
@@ -220,7 +253,7 @@ const databaseMessages = {
   renameView: "Rename view",
   resume: "Resume",
   retry: "Retry",
-  reviewBeforeTheyReachBuilder: "Review before they reach Jami Studio.",
+  reviewBeforeTheyReachBuilder: "Review before they reach Builder.",
   reviewDiff: "Review diff",
   sampleMatches: "Sample matches",
   showAll: "Show all",
@@ -262,27 +295,26 @@ const databaseMessages = {
   sum: "Sum",
   thisDatabaseIsLocalConnectASourceToMapIts:
     "This database is local. Connect a source to map its columns onto these rows.",
-  builderApiReadOnly: "Jami Studio API read-only",
+  builderApiReadOnly: "Builder API read-only",
   builderBodyEditsNeedSaferPath:
-    "Jami Studio body edits need a safer push path before they can be sent.",
-  builderCheckingGate: "Checking the Jami Studio gate locally.",
-  builderCheckedNothingSent:
-    "Checked just now. Nothing was sent to Jami Studio.",
-  builderModel: "Jami Studio model",
+    "Builder body edits need a safer push path before they can be sent.",
+  builderCheckingGate: "Checking the Builder gate locally.",
+  builderCheckedNothingSent: "Checked just now. Nothing was sent to Builder.",
+  builderModel: "Builder model",
   builderPreparingGate:
-    "Preparing the Jami Studio gate and sending through the guarded write path.",
-  builderPushFinished: "Jami Studio push finished.",
-  builderPushedReconciled: "Pushed to Jami Studio and reconciled locally.",
+    "Preparing the Builder gate and sending through the guarded write path.",
+  builderPushFinished: "Builder push finished.",
+  builderPushedReconciled: "Pushed to Builder and reconciled locally.",
   builderPushWillSend:
-    "Push will send autosave writes through the guarded Jami Studio path.",
+    "Push will send autosave writes through the guarded Builder path.",
   builderWritesDisabledCheckOnly:
-    "Jami Studio writes are disabled. Push will check the update only.",
-  canSendToBuilder: "can send to Jami Studio",
+    "Builder writes are disabled. Push will check the update only.",
+  canSendToBuilder: "can send to Builder",
   checkedStatus: "Checked",
   checking: "Checking...",
   checksOnly: "checks only",
   close: "Close",
-  closeBuilderUpdateReview: "Close Jami Studio update review",
+  closeBuilderUpdateReview: "Close Builder update review",
   disabled: "disabled",
   draft: "Draft",
   enabled: "enabled",
@@ -291,8 +323,8 @@ const databaseMessages = {
   liveWrites: "Live writes",
   localFixture: "Local fixture",
   localReview: "Local review",
-  noPendingBuilderChanges: "No pending Jami Studio changes.",
-  noPendingLocalBuilderChangesYet: "No pending local Jami Studio changes yet.",
+  noPendingBuilderChanges: "No pending Builder changes.",
+  noPendingLocalBuilderChangesYet: "No pending local Builder changes yet.",
   notConfigured: "Not configured",
   plusBodyDiff: "plus body diff",
   publish: "Publish",
@@ -303,7 +335,7 @@ const databaseMessages = {
   readError: "Read error",
   readMode: "Read mode",
   result: "Result",
-  reviewBuilderUpdate: "Review Jami Studio update",
+  reviewBuilderUpdate: "Review Builder update",
   riskCheck: "Risk check",
   riskLabel: "{{level}} risk",
   saveRevisionAutosave: "Save revision / autosave",
@@ -322,12 +354,12 @@ const databaseMessages = {
   localNoCollection: "Local (no collection)",
   liveWritesTestCollectionOnly:
     "Live writes are only available for the Agent Native test collection.",
-  builderWriteMode: "Jami Studio write mode",
-  builderWriteModeUpdated: "Jami Studio write mode updated",
+  builderWriteMode: "Builder write mode",
+  builderWriteModeUpdated: "Builder write mode updated",
   allowPublishUnpublishPerItem: "Allow publish/unpublish per item",
-  builderChanges: "Jami Studio changes",
+  builderChanges: "Builder changes",
   reviewLocalEditsBeforeBuilder:
-    "Review local edits before they reach Jami Studio.",
+    "Review local edits before they reach Builder.",
   liveWritesOffStagedForReview:
     "Live writes are off — local edits are staged for review only.",
   noPendingChangesEditASourceBackedRow:
@@ -335,10 +367,10 @@ const databaseMessages = {
   reviewChanges: "Review changes",
   recentlyPushed: "Recently pushed",
   connectABuilderCollectionToMapRows:
-    "Connect a Jami Studio collection or another table to map onto these rows.",
-  noBuilderWrites: "No Jami Studio writes.",
+    "Connect a Builder collection or another table to map onto these rows.",
+  noBuilderWrites: "No Builder writes.",
   stageOnly: "Stage only",
-  savesDraftsNeverPublishes: "Saves drafts to Jami Studio — never publishes.",
+  savesDraftsNeverPublishes: "Saves drafts to Builder — never publishes.",
   publishUpdates: "Publish updates",
   writesUpdatesToLiveEntries: "Writes updates to live entries.",
   sourcesFeedingThisColumn: "Sources feeding this column",
@@ -346,11 +378,10 @@ const databaseMessages = {
   bindAFieldFromASource: "Bind a field from a source",
   confirmUnpublish: "Confirm unpublish",
   changedInBuilderSinceSync:
-    "Changed in Jami Studio since you synced — review before pushing.",
-  thisUnpublishesTheLiveEntry:
-    "This unpublishes the live entry in Jami Studio.",
+    "Changed in Builder since you synced — review before pushing.",
+  thisUnpublishesTheLiveEntry: "This unpublishes the live entry in Builder.",
   needsAttentionBeforeFinish: "Needs attention before this can finish",
-  noPendingLocalBuilderChanges: "No pending local Jami Studio changes yet.",
+  noPendingLocalBuilderChanges: "No pending local Builder changes yet.",
   needsAttention: "Needs attention",
   failedYouCanRetry: "Failed — you can retry",
   needsAFreshReview: "Needs a fresh review",
@@ -394,37 +425,37 @@ const databaseMessagesByLocale = {
     sourceRole: "来源角色",
     localNoCollection: "本地（无集合）",
     liveWritesTestCollectionOnly: "仅 Agent Native 测试集合支持实时写入。",
-    builderWriteMode: "Jami Studio 写入模式",
-    builderWriteModeUpdated: "已更新 Jami Studio 写入模式",
+    builderWriteMode: "Builder 写入模式",
+    builderWriteModeUpdated: "已更新 Builder 写入模式",
     allowPublishUnpublishPerItem: "允许逐项发布/取消发布",
-    builderChanges: "Jami Studio 更改",
-    reviewLocalEditsBeforeBuilder: "在本地编辑到达 Jami Studio 之前进行审查。",
+    builderChanges: "Builder 更改",
+    reviewLocalEditsBeforeBuilder: "在本地编辑到达 Builder 之前进行审查。",
     liveWritesOffStagedForReview: "实时写入已关闭 — 本地编辑仅暂存以供审查。",
     noPendingChangesEditASourceBackedRow:
       "没有待处理的更改。编辑来源支持的行以在此排队。",
     reviewChanges: "审查更改",
     recentlyPushed: "最近推送",
     connectABuilderCollectionToMapRows:
-      "连接 Jami Studio 集合或其他表以映射到这些行。",
-    noBuilderWrites: "无 Jami Studio 写入。",
+      "连接 Builder 集合或其他表以映射到这些行。",
+    noBuilderWrites: "无 Builder 写入。",
     stageOnly: "仅暂存",
-    savesDraftsNeverPublishes: "将草稿保存到 Jami Studio — 从不发布。",
+    savesDraftsNeverPublishes: "将草稿保存到 Builder — 从不发布。",
     publishUpdates: "发布更新",
     writesUpdatesToLiveEntries: "将更新写入实时条目。",
     sourcesFeedingThisColumn: "为此列供数的来源",
     noSourceFieldsBoundYet: "尚未绑定来源字段。",
     bindAFieldFromASource: "从来源绑定字段",
-    reviewBuilderUpdate: "审查 Jami Studio 更新",
-    closeBuilderUpdateReview: "关闭 Jami Studio 更新审查",
+    reviewBuilderUpdate: "审查 Builder 更新",
+    closeBuilderUpdateReview: "关闭 Builder 更新审查",
     whatChanged: "更改内容",
     confirmUnpublish: "确认取消发布",
     builderBodyEditsNeedSaferPath:
-      "Jami Studio 正文编辑需要更安全的推送路径才能发送。",
+      "Builder 正文编辑需要更安全的推送路径才能发送。",
     changedInBuilderSinceSync:
-      "自您同步以来在 Jami Studio 中已更改 — 推送前请审查。",
-    thisUnpublishesTheLiveEntry: "这将取消发布 Jami Studio 中的实时条目。",
+      "自您同步以来在 Builder 中已更改 — 推送前请审查。",
+    thisUnpublishesTheLiveEntry: "这将取消发布 Builder 中的实时条目。",
     needsAttentionBeforeFinish: "完成前需要处理",
-    noPendingLocalBuilderChanges: "尚无待处理的本地 Jami Studio 更改。",
+    noPendingLocalBuilderChanges: "尚无待处理的本地 Builder 更改。",
     needsAttention: "需要处理",
     failedYouCanRetry: "失败 — 您可以重试",
     needsAFreshReview: "需要重新审查",
@@ -441,9 +472,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "添加数据库视图",
     addProperty: "添加属性",
     back: "返回",
-    builderSpace: "Jami Studio 空间",
-    builderUpdateFailed: "Jami Studio 更新失败",
-    builderWriteModeWasNotChanged: "Jami Studio 写入模式未更改",
+    builderSpace: "Builder 空间",
+    builderBulkUpdateNotStaged: "Builder 批量更新未暂存",
+    builderBulkUpdateStaged: "Builder 批量更新已暂存",
+    builderUpdateFailed: "Builder 更新失败",
+    builderWriteModeWasNotChanged: "Builder 写入模式未更改",
     closeDatabaseSettings: "关闭数据库设置",
     closeSearch: "关闭搜索",
     databaseRowsAndLocalPropertiesWereKeptIntact: "数据库行和本地属性已保留。",
@@ -477,6 +510,7 @@ const databaseMessagesByLocale = {
     nextMonth: "下个月",
     nextTimelineRange: "下一个时间线范围",
     noRowsMatchThisView: "没有行匹配此视图",
+    editFilesForSelectedRows: "编辑所选行的文件",
     oneFileOrMediaLinkPerLine: "每行一个文件或媒体链接",
     previewPageTitle: "预览页面标题",
     previousDatabasePage: "上一页数据库页面",
@@ -485,7 +519,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "属性可见性",
     resizeNameColumn: "调整名称列宽",
     search: "搜索",
-    searchBuilderModels: "搜索 Jami Studio 模型",
+    searchBuilderModels: "搜索 Builder 模型",
     searchGroupProperties: "搜索分组属性",
     searchModels: "搜索模型",
     searchOptions: "搜索选项",
@@ -540,12 +574,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "Local (sin colección)",
     liveWritesTestCollectionOnly:
       "La escritura en vivo solo está disponible para la colección de prueba de Agent Native.",
-    builderWriteMode: "Modo de escritura de Jami Studio",
-    builderWriteModeUpdated: "Modo de escritura de Jami Studio actualizado",
+    builderWriteMode: "Modo de escritura de Builder",
+    builderWriteModeUpdated: "Modo de escritura de Builder actualizado",
     allowPublishUnpublishPerItem: "Permitir publicar/retirar por elemento",
-    builderChanges: "Cambios de Jami Studio",
+    builderChanges: "Cambios de Builder",
     reviewLocalEditsBeforeBuilder:
-      "Revisa las ediciones locales antes de que lleguen a Jami Studio.",
+      "Revisa las ediciones locales antes de que lleguen a Builder.",
     liveWritesOffStagedForReview:
       "La escritura en vivo está desactivada — las ediciones locales solo se preparan para revisión.",
     noPendingChangesEditASourceBackedRow:
@@ -553,30 +587,29 @@ const databaseMessagesByLocale = {
     reviewChanges: "Revisar cambios",
     recentlyPushed: "Enviado recientemente",
     connectABuilderCollectionToMapRows:
-      "Conecta una colección de Jami Studio u otra tabla para asignarla a estas filas.",
-    noBuilderWrites: "Sin escrituras en Jami Studio.",
+      "Conecta una colección de Builder u otra tabla para asignarla a estas filas.",
+    noBuilderWrites: "Sin escrituras en Builder.",
     stageOnly: "Solo preparar",
-    savesDraftsNeverPublishes:
-      "Guarda borradores en Jami Studio — nunca publica.",
+    savesDraftsNeverPublishes: "Guarda borradores en Builder — nunca publica.",
     publishUpdates: "Publicar actualizaciones",
     writesUpdatesToLiveEntries:
       "Escribe actualizaciones en las entradas en vivo.",
     sourcesFeedingThisColumn: "Fuentes que alimentan esta columna",
     noSourceFieldsBoundYet: "Aún no hay campos de fuente vinculados.",
     bindAFieldFromASource: "Vincular un campo de una fuente",
-    reviewBuilderUpdate: "Revisar actualización de Jami Studio",
-    closeBuilderUpdateReview: "Cerrar revisión de actualización de Jami Studio",
+    reviewBuilderUpdate: "Revisar actualización de Builder",
+    closeBuilderUpdateReview: "Cerrar revisión de actualización de Builder",
     whatChanged: "Qué cambió",
     confirmUnpublish: "Confirmar retirada de publicación",
     builderBodyEditsNeedSaferPath:
-      "Las ediciones del cuerpo en Jami Studio necesitan una ruta de envío más segura antes de poder enviarse.",
+      "Las ediciones del cuerpo en Builder necesitan una ruta de envío más segura antes de poder enviarse.",
     changedInBuilderSinceSync:
-      "Cambió en Jami Studio desde tu sincronización — revisa antes de enviar.",
+      "Cambió en Builder desde tu sincronización — revisa antes de enviar.",
     thisUnpublishesTheLiveEntry:
-      "Esto retira de publicación la entrada en vivo en Jami Studio.",
+      "Esto retira de publicación la entrada en vivo en Builder.",
     needsAttentionBeforeFinish: "Necesita atención antes de poder finalizar",
     noPendingLocalBuilderChanges:
-      "Aún no hay cambios locales de Jami Studio pendientes.",
+      "Aún no hay cambios locales de Builder pendientes.",
     needsAttention: "Necesita atención",
     failedYouCanRetry: "Falló — puedes reintentar",
     needsAFreshReview: "Necesita una nueva revisión",
@@ -593,10 +626,12 @@ const databaseMessagesByLocale = {
     addDatabaseView: "Añadir vista de base de datos",
     addProperty: "Añadir propiedad",
     back: "Atrás",
-    builderSpace: "Espacio de Jami Studio",
-    builderUpdateFailed: "Falló la actualización de Jami Studio",
+    builderSpace: "Espacio de Builder",
+    builderBulkUpdateNotStaged: "Actualización masiva de Builder no preparada",
+    builderBulkUpdateStaged: "Actualización masiva de Builder preparada",
+    builderUpdateFailed: "Falló la actualización de Builder",
     builderWriteModeWasNotChanged:
-      "No se cambió el modo de escritura de Jami Studio",
+      "No se cambió el modo de escritura de Builder",
     closeDatabaseSettings: "Cerrar ajustes de base de datos",
     closeSearch: "Cerrar búsqueda",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -634,6 +669,7 @@ const databaseMessagesByLocale = {
     nextMonth: "Mes siguiente",
     nextTimelineRange: "Rango de cronología siguiente",
     noRowsMatchThisView: "Ninguna fila coincide con esta vista",
+    editFilesForSelectedRows: "Editar archivos de las filas seleccionadas",
     oneFileOrMediaLinkPerLine: "Un archivo o enlace multimedia por línea",
     previewPageTitle: "Título de página de vista previa",
     previousDatabasePage: "Página de base de datos anterior",
@@ -642,7 +678,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "Visibilidad de propiedades",
     resizeNameColumn: "Cambiar ancho de la columna Nombre",
     search: "Buscar",
-    searchBuilderModels: "Buscar modelos de Jami Studio",
+    searchBuilderModels: "Buscar modelos de Builder",
     searchGroupProperties: "Buscar propiedades de grupo",
     searchModels: "Buscar modelos",
     searchOptions: "Buscar opciones",
@@ -697,12 +733,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "Local (aucune collection)",
     liveWritesTestCollectionOnly:
       "Les écritures en direct ne sont disponibles que pour la collection de test Agent Native.",
-    builderWriteMode: "Mode d'écriture Jami Studio",
-    builderWriteModeUpdated: "Mode d'écriture Jami Studio mis à jour",
+    builderWriteMode: "Mode d'écriture Builder",
+    builderWriteModeUpdated: "Mode d'écriture Builder mis à jour",
     allowPublishUnpublishPerItem: "Autoriser publier/dépublier par élément",
-    builderChanges: "Modifications Jami Studio",
+    builderChanges: "Modifications Builder",
     reviewLocalEditsBeforeBuilder:
-      "Vérifiez les modifications locales avant qu'elles n'atteignent Jami Studio.",
+      "Vérifiez les modifications locales avant qu'elles n'atteignent Builder.",
     liveWritesOffStagedForReview:
       "Écritures en direct désactivées — les modifications locales sont uniquement préparées pour révision.",
     noPendingChangesEditASourceBackedRow:
@@ -710,31 +746,31 @@ const databaseMessagesByLocale = {
     reviewChanges: "Vérifier les modifications",
     recentlyPushed: "Récemment envoyé",
     connectABuilderCollectionToMapRows:
-      "Connectez une collection Jami Studio ou une autre table pour la mapper sur ces lignes.",
-    noBuilderWrites: "Aucune écriture Jami Studio.",
+      "Connectez une collection Builder ou une autre table pour la mapper sur ces lignes.",
+    noBuilderWrites: "Aucune écriture Builder.",
     stageOnly: "Préparer seulement",
     savesDraftsNeverPublishes:
-      "Enregistre des brouillons dans Jami Studio — ne publie jamais.",
+      "Enregistre des brouillons dans Builder — ne publie jamais.",
     publishUpdates: "Publier les mises à jour",
     writesUpdatesToLiveEntries:
       "Écrit les mises à jour dans les entrées en direct.",
     sourcesFeedingThisColumn: "Sources alimentant cette colonne",
     noSourceFieldsBoundYet: "Aucun champ source lié pour l'instant.",
     bindAFieldFromASource: "Lier un champ depuis une source",
-    reviewBuilderUpdate: "Vérifier la mise à jour Jami Studio",
-    closeBuilderUpdateReview: "Fermer la révision de mise à jour Jami Studio",
+    reviewBuilderUpdate: "Vérifier la mise à jour Builder",
+    closeBuilderUpdateReview: "Fermer la révision de mise à jour Builder",
     whatChanged: "Ce qui a changé",
     confirmUnpublish: "Confirmer la dépublication",
     builderBodyEditsNeedSaferPath:
-      "Les modifications du corps dans Jami Studio nécessitent un chemin d'envoi plus sûr avant de pouvoir être envoyées.",
+      "Les modifications du corps dans Builder nécessitent un chemin d'envoi plus sûr avant de pouvoir être envoyées.",
     changedInBuilderSinceSync:
-      "Modifié dans Jami Studio depuis votre synchronisation — vérifiez avant d'envoyer.",
+      "Modifié dans Builder depuis votre synchronisation — vérifiez avant d'envoyer.",
     thisUnpublishesTheLiveEntry:
-      "Cela dépublie l'entrée en direct dans Jami Studio.",
+      "Cela dépublie l'entrée en direct dans Builder.",
     needsAttentionBeforeFinish:
       "Nécessite une attention avant de pouvoir se terminer",
     noPendingLocalBuilderChanges:
-      "Aucune modification Jami Studio locale en attente pour l'instant.",
+      "Aucune modification Builder locale en attente pour l'instant.",
     needsAttention: "Nécessite une attention",
     failedYouCanRetry: "Échec — vous pouvez réessayer",
     needsAFreshReview: "Nécessite une nouvelle révision",
@@ -751,10 +787,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "Ajouter une vue de base de données",
     addProperty: "Ajouter une propriété",
     back: "Retour",
-    builderSpace: "Espace Jami Studio",
-    builderUpdateFailed: "Échec de la mise à jour Jami Studio",
-    builderWriteModeWasNotChanged:
-      "Le mode d’écriture Jami Studio n’a pas changé",
+    builderSpace: "Espace Builder",
+    builderBulkUpdateNotStaged: "Mise à jour groupée Builder non préparée",
+    builderBulkUpdateStaged: "Mise à jour groupée Builder préparée",
+    builderUpdateFailed: "Échec de la mise à jour Builder",
+    builderWriteModeWasNotChanged: "Le mode d’écriture Builder n’a pas changé",
     closeDatabaseSettings: "Fermer les paramètres de base de données",
     closeSearch: "Fermer la recherche",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -792,6 +829,7 @@ const databaseMessagesByLocale = {
     nextMonth: "Mois suivant",
     nextTimelineRange: "Plage chronologique suivante",
     noRowsMatchThisView: "Aucune ligne ne correspond à cette vue",
+    editFilesForSelectedRows: "Modifier les fichiers des lignes sélectionnées",
     oneFileOrMediaLinkPerLine: "Un fichier ou lien média par ligne",
     previewPageTitle: "Titre de la page d’aperçu",
     previousDatabasePage: "Page de base de données précédente",
@@ -800,7 +838,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "Visibilité des propriétés",
     resizeNameColumn: "Redimensionner la colonne Nom",
     search: "Rechercher",
-    searchBuilderModels: "Rechercher des modèles Jami Studio",
+    searchBuilderModels: "Rechercher des modèles Builder",
     searchGroupProperties: "Rechercher des propriétés de groupe",
     searchModels: "Rechercher des modèles",
     searchOptions: "Rechercher des options",
@@ -855,13 +893,13 @@ const databaseMessagesByLocale = {
     localNoCollection: "Lokal (keine Sammlung)",
     liveWritesTestCollectionOnly:
       "Live-Schreibvorgänge sind nur für die Agent-Native-Testsammlung verfügbar.",
-    builderWriteMode: "Jami Studio-Schreibmodus",
-    builderWriteModeUpdated: "Jami Studio-Schreibmodus aktualisiert",
+    builderWriteMode: "Builder-Schreibmodus",
+    builderWriteModeUpdated: "Builder-Schreibmodus aktualisiert",
     allowPublishUnpublishPerItem:
       "Veröffentlichen/Zurückziehen pro Element zulassen",
-    builderChanges: "Jami Studio-Änderungen",
+    builderChanges: "Builder-Änderungen",
     reviewLocalEditsBeforeBuilder:
-      "Lokale Änderungen prüfen, bevor sie Jami Studio erreichen.",
+      "Lokale Änderungen prüfen, bevor sie Builder erreichen.",
     liveWritesOffStagedForReview:
       "Live-Schreibvorgänge sind aus — lokale Änderungen werden nur zur Prüfung bereitgestellt.",
     noPendingChangesEditASourceBackedRow:
@@ -869,30 +907,30 @@ const databaseMessagesByLocale = {
     reviewChanges: "Änderungen prüfen",
     recentlyPushed: "Kürzlich übertragen",
     connectABuilderCollectionToMapRows:
-      "Verbinde eine Jami Studio-Sammlung oder eine andere Tabelle, um sie diesen Zeilen zuzuordnen.",
-    noBuilderWrites: "Keine Jami Studio-Schreibvorgänge.",
+      "Verbinde eine Builder-Sammlung oder eine andere Tabelle, um sie diesen Zeilen zuzuordnen.",
+    noBuilderWrites: "Keine Builder-Schreibvorgänge.",
     stageOnly: "Nur bereitstellen",
     savesDraftsNeverPublishes:
-      "Speichert Entwürfe in Jami Studio — veröffentlicht nie.",
+      "Speichert Entwürfe in Builder — veröffentlicht nie.",
     publishUpdates: "Updates veröffentlichen",
     writesUpdatesToLiveEntries: "Schreibt Updates in Live-Einträge.",
     sourcesFeedingThisColumn: "Quellen, die diese Spalte speisen",
     noSourceFieldsBoundYet: "Noch keine Quellfelder verknüpft.",
     bindAFieldFromASource: "Ein Feld aus einer Quelle verknüpfen",
-    reviewBuilderUpdate: "Jami Studio-Update prüfen",
-    closeBuilderUpdateReview: "Jami Studio-Update-Prüfung schließen",
+    reviewBuilderUpdate: "Builder-Update prüfen",
+    closeBuilderUpdateReview: "Builder-Update-Prüfung schließen",
     whatChanged: "Was sich geändert hat",
     confirmUnpublish: "Zurückziehen bestätigen",
     builderBodyEditsNeedSaferPath:
-      "Jami Studio-Textänderungen benötigen einen sichereren Übertragungsweg, bevor sie gesendet werden können.",
+      "Builder-Textänderungen benötigen einen sichereren Übertragungsweg, bevor sie gesendet werden können.",
     changedInBuilderSinceSync:
-      "Seit deiner Synchronisierung in Jami Studio geändert — vor dem Übertragen prüfen.",
+      "Seit deiner Synchronisierung in Builder geändert — vor dem Übertragen prüfen.",
     thisUnpublishesTheLiveEntry:
-      "Dies zieht den Live-Eintrag in Jami Studio zurück.",
+      "Dies zieht den Live-Eintrag in Builder zurück.",
     needsAttentionBeforeFinish:
       "Erfordert Aufmerksamkeit, bevor dies abgeschlossen werden kann",
     noPendingLocalBuilderChanges:
-      "Noch keine ausstehenden lokalen Jami Studio-Änderungen.",
+      "Noch keine ausstehenden lokalen Builder-Änderungen.",
     needsAttention: "Erfordert Aufmerksamkeit",
     failedYouCanRetry: "Fehlgeschlagen — du kannst es erneut versuchen",
     needsAFreshReview: "Erfordert eine erneute Prüfung",
@@ -909,10 +947,12 @@ const databaseMessagesByLocale = {
     addDatabaseView: "Datenbankansicht hinzufügen",
     addProperty: "Eigenschaft hinzufügen",
     back: "Zurück",
-    builderSpace: "Jami Studio-Bereich",
-    builderUpdateFailed: "Jami Studio-Aktualisierung fehlgeschlagen",
-    builderWriteModeWasNotChanged:
-      "Jami Studio-Schreibmodus wurde nicht geändert",
+    builderSpace: "Builder-Bereich",
+    builderBulkUpdateNotStaged:
+      "Builder-Massenaktualisierung nicht bereitgestellt",
+    builderBulkUpdateStaged: "Builder-Massenaktualisierung bereitgestellt",
+    builderUpdateFailed: "Builder-Aktualisierung fehlgeschlagen",
+    builderWriteModeWasNotChanged: "Builder-Schreibmodus wurde nicht geändert",
     closeDatabaseSettings: "Datenbankeinstellungen schließen",
     closeSearch: "Suche schließen",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -950,6 +990,7 @@ const databaseMessagesByLocale = {
     nextMonth: "Nächster Monat",
     nextTimelineRange: "Nächster Zeitachsenbereich",
     noRowsMatchThisView: "Keine Zeilen entsprechen dieser Ansicht",
+    editFilesForSelectedRows: "Dateien für ausgewählte Zeilen bearbeiten",
     oneFileOrMediaLinkPerLine: "Eine Datei oder ein Medienlink pro Zeile",
     previewPageTitle: "Titel der Seitenvorschau",
     previousDatabasePage: "Vorherige Datenbankseite",
@@ -958,7 +999,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "Eigenschaftensichtbarkeit",
     resizeNameColumn: "Namensspalte anpassen",
     search: "Suchen",
-    searchBuilderModels: "Jami Studio-Modelle suchen",
+    searchBuilderModels: "Builder-Modelle suchen",
     searchGroupProperties: "Gruppeneigenschaften suchen",
     searchModels: "Modelle suchen",
     searchOptions: "Optionen suchen",
@@ -1012,12 +1053,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "ローカル（コレクションなし）",
     liveWritesTestCollectionOnly:
       "ライブ書き込みは Agent Native テストコレクションでのみ利用できます。",
-    builderWriteMode: "Jami Studio 書き込みモード",
-    builderWriteModeUpdated: "Jami Studio 書き込みモードを更新しました",
+    builderWriteMode: "Builder 書き込みモード",
+    builderWriteModeUpdated: "Builder 書き込みモードを更新しました",
     allowPublishUnpublishPerItem: "項目ごとの公開/非公開を許可",
-    builderChanges: "Jami Studio の変更",
+    builderChanges: "Builder の変更",
     reviewLocalEditsBeforeBuilder:
-      "Jami Studio に反映される前にローカル編集を確認します。",
+      "Builder に反映される前にローカル編集を確認します。",
     liveWritesOffStagedForReview:
       "ライブ書き込みはオフです — ローカル編集は確認用にステージングされるだけです。",
     noPendingChangesEditASourceBackedRow:
@@ -1025,29 +1066,29 @@ const databaseMessagesByLocale = {
     reviewChanges: "変更を確認",
     recentlyPushed: "最近プッシュ",
     connectABuilderCollectionToMapRows:
-      "Jami Studio コレクションまたは別のテーブルを接続して、これらの行にマッピングします。",
-    noBuilderWrites: "Jami Studio への書き込みなし。",
+      "Builder コレクションまたは別のテーブルを接続して、これらの行にマッピングします。",
+    noBuilderWrites: "Builder への書き込みなし。",
     stageOnly: "ステージングのみ",
     savesDraftsNeverPublishes:
-      "Jami Studio に下書きを保存します — 公開はしません。",
+      "Builder に下書きを保存します — 公開はしません。",
     publishUpdates: "更新を公開",
     writesUpdatesToLiveEntries: "ライブエントリに更新を書き込みます。",
     sourcesFeedingThisColumn: "この列に供給するソース",
     noSourceFieldsBoundYet: "まだソースフィールドがバインドされていません。",
     bindAFieldFromASource: "ソースからフィールドをバインド",
-    reviewBuilderUpdate: "Jami Studio の更新を確認",
-    closeBuilderUpdateReview: "Jami Studio 更新の確認を閉じる",
+    reviewBuilderUpdate: "Builder の更新を確認",
+    closeBuilderUpdateReview: "Builder 更新の確認を閉じる",
     whatChanged: "変更内容",
     confirmUnpublish: "非公開を確認",
     builderBodyEditsNeedSaferPath:
-      "Jami Studio の本文編集は、送信する前により安全なプッシュ経路が必要です。",
+      "Builder の本文編集は、送信する前により安全なプッシュ経路が必要です。",
     changedInBuilderSinceSync:
-      "同期以降に Jami Studio で変更されました — プッシュ前に確認してください。",
+      "同期以降に Builder で変更されました — プッシュ前に確認してください。",
     thisUnpublishesTheLiveEntry:
-      "これにより Jami Studio のライブエントリが非公開になります。",
+      "これにより Builder のライブエントリが非公開になります。",
     needsAttentionBeforeFinish: "完了する前に対応が必要です",
     noPendingLocalBuilderChanges:
-      "保留中のローカル Jami Studio 変更はまだありません。",
+      "保留中のローカル Builder 変更はまだありません。",
     needsAttention: "対応が必要",
     failedYouCanRetry: "失敗しました — 再試行できます",
     needsAFreshReview: "再確認が必要",
@@ -1064,10 +1105,12 @@ const databaseMessagesByLocale = {
     addDatabaseView: "データベースビューを追加",
     addProperty: "プロパティを追加",
     back: "戻る",
-    builderSpace: "Jami Studio スペース",
-    builderUpdateFailed: "Jami Studio の更新に失敗しました",
+    builderSpace: "Builder スペース",
+    builderBulkUpdateNotStaged: "Builder 一括更新はステージングされていません",
+    builderBulkUpdateStaged: "Builder 一括更新をステージングしました",
+    builderUpdateFailed: "Builder の更新に失敗しました",
     builderWriteModeWasNotChanged:
-      "Jami Studio の書き込みモードは変更されませんでした",
+      "Builder の書き込みモードは変更されませんでした",
     closeDatabaseSettings: "データベース設定を閉じる",
     closeSearch: "検索を閉じる",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -1103,6 +1146,7 @@ const databaseMessagesByLocale = {
     nextMonth: "次の月",
     nextTimelineRange: "次のタイムライン範囲",
     noRowsMatchThisView: "このビューに一致する行はありません",
+    editFilesForSelectedRows: "選択した行のファイルを編集",
     oneFileOrMediaLinkPerLine: "1 行に 1 つのファイルまたはメディアリンク",
     previewPageTitle: "プレビューページタイトル",
     previousDatabasePage: "前のデータベースページ",
@@ -1111,7 +1155,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "プロパティの表示",
     resizeNameColumn: "名前列のサイズ変更",
     search: "検索",
-    searchBuilderModels: "Jami Studio モデルを検索",
+    searchBuilderModels: "Builder モデルを検索",
     searchGroupProperties: "グループプロパティを検索",
     searchModels: "モデルを検索",
     searchOptions: "オプションを検索",
@@ -1165,12 +1209,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "로컬(컬렉션 없음)",
     liveWritesTestCollectionOnly:
       "라이브 쓰기는 Agent Native 테스트 컬렉션에서만 사용할 수 있습니다.",
-    builderWriteMode: "Jami Studio 쓰기 모드",
-    builderWriteModeUpdated: "Jami Studio 쓰기 모드 업데이트됨",
+    builderWriteMode: "Builder 쓰기 모드",
+    builderWriteModeUpdated: "Builder 쓰기 모드 업데이트됨",
     allowPublishUnpublishPerItem: "항목별 게시/게시 취소 허용",
-    builderChanges: "Jami Studio 변경 사항",
+    builderChanges: "Builder 변경 사항",
     reviewLocalEditsBeforeBuilder:
-      "Jami Studio에 도달하기 전에 로컬 편집을 검토합니다.",
+      "Builder에 도달하기 전에 로컬 편집을 검토합니다.",
     liveWritesOffStagedForReview:
       "라이브 쓰기가 꺼져 있습니다 — 로컬 편집은 검토용으로만 준비됩니다.",
     noPendingChangesEditASourceBackedRow:
@@ -1178,29 +1222,29 @@ const databaseMessagesByLocale = {
     reviewChanges: "변경 사항 검토",
     recentlyPushed: "최근 푸시됨",
     connectABuilderCollectionToMapRows:
-      "Jami Studio 컬렉션 또는 다른 테이블을 연결하여 이 행에 매핑하세요.",
-    noBuilderWrites: "Jami Studio 쓰기 없음.",
+      "Builder 컬렉션 또는 다른 테이블을 연결하여 이 행에 매핑하세요.",
+    noBuilderWrites: "Builder 쓰기 없음.",
     stageOnly: "준비만",
     savesDraftsNeverPublishes:
-      "Jami Studio에 초안을 저장합니다 — 게시하지 않습니다.",
+      "Builder에 초안을 저장합니다 — 게시하지 않습니다.",
     publishUpdates: "업데이트 게시",
     writesUpdatesToLiveEntries: "라이브 항목에 업데이트를 씁니다.",
     sourcesFeedingThisColumn: "이 열에 공급하는 소스",
     noSourceFieldsBoundYet: "아직 바인딩된 소스 필드가 없습니다.",
     bindAFieldFromASource: "소스에서 필드 바인딩",
-    reviewBuilderUpdate: "Jami Studio 업데이트 검토",
-    closeBuilderUpdateReview: "Jami Studio 업데이트 검토 닫기",
+    reviewBuilderUpdate: "Builder 업데이트 검토",
+    closeBuilderUpdateReview: "Builder 업데이트 검토 닫기",
     whatChanged: "변경 내용",
     confirmUnpublish: "게시 취소 확인",
     builderBodyEditsNeedSaferPath:
-      "Jami Studio 본문 편집은 전송하기 전에 더 안전한 푸시 경로가 필요합니다.",
+      "Builder 본문 편집은 전송하기 전에 더 안전한 푸시 경로가 필요합니다.",
     changedInBuilderSinceSync:
-      "동기화 이후 Jami Studio에서 변경됨 — 푸시하기 전에 검토하세요.",
+      "동기화 이후 Builder에서 변경됨 — 푸시하기 전에 검토하세요.",
     thisUnpublishesTheLiveEntry:
-      "이렇게 하면 Jami Studio의 라이브 항목이 게시 취소됩니다.",
+      "이렇게 하면 Builder의 라이브 항목이 게시 취소됩니다.",
     needsAttentionBeforeFinish: "완료하기 전에 주의가 필요합니다",
     noPendingLocalBuilderChanges:
-      "아직 대기 중인 로컬 Jami Studio 변경 사항이 없습니다.",
+      "아직 대기 중인 로컬 Builder 변경 사항이 없습니다.",
     needsAttention: "주의 필요",
     failedYouCanRetry: "실패함 — 다시 시도할 수 있습니다",
     needsAFreshReview: "새로운 검토 필요",
@@ -1217,10 +1261,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "데이터베이스 보기 추가",
     addProperty: "속성 추가",
     back: "뒤로",
-    builderSpace: "Jami Studio 공간",
-    builderUpdateFailed: "Jami Studio 업데이트 실패",
-    builderWriteModeWasNotChanged:
-      "Jami Studio 쓰기 모드가 변경되지 않았습니다",
+    builderSpace: "Builder 공간",
+    builderBulkUpdateNotStaged: "Builder 대량 업데이트가 스테이징되지 않음",
+    builderBulkUpdateStaged: "Builder 대량 업데이트가 스테이징됨",
+    builderUpdateFailed: "Builder 업데이트 실패",
+    builderWriteModeWasNotChanged: "Builder 쓰기 모드가 변경되지 않았습니다",
     closeDatabaseSettings: "데이터베이스 설정 닫기",
     closeSearch: "검색 닫기",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -1255,6 +1300,7 @@ const databaseMessagesByLocale = {
     nextMonth: "다음 달",
     nextTimelineRange: "다음 타임라인 범위",
     noRowsMatchThisView: "이 보기에 일치하는 행이 없습니다",
+    editFilesForSelectedRows: "선택한 행의 파일 편집",
     oneFileOrMediaLinkPerLine: "한 줄에 파일 또는 미디어 링크 하나",
     previewPageTitle: "미리보기 페이지 제목",
     previousDatabasePage: "이전 데이터베이스 페이지",
@@ -1263,7 +1309,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "속성 표시 여부",
     resizeNameColumn: "이름 열 크기 조정",
     search: "검색",
-    searchBuilderModels: "Jami Studio 모델 검색",
+    searchBuilderModels: "Builder 모델 검색",
     searchGroupProperties: "그룹 속성 검색",
     searchModels: "모델 검색",
     searchOptions: "옵션 검색",
@@ -1319,13 +1365,13 @@ const databaseMessagesByLocale = {
     localNoCollection: "Local (sem coleção)",
     liveWritesTestCollectionOnly:
       "As gravações ao vivo estão disponíveis apenas para a coleção de teste do Agent Native.",
-    builderWriteMode: "Modo de gravação do Jami Studio",
-    builderWriteModeUpdated: "Modo de gravação do Jami Studio atualizado",
+    builderWriteMode: "Modo de gravação do Builder",
+    builderWriteModeUpdated: "Modo de gravação do Builder atualizado",
     allowPublishUnpublishPerItem:
       "Permitir publicar/cancelar publicação por item",
-    builderChanges: "Alterações do Jami Studio",
+    builderChanges: "Alterações do Builder",
     reviewLocalEditsBeforeBuilder:
-      "Revise as edições locais antes que cheguem ao Jami Studio.",
+      "Revise as edições locais antes que cheguem ao Builder.",
     liveWritesOffStagedForReview:
       "Gravações ao vivo desativadas — as edições locais são apenas preparadas para revisão.",
     noPendingChangesEditASourceBackedRow:
@@ -1333,29 +1379,28 @@ const databaseMessagesByLocale = {
     reviewChanges: "Revisar alterações",
     recentlyPushed: "Enviado recentemente",
     connectABuilderCollectionToMapRows:
-      "Conecte uma coleção do Jami Studio ou outra tabela para mapeá-la nessas linhas.",
-    noBuilderWrites: "Sem gravações no Jami Studio.",
+      "Conecte uma coleção do Builder ou outra tabela para mapeá-la nessas linhas.",
+    noBuilderWrites: "Sem gravações no Builder.",
     stageOnly: "Apenas preparar",
-    savesDraftsNeverPublishes:
-      "Salva rascunhos no Jami Studio — nunca publica.",
+    savesDraftsNeverPublishes: "Salva rascunhos no Builder — nunca publica.",
     publishUpdates: "Publicar atualizações",
     writesUpdatesToLiveEntries: "Grava atualizações nas entradas ao vivo.",
     sourcesFeedingThisColumn: "Fontes que alimentam esta coluna",
     noSourceFieldsBoundYet: "Nenhum campo de fonte vinculado ainda.",
     bindAFieldFromASource: "Vincular um campo de uma fonte",
-    reviewBuilderUpdate: "Revisar atualização do Jami Studio",
-    closeBuilderUpdateReview: "Fechar revisão de atualização do Jami Studio",
+    reviewBuilderUpdate: "Revisar atualização do Builder",
+    closeBuilderUpdateReview: "Fechar revisão de atualização do Builder",
     whatChanged: "O que mudou",
     confirmUnpublish: "Confirmar cancelamento de publicação",
     builderBodyEditsNeedSaferPath:
-      "As edições de corpo do Jami Studio precisam de um caminho de envio mais seguro antes de poderem ser enviadas.",
+      "As edições de corpo do Builder precisam de um caminho de envio mais seguro antes de poderem ser enviadas.",
     changedInBuilderSinceSync:
-      "Alterado no Jami Studio desde a sua sincronização — revise antes de enviar.",
+      "Alterado no Builder desde a sua sincronização — revise antes de enviar.",
     thisUnpublishesTheLiveEntry:
-      "Isso cancela a publicação da entrada ao vivo no Jami Studio.",
+      "Isso cancela a publicação da entrada ao vivo no Builder.",
     needsAttentionBeforeFinish: "Precisa de atenção antes de poder concluir",
     noPendingLocalBuilderChanges:
-      "Ainda não há alterações locais do Jami Studio pendentes.",
+      "Ainda não há alterações locais do Builder pendentes.",
     needsAttention: "Precisa de atenção",
     failedYouCanRetry: "Falhou — você pode tentar novamente",
     needsAFreshReview: "Precisa de uma nova revisão",
@@ -1372,9 +1417,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "Adicionar visualização de banco de dados",
     addProperty: "Adicionar propriedade",
     back: "Voltar",
-    builderSpace: "Espaço do Jami Studio",
-    builderUpdateFailed: "Falha na atualização do Jami Studio",
-    builderWriteModeWasNotChanged: "O modo de escrita do Jami Studio não mudou",
+    builderSpace: "Espaço do Builder",
+    builderBulkUpdateNotStaged: "Atualização em massa do Builder não preparada",
+    builderBulkUpdateStaged: "Atualização em massa do Builder preparada",
+    builderUpdateFailed: "Falha na atualização do Builder",
+    builderWriteModeWasNotChanged: "O modo de escrita do Builder não mudou",
     closeDatabaseSettings: "Fechar configurações do banco de dados",
     closeSearch: "Fechar busca",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -1412,6 +1459,7 @@ const databaseMessagesByLocale = {
     nextMonth: "Próximo mês",
     nextTimelineRange: "Próximo intervalo da linha do tempo",
     noRowsMatchThisView: "Nenhuma linha corresponde a esta visualização",
+    editFilesForSelectedRows: "Editar arquivos das linhas selecionadas",
     oneFileOrMediaLinkPerLine: "Um arquivo ou link de mídia por linha",
     previewPageTitle: "Título da página de prévia",
     previousDatabasePage: "Página anterior do banco de dados",
@@ -1420,7 +1468,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "Visibilidade da propriedade",
     resizeNameColumn: "Redimensionar coluna Nome",
     search: "Buscar",
-    searchBuilderModels: "Buscar modelos do Jami Studio",
+    searchBuilderModels: "Buscar modelos do Builder",
     searchGroupProperties: "Buscar propriedades de grupo",
     searchModels: "Buscar modelos",
     searchOptions: "Buscar opções",
@@ -1472,12 +1520,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "लोकल (कोई संग्रह नहीं)",
     liveWritesTestCollectionOnly:
       "लाइव राइट केवल Agent Native टेस्ट संग्रह के लिए उपलब्ध हैं।",
-    builderWriteMode: "Jami Studio राइट मोड",
-    builderWriteModeUpdated: "Jami Studio राइट मोड अपडेट किया गया",
+    builderWriteMode: "Builder राइट मोड",
+    builderWriteModeUpdated: "Builder राइट मोड अपडेट किया गया",
     allowPublishUnpublishPerItem: "प्रति आइटम प्रकाशित/अप्रकाशित करने की अनुमति दें",
-    builderChanges: "Jami Studio परिवर्तन",
+    builderChanges: "Builder परिवर्तन",
     reviewLocalEditsBeforeBuilder:
-      "Jami Studio तक पहुँचने से पहले स्थानीय संपादन की समीक्षा करें।",
+      "Builder तक पहुँचने से पहले स्थानीय संपादन की समीक्षा करें।",
     liveWritesOffStagedForReview:
       "लाइव राइट बंद हैं — स्थानीय संपादन केवल समीक्षा के लिए तैयार किए जाते हैं।",
     noPendingChangesEditASourceBackedRow:
@@ -1485,29 +1533,28 @@ const databaseMessagesByLocale = {
     reviewChanges: "परिवर्तन समीक्षा करें",
     recentlyPushed: "हाल ही में पुश किया गया",
     connectABuilderCollectionToMapRows:
-      "इन पंक्तियों पर मैप करने के लिए एक Jami Studio संग्रह या अन्य तालिका कनेक्ट करें।",
-    noBuilderWrites: "कोई Jami Studio राइट नहीं।",
+      "इन पंक्तियों पर मैप करने के लिए एक Builder संग्रह या अन्य तालिका कनेक्ट करें।",
+    noBuilderWrites: "कोई Builder राइट नहीं।",
     stageOnly: "केवल स्टेज करें",
     savesDraftsNeverPublishes:
-      "Jami Studio में ड्राफ़्ट सहेजता है — कभी प्रकाशित नहीं करता।",
+      "Builder में ड्राफ़्ट सहेजता है — कभी प्रकाशित नहीं करता।",
     publishUpdates: "अपडेट प्रकाशित करें",
     writesUpdatesToLiveEntries: "लाइव प्रविष्टियों में अपडेट लिखता है।",
     sourcesFeedingThisColumn: "इस कॉलम को आपूर्ति करने वाले स्रोत",
     noSourceFieldsBoundYet: "अभी तक कोई स्रोत फ़ील्ड बाध्य नहीं है।",
     bindAFieldFromASource: "किसी स्रोत से एक फ़ील्ड बाँधें",
-    reviewBuilderUpdate: "Jami Studio अपडेट की समीक्षा करें",
-    closeBuilderUpdateReview: "Jami Studio अपडेट समीक्षा बंद करें",
+    reviewBuilderUpdate: "Builder अपडेट की समीक्षा करें",
+    closeBuilderUpdateReview: "Builder अपडेट समीक्षा बंद करें",
     whatChanged: "क्या बदला",
     confirmUnpublish: "अप्रकाशित करने की पुष्टि करें",
     builderBodyEditsNeedSaferPath:
-      "Jami Studio बॉडी संपादनों को भेजे जाने से पहले एक सुरक्षित पुश पथ की आवश्यकता होती है।",
+      "Builder बॉडी संपादनों को भेजे जाने से पहले एक सुरक्षित पुश पथ की आवश्यकता होती है।",
     changedInBuilderSinceSync:
-      "आपके सिंक के बाद से Jami Studio में बदला गया — पुश करने से पहले समीक्षा करें।",
+      "आपके सिंक के बाद से Builder में बदला गया — पुश करने से पहले समीक्षा करें।",
     thisUnpublishesTheLiveEntry:
-      "यह Jami Studio में लाइव प्रविष्टि को अप्रकाशित कर देता है।",
+      "यह Builder में लाइव प्रविष्टि को अप्रकाशित कर देता है।",
     needsAttentionBeforeFinish: "समाप्त होने से पहले ध्यान देने की आवश्यकता है",
-    noPendingLocalBuilderChanges:
-      "अभी तक कोई लंबित स्थानीय Jami Studio परिवर्तन नहीं।",
+    noPendingLocalBuilderChanges: "अभी तक कोई लंबित स्थानीय Builder परिवर्तन नहीं।",
     needsAttention: "ध्यान देने की आवश्यकता है",
     failedYouCanRetry: "विफल — आप पुनः प्रयास कर सकते हैं",
     needsAFreshReview: "एक नई समीक्षा की आवश्यकता है",
@@ -1524,9 +1571,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "डेटाबेस दृश्य जोड़ें",
     addProperty: "प्रॉपर्टी जोड़ें",
     back: "वापस",
-    builderSpace: "Jami Studio स्पेस",
-    builderUpdateFailed: "Jami Studio अपडेट विफल रहा",
-    builderWriteModeWasNotChanged: "Jami Studio लेखन मोड नहीं बदला गया",
+    builderSpace: "Builder स्पेस",
+    builderBulkUpdateNotStaged: "Builder बल्क अपडेट स्टेज नहीं हुआ",
+    builderBulkUpdateStaged: "Builder बल्क अपडेट स्टेज हुआ",
+    builderUpdateFailed: "Builder अपडेट विफल रहा",
+    builderWriteModeWasNotChanged: "Builder लेखन मोड नहीं बदला गया",
     closeDatabaseSettings: "डेटाबेस सेटिंग्स बंद करें",
     closeSearch: "खोज बंद करें",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -1561,6 +1610,7 @@ const databaseMessagesByLocale = {
     nextMonth: "अगला महीना",
     nextTimelineRange: "अगला टाइमलाइन रेंज",
     noRowsMatchThisView: "इस दृश्य से कोई पंक्ति मेल नहीं खाती",
+    editFilesForSelectedRows: "चयनित पंक्तियों की फ़ाइलें संपादित करें",
     oneFileOrMediaLinkPerLine: "हर पंक्ति में एक फ़ाइल या मीडिया लिंक",
     previewPageTitle: "प्रीव्यू पेज शीर्षक",
     previousDatabasePage: "पिछला डेटाबेस पेज",
@@ -1569,7 +1619,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "प्रॉपर्टी दृश्यता",
     resizeNameColumn: "नाम कॉलम का आकार बदलें",
     search: "खोजें",
-    searchBuilderModels: "Jami Studio मॉडल खोजें",
+    searchBuilderModels: "Builder मॉडल खोजें",
     searchGroupProperties: "समूह प्रॉपर्टीज़ खोजें",
     searchModels: "मॉडल खोजें",
     searchOptions: "विकल्प खोजें",
@@ -1622,12 +1672,12 @@ const databaseMessagesByLocale = {
     localNoCollection: "محلي (بدون مجموعة)",
     liveWritesTestCollectionOnly:
       "الكتابة المباشرة متاحة فقط لمجموعة اختبار Agent Native.",
-    builderWriteMode: "وضع كتابة Jami Studio",
-    builderWriteModeUpdated: "تم تحديث وضع كتابة Jami Studio",
+    builderWriteMode: "وضع كتابة Builder",
+    builderWriteModeUpdated: "تم تحديث وضع كتابة Builder",
     allowPublishUnpublishPerItem: "السماح بالنشر/إلغاء النشر لكل عنصر",
-    builderChanges: "تغييرات Jami Studio",
+    builderChanges: "تغييرات Builder",
     reviewLocalEditsBeforeBuilder:
-      "راجع التعديلات المحلية قبل أن تصل إلى Jami Studio.",
+      "راجع التعديلات المحلية قبل أن تصل إلى Builder.",
     liveWritesOffStagedForReview:
       "الكتابة المباشرة معطّلة — التعديلات المحلية تُجهَّز للمراجعة فقط.",
     noPendingChangesEditASourceBackedRow:
@@ -1635,27 +1685,26 @@ const databaseMessagesByLocale = {
     reviewChanges: "مراجعة التغييرات",
     recentlyPushed: "تم الدفع مؤخرًا",
     connectABuilderCollectionToMapRows:
-      "اربط مجموعة Jami Studio أو جدولًا آخر لتعيينه على هذه الصفوف.",
-    noBuilderWrites: "لا توجد عمليات كتابة في Jami Studio.",
+      "اربط مجموعة Builder أو جدولًا آخر لتعيينه على هذه الصفوف.",
+    noBuilderWrites: "لا توجد عمليات كتابة في Builder.",
     stageOnly: "التجهيز فقط",
-    savesDraftsNeverPublishes: "يحفظ المسودات في Jami Studio — لا ينشر أبدًا.",
+    savesDraftsNeverPublishes: "يحفظ المسودات في Builder — لا ينشر أبدًا.",
     publishUpdates: "نشر التحديثات",
     writesUpdatesToLiveEntries: "يكتب التحديثات في الإدخالات المباشرة.",
     sourcesFeedingThisColumn: "المصادر التي تغذّي هذا العمود",
     noSourceFieldsBoundYet: "لم يتم ربط أي حقول مصدر بعد.",
     bindAFieldFromASource: "ربط حقل من مصدر",
-    reviewBuilderUpdate: "مراجعة تحديث Jami Studio",
-    closeBuilderUpdateReview: "إغلاق مراجعة تحديث Jami Studio",
+    reviewBuilderUpdate: "مراجعة تحديث Builder",
+    closeBuilderUpdateReview: "إغلاق مراجعة تحديث Builder",
     whatChanged: "ما الذي تغيّر",
     confirmUnpublish: "تأكيد إلغاء النشر",
     builderBodyEditsNeedSaferPath:
-      "تتطلب تعديلات نص Jami Studio مسار دفع أكثر أمانًا قبل أن يمكن إرسالها.",
-    changedInBuilderSinceSync:
-      "تغيّر في Jami Studio منذ مزامنتك — راجع قبل الدفع.",
+      "تتطلب تعديلات نص Builder مسار دفع أكثر أمانًا قبل أن يمكن إرسالها.",
+    changedInBuilderSinceSync: "تغيّر في Builder منذ مزامنتك — راجع قبل الدفع.",
     thisUnpublishesTheLiveEntry:
-      "يؤدي هذا إلى إلغاء نشر الإدخال المباشر في Jami Studio.",
+      "يؤدي هذا إلى إلغاء نشر الإدخال المباشر في Builder.",
     needsAttentionBeforeFinish: "يتطلب الانتباه قبل أن يكتمل",
-    noPendingLocalBuilderChanges: "لا توجد تغييرات Jami Studio محلية معلّقة بعد.",
+    noPendingLocalBuilderChanges: "لا توجد تغييرات Builder محلية معلّقة بعد.",
     needsAttention: "يتطلب الانتباه",
     failedYouCanRetry: "فشل — يمكنك إعادة المحاولة",
     needsAFreshReview: "يتطلب مراجعة جديدة",
@@ -1672,9 +1721,11 @@ const databaseMessagesByLocale = {
     addDatabaseView: "إضافة عرض قاعدة بيانات",
     addProperty: "إضافة خاصية",
     back: "رجوع",
-    builderSpace: "مساحة Jami Studio",
-    builderUpdateFailed: "فشل تحديث Jami Studio",
-    builderWriteModeWasNotChanged: "لم يتغير وضع كتابة Jami Studio",
+    builderSpace: "مساحة Builder",
+    builderBulkUpdateNotStaged: "لم يتم تجهيز تحديث Builder المجمع",
+    builderBulkUpdateStaged: "تم تجهيز تحديث Builder المجمع",
+    builderUpdateFailed: "فشل تحديث Builder",
+    builderWriteModeWasNotChanged: "لم يتغير وضع كتابة Builder",
     closeDatabaseSettings: "إغلاق إعدادات قاعدة البيانات",
     closeSearch: "إغلاق البحث",
     databaseRowsAndLocalPropertiesWereKeptIntact:
@@ -1709,6 +1760,7 @@ const databaseMessagesByLocale = {
     nextMonth: "الشهر التالي",
     nextTimelineRange: "نطاق المخطط الزمني التالي",
     noRowsMatchThisView: "لا توجد صفوف تطابق هذا العرض",
+    editFilesForSelectedRows: "تحرير ملفات الصفوف المحددة",
     oneFileOrMediaLinkPerLine: "ملف أو رابط وسائط واحد في كل سطر",
     previewPageTitle: "عنوان صفحة المعاينة",
     previousDatabasePage: "صفحة قاعدة البيانات السابقة",
@@ -1717,7 +1769,7 @@ const databaseMessagesByLocale = {
     propertyVisibility: "رؤية الخصائص",
     resizeNameColumn: "تغيير حجم عمود الاسم",
     search: "بحث",
-    searchBuilderModels: "بحث في نماذج Jami Studio",
+    searchBuilderModels: "بحث في نماذج Builder",
     searchGroupProperties: "بحث في خصائص المجموعة",
     searchModels: "بحث في النماذج",
     searchOptions: "بحث في الخيارات",
@@ -1740,6 +1792,7 @@ const editorPropertiesMessages = {
   add: "Add",
   addOption: "Add option",
   addProperty: "Add property",
+  addPropertyFailed: "Could not add property.",
   addPropertyLink: "Add {{name}} link",
   addPropertyPerson: "Add {{name}} person",
   addPropertyType: "Add {{type}} property",
@@ -1787,7 +1840,7 @@ const editorPropertiesMessages = {
   noFilesOrMedia: "No files or media",
   noMatchingOptions: "No matching options",
   noMatchingPropertyTypes: "No matching property types",
-  notMappedToBuilder: "Not mapped to Jami Studio.",
+  notMappedToBuilder: "Not mapped to Builder.",
   onlyBlocksPropertyWarning:
     "This is the only blocks property present in this object type. This will delete the main content (body) for all objects of this type.",
   optional: "Optional",
@@ -1881,6 +1934,7 @@ const editorMediaMessages = {
   generatingAltText: "Generating alt text...",
   image: "Image",
   imageAdded: "Image added",
+  imageBroken: "Image could not be loaded",
   imageCommentWithAlt: "Image: {{alt}}",
   imageCopied: "Image copied.",
   imageDownloadStarted: "Image download started.",
@@ -2255,7 +2309,12 @@ const enUS = {
     noDocumentSelected: "No document selected",
     couldNotReadLocalSourceFile: "Could not read local source file",
     couldNotSaveLocalFile: "Could not save local file",
+    collabConnectingReadOnly:
+      "Connecting live editor. Showing a read-only snapshot.",
     documentTitle: "Document title",
+    builderBodySyncing: "Content is still syncing from Builder",
+    builderBodySyncingDescription:
+      "Editing is paused until the Builder body finishes syncing, so the existing article content is not overwritten.",
     localFileSavedHistoryNotUpdated:
       "Local file saved, but history was not updated",
     reorderField: "Reorder {{name}}",
@@ -2675,29 +2734,27 @@ const rawLiteralLocaleMessages: Partial<Record<LocaleCode, PartialMessages>> = {
       toAddARow: "para agregar una fila.",
       toAddOrRemoveColumns: "para agregar o quitar columnas.",
       toAddOrRemoveRows: "para agregar o quitar filas.",
-      builderApiReadOnly: "Jami Studio API de solo lectura",
+      builderApiReadOnly: "Builder API de solo lectura",
       builderBodyEditsNeedSaferPath:
-        "Las ediciones del cuerpo de Jami Studio necesitan una ruta de envío más segura antes de enviarse.",
-      builderCheckingGate: "Comprobando la puerta de Jami Studio localmente.",
+        "Las ediciones del cuerpo de Builder necesitan una ruta de envío más segura antes de enviarse.",
+      builderCheckingGate: "Comprobando la puerta de Builder localmente.",
       builderCheckedNothingSent:
-        "Comprobado ahora. No se envió nada a Jami Studio.",
-      builderModel: "Modelo de Jami Studio",
+        "Comprobado ahora. No se envió nada a Builder.",
+      builderModel: "Modelo de Builder",
       builderPreparingGate:
-        "Preparando la puerta de Jami Studio y enviando por la ruta protegida.",
-      builderPushFinished: "Envío a Jami Studio finalizado.",
-      builderPushedReconciled:
-        "Enviado a Jami Studio y reconciliado localmente.",
+        "Preparando la puerta de Builder y enviando por la ruta protegida.",
+      builderPushFinished: "Envío a Builder finalizado.",
+      builderPushedReconciled: "Enviado a Builder y reconciliado localmente.",
       builderPushWillSend:
-        "Enviar mandará escrituras de autosave por la ruta protegida de Jami Studio.",
+        "Enviar mandará escrituras de autosave por la ruta protegida de Builder.",
       builderWritesDisabledCheckOnly:
-        "Las escrituras de Jami Studio están desactivadas. Enviar solo comprobará la actualización.",
-      canSendToBuilder: "puede enviarse a Jami Studio",
+        "Las escrituras de Builder están desactivadas. Enviar solo comprobará la actualización.",
+      canSendToBuilder: "puede enviarse a Builder",
       checkedStatus: "Comprobado",
       checking: "Comprobando...",
       checksOnly: "solo comprobaciones",
       close: "Cerrar",
-      closeBuilderUpdateReview:
-        "Cerrar revisión de actualización de Jami Studio",
+      closeBuilderUpdateReview: "Cerrar revisión de actualización de Builder",
       disabled: "desactivado",
       draft: "Borrador",
       enabled: "activado",
@@ -2706,9 +2763,9 @@ const rawLiteralLocaleMessages: Partial<Record<LocaleCode, PartialMessages>> = {
       liveWrites: "Escrituras en vivo",
       localFixture: "Fixture local",
       localReview: "Revisión local",
-      noPendingBuilderChanges: "No hay cambios pendientes de Jami Studio.",
+      noPendingBuilderChanges: "No hay cambios pendientes de Builder.",
       noPendingLocalBuilderChangesYet:
-        "Aún no hay cambios locales pendientes de Jami Studio.",
+        "Aún no hay cambios locales pendientes de Builder.",
       notConfigured: "No configurado",
       plusBodyDiff: "más diferencia del cuerpo",
       publish: "Publicar",
@@ -2718,7 +2775,7 @@ const rawLiteralLocaleMessages: Partial<Record<LocaleCode, PartialMessages>> = {
       readError: "Error de lectura",
       readMode: "Modo de lectura",
       result: "Resultado",
-      reviewBuilderUpdate: "Revisar actualización de Jami Studio",
+      reviewBuilderUpdate: "Revisar actualización de Builder",
       riskCheck: "Comprobación de riesgo",
       riskLabel: "{{level}} riesgo",
       saveRevisionAutosave: "Guardar revisión / autosave",
@@ -3635,9 +3692,9 @@ const databaseExactEnglishMessagesByLocale = {
     analyzingBothSourcesForASharedKey: "正在分析两个来源的共享键",
     bodyDiff: "正文差异",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio 未连接。请先返回并连接你的账户。",
+      "Builder 未连接。请先返回并连接你的账户。",
     calendarBy: "日历依据",
-    checkingBuilderConnection: "正在检查 Jami Studio 连接",
+    checkingBuilderConnection: "正在检查 Builder 连接",
     clearAll: "全部清除",
     clearFilters: "清除筛选器",
     clearSearchAndFilters: "清除搜索和筛选器",
@@ -3647,7 +3704,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "折叠所有分组",
     collapseAll: "全部折叠",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "连接你的 Jami Studio 账户以浏览其空间和模型。",
+      "连接你的 Builder 账户以浏览其空间和模型。",
     connectedSources: "已连接的来源",
     couldntSyncRetry: "无法同步 · 重试",
     countAll: "全部计数",
@@ -3683,7 +3740,7 @@ const databaseExactEnglishMessagesByLocale = {
       "保留数据库行和本地属性，但移除来源映射、行标识和待处理来源更改。",
     liveWritesOn: "实时写入已开启",
     loadingBoard: "正在加载看板",
-    loadingBuilderModels: "正在加载 Jami Studio 模型",
+    loadingBuilderModels: "正在加载 Builder 模型",
     loadingCalendar: "正在加载日历",
     loadingDatabase: "正在加载数据库",
     loadingGallery: "正在加载画廊",
@@ -3694,7 +3751,7 @@ const databaseExactEnglishMessagesByLocale = {
     matchFormula: "匹配公式",
     newSourceNormalize: "新来源 · 规范化",
     newView: "新视图",
-    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Jami Studio 模型。",
+    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Builder 模型。",
     noDatabasePageSelected: "未选择数据库页面。",
     noDate: "无日期",
     noEditableProperties: "没有可编辑属性",
@@ -3705,7 +3762,7 @@ const databaseExactEnglishMessagesByLocale = {
     noMatchingProperties: "没有匹配属性",
     noOtherDatabasesAvailableToAdd: "没有其他可添加的数据库。",
     noPropertiesFound: "未找到属性",
-    notMappedToBuilder: "未映射到 Jami Studio。",
+    notMappedToBuilder: "未映射到 Builder。",
     openPagesIn: "打开页面位置",
     openPage: "打开页面",
     percentChecked: "已选百分比",
@@ -3717,7 +3774,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "只读",
     removeThisSource: "移除此来源",
     renameView: "重命名视图",
-    reviewBeforeTheyReachBuilder: "在发送到 Jami Studio 前审核。",
+    reviewBeforeTheyReachBuilder: "在发送到 Builder 前审核。",
     reviewDiff: "审核差异",
     sampleMatches: "示例匹配",
     showAll: "显示全部",
@@ -3746,9 +3803,9 @@ const databaseExactEnglishMessagesByLocale = {
       "Analizando ambos orígenes para encontrar una clave compartida",
     bodyDiff: "Diferencia del cuerpo",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio no está conectado. Vuelve para conectar tu cuenta primero.",
+      "Builder no está conectado. Vuelve para conectar tu cuenta primero.",
     calendarBy: "Calendario por",
-    checkingBuilderConnection: "Comprobando conexión de Jami Studio",
+    checkingBuilderConnection: "Comprobando conexión de Builder",
     clearAll: "Borrar todo",
     clearFilters: "Borrar filtros",
     clearSearchAndFilters: "Borrar búsqueda y filtros",
@@ -3758,7 +3815,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "Contraer todos los grupos",
     collapseAll: "Contraer todo",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "Conecta tu cuenta de Jami Studio para explorar sus espacios y modelos.",
+      "Conecta tu cuenta de Builder para explorar sus espacios y modelos.",
     connectedSources: "Fuentes conectadas",
     couldntSyncRetry: "No se pudo sincronizar · Reintentar",
     countAll: "Contar todo",
@@ -3794,7 +3851,7 @@ const databaseExactEnglishMessagesByLocale = {
       "Conserva las filas de la base de datos y las propiedades locales, pero elimina asignaciones de fuente, identidad de fila y cambios pendientes de fuente.",
     liveWritesOn: "Escrituras en vivo activadas",
     loadingBoard: "Cargando tablero",
-    loadingBuilderModels: "Cargando modelos de Jami Studio",
+    loadingBuilderModels: "Cargando modelos de Builder",
     loadingCalendar: "Cargando calendario",
     loadingDatabase: "Cargando base de datos",
     loadingGallery: "Cargando galería",
@@ -3806,7 +3863,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "Nueva fuente · normalizar",
     newView: "Nueva vista",
     noBuilderModelsWereFoundInThisSpace:
-      "No se encontraron modelos de Jami Studio en este espacio.",
+      "No se encontraron modelos de Builder en este espacio.",
     noDatabasePageSelected: "No hay página de base de datos seleccionada.",
     noDate: "Sin fecha",
     noEditableProperties: "No hay propiedades editables",
@@ -3818,7 +3875,7 @@ const databaseExactEnglishMessagesByLocale = {
     noOtherDatabasesAvailableToAdd:
       "No hay otras bases de datos disponibles para añadir.",
     noPropertiesFound: "No se encontraron propiedades",
-    notMappedToBuilder: "No asignado a Jami Studio.",
+    notMappedToBuilder: "No asignado a Builder.",
     openPagesIn: "Abrir páginas en",
     openPage: "Abrir página",
     percentChecked: "Porcentaje marcado",
@@ -3830,7 +3887,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "Solo lectura",
     removeThisSource: "Eliminar esta fuente",
     renameView: "Renombrar vista",
-    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Jami Studio.",
+    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Builder.",
     reviewDiff: "Revisar diferencia",
     sampleMatches: "Coincidencias de muestra",
     showAll: "Mostrar todo",
@@ -3859,9 +3916,9 @@ const databaseExactEnglishMessagesByLocale = {
       "Analizando ambos orígenes para encontrar una clave compartida",
     bodyDiff: "Diferencia del cuerpo",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio no está conectado. Vuelve para conectar tu cuenta primero.",
+      "Builder no está conectado. Vuelve para conectar tu cuenta primero.",
     calendarBy: "Calendario por",
-    checkingBuilderConnection: "Comprobando conexión de Jami Studio",
+    checkingBuilderConnection: "Comprobando conexión de Builder",
     clearAll: "Borrar todo",
     clearFilters: "Borrar filtros",
     clearSearchAndFilters: "Borrar búsqueda y filtros",
@@ -3871,7 +3928,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "Contraer todos los grupos",
     collapseAll: "Contraer todo",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "Conecta tu cuenta de Jami Studio para explorar sus espacios y modelos.",
+      "Conecta tu cuenta de Builder para explorar sus espacios y modelos.",
     connectedSources: "Fuentes conectadas",
     couldntSyncRetry: "No se pudo sincronizar · Reintentar",
     countAll: "Contar todo",
@@ -3907,7 +3964,7 @@ const databaseExactEnglishMessagesByLocale = {
       "Conserva las filas de la base de datos y las propiedades locales, pero elimina asignaciones de fuente, identidad de fila y cambios pendientes de fuente.",
     liveWritesOn: "Escrituras en vivo activadas",
     loadingBoard: "Cargando tablero",
-    loadingBuilderModels: "Cargando modelos de Jami Studio",
+    loadingBuilderModels: "Cargando modelos de Builder",
     loadingCalendar: "Cargando calendario",
     loadingDatabase: "Cargando base de datos",
     loadingGallery: "Cargando galería",
@@ -3919,7 +3976,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "Nueva fuente · normalizar",
     newView: "Nueva vista",
     noBuilderModelsWereFoundInThisSpace:
-      "No se encontraron modelos de Jami Studio en este espacio.",
+      "No se encontraron modelos de Builder en este espacio.",
     noDatabasePageSelected: "No hay página de base de datos seleccionada.",
     noDate: "Sin fecha",
     noEditableProperties: "No hay propiedades editables",
@@ -3931,7 +3988,7 @@ const databaseExactEnglishMessagesByLocale = {
     noOtherDatabasesAvailableToAdd:
       "No hay otras bases de datos disponibles para añadir.",
     noPropertiesFound: "No se encontraron propiedades",
-    notMappedToBuilder: "No asignado a Jami Studio.",
+    notMappedToBuilder: "No asignado a Builder.",
     openPagesIn: "Abrir páginas en",
     openPage: "Abrir página",
     percentChecked: "Porcentaje marcado",
@@ -3943,7 +4000,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "Solo lectura",
     removeThisSource: "Eliminar esta fuente",
     renameView: "Renombrar vista",
-    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Jami Studio.",
+    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Builder.",
     reviewDiff: "Revisar diferencia",
     sampleMatches: "Coincidencias de muestra",
     showAll: "Mostrar todo",
@@ -3972,9 +4029,9 @@ const databaseExactEnglishMessagesByLocale = {
       "Analizando ambos orígenes para encontrar una clave compartida",
     bodyDiff: "Diferencia del cuerpo",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio no está conectado. Vuelve para conectar tu cuenta primero.",
+      "Builder no está conectado. Vuelve para conectar tu cuenta primero.",
     calendarBy: "Calendario por",
-    checkingBuilderConnection: "Comprobando conexión de Jami Studio",
+    checkingBuilderConnection: "Comprobando conexión de Builder",
     clearAll: "Borrar todo",
     clearFilters: "Borrar filtros",
     clearSearchAndFilters: "Borrar búsqueda y filtros",
@@ -3984,7 +4041,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "Contraer todos los grupos",
     collapseAll: "Contraer todo",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "Conecta tu cuenta de Jami Studio para explorar sus espacios y modelos.",
+      "Conecta tu cuenta de Builder para explorar sus espacios y modelos.",
     connectedSources: "Fuentes conectadas",
     couldntSyncRetry: "No se pudo sincronizar · Reintentar",
     countAll: "Contar todo",
@@ -4020,7 +4077,7 @@ const databaseExactEnglishMessagesByLocale = {
       "Conserva las filas de la base de datos y las propiedades locales, pero elimina asignaciones de fuente, identidad de fila y cambios pendientes de fuente.",
     liveWritesOn: "Escrituras en vivo activadas",
     loadingBoard: "Cargando tablero",
-    loadingBuilderModels: "Cargando modelos de Jami Studio",
+    loadingBuilderModels: "Cargando modelos de Builder",
     loadingCalendar: "Cargando calendario",
     loadingDatabase: "Cargando base de datos",
     loadingGallery: "Cargando galería",
@@ -4032,7 +4089,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "Nueva fuente · normalizar",
     newView: "Nueva vista",
     noBuilderModelsWereFoundInThisSpace:
-      "No se encontraron modelos de Jami Studio en este espacio.",
+      "No se encontraron modelos de Builder en este espacio.",
     noDatabasePageSelected: "No hay página de base de datos seleccionada.",
     noDate: "Sin fecha",
     noEditableProperties: "No hay propiedades editables",
@@ -4044,7 +4101,7 @@ const databaseExactEnglishMessagesByLocale = {
     noOtherDatabasesAvailableToAdd:
       "No hay otras bases de datos disponibles para añadir.",
     noPropertiesFound: "No se encontraron propiedades",
-    notMappedToBuilder: "No asignado a Jami Studio.",
+    notMappedToBuilder: "No asignado a Builder.",
     openPagesIn: "Abrir páginas en",
     openPage: "Abrir página",
     percentChecked: "Porcentaje marcado",
@@ -4056,7 +4113,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "Solo lectura",
     removeThisSource: "Eliminar esta fuente",
     renameView: "Renombrar vista",
-    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Jami Studio.",
+    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Builder.",
     reviewDiff: "Revisar diferencia",
     sampleMatches: "Coincidencias de muestra",
     showAll: "Mostrar todo",
@@ -4085,9 +4142,9 @@ const databaseExactEnglishMessagesByLocale = {
       "Analizando ambos orígenes para encontrar una clave compartida",
     bodyDiff: "Diferencia del cuerpo",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio no está conectado. Vuelve para conectar tu cuenta primero.",
+      "Builder no está conectado. Vuelve para conectar tu cuenta primero.",
     calendarBy: "Calendario por",
-    checkingBuilderConnection: "Comprobando conexión de Jami Studio",
+    checkingBuilderConnection: "Comprobando conexión de Builder",
     clearAll: "Borrar todo",
     clearFilters: "Borrar filtros",
     clearSearchAndFilters: "Borrar búsqueda y filtros",
@@ -4097,7 +4154,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "Contraer todos los grupos",
     collapseAll: "Contraer todo",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "Conecta tu cuenta de Jami Studio para explorar sus espacios y modelos.",
+      "Conecta tu cuenta de Builder para explorar sus espacios y modelos.",
     connectedSources: "Fuentes conectadas",
     couldntSyncRetry: "No se pudo sincronizar · Reintentar",
     countAll: "Contar todo",
@@ -4133,7 +4190,7 @@ const databaseExactEnglishMessagesByLocale = {
       "Conserva las filas de la base de datos y las propiedades locales, pero elimina asignaciones de fuente, identidad de fila y cambios pendientes de fuente.",
     liveWritesOn: "Escrituras en vivo activadas",
     loadingBoard: "Cargando tablero",
-    loadingBuilderModels: "Cargando modelos de Jami Studio",
+    loadingBuilderModels: "Cargando modelos de Builder",
     loadingCalendar: "Cargando calendario",
     loadingDatabase: "Cargando base de datos",
     loadingGallery: "Cargando galería",
@@ -4145,7 +4202,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "Nueva fuente · normalizar",
     newView: "Nueva vista",
     noBuilderModelsWereFoundInThisSpace:
-      "No se encontraron modelos de Jami Studio en este espacio.",
+      "No se encontraron modelos de Builder en este espacio.",
     noDatabasePageSelected: "No hay página de base de datos seleccionada.",
     noDate: "Sin fecha",
     noEditableProperties: "No hay propiedades editables",
@@ -4157,7 +4214,7 @@ const databaseExactEnglishMessagesByLocale = {
     noOtherDatabasesAvailableToAdd:
       "No hay otras bases de datos disponibles para añadir.",
     noPropertiesFound: "No se encontraron propiedades",
-    notMappedToBuilder: "No asignado a Jami Studio.",
+    notMappedToBuilder: "No asignado a Builder.",
     openPagesIn: "Abrir páginas en",
     openPage: "Abrir página",
     percentChecked: "Porcentaje marcado",
@@ -4169,7 +4226,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "Solo lectura",
     removeThisSource: "Eliminar esta fuente",
     renameView: "Renombrar vista",
-    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Jami Studio.",
+    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Builder.",
     reviewDiff: "Revisar diferencia",
     sampleMatches: "Coincidencias de muestra",
     showAll: "Mostrar todo",
@@ -4198,9 +4255,9 @@ const databaseExactEnglishMessagesByLocale = {
       "Analizando ambos orígenes para encontrar una clave compartida",
     bodyDiff: "Diferencia del cuerpo",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio no está conectado. Vuelve para conectar tu cuenta primero.",
+      "Builder no está conectado. Vuelve para conectar tu cuenta primero.",
     calendarBy: "Calendario por",
-    checkingBuilderConnection: "Comprobando conexión de Jami Studio",
+    checkingBuilderConnection: "Comprobando conexión de Builder",
     clearAll: "Borrar todo",
     clearFilters: "Borrar filtros",
     clearSearchAndFilters: "Borrar búsqueda y filtros",
@@ -4210,7 +4267,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "Contraer todos los grupos",
     collapseAll: "Contraer todo",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "Conecta tu cuenta de Jami Studio para explorar sus espacios y modelos.",
+      "Conecta tu cuenta de Builder para explorar sus espacios y modelos.",
     connectedSources: "Fuentes conectadas",
     couldntSyncRetry: "No se pudo sincronizar · Reintentar",
     countAll: "Contar todo",
@@ -4246,7 +4303,7 @@ const databaseExactEnglishMessagesByLocale = {
       "Conserva las filas de la base de datos y las propiedades locales, pero elimina asignaciones de fuente, identidad de fila y cambios pendientes de fuente.",
     liveWritesOn: "Escrituras en vivo activadas",
     loadingBoard: "Cargando tablero",
-    loadingBuilderModels: "Cargando modelos de Jami Studio",
+    loadingBuilderModels: "Cargando modelos de Builder",
     loadingCalendar: "Cargando calendario",
     loadingDatabase: "Cargando base de datos",
     loadingGallery: "Cargando galería",
@@ -4258,7 +4315,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "Nueva fuente · normalizar",
     newView: "Nueva vista",
     noBuilderModelsWereFoundInThisSpace:
-      "No se encontraron modelos de Jami Studio en este espacio.",
+      "No se encontraron modelos de Builder en este espacio.",
     noDatabasePageSelected: "No hay página de base de datos seleccionada.",
     noDate: "Sin fecha",
     noEditableProperties: "No hay propiedades editables",
@@ -4270,7 +4327,7 @@ const databaseExactEnglishMessagesByLocale = {
     noOtherDatabasesAvailableToAdd:
       "No hay otras bases de datos disponibles para añadir.",
     noPropertiesFound: "No se encontraron propiedades",
-    notMappedToBuilder: "No asignado a Jami Studio.",
+    notMappedToBuilder: "No asignado a Builder.",
     openPagesIn: "Abrir páginas en",
     openPage: "Abrir página",
     percentChecked: "Porcentaje marcado",
@@ -4282,7 +4339,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "Solo lectura",
     removeThisSource: "Eliminar esta fuente",
     renameView: "Renombrar vista",
-    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Jami Studio.",
+    reviewBeforeTheyReachBuilder: "Revisar antes de que lleguen a Builder.",
     reviewDiff: "Revisar diferencia",
     sampleMatches: "Coincidencias de muestra",
     showAll: "Mostrar todo",
@@ -4308,9 +4365,9 @@ const databaseExactEnglishMessagesByLocale = {
     analyzingBothSourcesForASharedKey: "正在分析两个来源的共享键",
     bodyDiff: "正文差异",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio 未连接。请先返回并连接你的账户。",
+      "Builder 未连接。请先返回并连接你的账户。",
     calendarBy: "日历依据",
-    checkingBuilderConnection: "正在检查 Jami Studio 连接",
+    checkingBuilderConnection: "正在检查 Builder 连接",
     clearAll: "全部清除",
     clearFilters: "清除筛选器",
     clearSearchAndFilters: "清除搜索和筛选器",
@@ -4320,7 +4377,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "折叠所有分组",
     collapseAll: "全部折叠",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "连接你的 Jami Studio 账户以浏览其空间和模型。",
+      "连接你的 Builder 账户以浏览其空间和模型。",
     connectedSources: "已连接的来源",
     couldntSyncRetry: "无法同步 · 重试",
     countAll: "全部计数",
@@ -4356,7 +4413,7 @@ const databaseExactEnglishMessagesByLocale = {
       "保留数据库行和本地属性，但移除来源映射、行标识和待处理来源更改。",
     liveWritesOn: "实时写入已开启",
     loadingBoard: "正在加载看板",
-    loadingBuilderModels: "正在加载 Jami Studio 模型",
+    loadingBuilderModels: "正在加载 Builder 模型",
     loadingCalendar: "正在加载日历",
     loadingDatabase: "正在加载数据库",
     loadingGallery: "正在加载画廊",
@@ -4367,7 +4424,7 @@ const databaseExactEnglishMessagesByLocale = {
     matchFormula: "匹配公式",
     newSourceNormalize: "新来源 · 规范化",
     newView: "新视图",
-    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Jami Studio 模型。",
+    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Builder 模型。",
     noDatabasePageSelected: "未选择数据库页面。",
     noDate: "无日期",
     noEditableProperties: "没有可编辑属性",
@@ -4378,7 +4435,7 @@ const databaseExactEnglishMessagesByLocale = {
     noMatchingProperties: "没有匹配属性",
     noOtherDatabasesAvailableToAdd: "没有其他可添加的数据库。",
     noPropertiesFound: "未找到属性",
-    notMappedToBuilder: "未映射到 Jami Studio。",
+    notMappedToBuilder: "未映射到 Builder。",
     openPagesIn: "打开页面位置",
     openPage: "打开页面",
     percentChecked: "已选百分比",
@@ -4390,7 +4447,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "只读",
     removeThisSource: "移除此来源",
     renameView: "重命名视图",
-    reviewBeforeTheyReachBuilder: "在发送到 Jami Studio 前审核。",
+    reviewBeforeTheyReachBuilder: "在发送到 Builder 前审核。",
     reviewDiff: "审核差异",
     sampleMatches: "示例匹配",
     showAll: "显示全部",
@@ -4416,9 +4473,9 @@ const databaseExactEnglishMessagesByLocale = {
     analyzingBothSourcesForASharedKey: "正在分析两个来源的共享键",
     bodyDiff: "正文差异",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio 未连接。请先返回并连接你的账户。",
+      "Builder 未连接。请先返回并连接你的账户。",
     calendarBy: "日历依据",
-    checkingBuilderConnection: "正在检查 Jami Studio 连接",
+    checkingBuilderConnection: "正在检查 Builder 连接",
     clearAll: "全部清除",
     clearFilters: "清除筛选器",
     clearSearchAndFilters: "清除搜索和筛选器",
@@ -4428,7 +4485,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "折叠所有分组",
     collapseAll: "全部折叠",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "连接你的 Jami Studio 账户以浏览其空间和模型。",
+      "连接你的 Builder 账户以浏览其空间和模型。",
     connectedSources: "已连接的来源",
     couldntSyncRetry: "无法同步 · 重试",
     countAll: "全部计数",
@@ -4464,7 +4521,7 @@ const databaseExactEnglishMessagesByLocale = {
       "保留数据库行和本地属性，但移除来源映射、行标识和待处理来源更改。",
     liveWritesOn: "实时写入已开启",
     loadingBoard: "正在加载看板",
-    loadingBuilderModels: "正在加载 Jami Studio 模型",
+    loadingBuilderModels: "正在加载 Builder 模型",
     loadingCalendar: "正在加载日历",
     loadingDatabase: "正在加载数据库",
     loadingGallery: "正在加载画廊",
@@ -4475,7 +4532,7 @@ const databaseExactEnglishMessagesByLocale = {
     matchFormula: "匹配公式",
     newSourceNormalize: "新来源 · 规范化",
     newView: "新视图",
-    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Jami Studio 模型。",
+    noBuilderModelsWereFoundInThisSpace: "此空间中未找到 Builder 模型。",
     noDatabasePageSelected: "未选择数据库页面。",
     noDate: "无日期",
     noEditableProperties: "没有可编辑属性",
@@ -4486,7 +4543,7 @@ const databaseExactEnglishMessagesByLocale = {
     noMatchingProperties: "没有匹配属性",
     noOtherDatabasesAvailableToAdd: "没有其他可添加的数据库。",
     noPropertiesFound: "未找到属性",
-    notMappedToBuilder: "未映射到 Jami Studio。",
+    notMappedToBuilder: "未映射到 Builder。",
     openPagesIn: "打开页面位置",
     openPage: "打开页面",
     percentChecked: "已选百分比",
@@ -4498,7 +4555,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "只读",
     removeThisSource: "移除此来源",
     renameView: "重命名视图",
-    reviewBeforeTheyReachBuilder: "在发送到 Jami Studio 前审核。",
+    reviewBeforeTheyReachBuilder: "在发送到 Builder 前审核。",
     reviewDiff: "审核差异",
     sampleMatches: "示例匹配",
     showAll: "显示全部",
@@ -4527,9 +4584,9 @@ const databaseExactEnglishMessagesByLocale = {
       "साझा कुंजी के लिए दोनों स्रोतों का विश्लेषण किया जा रहा है",
     bodyDiff: "बॉडी अंतर",
     builderIsntConnectedGoBackToConnectYour:
-      "Jami Studio कनेक्ट नहीं है। पहले अपना खाता कनेक्ट करने के लिए वापस जाएं।",
+      "Builder कनेक्ट नहीं है। पहले अपना खाता कनेक्ट करने के लिए वापस जाएं।",
     calendarBy: "कैलेंडर इसके अनुसार",
-    checkingBuilderConnection: "Jami Studio कनेक्शन जांचा जा रहा है",
+    checkingBuilderConnection: "Builder कनेक्शन जांचा जा रहा है",
     clearAll: "सब साफ़ करें",
     clearFilters: "फ़िल्टर साफ़ करें",
     clearSearchAndFilters: "खोज और फ़िल्टर साफ़ करें",
@@ -4539,7 +4596,7 @@ const databaseExactEnglishMessagesByLocale = {
     collapseAllGroups: "सभी समूह समेटें",
     collapseAll: "सभी समेटें",
     connectYourBuilderAccountToBrowseItsSpaces:
-      "इसके spaces और models ब्राउज़ करने के लिए अपना Jami Studio खाता कनेक्ट करें।",
+      "इसके spaces और models ब्राउज़ करने के लिए अपना Builder खाता कनेक्ट करें।",
     connectedSources: "कनेक्ट किए गए स्रोत",
     couldntSyncRetry: "सिंक नहीं हो सका · फिर कोशिश करें",
     countAll: "सभी की गिनती",
@@ -4575,7 +4632,7 @@ const databaseExactEnglishMessagesByLocale = {
       "डेटाबेस पंक्तियां और स्थानीय गुण रखें, लेकिन स्रोत मैपिंग, पंक्ति पहचान और लंबित स्रोत बदलाव हटाएं।",
     liveWritesOn: "लाइव लेखन चालू है",
     loadingBoard: "बोर्ड लोड हो रहा है",
-    loadingBuilderModels: "Jami Studio मॉडल लोड हो रहे हैं",
+    loadingBuilderModels: "Builder मॉडल लोड हो रहे हैं",
     loadingCalendar: "कैलेंडर लोड हो रहा है",
     loadingDatabase: "डेटाबेस लोड हो रहा है",
     loadingGallery: "गैलरी लोड हो रही है",
@@ -4587,7 +4644,7 @@ const databaseExactEnglishMessagesByLocale = {
     newSourceNormalize: "नया स्रोत · normalize",
     newView: "नया दृश्य",
     noBuilderModelsWereFoundInThisSpace:
-      "इस space में कोई Jami Studio मॉडल नहीं मिला।",
+      "इस space में कोई Builder मॉडल नहीं मिला।",
     noDatabasePageSelected: "कोई डेटाबेस पेज चयनित नहीं है।",
     noDate: "कोई तारीख नहीं",
     noEditableProperties: "कोई संपादन योग्य गुण नहीं",
@@ -4598,7 +4655,7 @@ const databaseExactEnglishMessagesByLocale = {
     noMatchingProperties: "कोई मेल खाते गुण नहीं",
     noOtherDatabasesAvailableToAdd: "जोड़ने के लिए कोई अन्य डेटाबेस उपलब्ध नहीं है।",
     noPropertiesFound: "कोई गुण नहीं मिले",
-    notMappedToBuilder: "Jami Studio से मैप नहीं है।",
+    notMappedToBuilder: "Builder से मैप नहीं है।",
     openPagesIn: "पेज इसमें खोलें",
     openPage: "पेज खोलें",
     percentChecked: "चेक प्रतिशत",
@@ -4610,7 +4667,7 @@ const databaseExactEnglishMessagesByLocale = {
     readOnly: "रीड-ओनली",
     removeThisSource: "यह स्रोत हटाएं",
     renameView: "दृश्य का नाम बदलें",
-    reviewBeforeTheyReachBuilder: "Jami Studio तक पहुंचने से पहले समीक्षा करें।",
+    reviewBeforeTheyReachBuilder: "Builder तक पहुंचने से पहले समीक्षा करें।",
     reviewDiff: "अंतर की समीक्षा करें",
     sampleMatches: "नमूना मिलान",
     showAll: "सभी दिखाएं",
@@ -4628,6 +4685,10 @@ const databaseExactEnglishMessagesByLocale = {
 const editorMessagesByLocale = {
   "zh-CN": {
     noDocumentSelected: "未选择文档",
+    collabConnectingReadOnly: "正在连接实时编辑器。显示只读快照。",
+    builderBodySyncing: "内容仍在从 Builder 同步",
+    builderBodySyncingDescription:
+      "同步 Builder 正文完成前会暂停编辑，避免覆盖现有文章内容。",
     creatingDatabase: "正在创建内联数据库...",
     databaseCreated: "内联数据库已创建",
     describeWhatToGenerate: "描述要生成什么...",
@@ -4687,6 +4748,7 @@ const editorMessagesByLocale = {
       generatingAltText: "正在生成替代文本...",
       image: "图片",
       imageAdded: "图片已添加",
+      imageBroken: "图片无法加载",
       imageCommentWithAlt: "图片：{{alt}}",
       imageCopied: "图像已复制。",
       imageDownloadStarted: "图像下载开始。",
@@ -4745,6 +4807,7 @@ const editorMessagesByLocale = {
       add: "添加",
       addOption: "添加选项",
       addProperty: "添加属性",
+      addPropertyFailed: "无法添加属性。",
       addPropertyLink: "添加 {{name}} 链接",
       addPropertyPerson: "添加 {{name}} 人",
       addPropertyType: "添加 {{type}} 属性",
@@ -4945,6 +5008,11 @@ const editorMessagesByLocale = {
   },
   "es-ES": {
     noDocumentSelected: "Ningún documento seleccionado",
+    collabConnectingReadOnly:
+      "Conectando el editor en vivo. Mostrando una instantánea de solo lectura.",
+    builderBodySyncing: "El contenido aún se está sincronizando desde Builder",
+    builderBodySyncingDescription:
+      "La edición está en pausa hasta que el cuerpo de Builder termine de sincronizarse, para no sobrescribir el contenido existente del artículo.",
     creatingDatabase: "Creando base de datos integrada...",
     databaseCreated: "Base de datos integrada creada",
     describeWhatToGenerate: "Describe qué generar...",
@@ -5006,6 +5074,7 @@ const editorMessagesByLocale = {
       generatingAltText: "Generando texto alternativo...",
       image: "Imagen",
       imageAdded: "Imagen agregada",
+      imageBroken: "No se pudo cargar la imagen",
       imageCommentWithAlt: "Imagen: {{alt}}",
       imageCopied: "Imagen copiada.",
       imageDownloadStarted: "Se inició la descarga de la imagen.",
@@ -5064,6 +5133,7 @@ const editorMessagesByLocale = {
       add: "Añadir",
       addOption: "Agregar opción",
       addProperty: "Agregar propiedad",
+      addPropertyFailed: "No se pudo agregar la propiedad.",
       addPropertyLink: "Agregar enlace {{name}}",
       addPropertyPerson: "Agregar persona {{name}}",
       addPropertyType: "Agregar propiedad {{type}}",
@@ -5272,6 +5342,12 @@ const editorMessagesByLocale = {
   },
   "fr-FR": {
     noDocumentSelected: "Aucun document sélectionné",
+    collabConnectingReadOnly:
+      "Connexion de l'éditeur en direct. Affichage d'un instantané en lecture seule.",
+    builderBodySyncing:
+      "Le contenu est encore en cours de synchronisation depuis Builder",
+    builderBodySyncingDescription:
+      "La modification est suspendue jusqu'à la fin de la synchronisation du corps Builder, afin de ne pas écraser le contenu existant de l'article.",
     creatingDatabase: "Création d'une base de données intégrée...",
     databaseCreated: "Base de données intégrée créée",
     describeWhatToGenerate: "Décrivez ce qu'il faut générer...",
@@ -5335,6 +5411,7 @@ const editorMessagesByLocale = {
       generatingAltText: "Génération du texte alternatif...",
       image: "Images",
       imageAdded: "Image ajoutée",
+      imageBroken: "L'image n'a pas pu être chargée",
       imageCommentWithAlt: "Image : {{alt}}",
       imageCopied: "Image copiée.",
       imageDownloadStarted: "Le téléchargement de l'image a commencé.",
@@ -5393,6 +5470,7 @@ const editorMessagesByLocale = {
       add: "Ajouter",
       addOption: "Ajouter une option",
       addProperty: "Ajouter une propriété",
+      addPropertyFailed: "Impossible d’ajouter la propriété.",
       addPropertyLink: "Ajouter un lien {{name}}",
       addPropertyPerson: "Ajouter une personne {{name}}",
       addPropertyType: "Ajouter la propriété {{type}}",
@@ -5440,7 +5518,7 @@ const editorMessagesByLocale = {
       noFilesOrMedia: "Aucun fichier ni média",
       noMatchingOptions: "Aucune option correspondante",
       noMatchingPropertyTypes: "Aucun type de propriété correspondant",
-      notMappedToBuilder: "Non mappé à Jami Studio.",
+      notMappedToBuilder: "Non mappé à Builder.",
       onlyBlocksPropertyWarning:
         "C'est la seule propriété de blocs présente dans ce type d'objet. Cela supprimera le contenu principal (corps) de tous les objets de ce type.",
       optional: "Facultatif",
@@ -5601,6 +5679,11 @@ const editorMessagesByLocale = {
   },
   "de-DE": {
     noDocumentSelected: "Kein Dokument ausgewählt",
+    collabConnectingReadOnly:
+      "Live-Editor wird verbunden. Schreibgeschützte Momentaufnahme wird angezeigt.",
+    builderBodySyncing: "Inhalte werden noch von Builder synchronisiert",
+    builderBodySyncingDescription:
+      "Die Bearbeitung ist pausiert, bis der Builder-Textkörper fertig synchronisiert ist, damit der bestehende Artikelinhalt nicht überschrieben wird.",
     creatingDatabase: "Inline-Datenbank wird erstellt...",
     databaseCreated: "Inline-Datenbank erstellt",
     describeWhatToGenerate: "Beschreiben Sie, was generiert werden soll ...",
@@ -5664,6 +5747,7 @@ const editorMessagesByLocale = {
       generatingAltText: "Alternativtext wird generiert...",
       image: "Bild",
       imageAdded: "Bild hinzugefügt",
+      imageBroken: "Bild konnte nicht geladen werden",
       imageCommentWithAlt: "Bild: {{alt}}",
       imageCopied: "Bild kopiert.",
       imageDownloadStarted: "Bild-Download gestartet.",
@@ -5723,6 +5807,7 @@ const editorMessagesByLocale = {
       add: "Hinzufügen",
       addOption: "Option hinzufügen",
       addProperty: "Eigenschaft hinzufügen",
+      addPropertyFailed: "Eigenschaft konnte nicht hinzugefügt werden.",
       addPropertyLink: "{{name}}-Link hinzufügen",
       addPropertyPerson: "{{name}}-Person hinzufügen",
       addPropertyType: "{{type}}-Eigenschaft hinzufügen",
@@ -5770,7 +5855,7 @@ const editorMessagesByLocale = {
       noFilesOrMedia: "Keine Dateien oder Medien",
       noMatchingOptions: "Keine passenden Optionen",
       noMatchingPropertyTypes: "Keine passenden Immobilientypen",
-      notMappedToBuilder: "Nicht dem Jami Studio zugeordnet.",
+      notMappedToBuilder: "Nicht dem Builder zugeordnet.",
       onlyBlocksPropertyWarning:
         "Dies ist die einzige Blockeigenschaft, die in diesem Objekttyp vorhanden ist. Dadurch wird der Hauptinhalt (Body) für alle Objekte dieses Typs gelöscht.",
       optional: "Optional [de-DE]",
@@ -5935,6 +6020,11 @@ const editorMessagesByLocale = {
   },
   "ja-JP": {
     noDocumentSelected: "ドキュメントが選択されていません",
+    collabConnectingReadOnly:
+      "ライブエディターに接続中。読み取り専用のスナップショットを表示しています。",
+    builderBodySyncing: "コンテンツはまだ Builder から同期中です",
+    builderBodySyncingDescription:
+      "既存の記事内容を上書きしないよう、Builder 本文の同期が完了するまで編集は一時停止されます。",
     creatingDatabase: "インラインデータベースを作成しています...",
     databaseCreated: "インラインデータベースが作成されました",
     describeWhatToGenerate: "何を生成するかを説明します...",
@@ -5994,6 +6084,7 @@ const editorMessagesByLocale = {
       generatingAltText: "代替テキストを生成しています...",
       image: "画像",
       imageAdded: "画像追加",
+      imageBroken: "画像を読み込めませんでした",
       imageCommentWithAlt: "画像: {{alt}}",
       imageCopied: "画像をコピーしました。",
       imageDownloadStarted: "画像のダウンロードが始まりました。",
@@ -6053,6 +6144,7 @@ const editorMessagesByLocale = {
       add: "追加",
       addOption: "オプションを追加",
       addProperty: "プロパティの追加",
+      addPropertyFailed: "プロパティを追加できませんでした。",
       addPropertyLink: "{{name}} リンクを追加",
       addPropertyPerson: "{{name}} 人を追加",
       addPropertyType: "{{type}}プロパティを追加",
@@ -6259,6 +6351,11 @@ const editorMessagesByLocale = {
   },
   "ko-KR": {
     noDocumentSelected: "선택한 문서가 없습니다.",
+    collabConnectingReadOnly:
+      "라이브 편집기에 연결하는 중입니다. 읽기 전용 스냅샷을 표시합니다.",
+    builderBodySyncing: "콘텐츠가 아직 Builder에서 동기화되는 중입니다",
+    builderBodySyncingDescription:
+      "기존 문서 내용을 덮어쓰지 않도록 Builder 본문 동기화가 완료될 때까지 편집이 일시 중지됩니다.",
     creatingDatabase: "인라인 데이터베이스 생성 중...",
     databaseCreated: "인라인 데이터베이스가 생성되었습니다.",
     describeWhatToGenerate: "무엇을 생성할지 설명하세요...",
@@ -6318,6 +6415,7 @@ const editorMessagesByLocale = {
       generatingAltText: "대체 텍스트 생성 중...",
       image: "이미지",
       imageAdded: "이미지가 추가됨",
+      imageBroken: "이미지를 불러올 수 없습니다",
       imageCommentWithAlt: "이미지: {{alt}}",
       imageCopied: "이미지가 복사되었습니다.",
       imageDownloadStarted: "이미지 다운로드가 시작되었습니다.",
@@ -6376,6 +6474,7 @@ const editorMessagesByLocale = {
       add: "추가",
       addOption: "옵션 추가",
       addProperty: "속성 추가",
+      addPropertyFailed: "속성을 추가하지 못했습니다.",
       addPropertyLink: "{{name}} 링크 추가",
       addPropertyPerson: "{{name}} 사람 추가",
       addPropertyType: "{{type}} 속성 추가",
@@ -6582,6 +6681,11 @@ const editorMessagesByLocale = {
   },
   "pt-BR": {
     noDocumentSelected: "Nenhum documento selecionado",
+    collabConnectingReadOnly:
+      "Conectando o editor ao vivo. Exibindo um instantâneo somente leitura.",
+    builderBodySyncing: "O conteúdo ainda está sincronizando do Builder",
+    builderBodySyncingDescription:
+      "A edição fica pausada até o corpo do Builder terminar de sincronizar, para não sobrescrever o conteúdo existente do artigo.",
     creatingDatabase: "Criando banco de dados embutido...",
     databaseCreated: "Banco de dados embutido criado",
     describeWhatToGenerate: "Descreva o que gerar...",
@@ -6643,6 +6747,7 @@ const editorMessagesByLocale = {
       generatingAltText: "Gerando texto alternativo...",
       image: "Imagem",
       imageAdded: "Imagem adicionada",
+      imageBroken: "Não foi possível carregar a imagem",
       imageCommentWithAlt: "Imagem: {{alt}}",
       imageCopied: "Imagem copiada.",
       imageDownloadStarted: "O download da imagem foi iniciado.",
@@ -6702,6 +6807,7 @@ const editorMessagesByLocale = {
       add: "Adicionar",
       addOption: "Adicionar opção",
       addProperty: "Adicionar propriedade",
+      addPropertyFailed: "Não foi possível adicionar a propriedade.",
       addPropertyLink: "Adicionar link {{name}}",
       addPropertyPerson: "Adicionar pessoa {{name}}",
       addPropertyType: "Adicionar propriedade {{type}}",
@@ -6749,7 +6855,7 @@ const editorMessagesByLocale = {
       noFilesOrMedia: "Nenhum arquivo ou mídia",
       noMatchingOptions: "Nenhuma opção de correspondência",
       noMatchingPropertyTypes: "Nenhum tipo de propriedade correspondente",
-      notMappedToBuilder: "Não mapeado para o Jami Studio.",
+      notMappedToBuilder: "Não mapeado para o Builder.",
       onlyBlocksPropertyWarning:
         "Esta é a única propriedade de blocos presente neste tipo de objeto. Isso excluirá o conteúdo principal (corpo) de todos os objetos deste tipo.",
       optional: "Opcional",
@@ -6911,6 +7017,11 @@ const editorMessagesByLocale = {
   },
   "hi-IN": {
     noDocumentSelected: "कोई दस्तावेज़ चयनित नहीं",
+    collabConnectingReadOnly:
+      "लाइव संपादक कनेक्ट हो रहा है। केवल-पठन स्नैपशॉट दिखाया जा रहा है।",
+    builderBodySyncing: "सामग्री अभी भी Builder से सिंक हो रही है",
+    builderBodySyncingDescription:
+      "Builder का मुख्य भाग सिंक पूरा होने तक संपादन रोका गया है, ताकि मौजूदा लेख सामग्री अधिलेखित न हो।",
     creatingDatabase: "इनलाइन डेटाबेस बनाया जा रहा है...",
     databaseCreated: "इनलाइन डेटाबेस बनाया गया",
     describeWhatToGenerate: "वर्णन करें कि क्या उत्पन्न करना है...",
@@ -6970,6 +7081,7 @@ const editorMessagesByLocale = {
       generatingAltText: "वैकल्पिक टेक्स्ट जनरेट किया जा रहा है...",
       image: "छवि",
       imageAdded: "छवि जोड़ी गई",
+      imageBroken: "छवि लोड नहीं हो सकी",
       imageCommentWithAlt: "छवि: {{alt}}",
       imageCopied: "छवि कॉपी की गई.",
       imageDownloadStarted: "छवि डाउनलोड प्रारंभ हुआ.",
@@ -7028,6 +7140,7 @@ const editorMessagesByLocale = {
       add: "जोड़ें",
       addOption: "विकल्प जोड़ें",
       addProperty: "संपत्ति जोड़ें",
+      addPropertyFailed: "प्रॉपर्टी नहीं जोड़ी जा सकी।",
       addPropertyLink: "{{name}} लिंक जोड़ें",
       addPropertyPerson: "{{name}} व्यक्ति जोड़ें",
       addPropertyType: "{{type}} गुण जोड़ें",
@@ -7231,6 +7344,11 @@ const editorMessagesByLocale = {
   },
   "ar-SA": {
     noDocumentSelected: "لم يتم تحديد أي مستند",
+    collabConnectingReadOnly:
+      "جارٍ الاتصال بالمحرر المباشر. يتم عرض لقطة للقراءة فقط.",
+    builderBodySyncing: "لا يزال المحتوى قيد المزامنة من Builder",
+    builderBodySyncingDescription:
+      "يتم إيقاف التحرير مؤقتًا حتى تكتمل مزامنة نص Builder، حتى لا يتم استبدال محتوى المقالة الحالي.",
     creatingDatabase: "جارٍ إنشاء قاعدة بيانات مضمنة...",
     databaseCreated: "تم إنشاء قاعدة البيانات المضمنة",
     describeWhatToGenerate: "وصف ما سيتم إنشاؤه...",
@@ -7290,6 +7408,7 @@ const editorMessagesByLocale = {
       generatingAltText: "جارٍ إنشاء نص بديل...",
       image: "صورة",
       imageAdded: "تمت إضافة الصورة",
+      imageBroken: "تعذّر تحميل الصورة",
       imageCommentWithAlt: "الصورة: {{alt}}",
       imageCopied: "تم نسخ الصورة.",
       imageDownloadStarted: "بدأ تنزيل الصورة.",
@@ -7348,6 +7467,7 @@ const editorMessagesByLocale = {
       add: "أضف",
       addOption: "إضافة خيار",
       addProperty: "أضف خاصية",
+      addPropertyFailed: "تعذرت إضافة الخاصية.",
       addPropertyLink: "أضف رابط {{name}}",
       addPropertyPerson: "إضافة شخص {{name}}",
       addPropertyType: "إضافة خاصية {{type}}",
@@ -7395,7 +7515,7 @@ const editorMessagesByLocale = {
       noFilesOrMedia: "لا توجد ملفات أو وسائل الإعلام",
       noMatchingOptions: "لا توجد خيارات مطابقة",
       noMatchingPropertyTypes: "لا توجد أنواع عقارات مطابقة",
-      notMappedToBuilder: "لم يتم تعيينه إلى Jami Studio.",
+      notMappedToBuilder: "لم يتم تعيينه إلى Builder.",
       onlyBlocksPropertyWarning:
         "هذه هي خاصية الكتل الوحيدة الموجودة في هذا النوع من الكائنات. سيؤدي هذا إلى حذف المحتوى الرئيسي (النص) لجميع الكائنات من هذا النوع.",
       optional: "اختياري",
@@ -7804,8 +7924,34 @@ export const messagesByLocale = {
     database: {
       ...databaseMessagesByLocale["zh-CN"],
       ...databaseExactEnglishMessagesByLocale["zh-CN"],
-      builderBodiesReadyLocally: "Jami Studio 文章正文已在本地准备就绪。",
+      builderBodiesReadyLocally: "Builder 文章正文已在本地准备就绪。",
       builderBodySync: "正文同步",
+      builderBodySyncFailedNotice: "此文章正文无法从 Builder 同步",
+      builderBodySyncFailedDescription:
+        "该行仍可编辑，但 Builder 正文未完成同步。发布或推送更改前请检查文章内容。",
+      builderBodySyncing: "内容仍在从 Builder 同步",
+      builderBodySyncingDescription:
+        "同步 Builder 正文完成前会暂停编辑，避免覆盖现有文章内容。",
+      builderReviewShowingRows:
+        "此次审查显示 {{total}} 个 Builder 行中的 {{shown}} 个。",
+      builderReviewShowMore: "显示更多",
+      builderReviewRemainingBatches:
+        "此批次完成后请再次审查，以准备其余 Builder 更改。",
+      builderBodiesSyncingProgress:
+        "正在同步 {{total}} 个正文中的 {{hydrated}} 个。",
+      builderBodiesSyncFinishedWithFailures:
+        "已同步 {{total}} 个正文中的 {{hydrated}} 个。{{failed}} 个失败。",
+      builderRowsFetchedBodiesSyncing:
+        "已获取 {{rows}} 行。正在同步 {{total}} 个正文中的 {{hydrated}} 个。",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "已获取 {{rows}} 行。已同步 {{total}} 个正文中的 {{hydrated}} 个。{{failed}} 个失败。",
+      builderRowsFetchedSyncingBodies:
+        "Builder 行已全部获取。文章正文仍在同步中。",
+      builderRowsFetchedSoFar: "目前已获取 {{count}} 行。",
+      builderRowsFinishingUp: "Builder 行即将完成加载。",
+      builderRowsLoadingBackground: "Builder 仍在后台加载行。",
+      builderRowsLoadingHitSnag: "Builder 行加载遇到问题。",
+      opening: "正在打开...",
     },
     localFiles: localFilesMessagesByLocale["zh-CN"],
     root: {
@@ -7938,8 +8084,39 @@ export const messagesByLocale = {
       ...databaseMessagesByLocale["es-ES"],
       ...databaseExactEnglishMessagesByLocale["es-ES"],
       builderBodiesReadyLocally:
-        "Los cuerpos de los artículos de Jami Studio están listos localmente.",
+        "Los cuerpos de los artículos de Builder están listos localmente.",
       builderBodySync: "Sincronización del cuerpo",
+      builderBodySyncFailedNotice:
+        "El cuerpo de este artículo no se pudo sincronizar desde Builder",
+      builderBodySyncFailedDescription:
+        "La fila sigue siendo editable, pero el cuerpo de Builder no terminó de sincronizarse. Revisa el contenido del artículo antes de publicar o enviar cambios.",
+      builderBodySyncing:
+        "El contenido aún se está sincronizando desde Builder",
+      builderBodySyncingDescription:
+        "La edición está en pausa hasta que el cuerpo de Builder termine de sincronizarse, para no sobrescribir el contenido existente del artículo.",
+      builderReviewShowingRows:
+        "Mostrando {{shown}} de {{total}} filas de Builder para esta revisión.",
+      builderReviewShowMore: "Mostrar más",
+      builderReviewRemainingBatches:
+        "Revisa de nuevo después de este lote para preparar los cambios restantes de Builder.",
+      builderBodiesSyncingProgress:
+        "Sincronizando {{hydrated}} de {{total}} cuerpos.",
+      builderBodiesSyncFinishedWithFailures:
+        "{{hydrated}} de {{total}} cuerpos sincronizados. {{failed}} fallaron.",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} filas obtenidas. Sincronizando {{hydrated}} de {{total}} cuerpos.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} filas obtenidas. {{hydrated}} de {{total}} cuerpos sincronizados. {{failed}} fallaron.",
+      builderRowsFetchedSyncingBodies:
+        "Las filas de Builder están obtenidas. Los cuerpos de los artículos aún se están sincronizando.",
+      builderRowsFetchedSoFar: "{{count}} filas obtenidas hasta ahora.",
+      builderRowsFinishingUp:
+        "Las filas de Builder están terminando de cargarse.",
+      builderRowsLoadingBackground:
+        "Builder sigue cargando filas en segundo plano.",
+      builderRowsLoadingHitSnag:
+        "La carga de filas de Builder tuvo un problema.",
+      opening: "Abriendo...",
     },
     localFiles: localFilesMessagesByLocale["es-ES"],
     root: {
@@ -8082,8 +8259,38 @@ export const messagesByLocale = {
       ...databaseMessagesByLocale["fr-FR"],
       ...databaseExactEnglishMessagesByLocale["fr-FR"],
       builderBodiesReadyLocally:
-        "Les corps d’articles Jami Studio sont prêts localement.",
+        "Les corps d’articles Builder sont prêts localement.",
       builderBodySync: "Synchronisation du corps",
+      builderBodySyncFailedNotice:
+        "Le corps de cet article n'a pas pu être synchronisé depuis Builder",
+      builderBodySyncFailedDescription:
+        "La ligne reste modifiable, mais le corps Builder n'a pas terminé sa synchronisation. Vérifiez le contenu de l'article avant de publier ou de pousser des modifications.",
+      builderBodySyncing:
+        "Le contenu est encore en cours de synchronisation depuis Builder",
+      builderBodySyncingDescription:
+        "La modification est suspendue jusqu'à la fin de la synchronisation du corps Builder, afin de ne pas écraser le contenu existant de l'article.",
+      builderReviewShowingRows:
+        "Affichage de {{shown}} lignes Builder sur {{total}} pour cette revue.",
+      builderReviewShowMore: "Afficher plus",
+      builderReviewRemainingBatches:
+        "Relancez la revue après ce lot pour préparer les modifications Builder restantes.",
+      builderBodiesSyncingProgress:
+        "Synchronisation de {{hydrated}} corps sur {{total}}.",
+      builderBodiesSyncFinishedWithFailures:
+        "{{hydrated}} corps synchronisés sur {{total}}. {{failed}} échecs.",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} lignes récupérées. Synchronisation de {{hydrated}} corps sur {{total}}.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} lignes récupérées. {{hydrated}} corps synchronisés sur {{total}}. {{failed}} échecs.",
+      builderRowsFetchedSyncingBodies:
+        "Les lignes Builder sont récupérées. Les corps d'articles se synchronisent encore.",
+      builderRowsFetchedSoFar: "{{count}} lignes récupérées jusqu’à présent.",
+      builderRowsFinishingUp: "Les lignes Builder terminent leur chargement.",
+      builderRowsLoadingBackground:
+        "Builder charge encore des lignes en arrière-plan.",
+      builderRowsLoadingHitSnag:
+        "Le chargement des lignes Builder a rencontré un problème.",
+      opening: "Ouverture...",
     },
     localFiles: localFilesMessagesByLocale["fr-FR"],
     root: {
@@ -8229,9 +8436,37 @@ export const messagesByLocale = {
     database: {
       ...databaseMessagesByLocale["de-DE"],
       ...databaseExactEnglishMessagesByLocale["de-DE"],
-      builderBodiesReadyLocally:
-        "Jami Studio-Artikelinhalte sind lokal bereit.",
+      builderBodiesReadyLocally: "Builder-Artikelinhalte sind lokal bereit.",
       builderBodySync: "Inhaltssynchronisierung",
+      builderBodySyncFailedNotice:
+        "Der Inhalt dieses Artikels konnte nicht aus Builder synchronisiert werden",
+      builderBodySyncFailedDescription:
+        "Die Zeile bleibt bearbeitbar, aber der Builder-Inhalt wurde nicht vollständig synchronisiert. Prüfen Sie den Artikelinhalt vor dem Veröffentlichen oder Pushen.",
+      builderBodySyncing: "Inhalte werden noch von Builder synchronisiert",
+      builderBodySyncingDescription:
+        "Die Bearbeitung ist pausiert, bis der Builder-Textkörper fertig synchronisiert ist, damit der bestehende Artikelinhalt nicht überschrieben wird.",
+      builderReviewShowingRows:
+        "Zeige {{shown}} von {{total}} Builder-Zeilen für diese Überprüfung.",
+      builderReviewShowMore: "Mehr anzeigen",
+      builderReviewRemainingBatches:
+        "Nach diesem Stapel erneut überprüfen, um die restlichen Builder-Änderungen vorzubereiten.",
+      builderBodiesSyncingProgress:
+        "{{hydrated}} von {{total}} Texten werden synchronisiert.",
+      builderBodiesSyncFinishedWithFailures:
+        "{{hydrated}} von {{total}} Texten synchronisiert. {{failed}} fehlgeschlagen.",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} Zeilen geladen. {{hydrated}} von {{total}} Texten werden synchronisiert.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} Zeilen geladen. {{hydrated}} von {{total}} Texten synchronisiert. {{failed}} fehlgeschlagen.",
+      builderRowsFetchedSyncingBodies:
+        "Builder-Zeilen sind geladen. Artikeltexte werden noch synchronisiert.",
+      builderRowsFetchedSoFar: "{{count}} Zeilen bisher abgerufen.",
+      builderRowsFinishingUp: "Builder-Zeilen werden fertig geladen.",
+      builderRowsLoadingBackground:
+        "Builder lädt weiterhin Zeilen im Hintergrund.",
+      builderRowsLoadingHitSnag:
+        "Beim Laden der Builder-Zeilen ist ein Problem aufgetreten.",
+      opening: "Wird geöffnet...",
     },
     localFiles: localFilesMessagesByLocale["de-DE"],
     root: {
@@ -8378,8 +8613,36 @@ export const messagesByLocale = {
       ...databaseMessagesByLocale["ja-JP"],
       ...databaseExactEnglishMessagesByLocale["ja-JP"],
       builderBodiesReadyLocally:
-        "Jami Studio の記事本文はローカルで準備できています。",
+        "Builder の記事本文はローカルで準備できています。",
       builderBodySync: "本文同期",
+      builderBodySyncFailedNotice:
+        "この記事の本文を Builder から同期できませんでした",
+      builderBodySyncFailedDescription:
+        "この行は引き続き編集できますが、Builder 本文の同期は完了していません。公開または変更のプッシュ前に記事内容を確認してください。",
+      builderBodySyncing: "コンテンツはまだ Builder から同期中です",
+      builderBodySyncingDescription:
+        "既存の記事内容を上書きしないよう、Builder 本文の同期が完了するまで編集は一時停止されます。",
+      builderReviewShowingRows:
+        "このレビューでは {{total}} 件中 {{shown}} 件の Builder 行を表示しています。",
+      builderReviewShowMore: "さらに表示",
+      builderReviewRemainingBatches:
+        "残りの Builder 変更を準備するには、このバッチの後で再度レビューしてください。",
+      builderBodiesSyncingProgress:
+        "{{total}} 件中 {{hydrated}} 件の本文を同期しています。",
+      builderBodiesSyncFinishedWithFailures:
+        "{{total}} 件中 {{hydrated}} 件の本文を同期しました。{{failed}} 件が失敗しました。",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} 行を取得しました。{{total}} 件中 {{hydrated}} 件の本文を同期しています。",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} 行を取得しました。{{total}} 件中 {{hydrated}} 件の本文を同期しました。{{failed}} 件が失敗しました。",
+      builderRowsFetchedSyncingBodies:
+        "Builder の行は取得済みです。記事本文はまだ同期中です。",
+      builderRowsFetchedSoFar: "現在 {{count}} 行を取得済みです。",
+      builderRowsFinishingUp: "Builder 行の読み込みを完了しています。",
+      builderRowsLoadingBackground:
+        "Builder はバックグラウンドで行を読み込み続けています。",
+      builderRowsLoadingHitSnag: "Builder 行の読み込みで問題が発生しました。",
+      opening: "開いています...",
     },
     localFiles: localFilesMessagesByLocale["ja-JP"],
     root: {
@@ -8521,9 +8784,36 @@ export const messagesByLocale = {
     database: {
       ...databaseMessagesByLocale["ko-KR"],
       ...databaseExactEnglishMessagesByLocale["ko-KR"],
-      builderBodiesReadyLocally:
-        "Jami Studio 문서 본문이 로컬에서 준비되었습니다.",
+      builderBodiesReadyLocally: "Builder 문서 본문이 로컬에서 준비되었습니다.",
       builderBodySync: "본문 동기화",
+      builderBodySyncFailedNotice:
+        "이 문서 본문을 Builder에서 동기화하지 못했습니다",
+      builderBodySyncFailedDescription:
+        "이 행은 계속 편집할 수 있지만 Builder 본문 동기화가 완료되지 않았습니다. 게시하거나 변경 사항을 푸시하기 전에 문서 내용을 검토하세요.",
+      builderBodySyncing: "콘텐츠가 아직 Builder에서 동기화되는 중입니다",
+      builderBodySyncingDescription:
+        "기존 문서 내용을 덮어쓰지 않도록 Builder 본문 동기화가 완료될 때까지 편집이 일시 중지됩니다.",
+      builderReviewShowingRows:
+        "이 검토에서 Builder 행 {{total}}개 중 {{shown}}개를 표시하고 있습니다.",
+      builderReviewShowMore: "더 보기",
+      builderReviewRemainingBatches:
+        "남은 Builder 변경 사항을 준비하려면 이 배치 후 다시 검토하세요.",
+      builderBodiesSyncingProgress:
+        "본문 {{total}}개 중 {{hydrated}}개를 동기화하는 중입니다.",
+      builderBodiesSyncFinishedWithFailures:
+        "본문 {{total}}개 중 {{hydrated}}개를 동기화했습니다. {{failed}}개 실패했습니다.",
+      builderRowsFetchedBodiesSyncing:
+        "행 {{rows}}개를 가져왔습니다. 본문 {{total}}개 중 {{hydrated}}개를 동기화하는 중입니다.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "행 {{rows}}개를 가져왔습니다. 본문 {{total}}개 중 {{hydrated}}개를 동기화했습니다. {{failed}}개 실패했습니다.",
+      builderRowsFetchedSyncingBodies:
+        "Builder 행을 모두 가져왔습니다. 문서 본문은 아직 동기화 중입니다.",
+      builderRowsFetchedSoFar: "지금까지 {{count}}개 행을 가져왔습니다.",
+      builderRowsFinishingUp: "Builder 행 로드를 마무리하는 중입니다.",
+      builderRowsLoadingBackground:
+        "Builder가 백그라운드에서 행을 계속 로드하고 있습니다.",
+      builderRowsLoadingHitSnag: "Builder 행 로드 중 문제가 발생했습니다.",
+      opening: "여는 중...",
     },
     localFiles: localFilesMessagesByLocale["ko-KR"],
     root: {
@@ -8658,8 +8948,38 @@ export const messagesByLocale = {
       ...databaseMessagesByLocale["pt-BR"],
       ...databaseExactEnglishMessagesByLocale["pt-BR"],
       builderBodiesReadyLocally:
-        "Os corpos dos artigos do Jami Studio estão prontos localmente.",
+        "Os corpos dos artigos do Builder estão prontos localmente.",
       builderBodySync: "Sincronização do corpo",
+      builderBodySyncFailedNotice:
+        "O corpo deste artigo não pôde ser sincronizado do Builder",
+      builderBodySyncFailedDescription:
+        "A linha continua editável, mas o corpo do Builder não terminou de sincronizar. Revise o conteúdo do artigo antes de publicar ou enviar alterações.",
+      builderBodySyncing: "O conteúdo ainda está sincronizando do Builder",
+      builderBodySyncingDescription:
+        "A edição fica pausada até o corpo do Builder terminar de sincronizar, para não sobrescrever o conteúdo existente do artigo.",
+      builderReviewShowingRows:
+        "Mostrando {{shown}} de {{total}} linhas do Builder para esta revisão.",
+      builderReviewShowMore: "Mostrar mais",
+      builderReviewRemainingBatches:
+        "Revise novamente após este lote para preparar as alterações restantes do Builder.",
+      builderBodiesSyncingProgress:
+        "Sincronizando {{hydrated}} de {{total}} corpos.",
+      builderBodiesSyncFinishedWithFailures:
+        "{{hydrated}} de {{total}} corpos sincronizados. {{failed}} falharam.",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} linhas obtidas. Sincronizando {{hydrated}} de {{total}} corpos.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} linhas obtidas. {{hydrated}} de {{total}} corpos sincronizados. {{failed}} falharam.",
+      builderRowsFetchedSyncingBodies:
+        "As linhas do Builder foram obtidas. Os corpos dos artigos ainda estão sincronizando.",
+      builderRowsFetchedSoFar: "{{count}} linhas buscadas até agora.",
+      builderRowsFinishingUp:
+        "As linhas do Builder estão terminando de carregar.",
+      builderRowsLoadingBackground:
+        "O Builder ainda está carregando linhas em segundo plano.",
+      builderRowsLoadingHitSnag:
+        "O carregamento de linhas do Builder encontrou um problema.",
+      opening: "Abrindo...",
     },
     localFiles: localFilesMessagesByLocale["pt-BR"],
     root: {
@@ -8804,8 +9124,35 @@ export const messagesByLocale = {
     database: {
       ...databaseMessagesByLocale["hi-IN"],
       ...databaseExactEnglishMessagesByLocale["hi-IN"],
-      builderBodiesReadyLocally: "Jami Studio लेखों की बॉडी स्थानीय रूप से तैयार है।",
+      builderBodiesReadyLocally: "Builder लेखों की बॉडी स्थानीय रूप से तैयार है।",
       builderBodySync: "बॉडी सिंक",
+      builderBodySyncFailedNotice: "इस लेख की बॉडी Builder से सिंक नहीं हो सकी",
+      builderBodySyncFailedDescription:
+        "पंक्ति संपादन योग्य रहती है, लेकिन Builder बॉडी ने सिंक पूरा नहीं किया। प्रकाशित करने या परिवर्तन पुश करने से पहले लेख सामग्री की समीक्षा करें।",
+      builderBodySyncing: "सामग्री अभी भी Builder से सिंक हो रही है",
+      builderBodySyncingDescription:
+        "Builder का मुख्य भाग सिंक पूरा होने तक संपादन रोका गया है, ताकि मौजूदा लेख सामग्री अधिलेखित न हो।",
+      builderReviewShowingRows:
+        "इस समीक्षा के लिए {{total}} में से {{shown}} Builder पंक्तियाँ दिखाई जा रही हैं।",
+      builderReviewShowMore: "और दिखाएँ",
+      builderReviewRemainingBatches:
+        "शेष Builder परिवर्तन तैयार करने के लिए इस बैच के बाद फिर से समीक्षा करें।",
+      builderBodiesSyncingProgress:
+        "{{total}} में से {{hydrated}} मुख्य भाग सिंक हो रहे हैं।",
+      builderBodiesSyncFinishedWithFailures:
+        "{{total}} में से {{hydrated}} मुख्य भाग सिंक हुए। {{failed}} विफल हुए।",
+      builderRowsFetchedBodiesSyncing:
+        "{{rows}} पंक्तियाँ प्राप्त हुईं। {{total}} में से {{hydrated}} मुख्य भाग सिंक हो रहे हैं।",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "{{rows}} पंक्तियाँ प्राप्त हुईं। {{total}} में से {{hydrated}} मुख्य भाग सिंक हुए। {{failed}} विफल हुए।",
+      builderRowsFetchedSyncingBodies:
+        "Builder पंक्तियाँ प्राप्त हो गई हैं। लेखों के मुख्य भाग अभी भी सिंक हो रहे हैं।",
+      builderRowsFetchedSoFar: "अब तक {{count}} पंक्तियां लाई गईं।",
+      builderRowsFinishingUp: "Builder पंक्तियां लोड होना पूरा कर रही हैं।",
+      builderRowsLoadingBackground:
+        "Builder अभी भी पृष्ठभूमि में पंक्तियां लोड कर रहा है।",
+      builderRowsLoadingHitSnag: "Builder पंक्तियां लोड करने में समस्या आई।",
+      opening: "खोला जा रहा है...",
     },
     localFiles: localFilesMessagesByLocale["hi-IN"],
     root: {
@@ -8938,8 +9285,34 @@ export const messagesByLocale = {
     database: {
       ...databaseMessagesByLocale["ar-SA"],
       ...databaseExactEnglishMessagesByLocale["ar-SA"],
-      builderBodiesReadyLocally: "أصبحت نصوص مقالات Jami Studio جاهزة محليًا.",
+      builderBodiesReadyLocally: "أصبحت نصوص مقالات Builder جاهزة محليًا.",
       builderBodySync: "مزامنة النص",
+      builderBodySyncFailedNotice: "تعذرت مزامنة نص هذه المقالة من Builder",
+      builderBodySyncFailedDescription:
+        "يبقى الصف قابلاً للتحرير، لكن نص Builder لم يكمل المزامنة. راجع محتوى المقالة قبل النشر أو دفع التغييرات.",
+      builderBodySyncing: "لا يزال المحتوى قيد المزامنة من Builder",
+      builderBodySyncingDescription:
+        "يتم إيقاف التحرير مؤقتًا حتى تكتمل مزامنة نص Builder، حتى لا يتم استبدال محتوى المقالة الحالي.",
+      builderReviewShowingRows:
+        "يتم عرض {{shown}} من {{total}} صفوف Builder لهذه المراجعة.",
+      builderReviewShowMore: "عرض المزيد",
+      builderReviewRemainingBatches:
+        "راجع مرة أخرى بعد هذه الدفعة لتحضير تغييرات Builder المتبقية.",
+      builderBodiesSyncingProgress:
+        "تتم مزامنة {{hydrated}} من {{total}} من النصوص.",
+      builderBodiesSyncFinishedWithFailures:
+        "تمت مزامنة {{hydrated}} من {{total}} من النصوص. فشل {{failed}}.",
+      builderRowsFetchedBodiesSyncing:
+        "تم جلب {{rows}} صفًا. تتم مزامنة {{hydrated}} من {{total}} من النصوص.",
+      builderRowsFetchedBodiesSyncFinishedWithFailures:
+        "تم جلب {{rows}} صفًا. تمت مزامنة {{hydrated}} من {{total}} من النصوص. فشل {{failed}}.",
+      builderRowsFetchedSyncingBodies:
+        "تم جلب صفوف Builder. لا تزال نصوص المقالات قيد المزامنة.",
+      builderRowsFetchedSoFar: "تم جلب {{count}} صفًا حتى الآن.",
+      builderRowsFinishingUp: "صفوف Builder توشك على إكمال التحميل.",
+      builderRowsLoadingBackground: "لا يزال Builder يحمّل الصفوف في الخلفية.",
+      builderRowsLoadingHitSnag: "واجه تحميل صفوف Builder مشكلة.",
+      opening: "جارٍ الفتح...",
     },
     localFiles: localFilesMessagesByLocale["ar-SA"],
     root: {
