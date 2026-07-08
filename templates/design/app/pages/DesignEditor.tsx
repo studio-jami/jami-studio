@@ -3297,9 +3297,50 @@ function designSystemGenerationDirectives(
   if (!designSystemId) return [];
   return [
     `Use design system id "${designSystemId}" for this generation.`,
-    "Before generating visual code, call `get-design-system` for that id and follow its tokens, assets, and custom instructions.",
+    "Use the selected design system context in this message as mandatory generation input. If details are missing or conflict, call `get-design-system` for that id before writing visual code.",
     `When calling \`generate-design\`, pass \`designSystemId: "${designSystemId}"\` so the design remains linked.`,
   ];
+}
+
+interface DesignSystemGenerationContextResult {
+  title?: string;
+  agentContext?: string;
+}
+
+async function loadDesignSystemGenerationContext(
+  designSystemId?: string | null,
+): Promise<string> {
+  if (!designSystemId) return "";
+  try {
+    const result = (await callAction(
+      "get-design-system",
+      { id: designSystemId },
+      { method: "GET" },
+    )) as DesignSystemGenerationContextResult | undefined;
+    if (result?.agentContext?.trim()) {
+      return [
+        "",
+        result.agentContext.trim(),
+        "",
+        "The selected design system context above was hydrated before this agent run. Follow it directly; do not replace it with generic colors, fonts, spacing, or components.",
+      ].join("\n");
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "unknown loading error";
+    return [
+      "",
+      "## Selected Design System Context",
+      `The selected design system id "${designSystemId}" could not be loaded before generation: ${message}`,
+      "Before writing visual code, call `get-design-system` for this id. If it still fails, stop and tell the user the selected design system is unavailable instead of improvising a generic style.",
+    ].join("\n");
+  }
+  return [
+    "",
+    "## Selected Design System Context",
+    `The selected design system id "${designSystemId}" returned no generation context.`,
+    "Call `get-design-system` for this id before writing visual code. If it still has no usable tokens/docs, stop and ask the user to finish design-system indexing instead of improvising a generic style.",
+  ].join("\n");
 }
 
 function designIntakeQuestionDirectives(
@@ -10345,49 +10386,60 @@ export default function DesignEditor() {
       return;
     }
 
-    const shouldExploreVariants = promptRequestsVariantExploration(prompt);
-    const shouldSkipQuestions =
-      pending.skipQuestions === true || shouldExploreVariants;
-    const context = [
-      sourceContext,
-      `Design id: "${id}"`,
-      `Design title: "${design.title}"`,
-      `User request: "${prompt}"`,
-      pendingDesignSystemId
-        ? `Design system id: "${pendingDesignSystemId}"`
-        : "",
-      fileContext,
-      "",
-      ...(shouldExploreVariants
-        ? designVariantGenerationDirectives(id, pendingDesignSystemId)
-        : shouldSkipQuestions
-          ? designGenerationDirectives(id, pendingDesignSystemId)
-          : designIntakeQuestionDirectives(id, pendingDesignSystemId)),
-    ].join("\n");
+    let cancelled = false;
+    void (async () => {
+      const shouldExploreVariants = promptRequestsVariantExploration(prompt);
+      const shouldSkipQuestions =
+        pending.skipQuestions === true || shouldExploreVariants;
+      const designSystemContext = await loadDesignSystemGenerationContext(
+        pendingDesignSystemId,
+      );
+      if (cancelled) return;
+      const context = [
+        sourceContext,
+        `Design id: "${id}"`,
+        `Design title: "${design.title}"`,
+        `User request: "${prompt}"`,
+        pendingDesignSystemId
+          ? `Design system id: "${pendingDesignSystemId}"`
+          : "",
+        designSystemContext,
+        fileContext,
+        "",
+        ...(shouldExploreVariants
+          ? designVariantGenerationDirectives(id, pendingDesignSystemId)
+          : shouldSkipQuestions
+            ? designGenerationDirectives(id, pendingDesignSystemId)
+            : designIntakeQuestionDirectives(id, pendingDesignSystemId)),
+      ].join("\n");
 
-    clearGenerationCompleteTimer();
-    setGenerationIssue(null);
-    const runTabId = agentSubmit(
-      shouldSkipQuestions
-        ? `Generate design for "${design.title}": ${prompt}`
-        : `Create design: ${prompt}`,
-      context,
-      {
-        model: pending.model,
-        engine: pending.engine,
-        effort: pending.effort,
-        newTab: true,
-        images,
-      },
-    );
-    setGenerationChatTabId(runTabId);
-    patchPendingGeneration(id, {
-      runTabId,
-      attempt: pending.attempt ?? 1,
-      designSystemId: pendingDesignSystemId,
-      startedAt: Date.now(),
-    });
-    setHasPendingGeneration(true);
+      clearGenerationCompleteTimer();
+      setGenerationIssue(null);
+      const runTabId = agentSubmit(
+        shouldSkipQuestions
+          ? `Generate design for "${design.title}": ${prompt}`
+          : `Create design: ${prompt}`,
+        context,
+        {
+          model: pending.model,
+          engine: pending.engine,
+          effort: pending.effort,
+          newTab: true,
+          images,
+        },
+      );
+      setGenerationChatTabId(runTabId);
+      patchPendingGeneration(id, {
+        runTabId,
+        attempt: pending.attempt ?? 1,
+        designSystemId: pendingDesignSystemId,
+        startedAt: Date.now(),
+      });
+      setHasPendingGeneration(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [
     id,
     design,
@@ -10555,6 +10607,46 @@ export default function DesignEditor() {
       cancelled = true;
     };
   }, [appStateVersion, designBreakpoints, id]);
+
+  // Agent→UI: open the write-consent dialog when the agent requests local file
+  // write access via request-localhost-write-consent (granting stays human-only).
+  // One-shot: consume the app-state key, open the dialog, then clear it so
+  // echoed app-state bumps don't re-open it.
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    const key = `design-localhost-write-consent-request:${id}`;
+    void (async () => {
+      const request = await readClientAppState<{
+        designId?: string;
+        connectionId?: string;
+        rootPath?: string;
+        files?: string[];
+      }>(key).catch(() => null);
+      if (
+        cancelled ||
+        !request ||
+        request.designId !== id ||
+        !request.connectionId
+      ) {
+        return;
+      }
+      setLocalhostConsentConnectionId(request.connectionId);
+      setLocalhostWriteConsentPayload({
+        rootPath: request.rootPath ?? request.connectionId,
+        files: request.files ?? [],
+        onGranted: () => {
+          toast.success("File writes allowed for 8 hours." /* i18n-ignore */);
+        },
+        onCancel: () => {},
+      });
+      setLocalhostWriteConsentOpen(true);
+      await setClientAppState(key, null).catch(() => {});
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [appStateVersion, id]);
 
   // §6.4 — The active screen's primary-frame width (the BASE editing
   // context). Overrides written at a narrower active breakpoint apply below
@@ -15338,6 +15430,31 @@ export default function DesignEditor() {
     composerContextHasOurKeyRef.current =
       composerContextItemsForBookkeeping.some((item) => item.key === key);
   }, [composerContextItemsForBookkeeping]);
+
+  useEffect(() => {
+    const key = "design:design-system";
+    const designSystemId = design?.designSystemId;
+    if (!designSystemId) {
+      removeAgentChatContextItem(key);
+      return;
+    }
+
+    let cancelled = false;
+    void loadDesignSystemGenerationContext(designSystemId).then((context) => {
+      if (cancelled || !context.trim()) return;
+      setAgentChatContextItem({
+        key,
+        title: "Selected design system" /* i18n-ignore agent context label */,
+        context,
+        openSidebar: false,
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      removeAgentChatContextItem(key);
+    };
+  }, [design?.designSystemId]);
 
   const handleAssetInserted = useCallback(
     (selection: {
@@ -23082,7 +23199,7 @@ export default function DesignEditor() {
   });
 
   const startRetryGeneration = useCallback(
-    (
+    async (
       promptState: NonNullable<typeof retryablePrompt>,
       attempt: number,
       mode: "manual" | "auto",
@@ -23091,6 +23208,9 @@ export default function DesignEditor() {
       clearAutoRetryTimer();
       const fileContext = formatUploadedFileContext(promptState.files);
       const images = imageAttachmentsFromUploadedFiles(promptState.files);
+      const designSystemContext = await loadDesignSystemGenerationContext(
+        promptState.designSystemId,
+      );
       const retryLine =
         mode === "auto"
           ? `(Automatically retrying attempt ${attempt} of ${MAX_GENERATION_ATTEMPTS} — the previous attempt did not complete.)`
@@ -23101,6 +23221,7 @@ export default function DesignEditor() {
         promptState.designSystemId
           ? `Design system id: "${promptState.designSystemId}"`
           : "",
+        designSystemContext,
         fileContext,
         "",
         retryLine,
@@ -23158,7 +23279,7 @@ export default function DesignEditor() {
 
   const handleRetryGeneration = useCallback(() => {
     if (!retryablePrompt || !canEditDesign) return;
-    startRetryGeneration(
+    void startRetryGeneration(
       retryablePrompt,
       (retryablePrompt.attempt ?? 1) + 1,
       "manual",
@@ -23181,7 +23302,7 @@ export default function DesignEditor() {
 
     autoRetryTimerRef.current = window.setTimeout(() => {
       autoRetryTimerRef.current = null;
-      startRetryGeneration(retryablePrompt, completedAttempt + 1, "auto");
+      void startRetryGeneration(retryablePrompt, completedAttempt + 1, "auto");
     }, AUTO_RETRY_DELAY_MS);
 
     return clearAutoRetryTimer;
@@ -29246,7 +29367,7 @@ ${serializedHtml}
         onOpenChange={handlePromptOpenChange}
         title={t("designEditor.generateDesign")}
         placeholder={t("designEditor.generatePlaceholder")}
-        onSubmit={(
+        onSubmit={async (
           prompt: string,
           files: UploadedFile[],
           options: PromptComposerSubmitOptions,
@@ -29267,6 +29388,8 @@ ${serializedHtml}
           persistPromptDesignSystem(designSystemId);
           const fileContext = formatUploadedFileContext(files);
           const images = imageAttachmentsFromUploadedFiles(files);
+          const designSystemContext =
+            await loadDesignSystemGenerationContext(designSystemId);
           const shouldExploreVariants =
             promptRequestsVariantExploration(prompt);
           const shouldSkipQuestions = shouldExploreVariants;
@@ -29274,6 +29397,7 @@ ${serializedHtml}
             `The user has design "${id}" (title: "${design.title}") open and wants to fill it with design files.`,
             `User request: "${prompt}"`,
             designSystemId ? `Design system id: "${designSystemId}"` : "",
+            designSystemContext,
             fileContext,
             "",
             ...(shouldExploreVariants

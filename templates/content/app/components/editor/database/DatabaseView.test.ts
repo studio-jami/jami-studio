@@ -8,7 +8,13 @@ import { describe, expect, it } from "vitest";
 import {
   databaseBuilderBulkUpdateSource,
   databaseBulkEditableProperties,
+  databaseBulkPropertyValueForItem,
+  databaseBulkMultiSelectFilteredOptions,
+  databaseBulkMultiSelectOptionPresence,
+  databaseBulkMultiSelectToggleOperation,
+  databaseBulkMultiSelectValueAfterOperation,
   builderSourceContinuationKey,
+  builderSourceContinuationFetchedCountDetail,
   builderSourceContinuationWatchdogDelay,
   builderSourceContinuationProgressPercent,
   builderSourceContinuationWatchdogDecision,
@@ -85,6 +91,41 @@ describe("Builder source continuation state", () => {
     ).toBe(95);
   });
 
+  it("includes the known Builder total in partial fetch details", () => {
+    expect(
+      builderSourceContinuationFetchedCountDetail(
+        {
+          metadata: {
+            primaryKey: "id",
+            titleField: "data.title",
+            lastReadFetchedEntryCount: 100,
+            lastReadLimit: 300,
+            lastReadHasMore: true,
+          },
+        },
+        100,
+      ),
+    ).toBe("100 of 300");
+  });
+
+  it("keeps completed fetch details to the fetched count", () => {
+    expect(
+      builderSourceContinuationFetchedCountDetail(
+        {
+          metadata: {
+            primaryKey: "id",
+            titleField: "data.title",
+            lastReadFetchedEntryCount: 300,
+            lastReadLimit: 300,
+            lastReadHasMore: false,
+          },
+        },
+        300,
+        true,
+      ),
+    ).toBe(300);
+  });
+
   it("falls back to indeterminate progress when counts are missing", () => {
     expect(
       builderSourceContinuationProgressPercent({
@@ -147,6 +188,15 @@ const builderRowItem = (id: string): ContentDatabaseItem => ({
     canManage: true,
   },
   properties: [],
+});
+
+const rowWithPropertyValue = (
+  id: string,
+  property: DocumentProperty,
+  value: DocumentProperty["value"],
+): ContentDatabaseItem => ({
+  ...builderRowItem(id),
+  properties: [{ ...property, value }],
 });
 
 const builderSourceForBulk = (
@@ -241,5 +291,170 @@ describe("Builder-backed database edit helpers", () => {
         (property) => property.definition.id,
       ),
     ).toEqual(["tags"]);
+  });
+});
+
+describe("Database bulk multi-select edit helpers", () => {
+  it("filters multi-select options by tag name", () => {
+    const options = [
+      { id: "agent-native", name: "Agent Native", color: "blue" as const },
+      { id: "open-source", name: "Open Source", color: "green" as const },
+      { id: "cms", name: "Headless CMS", color: "purple" as const },
+    ];
+
+    expect(
+      databaseBulkMultiSelectFilteredOptions(options, " source ").map(
+        (option) => option.id,
+      ),
+    ).toEqual(["open-source"]);
+    expect(
+      databaseBulkMultiSelectFilteredOptions(options, "CMS").map(
+        (option) => option.id,
+      ),
+    ).toEqual(["cms"]);
+    expect(databaseBulkMultiSelectFilteredOptions(options, "")).toBe(options);
+  });
+
+  it("adds selected options without replacing existing row tags", () => {
+    expect(
+      databaseBulkMultiSelectValueAfterOperation(["agent-native"], {
+        kind: "multi_select_add",
+        optionIds: ["open-source"],
+      }),
+    ).toEqual(["agent-native", "open-source"]);
+
+    expect(
+      databaseBulkMultiSelectValueAfterOperation(["agent-native"], {
+        kind: "multi_select_add",
+        optionIds: ["agent-native", "open-source", "open-source"],
+      }),
+    ).toEqual(["agent-native", "open-source"]);
+  });
+
+  it("applies pending add and remove options together", () => {
+    expect(
+      databaseBulkMultiSelectValueAfterOperation(
+        ["agent-native", "open-source"],
+        {
+          kind: "multi_select_batch",
+          addOptionIds: ["cms"],
+          removeOptionIds: ["open-source"],
+        },
+      ),
+    ).toEqual(["agent-native", "cms"]);
+  });
+
+  it("removes selected options from existing row tags", () => {
+    expect(
+      databaseBulkMultiSelectValueAfterOperation(
+        ["agent-native", "open-source", "cms"],
+        {
+          kind: "multi_select_remove",
+          optionIds: ["open-source"],
+        },
+      ),
+    ).toEqual(["agent-native", "cms"]);
+  });
+
+  it("clears all multi-select options with a set-empty operation", () => {
+    const tagsProperty = baseProperty("tags", "multi_select");
+    const row = rowWithPropertyValue("alpha", tagsProperty, [
+      "agent-native",
+      "open-source",
+    ]);
+
+    expect(
+      databaseBulkPropertyValueForItem(row, tagsProperty, {
+        kind: "set",
+        value: [],
+      }),
+    ).toEqual([]);
+  });
+
+  it("only enables remove when every selected row has the option", () => {
+    const tagsProperty = baseProperty("tags", "multi_select");
+    const rows = [
+      rowWithPropertyValue("alpha", tagsProperty, [
+        "agent-native",
+        "open-source",
+      ]),
+      rowWithPropertyValue("beta", tagsProperty, ["open-source"]),
+      rowWithPropertyValue("gamma", tagsProperty, ["agent-native"]),
+    ];
+
+    expect(
+      databaseBulkMultiSelectOptionPresence(rows, tagsProperty, "open-source"),
+    ).toEqual({ presentInAny: true, presentInAll: false });
+    expect(
+      databaseBulkMultiSelectOptionPresence(
+        rows.slice(0, 2),
+        tagsProperty,
+        "open-source",
+      ),
+    ).toEqual({ presentInAny: true, presentInAll: true });
+  });
+
+  it("toggles all-present options to remove and partial options to add", () => {
+    const tagsProperty = baseProperty("tags", "multi_select");
+    const rows = [
+      rowWithPropertyValue("alpha", tagsProperty, [
+        "agent-native",
+        "open-source",
+      ]),
+      rowWithPropertyValue("beta", tagsProperty, ["open-source"]),
+    ];
+
+    expect(
+      databaseBulkMultiSelectToggleOperation(rows, tagsProperty, "open-source"),
+    ).toEqual({
+      kind: "multi_select_batch",
+      addOptionIds: [],
+      removeOptionIds: ["open-source"],
+    });
+    expect(
+      databaseBulkMultiSelectToggleOperation(
+        rows,
+        tagsProperty,
+        "agent-native",
+      ),
+    ).toEqual({
+      kind: "multi_select_batch",
+      addOptionIds: ["agent-native"],
+      removeOptionIds: [],
+    });
+  });
+
+  it("uses pending toggles when deciding the next toggle operation", () => {
+    const tagsProperty = baseProperty("tags", "multi_select");
+    const rows = [
+      rowWithPropertyValue("alpha", tagsProperty, ["open-source"]),
+      rowWithPropertyValue("beta", tagsProperty, []),
+    ];
+    const pendingAdd = databaseBulkMultiSelectToggleOperation(
+      rows,
+      tagsProperty,
+      "open-source",
+    );
+
+    expect(
+      databaseBulkMultiSelectOptionPresence(
+        rows,
+        tagsProperty,
+        "open-source",
+        pendingAdd,
+      ),
+    ).toEqual({ presentInAny: true, presentInAll: true });
+    expect(
+      databaseBulkMultiSelectToggleOperation(
+        rows,
+        tagsProperty,
+        "open-source",
+        pendingAdd,
+      ),
+    ).toEqual({
+      kind: "multi_select_batch",
+      addOptionIds: [],
+      removeOptionIds: ["open-source"],
+    });
   });
 });

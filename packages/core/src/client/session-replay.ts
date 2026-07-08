@@ -1,8 +1,8 @@
 import {
-  getAnalyticsSessionId,
-  getAnalyticsAnonymousId,
-  scrubUrl,
-} from "./analytics.js";
+  getOrCreateAnalyticsAnonymousId,
+  getOrCreateAnalyticsSessionId,
+} from "./analytics-session.js";
+import { scrubUrl } from "./url-scrub.js";
 
 type ReplayEvent = Record<string, unknown>;
 type QueuedReplayEvent = {
@@ -745,6 +745,99 @@ function serializeReplayEvent(event: ReplayEvent): string {
   }
 }
 
+/** rrweb Meta event type. */
+const RRWEB_META_EVENT = 4;
+/** rrweb IncrementalSnapshot event type. */
+const RRWEB_INCREMENTAL_EVENT = 3;
+/** rrweb ViewportResize incremental source. */
+const RRWEB_VIEWPORT_RESIZE_SOURCE = 4;
+
+/**
+ * Bounds for captured viewport frames. Multi-monitor spans and corrupt
+ * resize payloads produce absurd aspect ratios that collapse the replay
+ * stage into an ultra-wide ribbon after fit-to-scale. Clamp at capture so
+ * bad dimensions are never stored.
+ */
+const MIN_CAPTURED_VIEWPORT = 240;
+const MAX_CAPTURED_ASPECT_RATIO = 2.45;
+const MIN_CAPTURED_ASPECT_RATIO = 0.5;
+
+/**
+ * Rewrite Meta / ViewportResize frames with absurd dimensions before they
+ * enter the upload queue. Returns the original event when dimensions are
+ * already sane or the event is not a viewport frame.
+ */
+export function sanitizeCapturedReplayViewportEvent(
+  event: ReplayEvent,
+): ReplayEvent {
+  const type = event.type;
+  if (type === RRWEB_META_EVENT) {
+    return sanitizeCapturedViewportData(event, event.data);
+  }
+  if (type === RRWEB_INCREMENTAL_EVENT) {
+    const data = event.data;
+    if (
+      data &&
+      typeof data === "object" &&
+      !Array.isArray(data) &&
+      (data as Record<string, unknown>).source === RRWEB_VIEWPORT_RESIZE_SOURCE
+    ) {
+      return sanitizeCapturedViewportData(event, data);
+    }
+  }
+  return event;
+}
+
+function sanitizeCapturedViewportData(
+  event: ReplayEvent,
+  data: unknown,
+): ReplayEvent {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return event;
+  const record = data as Record<string, unknown>;
+  const width = record.width;
+  const height = record.height;
+  if (
+    typeof width !== "number" ||
+    typeof height !== "number" ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return event;
+  }
+  const clamped = clampCapturedViewport(width, height);
+  if (
+    clamped.width === Math.round(width) &&
+    clamped.height === Math.round(height)
+  ) {
+    return event;
+  }
+  return {
+    ...event,
+    data: {
+      ...record,
+      width: clamped.width,
+      height: clamped.height,
+    },
+  };
+}
+
+function clampCapturedViewport(
+  width: number,
+  height: number,
+): { width: number; height: number } {
+  let nextWidth = Math.max(MIN_CAPTURED_VIEWPORT, Math.round(width));
+  let nextHeight = Math.max(MIN_CAPTURED_VIEWPORT, Math.round(height));
+  const aspect = nextWidth / nextHeight;
+  if (aspect > MAX_CAPTURED_ASPECT_RATIO) {
+    nextWidth = Math.round(nextHeight * MAX_CAPTURED_ASPECT_RATIO);
+  } else if (aspect < MIN_CAPTURED_ASPECT_RATIO) {
+    nextHeight = Math.round(nextWidth / MIN_CAPTURED_ASPECT_RATIO);
+  }
+  return { width: nextWidth, height: nextHeight };
+}
+
 function replayEventTimestampMs(event: ReplayEvent): number {
   const timestamp = event.timestamp;
   if (typeof timestamp === "number" && Number.isFinite(timestamp)) {
@@ -762,7 +855,8 @@ function enqueueReplayEvent(
   event: ReplayEvent,
 ): void {
   if (!state.options) return;
-  const serialized = serializeReplayEvent(event);
+  const sanitized = sanitizeCapturedReplayViewportEvent(event);
+  const serialized = serializeReplayEvent(sanitized);
   if (!serialized) return;
   const estimatedBytes = serialized.length;
   if (
@@ -773,8 +867,8 @@ function enqueueReplayEvent(
   }
   state.queue.push({
     json: serialized,
-    timestampMs: replayEventTimestampMs(event),
-    type: typeof event.type === "number" ? event.type : null,
+    timestampMs: replayEventTimestampMs(sanitized),
+    type: typeof sanitized.type === "number" ? sanitized.type : null,
   });
   state.queuedBytes += estimatedBytes;
   flushQueuedReplayIfNeeded(state);
@@ -842,7 +936,7 @@ function buildReplayBody(
 ): ReplayUploadPayload | null {
   const options = state.options;
   if (!options || !state.replayId) return null;
-  const sessionId = getAnalyticsSessionId();
+  const sessionId = getOrCreateAnalyticsSessionId();
   if (!sessionId) return null;
   const properties = replayPropertiesForUpload(state, options);
   const userEmail = replayUserEmail(properties);
@@ -864,7 +958,7 @@ function buildReplayBody(
     sessionId,
     ...(userId ? { userId } : {}),
     ...(userEmail ? { userEmail } : {}),
-    anonymousId: getAnalyticsAnonymousId(),
+    anonymousId: getOrCreateAnalyticsAnonymousId(),
     sequence: state.sequence,
     reason,
     status: isFinalFlushReason(reason) ? "completed" : "active",
@@ -1956,7 +2050,7 @@ export async function startSessionReplay(
   const normalized = normalizeOptions(options);
   if (!normalized) return { started: false, reason: "missing-public-key" };
 
-  const sessionId = getAnalyticsSessionId();
+  const sessionId = getOrCreateAnalyticsSessionId();
   if (!sessionId) return { started: false, reason: "missing-session-id" };
   const sampled = shouldSampleSessionReplay(
     sessionId,
@@ -2168,4 +2262,54 @@ export function maybeStartSessionReplay(
 
 export function isSessionReplayActive(): boolean {
   return getState().active;
+}
+
+/**
+ * The active session replay id when a recording is running, or the last one
+ * persisted for this analytics session in `localStorage`. First-party error
+ * capture uses this to tie each captured exception to the replay it happened
+ * in, so triage can jump straight to `/sessions/<recordingId>`.
+ */
+export function getSessionReplayId(): string | null {
+  const state = getState();
+  if (state.active && state.replayId) return state.replayId;
+  const stored = readStoredReplaySession();
+  return stored?.replayId ?? null;
+}
+
+/**
+ * Surface a manually captured exception on the active session replay timeline
+ * as an `agent-native.console` custom event, reusing the diagnostics contract
+ * (`level`, `source: "console"`, `message`, `stack`, `url`). No-op when no
+ * recording is active. Auto-captured `window.onerror` / `unhandledrejection`
+ * are intentionally NOT routed here — the recorder already logs those as
+ * `window-error` / `unhandledrejection`, so re-emitting would double-count.
+ */
+export function emitSessionReplayException(input: {
+  type: string;
+  message: string;
+  level?: "fatal" | "error" | "warning" | "info" | "debug";
+  stack?: string;
+  url?: string;
+}): void {
+  const state = getState();
+  if (!state.active || !state.addCustomEvent) return;
+  const level =
+    input.level === "warning"
+      ? "warn"
+      : input.level === "info" || input.level === "debug"
+        ? input.level
+        : "error";
+  emitReplayCustomEvent(state, SESSION_REPLAY_CONSOLE_EVENT_TAG, {
+    level,
+    source: "console",
+    message: `${input.type}: ${input.message}`.slice(
+      0,
+      MAX_CONSOLE_MESSAGE_LENGTH,
+    ),
+    ...(input.stack
+      ? { stack: input.stack.slice(0, MAX_CONSOLE_STACK_LENGTH) }
+      : {}),
+    ...(input.url ? { url: input.url } : {}),
+  });
 }

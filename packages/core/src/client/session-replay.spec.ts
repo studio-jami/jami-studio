@@ -198,6 +198,7 @@ async function freshSessionReplay() {
 
 describe("session replay", () => {
   afterEach(() => {
+    vi.resetModules();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -209,6 +210,49 @@ describe("session replay", () => {
     sentryMock.setUser.mockReset();
     amplitudeMock.init.mockReset();
     amplitudeMock.track.mockReset();
+  });
+
+  it("clamps absurd Meta and ViewportResize dimensions before upload", async () => {
+    const { sanitizeCapturedReplayViewportEvent } = await freshSessionReplay();
+
+    expect(
+      sanitizeCapturedReplayViewportEvent({
+        type: 4,
+        timestamp: 1,
+        data: { width: 3840, height: 1080, href: "https://app.example.test/" },
+      }),
+    ).toMatchObject({
+      data: { width: 2646, height: 1080 },
+    });
+    expect(
+      sanitizeCapturedReplayViewportEvent({
+        type: 3,
+        timestamp: 2,
+        data: { source: 4, width: 5000, height: 800 },
+      }),
+    ).toMatchObject({
+      data: { width: 1960, height: 800 },
+    });
+    expect(
+      sanitizeCapturedReplayViewportEvent({
+        type: 4,
+        timestamp: 3,
+        data: { width: 1440, height: 900 },
+      }),
+    ).toMatchObject({
+      data: { width: 1440, height: 900 },
+    });
+    expect(
+      sanitizeCapturedReplayViewportEvent({
+        type: 2,
+        timestamp: 4,
+        data: { node: {} },
+      }),
+    ).toEqual({
+      type: 2,
+      timestamp: 4,
+      data: { node: {} },
+    });
   });
 
   it("does not import or start rrweb from configureTracking without replay config or an analytics key", async () => {
@@ -256,7 +300,7 @@ describe("session replay", () => {
     );
     expect(replayCalls).toHaveLength(1);
     expect(replayCalls[0][0]).toBe(
-      "https://analytics.agent-native.com/api/analytics/replay",
+      "https://analytics.jami.studio/api/analytics/replay",
     );
     const body = await parseReplayUpload(replayCalls[0][1] as RequestInit);
     expect(body).toMatchObject({
@@ -318,7 +362,7 @@ describe("session replay", () => {
     configureTracking({
       key: "anpk_configured",
       endpoint: "https://analytics.example.test/api/analytics/track",
-      sessionReplay: true,
+      sessionReplay: { enabled: true, sampleRate: 1 },
     });
     await tick();
 
@@ -1154,11 +1198,10 @@ describe("session replay", () => {
     configureTracking({
       key: "anpk_configured",
       endpoint: "https://analytics.example.test/api/analytics/track",
-      sessionReplay: true,
+      sessionReplay: { enabled: true, sampleRate: 1 },
     });
-    await tick();
+    await waitForAssertion(() => expect(recordOptions).toBeDefined());
 
-    expect(recordOptions).toBeDefined();
     recordOptions.emit({ type: 3, data: { href: "/inbox" } });
     await stopSessionReplay();
     await waitForAssertion(() =>
@@ -1207,9 +1250,9 @@ describe("session replay", () => {
         app: "agent-native-test",
         userId: "user_123",
       }),
-      sessionReplay: true,
+      sessionReplay: { enabled: true, sampleRate: 1 },
     });
-    await tick();
+    await waitForAssertion(() => expect(recordOptions).toBeDefined());
 
     recordOptions.emit({ type: 3, data: { href: "/inbox" } });
     await stopSessionReplay();
@@ -1258,9 +1301,13 @@ describe("session replay", () => {
         ...properties,
         app: "agent-native-clips",
       }),
-      sessionReplay: { enabled: true, requireSignedInUser: true },
+      sessionReplay: {
+        enabled: true,
+        requireSignedInUser: true,
+        sampleRate: 1,
+      },
     });
-    await tick();
+    await waitForAssertion(() => expect(recordOptions).toBeDefined());
 
     recordOptions.emit({ type: 3, data: { href: "/inbox" } });
     await stopSessionReplay();
@@ -1310,6 +1357,7 @@ describe("session replay", () => {
       sessionReplay: {
         enabled: true,
         requireSignedInUser: true,
+        sampleRate: 1,
         flushIntervalMs: 100_000,
       },
     });
