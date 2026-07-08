@@ -1,6 +1,12 @@
 # Curation Notes - 7c84f30
 
-## Accepted
+## Policy Calibration
+
+Default posture is now **accept upstream main**, then strip or adapt obvious
+Jami contradictions. Size alone is not a reason to defer in `sync/intake` or
+`sync/staging`; those branches are the safety layer.
+
+## Accepted Before Full Merge
 
 - `7c84f30b1` / `#1955`: ported Clips first-play startup reliability.
   - Added the first-play rewind guard for stale duration-probe seeks.
@@ -12,22 +18,17 @@
   - Added upstream focused coverage for the auto-title/chat bridge.
   - Kept the Clips changelog entry.
 
-## Deferred
+## Full Merge Handling
 
-- `bba733221` / `#1953`: background agent routing hardening.
-  - Broad core-agent surface.
-  - Includes `.changeset` package-release files.
-  - Should be reviewed as a dedicated core reliability lane.
-- `d6153fdcb` / `#1949`: deploy guards and analytics reliability.
-  - Mixes deploy guard changes, analytics, file-upload behavior, desktop Clips,
-    docs, and changesets.
-  - Should be split into smaller lanes.
-- `3995e4e8c` / `#1946`: Dispatch overview simplification.
-  - Large UI rewrite.
-  - Needs product review before intake.
-- `179d5ed8e` and related Content bulk source changes.
-  - Already called out as broad/conflict-prone by the report.
-  - Needs a separate Content-source lane.
+The remaining upstream delta should be merged into this intake branch. During
+that merge, keep upstream code by default and strip or adapt only takeover
+contradictions:
+
+- keep Jami source-sync workflows and `_ops/source-sync`
+- keep inherited Builder workflows disabled
+- keep Jami deploy relocation decisions
+- preserve Jami identity/domain/repo ownership decisions
+- avoid importing upstream agent attribution trailers
 
 ## Notes
 

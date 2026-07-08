@@ -8,7 +8,10 @@
 
 ## Protected Decisions
 
-Automation must flag, not auto-port, changes that affect:
+Automation should accept upstream `main` by default, then strip or adapt changes
+that contradict Jami takeover decisions.
+
+Automation must flag and clean changes that affect:
 
 - `.github/workflows/**`
 - `deploy/netlify/**`
@@ -16,6 +19,10 @@ Automation must flag, not auto-port, changes that affect:
 - package publishing and changeset automation
 - branding, domain, legal, OAuth, or hosted URL assumptions
 - `_ops/**` operational records
+
+Large upstream changes are not a reason to defer on their own. The sync branches
+are the safety layer; the pre-merge pass is a contradiction filter, not a broad
+code-quality gate.
 
 ## Registry Lane
 

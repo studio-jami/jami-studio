@@ -24,18 +24,19 @@ These are the first-pass rules. Update them as we learn the upstream rhythm.
 
 ## Likely Good Intake
 
-- isolated bug fixes
-- security hardening
-- performance fixes
+- upstream `main` changes by default
+- isolated bug fixes, security hardening, and performance fixes
+- broad runtime, product, and template changes once Jami contradictions are
+  stripped or adapted
 - test fixes that cover real behavior
-- registry/template catalog updates, after review
-- reusable framework improvements that do not assume Builder infrastructure
+- registry/template catalog updates
+- reusable framework improvements
 
-## Usually Defer
+## Strip Or Adapt
 
-- version package commits
-- release automation
-- Netlify or Builder deploy routing changes
-- Builder-owned service integrations unless we are actively replacing that
-  surface
-- broad content/source-sync changes until reviewed as their own lane
+- inherited Builder workflows
+- Builder publish, release, deploy, billing, or dispatch automation
+- Builder domains, repository identity, or hosted-service defaults that conflict
+  with Jami takeover decisions
+- reversions of Jami deploy relocation or `_ops/source-sync`
+- changes that would make `jami-studio` behave like a GitHub fork again
