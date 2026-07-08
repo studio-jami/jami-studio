@@ -1,0 +1,69 @@
+name: Source sync review
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        description: Base ref to compare from
+        required: false
+        default: main
+      source_ref:
+        description: Source ref to compare against
+        required: false
+        default: source/main
+      create_issue:
+        description: Create a GitHub issue with the report summary
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: source-sync-review
+  cancel-in-progress: true
+
+jobs:
+  report:
+    name: Generate source-sync report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Jami repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure remotes
+        run: |
+          git remote add source https://github.com/studio-jami/agent-native-source.git
+          git remote add upstream https://github.com/BuilderIO/agent-native.git
+          git fetch source
+          git fetch upstream main
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate report
+        run: |
+          node --experimental-strip-types _ops/source-sync/scripts/source-sync-report.ts --base "${{ inputs.base_ref }}" --source "${{ inputs.source_ref }}" --out _ops/source-sync/reports/github-action-report.md
+          cat _ops/source-sync/reports/github-action-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-sync-report
+          path: _ops/source-sync/reports/github-action-report.md
+
+      - name: Create review issue
+        if: ${{ inputs.create_issue == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Source sync review $(date -u +%Y-%m-%dT%H:%MZ)"
+          gh issue create \
+            --title "$title" \
+            --body-file _ops/source-sync/reports/github-action-report.md \
+            --label source-sync

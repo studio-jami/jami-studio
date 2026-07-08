@@ -1,0 +1,298 @@
+# Source Sync Report - 2026-07-08
+
+## Summary
+
+- Base ref: `HEAD` (8a4d80c27a1c72d545885ca35c782edc3aff693b)
+- Source ref: `source/main` (7c84f30b17d743f241dcf9c27e4d9db0c9dc0a8c)
+- Merge base: `8b75a5e2f2d7f1a0db62397c9d8ec7eaaa921066`
+- Base-only commits: 21
+- Source-only commits: 92
+- Changed files from base to source: 1527
+- Protected-path changes: 106
+- Registry-lane changes: 29
+- Dry-merge conflicts: 11
+
+## Recommendation
+
+Do not merge source directly into Jami `main`. Review protected-path changes
+first, port high-value upstream changes by lane, and keep Jami takeover decisions
+intact unless explicitly reversed.
+
+## Changed Files By Area
+
+- packages/core: 749
+- templates/clips: 143
+- templates/content: 120
+- templates/design: 116
+- packages/docs: 43
+- templates/analytics: 35
+- templates/slides: 34
+- templates/calendar: 31
+- templates/plan: 31
+- templates/assets: 23
+- templates/mail: 22
+- scripts: 21
+- .github: 20
+- .agents: 15
+- templates/forms: 15
+- packages/skills: 12
+- packages/dispatch: 10
+- templates/dispatch: 9
+- packages/vscode-extension: 7
+- packages/desktop-app: 6
+- skills: 6
+- plans: 5
+- templates/.retired: 5
+- templates/brain: 5
+- templates/chat: 5
+- packages/toolkit: 3
+- templates/macros: 3
+- docs: 2
+- packages/scheduling: 2
+-  .video-bakeoff: 1
+- .claude-plugin: 1
+- .gitignore: 1
+- agent-native.json: 1
+- AGENTS.md: 1
+- deploy: 1
+- package.json: 1
+- packages/code-agents-ui: 1
+- packages/embedding: 1
+- packages/frame: 1
+- packages/mobile-app: 1
+- packages/pinpoint: 1
+- packages/shared-app-config: 1
+- pnpm-workspace.yaml: 1
+- PORT-GUIDE-design-followups.md: 1
+- README.md: 1
+- registry: 1
+- registry.json: 1
+- templates/videos: 1
+- wrangler-analytics.toml: 1
+- wrangler-calendar.toml: 1
+- wrangler-calorie-tracker.toml: 1
+- wrangler-chat.toml: 1
+- wrangler-clips.toml: 1
+- wrangler-content.toml: 1
+- wrangler-dispatch.toml: 1
+- wrangler-forms.toml: 1
+- wrangler-mail.toml: 1
+- wrangler-slides.toml: 1
+
+## Protected-Path Changes
+
+- A .github/workflows/auto-merge-version-packages.yml
+- A .github/workflows/auto-publish.yml
+- R098 .github/workflows/cancel-active-netlify-previews.yml
+- R087 .github/workflows/cancel-stale-netlify-main-deploys.yml
+- R096 .github/workflows/cancel-stale-netlify-previews.yml
+- A .github/workflows/changeset-check.yml
+- A .github/workflows/ci.yml
+- A .github/workflows/clips-desktop-build-check.yml
+- A .github/workflows/clips-desktop-release.yml
+- A .github/workflows/desktop-release.yml
+- A .github/workflows/evals.yml
+- A .github/workflows/hide-preview-bot-comments.yml
+- A .github/workflows/keep-neon-warm.yml
+- A .github/workflows/neon-preview-branches.yml
+- A .github/workflows/pr-visual-recap-fork.yml
+- A .github/workflows/pr-visual-recap-reusable.yml
+- A .github/workflows/pr-visual-recap.yml
+- R097 .github/workflows/promote-netlify-deploy.yml
+- A .github/workflows/sync-builder-starter.yml
+- A .github/workflows/sync-public-skills.yml
+- M AGENTS.md
+- M README.md
+- D deploy/netlify/netlify-sites.json
+- M package.json
+- M packages/core/src/cli/app-skill.spec.ts
+- M packages/core/src/cli/app-skill.ts
+- M packages/core/src/cli/connect.spec.ts
+- M packages/core/src/cli/connect.ts
+- M packages/core/src/cli/create-e2e.spec.ts
+- M packages/core/src/cli/create.ts
+- A packages/core/src/cli/deploy-build.spec.ts
+- A packages/core/src/cli/deploy-build.ts
+- M packages/core/src/cli/design-connect.spec.ts
+- M packages/core/src/cli/design-connect.ts
+- M packages/core/src/cli/index.ts
+- M packages/core/src/cli/mcp-config-writers.spec.ts
+- M packages/core/src/cli/plan-blocks.ts
+- M packages/core/src/cli/plan-install.spec.ts
+- M packages/core/src/cli/plan-local.spec.ts
+- M packages/core/src/cli/plan-publish-store.spec.ts
+- M packages/core/src/cli/plan-publish-store.ts
+- M packages/core/src/cli/pr-visual-recap-workflow.ts
+- M packages/core/src/cli/recap.io.spec.ts
+- M packages/core/src/cli/recap.spec.ts
+- M packages/core/src/cli/recap.ts
+- M packages/core/src/cli/skills.spec.ts
+- M packages/core/src/cli/skills.ts
+- M packages/core/src/cli/telemetry.ts
+- M packages/core/src/cli/templates-meta.ts
+- M packages/core/src/cli/workspacify.ts
+- M packages/docs/app/root.tsx
+- M packages/docs/app/seo.ts
+- M templates/analytics/AGENTS.md
+- M templates/analytics/README.md
+- M templates/analytics/netlify.toml
+- M templates/assets/AGENTS.md
+- M templates/assets/DEVELOPING.md
+- M templates/assets/README.md
+- M templates/assets/netlify.toml
+- M templates/brain/AGENTS.md
+- M templates/brain/DEVELOPING.md
+- M templates/brain/README.md
+- M templates/brain/netlify.toml
+- M templates/calendar/AGENTS.md
+- M templates/calendar/DEVELOPING.md
+- M templates/calendar/README.md
+- M templates/calendar/netlify.toml
+- M templates/chat/AGENTS.md
+- M templates/chat/DEVELOPING.md
+- M templates/chat/README.md
+- M templates/chat/netlify.toml
+- M templates/clips/AGENTS.md
+- M templates/clips/DEVELOPING.md
+- M templates/clips/README.md
+- M templates/clips/netlify.toml
+- M templates/content/AGENTS.md
+- M templates/content/DEVELOPING.md
+- M templates/content/README.md
+- M templates/content/netlify.toml
+- M templates/design/AGENTS.md
+- M templates/design/DEVELOPING.md
+- M templates/design/README.md
+- M templates/design/netlify.toml
+- M templates/dispatch/AGENTS.md
+- M templates/dispatch/DEVELOPING.md
+- M templates/dispatch/README.md
+- M templates/dispatch/netlify.toml
+- M templates/forms/AGENTS.md
+- M templates/forms/DEVELOPING.md
+- M templates/forms/README.md
+- M templates/forms/netlify.toml
+- M templates/macros/AGENTS.md
+- M templates/macros/README.md
+- M templates/macros/netlify.toml
+- M templates/mail/AGENTS.md
+- M templates/mail/README.md
+- M templates/mail/netlify.toml
+- M templates/plan/AGENTS.md
+- M templates/plan/DEVELOPING.md
+- M templates/plan/README.md
+- M templates/plan/netlify.toml
+- M templates/slides/AGENTS.md
+- M templates/slides/DEVELOPING.md
+- M templates/slides/README.md
+- M templates/slides/netlify.toml
+- M templates/videos/netlify.toml
+
+## Registry-Lane Changes
+
+- M packages/core/src/cli/create.ts
+- M packages/docs/app/components/TemplateCard.tsx
+- M packages/docs/app/i18n/ar-SA.ts
+- M packages/docs/app/i18n/de-DE.ts
+- M packages/docs/app/i18n/en-US.ts
+- M packages/docs/app/i18n/es-ES.ts
+- M packages/docs/app/i18n/fr-FR.ts
+- M packages/docs/app/i18n/hi-IN.ts
+- M packages/docs/app/i18n/ja-JP.ts
+- M packages/docs/app/i18n/ko-KR.ts
+- M packages/docs/app/i18n/pt-BR.ts
+- M packages/docs/app/i18n/zh-CN.ts
+- M packages/docs/app/i18n/zh-TW.ts
+- M packages/docs/app/routes/templates._index.tsx
+- M packages/docs/app/routes/templates.analytics.tsx
+- M packages/docs/app/routes/templates.calendar.tsx
+- M packages/docs/app/routes/templates.clips.tsx
+- M packages/docs/app/routes/templates.content.tsx
+- M packages/docs/app/routes/templates.design.tsx
+- M packages/docs/app/routes/templates.dispatch.tsx
+- M packages/docs/app/routes/templates.forms.tsx
+- M packages/docs/app/routes/templates.mail.tsx
+- M packages/docs/app/routes/templates.plan.tsx
+- M packages/docs/app/routes/templates.slides.tsx
+- M packages/docs/app/vite-sitemap-plugin.ts
+- M packages/shared-app-config/templates.ts
+- M registry.json
+- M registry/agent-native-app/AGENTS.md
+- M scripts/guard-template-list.mjs
+
+## Dry-Merge Conflicts
+
+- README.md
+- packages/skills/package.json
+- templates/content/AGENTS.md
+- templates/content/actions/_builder-cms-read-client.ts
+- templates/content/actions/_builder-docs-client.ts
+- templates/content/actions/_database-source-utils.ts
+- templates/content/actions/prepare-builder-source-review.ts
+- templates/content/actions/refresh-content-database-source.ts
+- templates/content/app/i18n-data.ts
+- templates/content/app/i18n/zh-TW.ts
+- templates/content/parity/matrix.md
+
+## Upstream Commits
+
+- 7c84f30b1 Fix Clips first-play startup (#1955)
+- b43ea6523 chore: version packages [skip netlify] (#1954)
+- bba733221 Harden background agent run routing (#1953)
+- 14110434f Open Clips chapter regeneration in chat (#1952)
+- 75cdd0894 chore: version packages [skip netlify] (#1951)
+- d6153fdcb Fix deploy guards and analytics reliability (#1949)
+- e4f6237d6 chore: version packages [skip netlify] (#1950)
+- 3995e4e8c Simplify Dispatch overview to chat and apps (#1946)
+- 02fa4462a chore: version packages [skip netlify] (#1948)
+- a1db61099 Fix Netlify deploy routing guard (#1947)
+- e87e59b19 chore: version packages [skip netlify] (#1945)
+- 1de8510eb Fix Netlify deploy routing and docs CTA (#1944)
+- eb4473002 chore: version packages [skip netlify] (#1943)
+- 8940011c6 chore: version packages [skip netlify] (#1942)
+- 3c7adac3e Add docs build-from-scratch CTA (#1940)
+- f6ecee29f Design app: drag-and-drop hardening — reorder feedback, drop targeting, data-integrity fixes from real-data deep testing (#1932)
+- 34ef171de chore: version packages [skip netlify] (#1939)
+- 3da78df70 Enable server-owned agent continuations (#1937)
+- 179d5ed8e Merge pull request #1758 from BuilderIO/codex/content-builder-source-bulk-updates
+- 81a7557f9 chore: version packages [skip netlify] (#1936)
+- 441bb8693 Localize bulk file edit label
+- 9f396bc11 Add visual edit bridge and template workflow updates
+- fcc188826 Fix Builder-backed database field editing
+- 4ea0a220f fix(assets): fix skeleton inpaint fallback and preset validation edge… (#1924)
+- 209d16d67 Trim heavy Builder source table snapshots
+- bd414dc75 chore: version packages [skip netlify] (#1934)
+- ec523c479 Add toolkit history/review kits and template reliability fixes (#1933)
+- 99c40ebef Merge pull request #1931 from BuilderIO/codex/content-permanent-delete-timeout
+- ea10abc71 Harden Content recursive delete batching
+- 38511a252 Fix stuck microphone selection in Clips desktop (#1929)
+- 1df20530a Fix Content database permanent delete timeout
+- 95290d3e4 Merge remote-tracking branch 'origin/main' into codex/content-builder-source-bulk-updates
+- 3b1f1a266 Format content parity matrix
+- 490ffa8cd Fix: Clips updates no longer block recording (#1926)
+- a029244e3 Drop unrelated core docs diff from bulk updates
+- d4538d61f Merge origin/main into content bulk updates
+- 76082417e Merge pull request #1819 from BuilderIO/codex/clips-media-reliability
+- d6389a1b1 Fix wrong duration for paused fullscreen recordings (#1925)
+- 4eefc760d Fix: Clips Chrome extension recordings survive a tab refresh (#1927)
+- 3b6e08dec chore: version packages [skip netlify] (#1928)
+- 9595eca87 Merge pull request #1759 from BuilderIO/codex/builder-docs-blog-scale-baseline
+- f018fac14 Merge main into clips media reliability
+- 0663eaa27 Merge origin/main before merging Builder scale PR
+- 5fec28cb9 Move New Recording button above library clips (#1904)
+- f79e2209e Merge pull request #1907 from BuilderIO/ai_main_57aaaeed2b0d4c0a94eb
+- 8df0a592e Clips: release camera on stop, parallel chunk uploads (#1813)
+- 6d7ef3dfc Fix Content database tests after merge
+- 5cef80891 Merge origin/main into builder docs blog scale baseline
+- b24d08a09 Avoid phantom Builder body change sets
+- 69e1e387f Defer collab presence state updates
+- 600435a4c Fix Builder open-row body hydration tail
+- 890f65b04 Merge remote-tracking branch 'origin/main' into codex/builder-docs-blog-scale-baseline
+- 66ffcd933 Starved open-row hydration recovers; client aborts are not 500s; defer parent editor callbacks
+- 8976a2847 A client can only clear content it actually loaded
+- 30186761f Harden Builder bulk update staging
+- 16f742976 No Continue button during healthy sync; defer the collab seed setContent
+- f5f5ae2b1 Open-row promotion can no longer hydrate a document to empty
+- 7e3bd9f57 fix: keep read-only banner fully non-blocking (no pointer-events-auto)
+- e03c0b0c5 fix: sort ReadOnlyDesignBanner import alphabetically (oxfmt)
+- 4335925f4 Move read-only banner to bottom and use info styling

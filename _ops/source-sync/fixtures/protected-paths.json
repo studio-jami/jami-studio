@@ -1,0 +1,23 @@
+{
+  "description": "Paths that source-sync automation must flag for human review.",
+  "patterns": [
+    ".github/workflows/**",
+    "deploy/netlify/**",
+    "deploy/cloudflare/**",
+    ".changeset/**",
+    "package.json",
+    "pnpm-lock.yaml",
+    "AGENTS.md",
+    "README.md",
+    "_ops/**",
+    "packages/core/src/cli/**",
+    "packages/core/src/templates/**/AGENTS.md",
+    "packages/core/src/templates/**/DEVELOPING.md",
+    "packages/docs/app/root.tsx",
+    "packages/docs/app/seo.ts",
+    "templates/*/netlify.toml",
+    "templates/*/AGENTS.md",
+    "templates/*/DEVELOPING.md",
+    "templates/*/README.md"
+  ]
+}

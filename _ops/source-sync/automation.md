@@ -1,0 +1,63 @@
+# Source Sync Automation
+
+Start manual, then increase automation only after the reports prove useful.
+
+## Modes
+
+### 1. Manual Review
+
+Current mode.
+
+Run the `Source sync review` workflow by hand when we want a fresh report. This
+is best while policy and classification are still settling.
+
+### 2. Manual Review With Ping
+
+Current workflow supports this without turning on a schedule.
+
+Set `create_issue` to `true` when dispatching the workflow. The workflow will
+upload the report, write it to the run summary, and create a GitHub issue.
+
+### 3. Scheduled Watch
+
+Future mode.
+
+Use a scheduled workflow in `jami-studio` to generate a report every hour or a
+few times per day. This is simple and cheap, but it may report the same source
+SHA repeatedly unless the workflow learns the last reviewed SHA.
+
+Recommended first schedule when ready:
+
+```yml
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+```
+
+Use a non-round minute so GitHub does not run with the top-of-hour crowd.
+
+### 4. Source-Pushed Dispatch
+
+Future preferred mode.
+
+Let `agent-native-source` refresh from Builder upstream. When its `main` branch
+changes, it sends a `repository_dispatch` event to `jami-studio`.
+
+This is closer to a true "watch" flow than polling:
+
+```txt
+Builder upstream changes
+  -> source fork refreshes
+  -> source fork dispatches Jami intake
+  -> Jami workflow reports and optionally opens/updates an issue
+```
+
+This avoids spending Action minutes when nothing changed and keeps reports or
+intake PRs bite-sized.
+
+## Recommendation
+
+Use manual mode while we tune rules. Then test manual issue creation. After
+that, add source-pushed dispatch from `agent-native-source`. Use hourly schedule
+only as a fallback if dispatch becomes awkward.

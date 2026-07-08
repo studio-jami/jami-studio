@@ -72,6 +72,8 @@
     "sync:workspace-skills": "tsx scripts/sync-workspace-core-skills.ts",
     "sync:plan-marketplace": "tsx scripts/sync-plan-marketplace.ts",
     "sync:plan-skills": "tsx scripts/sync-plan-skills.ts",
+    "source-sync:refresh": "node --experimental-strip-types _ops/source-sync/scripts/refresh-source-fork.ts",
+    "source-sync:report": "node --experimental-strip-types _ops/source-sync/scripts/source-sync-report.ts",
     "changeset": "changeset",
     "changeset:add": "changeset add",
     "changeset:status": "changeset status --since=origin/main",

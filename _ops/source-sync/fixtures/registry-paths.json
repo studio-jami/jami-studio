@@ -1,0 +1,15 @@
+{
+  "description": "Paths that belong to the future Jami-owned registry lane.",
+  "patterns": [
+    "registry.json",
+    "registry/**",
+    "packages/shared-app-config/templates.ts",
+    "packages/docs/app/routes/templates**",
+    "packages/docs/app/components/**Template**",
+    "packages/docs/app/i18n/**",
+    "packages/docs/app/vite-sitemap-plugin.ts",
+    "packages/core/src/cli/create.ts",
+    "packages/core/src/cli/templates.ts",
+    "scripts/guard-template-list.mjs"
+  ]
+}
