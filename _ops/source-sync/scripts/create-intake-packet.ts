@@ -166,13 +166,22 @@ function createOrUpdatePr(
   baseBranch: string,
   shortSha: string,
 ) {
+  const repo = git(["remote", "get-url", "origin"])
+    .replace(/\.git$/, "")
+    .split("/")
+    .slice(-2)
+    .join("/");
+  const owner = repo.split("/")[0];
+  const headRef = `${owner}:${branch}`;
   const existingPr = execFileSync(
     "gh",
     [
       "pr",
       "list",
+      "--repo",
+      repo,
       "--head",
-      branch,
+      headRef,
       "--base",
       baseBranch,
       "--state",
@@ -201,10 +210,12 @@ Review packet:
   runCommand("gh", [
     "pr",
     "create",
+    "--repo",
+    repo,
     "--base",
     baseBranch,
     "--head",
-    branch,
+    headRef,
     "--title",
     `Source sync intake ${shortSha}`,
     "--body",
