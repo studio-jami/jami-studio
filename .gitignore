@@ -28,9 +28,12 @@ packages/core/corpus/
 RAMBLINGS.md
 FUSION-APPS.md
 node-compile-cache/
-_ops/*
-!_ops/source-sync/
-!_ops/source-sync/**
+
+# Ops records are versioned by default; keep private admin and credentials out.
+_ops/admin/
+_ops/admin/**
+_ops/credentials/
+_ops/credentials/**
 
 # Application state data files (ephemeral, may contain secrets)
 **/application-state/*.json

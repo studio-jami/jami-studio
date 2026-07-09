@@ -1,0 +1,508 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel an in-progress CI run when a new commit is pushed to the same PR.
+# Without this, every push starts a fresh ~20-min matrix while the prior one
+# keeps running, stacking 3-4 overlapping runs on a busy PR. Keyed on the PR
+# number (falling back to the ref) so runs on different PRs never cancel each
+# other.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      # Lint only needs oxfmt + oxlint from root devDependencies; no package
+      # builds are required, so skip the postinstall build chain entirely.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Oxfmt check
+        run: pnpm fmt:check
+
+      - name: Oxlint
+        run: pnpm oxlint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+  test:
+    name: Fast tests
+    runs-on: ubuntu-latest
+    # Cap the run so a hung test fails fast instead of pinning a runner for
+    # GitHub's 6h default. Slow DB/integration/e2e specs run in separate jobs
+    # below so they can run in parallel instead of serially behind fast tests.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium for browser-backed unit tests
+        run: pnpm exec playwright install --only-shell chromium
+
+      - name: Run fast tests
+        run: pnpm test:fast
+
+  content-parity:
+    name: Content parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run deterministic Content parity checks
+        run: pnpm test:content-parity
+
+  content-db-tests:
+    name: Content DB tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run Content DB tests
+        run: pnpm test:content-db
+
+  core-integration-tests:
+    name: Core integration tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium for browser-backed integration tests
+        run: pnpm exec playwright install --only-shell chromium
+
+      - name: Run Core integration tests
+        run: pnpm test:core-integration
+
+  plan-e2e-tests:
+    name: Plan E2E tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run Plan action E2E tests
+        run: pnpm test:plan-e2e
+
+  brain-evals:
+    name: Brain evals
+    runs-on: ubuntu-latest
+    # Brain evals are offline action/fixture retrieval checks; live LLM evals
+    # belong in the gated eval workflow.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run brain evals
+        run: pnpm test:brain-evals
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+  scaffold-e2e:
+    name: Scaffold E2E — create + pnpm install
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AGENT_NATIVE_CREATE_USE_LOCAL_CORE: "1"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Free disk for scaffold smoke
+        run: |
+          df -h
+          sudo rm -rf \
+            /opt/ghc \
+            /opt/hostedtoolcache/CodeQL \
+            /usr/local/.ghcup \
+            /usr/local/lib/android \
+            /usr/local/share/boost \
+            /usr/share/dotnet \
+            /usr/share/swift \
+            ~/.cache/ms-playwright
+          docker system prune -af || true
+          sudo apt-get clean
+          df -h
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Restore dist + tsBuildInfo cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            packages/*/dist
+            packages/*/node_modules/.cache/tsbuildinfo
+          key: dist-${{ hashFiles('packages/*/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: dist-
+
+      # postinstall rebuilds any stale/missing dists (incremental tsgo is fast on
+      # cache hit); no separate `pnpm build` step needed.
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium for dev smoke
+        run: pnpm exec playwright install --only-shell chromium
+
+      - name: Standalone chat dev smoke (auto-login + SSR render)
+        # Catches Vite dev SSR failures (e.g. Meta outside HydratedRouter) that
+        # production build alone does not surface. Also scaffolds + pnpm install.
+        run: pnpm qa:standalone-chat-dev
+
+      - name: Headless scaffold — pnpm install + typecheck + action
+        # Guards the documented one-file headless onboarding: a fresh
+        # `--headless` scaffold must `pnpm typecheck` (no inherited vite/client
+        # types) and `pnpm action hello` (server-safe package root, no React /
+        # react-query in the load graph) out of the box. AGENT_NATIVE_CREATE_USE_LOCAL_CORE
+        # is set at the job level, so the gated heavyweight guard actually runs.
+        run: pnpm --filter @agent-native/core exec vitest run src/cli/create-e2e.spec.ts
+
+      - name: Scaffold workspace (chat + calendar + dispatch) and verify pnpm install + build
+        # Dispatch is in the combo because it exercises the
+        # workspacify.ts dispatch-rewrite path (workspace:* → "latest" for
+        # @agent-native/dispatch, the only published package consumed as a
+        # workspace app). Calendar covers the requiredPackages →
+        # packages/scheduling scaffold path. Together they guard the two
+        # distinct ways a workspace template can break `pnpm install`.
+        run: |
+          cd "$(mktemp -d)"
+          node "$GITHUB_WORKSPACE/packages/core/dist/cli/index.js" create test-workspace --template chat,calendar,dispatch
+          cd test-workspace
+          # Required package must be scaffolded
+          if [ ! -d "packages/scheduling" ]; then
+            echo "::error::packages/scheduling not scaffolded for calendar template"
+            exit 1
+          fi
+          # Root must have postinstall for required packages
+          if ! grep -q 'postinstall' package.json; then
+            echo "::error::postinstall script missing for required packages"
+            exit 1
+          fi
+          # Every workspace:* dep in scaffolded apps must resolve to a
+          # package actually present in the workspace. Catches the class of
+          # bug Sami hit: a template depended on @agent-native/dispatch
+          # (a published package, not a workspace member) and `pnpm install`
+          # blew up with ERR_PNPM_WORKSPACE_PKG_NOT_FOUND.
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const wsMembers = new Set();
+            for (const dir of ["apps", "packages"]) {
+              if (!fs.existsSync(dir)) continue;
+              for (const sub of fs.readdirSync(dir)) {
+                const pj = path.join(dir, sub, "package.json");
+                if (fs.existsSync(pj)) {
+                  const n = JSON.parse(fs.readFileSync(pj, "utf8")).name;
+                  if (n) wsMembers.add(n);
+                }
+              }
+            }
+            const offenders = [];
+            for (const dir of ["apps", "packages"]) {
+              if (!fs.existsSync(dir)) continue;
+              for (const sub of fs.readdirSync(dir)) {
+                const pj = path.join(dir, sub, "package.json");
+                if (!fs.existsSync(pj)) continue;
+                const pkg = JSON.parse(fs.readFileSync(pj, "utf8"));
+                for (const dt of ["dependencies","devDependencies","peerDependencies"]) {
+                  for (const [name, ver] of Object.entries(pkg[dt] || {})) {
+                    if (typeof ver === "string" && ver.startsWith("workspace:")) {
+                      if (!wsMembers.has(name)) {
+                        offenders.push(pj + ": " + dt + "." + name + "=" + ver);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if (offenders.length) {
+              console.error("::error::dangling workspace:* refs in scaffold (no matching workspace member):");
+              for (const o of offenders) console.error("  " + o);
+              process.exit(1);
+            }
+          '
+          pnpm install
+          # Build the calendar app — catches missing peer/runtime deps that
+          # `pnpm install` alone won't surface (e.g. core importing a peer
+          # dep that templates don't declare).
+          pnpm --filter ./apps/calendar build
+
+  ssr-boot-smoke:
+    name: SSR cold-start smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      # Skip postinstall build chain here — core is built explicitly below so we
+      # control the exact build order and avoid redundant parallel builds.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # Build core and its package dependency so the deploy build's CLI and
+      # compatibility shims are available, then produce the real serverless
+      # bundle.
+      - name: Build toolkit and core
+        run: |
+          pnpm --filter @agent-native/toolkit build
+          pnpm --filter @agent-native/core build
+
+      # The `plan` template exercises the Excalidraw/Mermaid diagram blocks, so
+      # its server bundle is the canonical reproducer for browser-only libs
+      # leaking into SSR. The fix lives in @agent-native/core, so one template
+      # guards the whole fleet.
+      - name: Build plan template (netlify preset)
+        run: NITRO_PRESET=netlify pnpm --filter plan build
+
+      - name: Import SSR handler — must not crash at cold-start
+        # External timeout is a backstop against a pathological synchronous hang;
+        # the script itself races module eval against a 30s window and force-exits.
+        run: timeout 120 node scripts/ssr-boot-smoke.mjs plan
+
+  guards:
+    name: Security guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      # Guard scripts only need dependencies and should not depend on package
+      # lifecycle builds; skipping scripts avoids native optional builds here.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run security guards
+        run: pnpm guards
+
+  guard-no-drizzle-push:
+    name: Guard — no drizzle-kit push in build paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+
+      # No install needed — the guard script only uses Node builtins.
+      - name: Scan netlify.toml + package.json for `drizzle-kit push`
+        run: node scripts/guard-no-drizzle-push.mjs
+
+  qa-static:
+    name: QA — static template checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      # These checks read source files only — no DB, browser, network, or
+      # secrets — so they're safe to run on every PR. (The heavier harnesses —
+      # test:mcp:e2e, qa:public-share, qa:composer-geometry — need a live
+      # server / DB / browser and belong in a separate, set-up job.)
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Template route matrix (fails on drift)
+        run: pnpm qa:template-routes
+
+      - name: Template action audit (advisory)
+        run: pnpm actions:audit
