@@ -135,8 +135,7 @@ Customer-visible claims:
 
 - Stay on the current branch unless explicitly asked to do branch operations.
 - Use official docs/source as the setup authority.
-- Do not test Hummingbird install paths during planning. Verification belongs
-  to execution.
+- Do not plan to test Hummingbird install paths during planning. Assume the product works. Verification belongs to execution.
 - Record every setup-changing decision under `_ops/planning/decisions/`.
 - Record future product deviations from upstream in the source-sync deviation
   catalog before merging them into Hummingbird.
