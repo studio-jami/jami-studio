@@ -157,6 +157,56 @@ afterEach(() => {
 });
 
 describe("workspace deploy", () => {
+  it("retries an app build that dies with a native crash exit code", async () => {
+    makeWorkspaceApp(tmpDir, "dispatch");
+    let attempts = 0;
+    execFile.mockImplementation(((_cmd, args, options) => {
+      if (Array.isArray(args) && args[0] === "--filter") {
+        attempts++;
+        if (attempts === 1) {
+          const error = new Error("native crash") as Error & {
+            status: number;
+          };
+          error.status = 3221225477;
+          throw error;
+        }
+        writeAppBuildOutput(tmpDir, String(args[1]));
+      }
+      return Buffer.from("");
+    }) as typeof execFileSync);
+
+    await runWorkspaceDeploy({
+      workspaceRoot: tmpDir,
+      args: ["--preset=netlify", "--build-only"],
+      execFile: execFile as typeof execFileSync,
+    });
+
+    expect(attempts).toBe(2);
+  });
+
+  it("does not retry an app build that fails with an ordinary exit code", async () => {
+    makeWorkspaceApp(tmpDir, "dispatch");
+    let attempts = 0;
+    execFile.mockImplementation((((_cmd: string, args: unknown) => {
+      if (Array.isArray(args) && args[0] === "--filter") {
+        attempts++;
+        const error = new Error("build failed") as Error & { status: number };
+        error.status = 1;
+        throw error;
+      }
+      return Buffer.from("");
+    }) as unknown) as typeof execFileSync);
+
+    await expect(
+      runWorkspaceDeploy({
+        workspaceRoot: tmpDir,
+        args: ["--preset=netlify", "--build-only"],
+        execFile: execFile as typeof execFileSync,
+      }),
+    ).rejects.toThrow("build failed");
+    expect(attempts).toBe(1);
+  });
+
   it("collects Netlify static assets, functions, and redirects for a workspace", async () => {
     makeWorkspaceApp(tmpDir, "dispatch");
     makeWorkspaceApp(tmpDir, "starter");

@@ -271,11 +271,34 @@ function buildOneApp(
 
   cleanAppBuildOutputs(appDir);
 
-  execFile("pnpm", ["--filter", app, "build"], {
-    cwd: workspaceRoot,
-    env,
-    stdio: "inherit",
-  });
+  // Windows: app builds occasionally die with a native access violation
+  // (0xC0000005 / exit 3221225477) inside the bundler's native bindings.
+  // It is a timing race, not a code failure — the same build passes on
+  // retry (and reliably passes with DEBUG logging enabled, which shifts
+  // the timing). Retry native-crash exits a bounded number of times;
+  // real build failures exit with ordinary codes and are NOT retried.
+  const NATIVE_CRASH_EXIT_CODES = new Set([3221225477, -1073741819]);
+  const maxAttempts = 3;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      execFile("pnpm", ["--filter", app, "build"], {
+        cwd: workspaceRoot,
+        env,
+        stdio: "inherit",
+      });
+      return;
+    } catch (error) {
+      const status = (error as { status?: number | null })?.status ?? null;
+      const isNativeCrash =
+        typeof status === "number" && NATIVE_CRASH_EXIT_CODES.has(status);
+      if (!isNativeCrash || attempt >= maxAttempts) throw error;
+      console.warn(
+        `[workspace-deploy] ${app} build died with a native crash ` +
+          `(exit ${status}); retrying (${attempt}/${maxAttempts - 1})...`,
+      );
+      cleanAppBuildOutputs(appDir);
+    }
+  }
 }
 
 function moveAppBuildIntoWorkspaceOutput(
