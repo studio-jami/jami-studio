@@ -9,6 +9,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ComponentType,
   type ReactNode,
@@ -115,10 +116,25 @@ function normalizeTabId(value?: string | null): string | null {
   if (normalized === "workspace" || normalized === "workspace-settings") {
     return "workspace";
   }
-  if (normalized === "organization" || normalized === "org") {
-    return "team";
-  }
   return normalized;
+}
+
+function resolveTabId(
+  tabs: SettingsTabItem[],
+  value?: string | null,
+): string | null {
+  const normalized = normalizeTabId(value);
+  if (!normalized) return null;
+  if (tabs.some((tab) => tab.id === normalized)) return normalized;
+  if (
+    normalized === "organization" ||
+    normalized === "org" ||
+    normalized === "team"
+  ) {
+    if (tabs.some((tab) => tab.id === "organization")) return "organization";
+    if (tabs.some((tab) => tab.id === "team")) return "team";
+  }
+  return null;
 }
 
 function activeTabFromHash(
@@ -126,9 +142,7 @@ function activeTabFromHash(
   defaultTab: string,
 ): string {
   if (typeof window === "undefined") return defaultTab;
-  const fromHash = normalizeTabId(window.location.hash);
-  if (fromHash && tabs.some((tab) => tab.id === fromHash)) return fromHash;
-  return defaultTab;
+  return resolveTabId(tabs, window.location.hash) ?? defaultTab;
 }
 
 function updateHashForTab(tabId: string) {
@@ -136,6 +150,17 @@ function updateHashForTab(tabId: string) {
   const { pathname, search } = window.location;
   const hash = tabId === "general" ? "" : `#${encodeURIComponent(tabId)}`;
   window.history.pushState(null, "", `${pathname}${search}${hash}`);
+}
+
+function isEditableElement(element: Element | null): boolean {
+  if (!(element instanceof HTMLElement)) return false;
+  const tagName = element.tagName.toLowerCase();
+  return (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    tagName === "select" ||
+    element.isContentEditable
+  );
 }
 
 export function SettingsTabsPage({
@@ -158,7 +183,13 @@ export function SettingsTabsPage({
   value,
   onValueChange,
 }: SettingsTabsPageProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const autoFocusedSearchRef = useRef(false);
   const tabs = useMemo<SettingsTabItem[]>(() => {
+    const hasOrganizationTab = extraTabs.some(
+      (tab) => tab.id === "organization",
+    );
     const next: SettingsTabItem[] = [
       {
         id: "general",
@@ -169,7 +200,7 @@ export function SettingsTabsPage({
       },
     ];
     next.push(...extraTabs);
-    if (team) {
+    if (team && !hasOrganizationTab) {
       next.push({
         id: "team",
         label: teamLabel,
@@ -229,14 +260,45 @@ export function SettingsTabsPage({
     // the active tab untouched to avoid bouncing back to General.
     if (isControlled) return;
     const handleHashChange = () => {
-      const fromHash = normalizeTabId(window.location.hash);
-      if (fromHash && tabs.some((tab) => tab.id === fromHash)) {
+      const fromHash = resolveTabId(tabs, window.location.hash);
+      if (fromHash) {
         setInternalTab(fromHash);
       }
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, [isControlled, tabs]);
+
+  useEffect(() => {
+    if (!enableSearch || autoFocusedSearchRef.current) return;
+    if (
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
+      return;
+    }
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      autoFocusedSearchRef.current = true;
+      const input = searchInputRef.current;
+      if (!input) return;
+
+      const activeElement = document.activeElement;
+      const activeInsideSettings =
+        !!activeElement && rootRef.current?.contains(activeElement);
+      if (
+        activeElement !== input &&
+        (isEditableElement(activeElement) || activeInsideSettings)
+      ) {
+        return;
+      }
+
+      input.focus({ preventScroll: true });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [enableSearch]);
 
   const selectedTab = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 
@@ -322,6 +384,7 @@ export function SettingsTabsPage({
 
   return (
     <div
+      ref={rootRef}
       className={cn(
         "flex h-full min-h-0 w-full flex-col overflow-hidden bg-background sm:flex-row",
         className,
@@ -329,7 +392,7 @@ export function SettingsTabsPage({
     >
       <div
         className={cn(
-          "flex shrink-0 flex-col gap-2 border-b border-border bg-background p-2 sm:min-h-0 sm:w-56 sm:overflow-y-auto sm:border-b-0 sm:border-e sm:p-3",
+          "flex shrink-0 flex-col gap-2 bg-background p-2 sm:min-h-0 sm:w-56 sm:overflow-y-auto sm:p-3",
           navClassName,
         )}
       >
@@ -337,6 +400,7 @@ export function SettingsTabsPage({
           <div className="relative sm:mb-1">
             <IconSearch className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
+              ref={searchInputRef}
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
