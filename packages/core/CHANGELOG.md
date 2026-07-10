@@ -1,5 +1,11 @@
 # @agent-native/core
 
+## 0.92.13
+
+### Patch Changes
+
+- SSR heavy-lib stub: add `useMessagePartReasoning` to the named-export list. Core's chat message components import the hook from `@assistant-ui/react`; templates that list that package in `ssrStubs` (e.g. content) failed `agent-native build` with `[MISSING_EXPORT] "useMessagePartReasoning" is not exported by "\0agent-native-ssr-stub"`.
+
 ## 0.92.12
 
 ### Patch Changes
