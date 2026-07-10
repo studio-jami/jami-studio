@@ -236,6 +236,14 @@ function shouldRetryWithJiti(filePath: string, err: unknown): boolean {
   if (!filePath.endsWith(".ts")) return false;
   const candidate = err as { code?: unknown; message?: unknown } | undefined;
   if (candidate?.code === "ERR_UNKNOWN_FILE_EXTENSION") return true;
+  // Node >= 23.6 strips TS types natively by default, so the ROOT .ts import
+  // succeeds — but native stripping does no specifier rewriting, so a child
+  // `./helper.js` -> helper.ts or extensionless-TS import inside the action
+  // graph fails with ERR_MODULE_NOT_FOUND and previously skipped the action
+  // entirely (observed: every app's actions skipped on Node 24). jiti
+  // resolves those specifiers, so retry on module-not-found too; a genuinely
+  // missing dependency simply fails again under jiti.
+  if (candidate?.code === "ERR_MODULE_NOT_FOUND") return true;
   return /Unknown file extension ".ts"/.test(String(candidate?.message ?? ""));
 }
 

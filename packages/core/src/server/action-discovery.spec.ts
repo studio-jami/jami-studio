@@ -50,6 +50,49 @@ describe("action discovery", () => {
     CORE_ACTION_DISCOVERY_TIMEOUT_MS,
   );
 
+  it(
+    "loads TS actions whose child imports use .js -> .ts specifiers (Node >= 23.6 native type stripping)",
+    async () => {
+      // Node >= 23.6 strips TS types natively, so the ROOT action.ts import
+      // succeeds — but native stripping does no specifier rewriting, so the
+      // child `./helper.js` (really helper.ts) import fails with
+      // ERR_MODULE_NOT_FOUND. Discovery must fall back to jiti (which
+      // resolves .js -> .ts) instead of skipping the action. On Node <= 22
+      // the root import itself throws ERR_UNKNOWN_FILE_EXTENSION and takes
+      // the same jiti path, so this passes on every supported Node.
+      const baseDir = fs.mkdtempSync(
+        path.join(os.tmpdir(), "agent-native-actions-strip-"),
+      );
+      tmpDirs.push(baseDir);
+      const actionsDir = path.join(baseDir, "actions");
+      fs.mkdirSync(actionsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(actionsDir, "helper.ts"),
+        'export const greeting: string = "Hello via helper";\n',
+      );
+      fs.writeFileSync(
+        path.join(actionsDir, "greet.ts"),
+        [
+          'import { greeting } from "./helper.js";',
+          "export default {",
+          '  tool: { description: "Greet", parameters: { type: "object", properties: {} } },',
+          "  readOnly: true,",
+          "  run: async () => ({ message: greeting }),",
+          "};",
+          "",
+        ].join("\n"),
+      );
+
+      const registry = await autoDiscoverActions(actionsDir);
+
+      expect(registry.greet).toBeDefined();
+      await expect(registry.greet.run({})).resolves.toEqual({
+        message: "Hello via helper",
+      });
+    },
+    CORE_ACTION_DISCOVERY_TIMEOUT_MS,
+  );
+
   it("preserves explicit readOnly false from static defineAction entries", () => {
     const registry = loadActionsFromStaticRegistry({
       "mutating-read": {
