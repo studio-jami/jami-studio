@@ -1697,40 +1697,40 @@ async function buildCloudflarePages() {
     (p) => !Object.hasOwn(CLOUDFLARE_WORKER_STUB_MODULES, p),
   ).map((p) => `--external:${p}`);
 
-  execFileSync(
-    esbuildBin,
-    [
-      tmpEntry,
-      "--bundle",
-      "--format=esm",
-      "--target=es2022",
-      // browser platform for npm resolution; node builtins externalized separately
-      "--platform=browser",
-      "--minify",
-      // Single-file bundle (no --splitting). CF Pages Functions' deploy
-      // validator fails to load chunked _worker.js/ bundles even when the
-      // chunks contain only bare node-builtin imports (wrangler 3.101.0
-      // + nodejs_compat v2). Matches main's working config.
-      `--outdir=${workerOutDir}`,
-      "--conditions=workerd,worker,import",
-      // The ssr-handler imports a virtual module that only exists at dev time
-      "--external:virtual:react-router/server-build",
-      `--alias:#nitro/virtual/server-assets=${nitroServerAssetsStub}`,
-      // Banner: override the __require shim that esbuild generates for CJS modules.
-      // This provides a real require() backed by ESM imports of node builtins.
-      // Without this, CF Workers rejects the bundle because esbuild's default
-      // __require shim throws "Dynamic require of X is not supported".
-      `--banner:js=${generateRequireShim()}`,
-      // Externalize node: builtins — CF Workers runtime provides them
-      ...nodeExternals,
-      ...heavyClientExternals,
-      ...stubAliases,
-      ...nodeBuiltinStubAliases,
-      // Rewrite node:* -> bare names so chunks never contain node: imports
-      ...nodeAliases,
-    ],
-    { stdio: "inherit", cwd },
-  );
+  const esbuildCommand = esbuildSpawnCommand(esbuildBin, [
+    tmpEntry,
+    "--bundle",
+    "--format=esm",
+    "--target=es2022",
+    // browser platform for npm resolution; node builtins externalized separately
+    "--platform=browser",
+    "--minify",
+    // Single-file bundle (no --splitting). CF Pages Functions' deploy
+    // validator fails to load chunked _worker.js/ bundles even when the
+    // chunks contain only bare node-builtin imports (wrangler 3.101.0
+    // + nodejs_compat v2). Matches main's working config.
+    `--outdir=${workerOutDir}`,
+    "--conditions=workerd,worker,import",
+    // The ssr-handler imports a virtual module that only exists at dev time
+    "--external:virtual:react-router/server-build",
+    `--alias:#nitro/virtual/server-assets=${nitroServerAssetsStub}`,
+    // Banner: override the __require shim that esbuild generates for CJS modules.
+    // This provides a real require() backed by ESM imports of node builtins.
+    // Without this, CF Workers rejects the bundle because esbuild's default
+    // __require shim throws "Dynamic require of X is not supported".
+    `--banner:js=${generateRequireShim()}`,
+    // Externalize node: builtins — CF Workers runtime provides them
+    ...nodeExternals,
+    ...heavyClientExternals,
+    ...stubAliases,
+    ...nodeBuiltinStubAliases,
+    // Rewrite node:* -> bare names so chunks never contain node: imports
+    ...nodeAliases,
+  ]);
+  execFileSync(esbuildCommand.file, esbuildCommand.args, {
+    stdio: "inherit",
+    cwd,
+  });
 
   // Clean up tmp
   fs.rmSync(tmpDir, { recursive: true });
@@ -1949,6 +1949,40 @@ function findEsbuild(): string {
   }
 
   return "esbuild";
+}
+
+/**
+ * `esbuild/bin/esbuild` is a `#!/usr/bin/env node` JS shim, not a native
+ * executable. Shebangs don't exist on Windows, so `execFileSync(shim)` fails
+ * there with ENOENT even though the file exists. Run any node-shebang script
+ * through the current Node executable (works on every platform — the shim
+ * locates and execs the real platform binary itself); native executables and
+ * PATH lookups spawn directly.
+ */
+export function esbuildSpawnCommand(
+  esbuildBin: string,
+  args: string[],
+): { file: string; args: string[] } {
+  if (isNodeShebangScript(esbuildBin)) {
+    return { file: process.execPath, args: [esbuildBin, ...args] };
+  }
+  return { file: esbuildBin, args };
+}
+
+function isNodeShebangScript(file: string): boolean {
+  if (!file.includes("/") && !file.includes(path.sep)) return false;
+  try {
+    const fd = fs.openSync(file, "r");
+    const buf = Buffer.alloc(128);
+    const bytesRead = fs.readSync(fd, buf, 0, buf.length, 0);
+    fs.closeSync(fd);
+    const firstLine = buf.toString("utf8", 0, bytesRead).split(/\r?\n/)[0];
+    // Only the shebang line decides — a `#!/bin/sh` wrapper that merely
+    // mentions node in its body must still spawn directly.
+    return firstLine.startsWith("#!") && /\bnode\s*$/.test(firstLine);
+  } catch {
+    return false;
+  }
 }
 
 function findWorkspaceRoot(dir: string): string | null {
@@ -3349,22 +3383,19 @@ export default bundle;
                 ].join("\n")
               : `export * from "${resolvedMod}"; export { default } from "${resolvedMod}";`;
 
-          execFileSync(
-            esbuildBin,
-            [
-              "--bundle",
-              `--outfile=${outFile}`,
-              "--format=esm",
-              "--platform=neutral",
-              "--target=es2022",
-              "--external:node:*",
-            ],
-            {
-              input: entryCode,
-              cwd,
-              stdio: ["pipe", "pipe", "pipe"],
-            },
-          );
+          const libEsbuildCommand = esbuildSpawnCommand(esbuildBin, [
+            "--bundle",
+            `--outfile=${outFile}`,
+            "--format=esm",
+            "--platform=neutral",
+            "--target=es2022",
+            "--external:node:*",
+          ]);
+          execFileSync(libEsbuildCommand.file, libEsbuildCommand.args, {
+            input: entryCode,
+            cwd,
+            stdio: ["pipe", "pipe", "pipe"],
+          });
           // Rewrite imports in all files to point to the bundled module
           function rewriteImports(dir: string) {
             if (!fs.existsSync(dir)) return;

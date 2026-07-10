@@ -17,6 +17,7 @@ import {
   CLOUDFLARE_WORKER_STUB_MODULES,
   copyDir,
   emitSingleTemplateNetlifyBackgroundFunction,
+  esbuildSpawnCommand,
   findInstalledFfmpegStaticPackage,
   findInstalledResvgPackages,
   generateCloudflarePagesStaticShellFromManifest,
@@ -1695,5 +1696,64 @@ describe("durable-background Netlify function emit (single-template, flag-gated)
     prepareSingleTemplateNetlifyOutput(cwd);
 
     expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+});
+
+describe("esbuildSpawnCommand (Windows-safe esbuild spawn)", () => {
+  const dirs: string[] = [];
+
+  afterEach(() => {
+    for (const d of dirs.splice(0)) {
+      fs.rmSync(d, { recursive: true, force: true });
+    }
+  });
+
+  function writeScript(name: string, content: string): string {
+    const dir = fs.mkdtempSync(path.join(process.cwd(), ".tmp-esbuild-bin-"));
+    dirs.push(dir);
+    const file = path.join(dir, name);
+    fs.writeFileSync(file, content);
+    return file;
+  }
+
+  it("runs esbuild's node-shebang JS shim through the current Node executable", () => {
+    // esbuild/bin/esbuild is `#!/usr/bin/env node` — shebangs don't exist on
+    // Windows, so execFileSync(shim) fails ENOENT there. Spawning
+    // `node <shim> ...args` works on every platform.
+    const shim = writeScript(
+      "esbuild",
+      '#!/usr/bin/env node\n"use strict";\nconsole.log("shim");\n',
+    );
+
+    const spawn = esbuildSpawnCommand(shim, ["--bundle", "--minify"]);
+
+    expect(spawn.file).toBe(process.execPath);
+    expect(spawn.args).toEqual([shim, "--bundle", "--minify"]);
+  });
+
+  it("spawns a POSIX sh wrapper directly even when its body mentions node", () => {
+    // pnpm's node_modules/.bin/esbuild on POSIX is a `#!/bin/sh` script whose
+    // body execs node — running IT through node would break. Only the shebang
+    // line decides.
+    const wrapper = writeScript(
+      "esbuild",
+      '#!/bin/sh\nexec node "$basedir/../esbuild/bin/esbuild" "$@"\n',
+    );
+
+    const spawn = esbuildSpawnCommand(wrapper, ["--bundle"]);
+
+    expect(spawn.file).toBe(wrapper);
+    expect(spawn.args).toEqual(["--bundle"]);
+  });
+
+  it("spawns a bare PATH lookup and native executables directly", () => {
+    const bare = esbuildSpawnCommand("esbuild", ["--version"]);
+    expect(bare.file).toBe("esbuild");
+    expect(bare.args).toEqual(["--version"]);
+
+    const exe = writeScript("esbuild.exe", "MZ\u0090\u0000binary");
+    const native = esbuildSpawnCommand(exe, ["--version"]);
+    expect(native.file).toBe(exe);
+    expect(native.args).toEqual(["--version"]);
   });
 });
