@@ -802,6 +802,10 @@ describe("CLOUDFLARE_WORKER_ESBUILD_EXTERNALS", () => {
     expect(CLOUDFLARE_WORKER_STUB_MODULES["playwright-core"]).toContain(
       "chromium",
     );
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["playwright"]).toContain("chromium");
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["playwright/test"]).toContain(
+      "chromium",
+    );
   });
 
   it("stubs node builtins that Cloudflare Pages rejects at upload time", () => {

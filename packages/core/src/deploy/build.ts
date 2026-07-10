@@ -142,6 +142,29 @@ export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
     "export default { chromium, firefox, webkit };",
     "",
   ].join("\n"),
+  // playwright and its playwright/test subpath are imported with literal
+  // dynamic import() in template actions (e.g. design's screenshot action
+  // imports "playwright/test"), so a bare --external leaves an unresolvable
+  // import in the final _worker.js — wrangler/Pages then refuses the bundle.
+  // Stub both so the import resolves and degrades at call time like Node.
+  playwright: [
+    "const unavailable = async () => { throw new Error('playwright unavailable in Cloudflare Pages worker'); };",
+    "export const chromium = { launch: unavailable };",
+    "export const firefox = { launch: unavailable };",
+    "export const webkit = { launch: unavailable };",
+    "export default { chromium, firefox, webkit };",
+    "",
+  ].join("\n"),
+  "playwright/test": [
+    "const unavailable = async () => { throw new Error('playwright/test unavailable in Cloudflare Pages worker'); };",
+    "export const chromium = { launch: unavailable };",
+    "export const firefox = { launch: unavailable };",
+    "export const webkit = { launch: unavailable };",
+    "export const test = undefined;",
+    "export const expect = undefined;",
+    "export default { chromium, firefox, webkit };",
+    "",
+  ].join("\n"),
   "@sparticuz/chromium-min": [
     "const chromium = {",
     "  args: [],",
