@@ -207,7 +207,12 @@ function formOgResvgOptions(): ResvgRenderOptions {
 }
 
 async function loadResvg(): Promise<typeof import("@resvg/resvg-js")> {
-  return import("@resvg/resvg-js");
+  // The comment keeps bundlers (Vite SSR + Nitro's Rolldown) from inlining
+  // resvg's JS binding — following it reaches the platform .node binary and
+  // fails the serverless build (UNLOADABLE_DEPENDENCY). Left as a runtime
+  // import, it resolves against the resvg packages the deploy build copies
+  // into the server bundle. Mirrors the calendar template's booking-og-image.
+  return import(/* @vite-ignore */ "@resvg/resvg-js");
 }
 
 export async function renderFormOgImage(
