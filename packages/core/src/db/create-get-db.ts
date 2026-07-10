@@ -22,6 +22,7 @@ import {
   retryOnConnectionError,
   dbOpTimeoutMs,
 } from "./client.js";
+import { isCloudflareRuntime } from "../shared/runtime.js";
 
 // Lazy driver loaders — cached promises so dynamic import only runs once.
 let _pgDrizzle: Promise<{ drizzle: any; postgres: any }> | undefined;
@@ -38,7 +39,9 @@ function getPgDrizzle() {
   return _pgDrizzle;
 }
 
-let _neonServerlessDrizzle: Promise<{ drizzle: any; Pool: any }> | undefined;
+let _neonServerlessDrizzle:
+  | Promise<{ drizzle: any; Pool: any; neonConfig: any }>
+  | undefined;
 function getNeonServerlessDrizzle() {
   if (!_neonServerlessDrizzle) {
     _neonServerlessDrizzle = Promise.all([
@@ -47,6 +50,7 @@ function getNeonServerlessDrizzle() {
     ]).then(([drizzleMod, neonMod]) => ({
       drizzle: drizzleMod.drizzle,
       Pool: neonMod.Pool,
+      neonConfig: neonMod.neonConfig,
     }));
   }
   return _neonServerlessDrizzle;
@@ -465,19 +469,31 @@ export function createGetDb<T extends Record<string, unknown>>(schema: T) {
 
     if (dialect === "postgres") {
       if (isNeonUrl(url)) {
-        _dbReady = getNeonServerlessDrizzle().then(({ drizzle, Pool }) => {
-          const rawPool = new Pool({
-            connectionString: url,
-            max: neonPoolMax(),
-          });
-          attachNeonPoolErrorLogger(rawPool);
-          // Wrap the pool with the resilience layer so Drizzle queries get the
-          // same withDbTimeout + retryOnConnectionError protection as the raw
-          // DbExec path in client.ts. Reads retry freely; writes only retry on
-          // acquire-timeout (pre-send) errors to avoid double-execution.
-          const pool = buildResilientNeonPool(rawPool);
-          _db = drizzle(pool, { schema });
-        });
+        _dbReady = getNeonServerlessDrizzle().then(
+          ({ drizzle, Pool, neonConfig }) => {
+            // Cloudflare Workers (workerd) forbids reusing I/O objects across
+            // requests — a WebSocket client cached in the pool by request A and
+            // handed to request B throws "Cannot perform I/O on behalf of a
+            // different request" and hangs the worker. Route plain queries over
+            // Neon's stateless HTTP transport (poolQueryViaFetch) and cap each
+            // WebSocket client (used for transactions) to a single use so it is
+            // never reused across requests.
+            const cfWorker = isCloudflareRuntime();
+            if (cfWorker) neonConfig.poolQueryViaFetch = true;
+            const rawPool = new Pool({
+              connectionString: url,
+              max: neonPoolMax(),
+              ...(cfWorker ? { maxUses: 1 } : {}),
+            });
+            attachNeonPoolErrorLogger(rawPool);
+            // Wrap the pool with the resilience layer so Drizzle queries get the
+            // same withDbTimeout + retryOnConnectionError protection as the raw
+            // DbExec path in client.ts. Reads retry freely; writes only retry on
+            // acquire-timeout (pre-send) errors to avoid double-execution.
+            const pool = buildResilientNeonPool(rawPool);
+            _db = drizzle(pool, { schema });
+          },
+        );
       } else {
         _dbReady = getPgDrizzle().then(({ drizzle, postgres }) => {
           // pgPoolOptions caps the pool to a small size on serverless so

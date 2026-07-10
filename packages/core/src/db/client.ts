@@ -10,6 +10,8 @@
  */
 import path from "path";
 
+import { isCloudflareRuntime } from "../shared/runtime.js";
+
 const recyclingPostgresPools = new WeakSet<object>();
 const loggedNeonPools = new WeakSet<object>();
 
@@ -1079,12 +1081,25 @@ async function createDbExecInternal(
       // analytics worker stalls right after model resolution and never claims.
       // HTTP-per-query (poolQueryViaFetch) has no persistent socket to die; the
       // foreground keeps the WebSocket pool. See the bg-fn execute branch below.
-      const bgHttp = isBackgroundFunctionPoolContext();
+      // Cloudflare Workers (workerd) additionally forbids reusing I/O objects
+      // across requests — a pooled WebSocket created in request A and handed
+      // to request B throws "Cannot perform I/O on behalf of a different
+      // request" and hangs the worker — so workerd always takes the stateless
+      // HTTP path too.
+      const bgHttp =
+        isBackgroundFunctionPoolContext() || isCloudflareRuntime();
       if (bgHttp) {
         (neonConfig as { poolQueryViaFetch?: boolean }).poolQueryViaFetch =
           true;
       }
-      const pool = new Pool({ connectionString: url, max: neonPoolMax() });
+      // On workerd, transactions still use pool.connect() WebSocket clients —
+      // cap each client to a single use so a socket created in one request is
+      // destroyed on release instead of being handed to a later request.
+      const pool = new Pool({
+        connectionString: url,
+        max: neonPoolMax(),
+        ...(isCloudflareRuntime() ? { maxUses: 1 } : {}),
+      });
       attachNeonPoolErrorLogger(pool);
       if (trackSingletonResources) _neonPool = pool;
       async function queryNeonClient(
