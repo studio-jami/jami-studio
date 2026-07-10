@@ -1,0 +1,309 @@
+# Source Sync Report - 2026-07-10
+
+## Summary
+
+- Base ref: `HEAD` (77cf4ebb6c2b536d0a6bc3f37ba6644b68e6ef83)
+- Source ref: `source/main` (d5e07fca51d2a17795f390b7c8ef0942ef92d790)
+- Merge base: `9b8ee99b8d19f8228d282d089cc420fbb45de8d4`
+- Base-only commits: 61
+- Source-only commits: 41
+- Changed files from base to source: 2576
+- Protected-path changes: 826
+- Registry-lane changes: 28
+- Dry-merge conflicts: 20
+
+## Recommendation
+
+Do not merge source directly into Jami `main`. For `sync/intake/**`, accept
+upstream by default and strip or adapt only obvious takeover contradictions.
+Keep Jami takeover decisions intact unless explicitly reversed.
+
+## Changed Files By Area
+
+- packages/core: 786
+- _ops: 705
+- templates/design: 254
+- templates/analytics: 132
+- templates/clips: 113
+- templates/content: 66
+- templates/assets: 60
+- templates/plan: 42
+- templates/slides: 42
+- packages/docs: 41
+- templates/calendar: 35
+- templates/mail: 33
+- .agents: 26
+- templates/forms: 24
+- scripts: 23
+- .github: 22
+- packages/dispatch: 16
+- templates/dispatch: 15
+- templates/chat: 14
+- packages/skills: 12
+- templates/brain: 11
+- packages/toolkit: 10
+- .changeset: 9
+- packages/desktop-app: 7
+- packages/vscode-extension: 7
+- skills: 7
+- templates/macros: 7
+- plans: 5
+- templates/.retired: 5
+- packages/code-agents-ui: 3
+- packages/scheduling: 3
+- .claude-plugin: 2
+- packages/embedding: 2
+- packages/frame: 2
+- packages/mobile-app: 2
+- packages/pinpoint: 2
+- packages/shared-app-config: 2
+- templates/videos: 2
+-  .video-bakeoff: 1
+- .gitignore: 1
+- .vscode: 1
+- agent-native.json: 1
+- AGENTS.md: 1
+- deploy: 1
+- DEVELOPMENT.md: 1
+- docs: 1
+- package.json: 1
+- packages/migrate: 1
+- pnpm-lock.yaml: 1
+- pnpm-workspace.yaml: 1
+- PORT-GUIDE-design-followups.md: 1
+- README.md: 1
+- registry: 1
+- registry.json: 1
+- templates/voice: 1
+- wrangler-analytics.toml: 1
+- wrangler-calendar.toml: 1
+- wrangler-calorie-tracker.toml: 1
+- wrangler-chat.toml: 1
+- wrangler-clips.toml: 1
+- wrangler-content.toml: 1
+- wrangler-dispatch.toml: 1
+- wrangler-forms.toml: 1
+- wrangler-mail.toml: 1
+- wrangler-slides.toml: 1
+
+## Protected-Path Changes
+
+- D .changeset/action-discovery-node24.md
+- D .changeset/clean-jami-metadata.md
+- D .changeset/esbuild-windows-spawn.md
+- D .changeset/navigation-command-ttl.md
+- D .changeset/netlify-guard-base-path.md
+- D .changeset/nitro-security-bump.md
+- D .changeset/session-replay-upload-backoff.md
+- D .changeset/windows-install-builds.md
+- D .changeset/workspace-dev-windows-tree-kill.md
+- R100 .github/workflows/auto-merge-version-packages.yml
+- R100 .github/workflows/auto-publish.yml
+- R098 .github/workflows/cancel-active-netlify-previews.yml
+- R098 .github/workflows/cancel-stale-netlify-main-deploys.yml
+- R096 .github/workflows/cancel-stale-netlify-previews.yml
+- R100 .github/workflows/changeset-check.yml
+- R093 .github/workflows/ci.yml
+- R100 .github/workflows/clips-desktop-build-check.yml
+- R100 .github/workflows/clips-desktop-release.yml
+- R100 .github/workflows/desktop-release.yml
+- R100 .github/workflows/evals.yml
+- R100 .github/workflows/hide-preview-bot-comments.yml
+- R100 .github/workflows/keep-neon-warm.yml
+- R100 .github/workflows/neon-preview-branches.yml
+- R087 .github/workflows/pr-visual-recap-fork.yml
+- R099 .github/workflows/pr-visual-recap-reusable.yml
+- R099 .github/workflows/pr-visual-recap.yml
+- R097 .github/workflows/promote-netlify-deploy.yml
+- D .github/workflows/source-sync-intake.yml
+- D .github/workflows/source-sync-review.yml
+- R100 .github/workflows/sync-builder-starter.yml
+- R100 .github/workflows/sync-public-skills.yml
+- M AGENTS.md
+- M README.md
+- D _ops/planning/decisions/2026-07-08-upstream-blocked-dependency-alerts.md
+- D _ops/planning/decisions/2026-07-09-hummingbird-os-adoption-provisioning.md
+- D _ops/planning/research/README.md
+- D _ops/planning/research/capabilities/2026-07-08-jami-studio-capability-deep-dive.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-06-25-avatar-agent-feasibility.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-06-26-elevenlabs-capabilities-and-my-agent-probe.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-07-08-realtime-voice-video-avatar-feasibility.md
+- D _ops/planning/research/feasibility-reports/avatar/brainstorms/initial-avatar-agent-brainstorm.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-05-21-intercal-foundation-report.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-04-intercal-revisit-audit-and-dev-environment.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-06-baseline-knowledge-seeding.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-14-intercal-experience-and-design-system-spec.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-15-intercal-source-canon-and-policy.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-15-oss-knowledge-banks-grounding-landscape.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-18-intercal-actions-pipeline-credits-migration-assessment.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/Rebuild.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/brainstorm.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/hosting-costs.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/README.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/agy-debug-notes.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/cli-inventory.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/orchestration-patterns.md
+- D _ops/planning/research/feasibility-reports/os-adoption/2026-07-09-hummingbird-workspace-provisioning-feasibility.md
+- D _ops/planning/research/masters/audits/00-orchestration/activity-log.md
+- D _ops/planning/research/masters/audits/00-orchestration/plan.md
+- D _ops/planning/research/masters/audits/00-orchestration/progress.md
+- D _ops/planning/research/masters/audits/00-orchestration/synthesis.md
+- D _ops/planning/research/masters/audits/01-projects-audit/report.md
+- D _ops/planning/research/masters/audits/01-projects-audit/review-notes.md
+- D _ops/planning/research/masters/audits/02-system-and-tooling/report.md
+- D _ops/planning/research/masters/audits/03-dev-systems/report.md
+- D _ops/planning/research/masters/audits/04-secrets/report.md
+- D _ops/planning/research/masters/audits/04-secrets/review-notes.md
+- D _ops/planning/research/masters/audits/05-templates/report.md
+- D _ops/planning/research/masters/audits/05-templates/review-notes.md
+- D _ops/planning/research/masters/audits/06-rebuild-feasibility/report.md
+- D _ops/planning/research/masters/audits/07-brands-funding/report.md
+- D _ops/planning/research/masters/audits/07-brands-funding/review-notes.md
+- D _ops/planning/research/masters/audits/08-canonical-system/report.md
+- D _ops/planning/research/masters/audits/09-brand-development/report.md
+- D _ops/planning/research/masters/audits/10-product-concepts/report.md
+- D _ops/planning/research/masters/audits/10-product-concepts/review-notes.md
+- D _ops/planning/research/masters/audits/11-skills-audit/report.md
+- D _ops/planning/research/masters/audits/11-skills-audit/review-notes.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/betterauth-per-org.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/provider-authz-audit-crux.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/provider-landscape-and-tradeoffs.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/shadcn-as-agent-registry.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/transcription-and-voice.md
+- D _ops/planning/research/masters/audits/12-agent-native/engine-harness-memory.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/README.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/a2a-protocol.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/actions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-mentions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-teams.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-web-surfaces.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/authentication.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/automations.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cli-adapters.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/client.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cloneable-saas.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/code-agents-ui.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/context-awareness.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/creating-templates.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cross-app-sso.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/database.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/deployment.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/dispatch.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/drop-in-agent.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/embedding-sdk.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/extensions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/external-agents.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/faq.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/file-uploads.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/frames.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/getting-started.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/key-concepts.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/mcp-clients.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/mcp-protocol.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/messaging.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/migration-workbench.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/multi-app-workspace.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/multi-tenancy.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/notifications.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/observability.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/onboarding.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/progress.md
+- ...and 706 more
+
+## Registry-Lane Changes
+
+- M packages/core/src/cli/create.ts
+- M packages/docs/app/components/TemplateCard.tsx
+- M packages/docs/app/i18n/ar-SA.ts
+- M packages/docs/app/i18n/de-DE.ts
+- M packages/docs/app/i18n/en-US.ts
+- M packages/docs/app/i18n/es-ES.ts
+- M packages/docs/app/i18n/fr-FR.ts
+- M packages/docs/app/i18n/hi-IN.ts
+- M packages/docs/app/i18n/ja-JP.ts
+- M packages/docs/app/i18n/ko-KR.ts
+- M packages/docs/app/i18n/pt-BR.ts
+- M packages/docs/app/i18n/zh-CN.ts
+- M packages/docs/app/i18n/zh-TW.ts
+- M packages/docs/app/routes/templates.analytics.tsx
+- M packages/docs/app/routes/templates.calendar.tsx
+- M packages/docs/app/routes/templates.clips.tsx
+- M packages/docs/app/routes/templates.content.tsx
+- M packages/docs/app/routes/templates.design.tsx
+- M packages/docs/app/routes/templates.dispatch.tsx
+- M packages/docs/app/routes/templates.forms.tsx
+- M packages/docs/app/routes/templates.mail.tsx
+- M packages/docs/app/routes/templates.plan.tsx
+- M packages/docs/app/routes/templates.slides.tsx
+- M packages/docs/app/vite-sitemap-plugin.ts
+- M packages/shared-app-config/templates.ts
+- M registry.json
+- M registry/agent-native-app/AGENTS.md
+- M scripts/guard-template-list.mjs
+
+## Dry-Merge Conflicts
+
+- _ops/planning/research/open-source-adoption/disabled-workflows-2026-07-07/pr-visual-recap-fork.yml
+- packages/core/src/client/settings/SettingsPanel.tsx
+- packages/core/src/deploy/build.ts
+- packages/core/src/templates/default/AGENTS.md
+- packages/skills/package.json
+- templates/analytics/AGENTS.md
+- templates/assets/AGENTS.md
+- templates/brain/AGENTS.md
+- templates/calendar/AGENTS.md
+- templates/chat/AGENTS.md
+- templates/clips/AGENTS.md
+- templates/clips/server/routes/api/recordings/[recordingId]/thumbnail.post.ts
+- templates/design/AGENTS.md
+- templates/design/actions/create-design-branch.ts
+- templates/dispatch/AGENTS.md
+- templates/forms/AGENTS.md
+- templates/macros/AGENTS.md
+- templates/mail/AGENTS.md
+- templates/plan/AGENTS.md
+- templates/slides/AGENTS.md
+
+## Upstream Commits
+
+- d5e07fca5 chore: version packages [skip netlify] (#1996)
+- 22abd765c Fix serverless Yjs runtime packaging (#1994)
+- 458baa99a chore: version packages [skip netlify] (#1993)
+- d5d94f29e Fix SSR error visibility and recap screenshots (#1992)
+- 2ff35d9de chore: version packages [skip netlify] (#1991)
+- 02ff384b5 Improve agent reliability and design workspace workflows (#1989)
+- 6c9c47254 Fix: Microphone not transcribed during meetings (#1977)
+- 1bfb81d52 Merge pull request #1988 from BuilderIO/ai_main_7f48826642a141f08fb3
+- ac1baa37e Merge pull request #1981 from BuilderIO/risk-meeting-data-programs
+- 85c872516 chore: version packages [skip netlify] (#1987)
+- cf9598d34 Merge pull request #1986 from BuilderIO/changes-436
+- 78f8d1df3 Increase z-index of popover and menu components to 290
+- a91535c45 Address Content property PR validation
+- 7a18c99cf Fix Content database property interactions
+- 13e3602b3 fix ci test
+- b3b733962 chore: version packages [skip netlify] (#1985)
+- c59669b77 Merge pull request #1984 from BuilderIO/nkoech/add-sync-template-toolkit
+- fed3d1faa chore: version packages [skip netlify] (#1983)
+- 2017f27f9 Fix settings search changeset frontmatter
+- 0136d748d Expose data-program read actions over HTTP for extension iframes.
+- 37f33674d Preserve starter-pinned toolkit during manifest sync.
+- c32c17493 Assets: preset reference boards — pin annotated reference images and fill per-run slots (#1972)
+- 6a29ba062 Assets: Add URL import action for Assets reference images (#1973)
+- 5f187dbf3 Improve chat, calendar, demo, and docs behavior
+- 520cf62e4 chore: version packages [skip netlify] (#1980)
+- eed1710ff fix: live-edit 401s (#1975)
+- a271ee181 chore: version packages [skip netlify] (#1978)
+- c38059d94 Merge pull request #1966 from BuilderIO/nkoech/fix-toolkit-version
+- 8ea49fdbe Update lockfile for toolkit workspace:^ specifier change.
+- e4f9cabb5 chore: version packages [skip netlify] (#1976)
+- 6522cf865 Publish toolkit as a caret range so apps can dedupe against latest.
+- 0fee97b7a Improve analytics monitor diagnostics (#1974)
+- 990700043 chore: version packages [skip netlify] (#1971)
+- 5df1506d4 Reduce noisy uptime monitor alerts (#1970)
+- 1197142c5 chore: version packages [skip netlify] (#1969)
+- 1d13434b5 Improve hosted storage and agent workflow reliability (#1968)
+- e5ef0029f fix (#1959)
+- 407e090a0 chore: version packages [skip netlify] (#1967)
+- 680b1ebcb Add upgrade tooling and notification fixes (#1965)
+- b8ff10ae3 fix builder bot comments
+- 86697e981 fix toolkit version issue as it should be borrowed from agent-native/core not setting it as latest
