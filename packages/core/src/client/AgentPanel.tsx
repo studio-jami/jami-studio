@@ -108,6 +108,10 @@ import type {
   MultiTabAssistantChatHeaderProps,
   MultiTabAssistantChatProps,
 } from "./MultiTabAssistantChat.js";
+import {
+  DEFAULT_NAVIGATION_COMMAND_TTL_MS,
+  navigationCommandTimestamp,
+} from "./route-state.js";
 import { AgentNativeRouteWarmup } from "./route-warmup.js";
 import { withBuilderConnectTrackingParams } from "./settings/useBuilderStatus.js";
 import { useScreenRefreshKey } from "./use-db-sync.js";
@@ -2129,7 +2133,21 @@ function URLSync({ browserTabId }: { browserTabId?: string }) {
         const text = await res.text();
         if (!text) return null;
         const data = JSON.parse(text);
-        return data ? { key, command: data } : null;
+        if (!data) return null;
+        const ts = navigationCommandTimestamp(data);
+        if (
+          ts !== null &&
+          Date.now() - ts > DEFAULT_NAVIGATION_COMMAND_TTL_MS
+        ) {
+          // Stale leftover from a lost consume-DELETE — clean it up instead
+          // of yanking the user's URL around on a later mount.
+          fetch(agentNativePath(`/_agent-native/application-state/${key}`), {
+            method: "DELETE",
+            headers: { "X-Agent-Native-CSRF": "1" },
+          }).catch(() => {});
+          return null;
+        }
+        return { key, command: data };
       };
       try {
         return (

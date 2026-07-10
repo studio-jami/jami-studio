@@ -65,6 +65,8 @@ export {
   type ClientAppStateWriteOptions,
 } from "./application-state.js";
 export {
+  DEFAULT_NAVIGATION_COMMAND_TTL_MS,
+  navigationCommandTimestamp,
   useAgentRouteState,
   useSemanticNavigationState,
   type AgentRouteLocation,

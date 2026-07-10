@@ -58,6 +58,17 @@ export interface UseSemanticNavigationStateOptions<
   writeDebounceMs?: number;
   /** Custom duplicate-command key. Defaults to `_writeId` or JSON content. */
   getCommandDedupKey?: (command: NavigateCommand) => string;
+  /**
+   * Max age for one-shot commands whose `_writeId` embeds a write timestamp
+   * (the framework's navigate action and URL tools write
+   * `${Date.now()}-${random}`). Commands older than this are deleted instead
+   * of applied, so a stale row — left behind when a consume-DELETE was lost
+   * (crash-looped app, killed tab, failed fetch) — can never beat a live user
+   * click on a later mount. Commands without a parseable timestamp are always
+   * applied (back-compat with external writers). Defaults to 120 000 ms;
+   * pass false to disable expiry.
+   */
+  commandTtlMs?: number | false;
   /** Called once for each non-duplicate command after the command is consumed. */
   onCommand: (command: NavigateCommand) => void | Promise<void>;
   /** Optional sink for best-effort navigation write/read/delete/command errors. */
@@ -136,6 +147,8 @@ export interface UseAgentRouteStateOptions<
   writeDebounceMs?: number;
   /** Custom duplicate-command key. Defaults to `_writeId` or JSON content. */
   getCommandDedupKey?: (command: NavigateCommand) => string;
+  /** Max age for timestamped one-shot commands. See `UseSemanticNavigationStateOptions.commandTtlMs`. */
+  commandTtlMs?: number | false;
   /** React Router navigate options, or a function of the consumed command. */
   navigateOptions?:
     | NavigateOptions
@@ -194,6 +207,33 @@ function defaultCommandDedupKey(command: unknown): string {
   return JSON.stringify(command);
 }
 
+export const DEFAULT_NAVIGATION_COMMAND_TTL_MS = 120_000;
+
+/**
+ * Extract the write timestamp the framework's command writers embed in
+ * `_writeId` (`${Date.now()}-${random}`). Returns null for commands without
+ * a parseable timestamp so they are never aged out (external writers).
+ */
+export function navigationCommandTimestamp(command: unknown): number | null {
+  if (!command || typeof command !== "object") return null;
+  const writeId = (command as { _writeId?: unknown })._writeId;
+  if (typeof writeId !== "string") return null;
+  const ts = Number(writeId.split("-")[0]);
+  // Sanity-bound: a plausible epoch-millis value (year 2001+), not a random
+  // small number that happens to precede the first dash.
+  return Number.isFinite(ts) && ts > 1_000_000_000_000 ? ts : null;
+}
+
+function isExpiredNavigationCommand(
+  command: unknown,
+  ttlMs: number | false,
+): boolean {
+  if (ttlMs === false) return false;
+  const ts = navigationCommandTimestamp(command);
+  if (ts === null) return false;
+  return Date.now() - ts > ttlMs;
+}
+
 function currentRouterPath(location: Location): string {
   return `${location.pathname}${location.search}${location.hash}`;
 }
@@ -238,6 +278,7 @@ export function useSemanticNavigationState<
     enabled = true,
     keepalive = true,
     writeDebounceMs = 0,
+    commandTtlMs = DEFAULT_NAVIGATION_COMMAND_TTL_MS,
   } = options;
 
   const queryClient = useQueryClient();
@@ -307,6 +348,14 @@ export function useSemanticNavigationState<
         for (const key of commandKeys) {
           const command = await readClientAppState<NavigateCommand>(key);
           if (command !== null && command !== undefined) {
+            if (isExpiredNavigationCommand(command, commandTtlMs)) {
+              // Stale leftover from a lost consume-DELETE — clean it up
+              // instead of bouncing the user off their current page.
+              deleteClientAppState(key, { requestSource }).catch((error) =>
+                onErrorRef.current?.(error),
+              );
+              continue;
+            }
             return { key, command };
           }
         }
@@ -427,6 +476,7 @@ export function useAgentRouteState<
     keepalive: options.keepalive,
     writeDebounceMs: options.writeDebounceMs,
     getCommandDedupKey: options.getCommandDedupKey,
+    commandTtlMs: options.commandTtlMs,
     onError: options.onError,
     onCommand: (command) => {
       const path = options.getCommandPath(command);

@@ -174,6 +174,100 @@ describe("route-state client helpers", () => {
     ).toBe(false);
   });
 
+  it("deletes an expired timestamped command instead of applying it (stale nav-bounce guard)", async () => {
+    // A command whose `_writeId` timestamp is older than the TTL is a leftover
+    // from a lost consume-DELETE. Applying it on a later mount bounced users
+    // off the page they just clicked — it must be cleaned up, never applied.
+    const staleWriteId = `${Date.now() - 10 * 60_000}-abc123`;
+    const { deletes, fetchMock } = makeAppStateFetch({
+      "navigate:tab-1": { view: "overview", _writeId: staleWriteId },
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const commands: unknown[] = [];
+
+    function Harness() {
+      useSemanticNavigationState({
+        state: { view: "inbox" },
+        navigationKeys: ["navigation"],
+        commandKeys: ["navigate:tab-1", "navigate"],
+        requestSource: "tab-1",
+        commandRefetchInterval: false,
+        onCommand: (command) => commands.push(command),
+      });
+      return null;
+    }
+
+    const rendered = renderWithQueryClient(<Harness />);
+    roots.push(rendered.root);
+    containers.push(rendered.container);
+    await act(flush);
+    await act(flush);
+
+    expect(commands).toEqual([]);
+    expect(deletes.map((d) => d.key)).toEqual(["navigate:tab-1"]);
+  });
+
+  it("applies a fresh timestamped command and never ages out commands without a timestamp", async () => {
+    const freshWriteId = `${Date.now()}-fresh1`;
+    const { fetchMock } = makeAppStateFetch({
+      "navigate:tab-1": { view: "detail", _writeId: freshWriteId },
+      navigate: { view: "fallback", _writeId: "no-timestamp" },
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const commands: unknown[] = [];
+
+    function Harness() {
+      useSemanticNavigationState({
+        state: { view: "inbox" },
+        navigationKeys: ["navigation"],
+        commandKeys: ["navigate:tab-1", "navigate"],
+        requestSource: "tab-1",
+        commandRefetchInterval: false,
+        onCommand: (command) => commands.push(command),
+      });
+      return null;
+    }
+
+    const rendered = renderWithQueryClient(<Harness />);
+    roots.push(rendered.root);
+    containers.push(rendered.container);
+    await act(flush);
+    await act(flush);
+
+    expect(commands).toEqual([{ view: "detail", _writeId: freshWriteId }]);
+  });
+
+  it("commandTtlMs: false disables expiry entirely", async () => {
+    const staleWriteId = `${Date.now() - 10 * 60_000}-abc123`;
+    const { fetchMock } = makeAppStateFetch({
+      navigate: { view: "old-but-wanted", _writeId: staleWriteId },
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const commands: unknown[] = [];
+
+    function Harness() {
+      useSemanticNavigationState({
+        state: { view: "inbox" },
+        navigationKeys: ["navigation"],
+        commandKeys: ["navigate"],
+        commandRefetchInterval: false,
+        commandTtlMs: false,
+        onCommand: (command) => commands.push(command),
+      });
+      return null;
+    }
+
+    const rendered = renderWithQueryClient(<Harness />);
+    roots.push(rendered.root);
+    containers.push(rendered.container);
+    await act(flush);
+    await act(flush);
+
+    expect(commands).toEqual([
+      { view: "old-but-wanted", _writeId: staleWriteId },
+    ]);
+  });
+
   it("derives route state and applies navigate commands with React Router", async () => {
     const { fetchMock, writes } = makeAppStateFetch({
       "navigate:tab-1": { view: "detail", id: "123", _writeId: "cmd-1" },
