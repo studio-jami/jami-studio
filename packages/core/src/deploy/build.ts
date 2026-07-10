@@ -183,6 +183,43 @@ export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
     "export default async () => ({ elements: [], files: {} });\n",
 };
 
+/**
+ * Optional AI SDK packages that ai-sdk-engine imports with LITERAL dynamic
+ * import() specifiers (so bundlers include provider packages when present).
+ * They are optional peer dependencies — when an app hasn't installed one,
+ * esbuild fails the worker bundle with "Could not resolve". Stub every
+ * uninstalled one with a module that throws at import time, which makes the
+ * dynamic import() reject exactly like the missing package does under Node.
+ */
+export const OPTIONAL_AI_SDK_MODULES = [
+  "ai",
+  "@ai-sdk/anthropic",
+  "@ai-sdk/openai",
+  "@ai-sdk/google",
+  "@ai-sdk/groq",
+  "@ai-sdk/mistral",
+  "@ai-sdk/cohere",
+  "@openrouter/ai-sdk-provider",
+  "ai-sdk-ollama",
+];
+
+export function uninstalledOptionalAiSdkStubs(
+  appDir: string,
+): Record<string, string> {
+  const appRequire = createRequire(path.join(appDir, "package.json"));
+  const stubs: Record<string, string> = {};
+  for (const mod of OPTIONAL_AI_SDK_MODULES) {
+    try {
+      appRequire.resolve(mod);
+    } catch {
+      stubs[mod] = `throw new Error(${JSON.stringify(
+        `${mod} is not installed in this deployment`,
+      )});\n`;
+    }
+  }
+  return stubs;
+}
+
 function cloudflareNodeBuiltinStubSource(
   moduleName: string,
   namedExports: string[],
@@ -1625,9 +1662,15 @@ async function buildCloudflarePages() {
 
   // Create stub modules for native/Node-only deps that can't run on Workers.
   // These get resolved by esbuild instead of the real modules, avoiding bundling
-  // native code that would fail on the Workers runtime.
+  // native code that would fail on the Workers runtime. Uninstalled optional
+  // AI SDK provider packages are stubbed the same way so their literal dynamic
+  // import() sites in ai-sdk-engine don't fail the bundle.
+  const workerStubModules: Record<string, string> = {
+    ...CLOUDFLARE_WORKER_STUB_MODULES,
+    ...uninstalledOptionalAiSdkStubs(cwd),
+  };
   const stubDir = path.join(tmpDir, "node_modules");
-  for (const [mod, source] of Object.entries(CLOUDFLARE_WORKER_STUB_MODULES)) {
+  for (const [mod, source] of Object.entries(workerStubModules)) {
     const modDir = path.join(stubDir, mod);
     fs.mkdirSync(modDir, { recursive: true });
     fs.writeFileSync(path.join(modDir, "index.js"), source);
@@ -1636,7 +1679,7 @@ async function buildCloudflarePages() {
       JSON.stringify({ name: mod, main: "index.js", type: "module" }),
     );
   }
-  const stubAliases = Object.keys(CLOUDFLARE_WORKER_STUB_MODULES).map(
+  const stubAliases = Object.keys(workerStubModules).map(
     (mod) => `--alias:${mod}=${path.join(stubDir, mod, "index.js")}`,
   );
   const nodeBuiltinStubDir = path.join(tmpDir, "node-builtin-stubs");

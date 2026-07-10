@@ -47,6 +47,23 @@ export interface WorkspaceApp {
   installing?: boolean;
   installAttempted?: boolean;
   /**
+   * Built-mode lifecycle. `devMode` marks an app that has been promoted to
+   * the vite dev server for the rest of the session (source changed, build
+   * failed, or no build could be produced). `building` marks a production
+   * build in flight as the app's prep child. `buildAttempted` prevents
+   * rebuild loops; `buildChecked` caches the once-per-session staleness scan.
+   */
+  devMode?: boolean;
+  building?: boolean;
+  buildAttempted?: boolean;
+  buildChecked?: boolean;
+  /**
+   * Set before an intentional kill (promotion to dev mode) so the exit
+   * handler respawns immediately instead of treating it as a crash.
+   */
+  expectedExit?: boolean;
+  promoteWatcher?: fs.FSWatcher;
+  /**
    * Set true once we've successfully connected to the upstream. After that we
    * skip the readiness probe on every request; the child server stays
    * listening for the rest of the dev session.
@@ -119,6 +136,109 @@ export function shouldEagerStartWorkspaceApps(
     env.WORKSPACE_EAGER === "1" ||
     env.WORKSPACE_EAGER === "true"
   );
+}
+
+/**
+ * Mixed-mode gateway: when enabled (--built / WORKSPACE_BUILT=1), each app
+ * boots from its prebuilt production server (`.output/server/index.mjs`,
+ * instant, prod-shaped) instead of a vite dev server. The gateway builds an
+ * app first when no fresh build exists, and automatically promotes an app to
+ * the vite dev server the moment one of its source files changes — so the
+ * app being edited gets hot reload while every other app stays on built
+ * output. Nothing is manual: editing is the switch.
+ */
+export function shouldRunBuiltWorkspaceApps(
+  args: string[] = [],
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  if (args.includes("--no-built")) return false;
+  if (env.WORKSPACE_BUILT === "0" || env.WORKSPACE_BUILT === "false") {
+    return false;
+  }
+  return (
+    args.includes("--built") ||
+    env.WORKSPACE_BUILT === "1" ||
+    env.WORKSPACE_BUILT === "true"
+  );
+}
+
+const BUILT_MODE_IGNORED_SEGMENTS = new Set([
+  "node_modules",
+  "build",
+  "dist",
+  "data",
+  "media",
+  "coverage",
+  "test-results",
+  "playwright-report",
+]);
+const BUILT_MODE_IGNORED_FILE_PATTERN =
+  /\.(log|tmp|db|db-wal|db-shm|sqlite|sqlite-wal|sqlite-shm)$/i;
+
+/**
+ * Whether a path relative to an app dir counts as "source" for built-mode
+ * staleness checks and dev-server promotion. Excludes build outputs, data,
+ * dependency trees, and every dot-directory/dot-file (`.output`,
+ * `.deploy-tmp`, `.react-router`, `.env`, ...) — an `.env` edit needs a
+ * restart, not a permanent promotion to vite.
+ */
+export function isBuiltModeSourcePath(relPath: string): boolean {
+  if (!relPath) return false;
+  const segments = relPath.split(/[\\/]/).filter(Boolean);
+  if (segments.length === 0) return false;
+  for (const segment of segments) {
+    if (segment.startsWith(".")) return false;
+    if (BUILT_MODE_IGNORED_SEGMENTS.has(segment)) return false;
+  }
+  return !BUILT_MODE_IGNORED_FILE_PATTERN.test(relPath);
+}
+
+export function builtWorkspaceAppServerEntry(appDir: string): string {
+  return path.join(appDir, ".output", "server", "index.mjs");
+}
+
+/**
+ * Newest mtime across an app's source files (build outputs, data, and
+ * node_modules excluded). Used once per session per app to decide whether
+ * the prebuilt server is stale and needs a rebuild before serving.
+ */
+export function newestBuiltModeSourceMtimeMs(
+  dir: string,
+  relBase = "",
+): number {
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return 0;
+  }
+  let newest = 0;
+  for (const entry of entries) {
+    const rel = relBase ? `${relBase}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      if (
+        entry.name.startsWith(".") ||
+        BUILT_MODE_IGNORED_SEGMENTS.has(entry.name)
+      ) {
+        continue;
+      }
+      newest = Math.max(
+        newest,
+        newestBuiltModeSourceMtimeMs(path.join(dir, entry.name), rel),
+      );
+      continue;
+    }
+    if (!entry.isFile() || !isBuiltModeSourcePath(rel)) continue;
+    try {
+      newest = Math.max(
+        newest,
+        fs.statSync(path.join(dir, entry.name)).mtimeMs,
+      );
+    } catch {
+      // File vanished mid-scan — ignore.
+    }
+  }
+  return newest;
 }
 
 /**
@@ -557,7 +677,9 @@ function renderStartingApp(app: WorkspaceApp): string {
       )}s. Fix the error below or stop the server with Ctrl+C.`
     : app.installing
       ? "The workspace gateway is installing this app's dependencies before starting it."
-      : "The workspace gateway is waking this app's dev server.";
+      : app.building
+        ? "The workspace gateway is building this app's production server before serving it."
+        : "The workspace gateway is waking this app's dev server.";
   const failureOutput = failure?.output.trim();
   return `<!doctype html>
 <html>
@@ -664,6 +786,7 @@ export async function runWorkspaceDev(
   );
   const forceVite = env.WORKSPACE_VITE_FORCE === "1";
   const eager = shouldEagerStartWorkspaceApps(args, env);
+  const builtMode = shouldRunBuiltWorkspaceApps(args, env);
   const pollingMode = pollingFileWatcherMode(env, root);
   const usePollingFileWatcher = pollingMode === "enable";
   const proxyReadyTimeoutMs = Number(
@@ -833,28 +956,85 @@ export async function runWorkspaceDev(
     const basePath = `/${app.id}`;
     const shouldInstall =
       !app.installAttempted && !hasLocalBin(app.dir, "vite");
-    const childArgs = shouldInstall
-      ? ["--dir", root, "install", "--no-frozen-lockfile", "--prefer-offline"]
-      : [
-          "--dir",
-          app.dir,
-          "exec",
-          "vite",
-          "--host",
-          "127.0.0.1",
-          "--port",
-          String(app.port),
-          "--strictPort",
-          ...(forceVite ? ["--force"] : []),
-        ];
+    const builtEntry = builtWorkspaceAppServerEntry(app.dir);
+    let shouldBuild = false;
+    let runBuilt = false;
+    if (builtMode && !shouldInstall && !app.devMode) {
+      let hasFreshBuild = false;
+      if (fs.existsSync(builtEntry)) {
+        if (app.buildChecked) {
+          hasFreshBuild = true;
+        } else {
+          app.buildChecked = true;
+          try {
+            hasFreshBuild =
+              newestBuiltModeSourceMtimeMs(app.dir) <=
+              fs.statSync(builtEntry).mtimeMs;
+          } catch {
+            hasFreshBuild = false;
+          }
+          if (!hasFreshBuild) {
+            stdout.write(
+              `[workspace] /${app.id}: production build is stale \u2014 rebuilding before serving\n`,
+            );
+          }
+        }
+      }
+      if (hasFreshBuild) {
+        runBuilt = true;
+      } else if (!app.buildAttempted) {
+        shouldBuild = true;
+      } else {
+        app.devMode = true;
+        stdout.write(
+          `[workspace] /${app.id}: no usable production build \u2014 falling back to the vite dev server\n`,
+        );
+      }
+    }
+
+    let spawnCommand = "pnpm";
+    let childArgs: string[];
+    if (shouldInstall) {
+      childArgs = [
+        "--dir",
+        root,
+        "install",
+        "--no-frozen-lockfile",
+        "--prefer-offline",
+      ];
+    } else if (shouldBuild) {
+      childArgs = ["--dir", app.dir, "run", "build"];
+    } else if (runBuilt) {
+      spawnCommand = process.execPath;
+      childArgs = [builtEntry];
+    } else {
+      childArgs = [
+        "--dir",
+        app.dir,
+        "exec",
+        "vite",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        String(app.port),
+        "--strictPort",
+        ...(forceVite ? ["--force"] : []),
+      ];
+    }
 
     if (shouldInstall) {
       stdout.write(
         `[workspace] Installing dependencies before starting /${app.id}\n`,
       );
+    } else if (shouldBuild) {
+      stdout.write(
+        `[workspace] Building /${app.id} for built-mode serving (one-time; subsequent boots are instant)\n`,
+      );
+    } else if (runBuilt) {
+      stdout.write(`[workspace] /${app.id}: serving prebuilt server\n`);
     }
 
-    const child = spawnProcess("pnpm", childArgs, {
+    const child = spawnProcess(spawnCommand, childArgs, {
       cwd: root,
       stdio: ["ignore", "pipe", "pipe"],
       env: devWatcherEnv(
@@ -887,12 +1067,15 @@ export async function runWorkspaceDev(
           VITE_WORKSPACE_GATEWAY_URL: gatewayUrl,
           PORT: String(app.port),
           WORKSPACE_GATEWAY_URL: gatewayUrl,
+          ...(runBuilt ? { HOST: "127.0.0.1" } : {}),
         },
         pollingMode,
       ),
     });
     app.process = child;
     app.installing = shouldInstall;
+    app.building = shouldBuild;
+    if (runBuilt) attachPromoteWatcher(app);
 
     const prefix = `[${app.id}]`;
     const stableTimer = setTimeout(() => {
@@ -921,6 +1104,7 @@ export async function runWorkspaceDev(
       const wasInstalling = app.installing;
       app.process = undefined;
       app.installing = false;
+      app.building = false;
       app.ready = false;
       app.readinessProbe = undefined;
       if (app.restartTimer || shuttingDown) return;
@@ -938,19 +1122,43 @@ export async function runWorkspaceDev(
     child.on("exit", (code, signal) => {
       clearTimeout(stableTimer);
       const wasInstalling = app.installing;
+      const wasBuilding = app.building;
       app.process = undefined;
       app.installing = false;
+      app.building = false;
       app.ready = false;
       app.readinessProbe = undefined;
+      if (app.expectedExit) {
+        // Intentional kill (promotion to the vite dev server). Respawn
+        // immediately instead of treating it as a crash.
+        app.expectedExit = false;
+        if (!shuttingDown && !app.restartTimer) startApp(app);
+        return;
+      }
       if (app.restartTimer) return;
       if (code === 0 || shuttingDown) {
-        if (wasInstalling && code === 0 && !shuttingDown) {
-          app.installAttempted = true;
-          startApp(app);
+        if (code === 0 && !shuttingDown) {
+          if (wasInstalling) {
+            app.installAttempted = true;
+            startApp(app);
+          } else if (wasBuilding) {
+            app.buildAttempted = true;
+            startApp(app);
+          }
         }
         return;
       }
       if (wasInstalling) app.installAttempted = false;
+      if (wasBuilding) {
+        // A failed production build must never brick the app — fall back to
+        // the vite dev server, which surfaces the error with hot reload.
+        app.devMode = true;
+        stderr.write(
+          `[${app.id}] production build failed (exit ${code}); falling back to the vite dev server\n`,
+        );
+        startApp(app);
+        return;
+      }
       scheduleAppRestart(app, {
         code,
         signal,
@@ -959,6 +1167,51 @@ export async function runWorkspaceDev(
         logMessage: `exited with code ${code}`,
       });
     });
+  }
+
+  /**
+   * Built-mode promotion: the moment one of an app's source files changes,
+   * swap its prebuilt server for the vite dev server on the same port. The
+   * proxy doesn't care what listens upstream, so the swap is invisible apart
+   * from a brief wake page. Sticky for the rest of the session.
+   */
+  function promoteAppToDevServer(app: WorkspaceApp, changedPath: string): void {
+    if (app.devMode || shuttingDown) return;
+    app.devMode = true;
+    app.promoteWatcher?.close();
+    app.promoteWatcher = undefined;
+    stdout.write(
+      `[workspace] /${app.id}: source changed (${changedPath}) \u2014 promoting to the vite dev server with hot reload\n`,
+    );
+    app.ready = false;
+    app.readinessProbe = undefined;
+    if (app.process && !app.process.killed) {
+      app.expectedExit = true;
+      killAppProcessTree(app.process);
+      return;
+    }
+    startApp(app);
+  }
+
+  function attachPromoteWatcher(app: WorkspaceApp): void {
+    if (app.promoteWatcher || app.devMode) return;
+    try {
+      const watcher = fs.watch(
+        app.dir,
+        { recursive: true },
+        (_event, filename) => {
+          const rel = filename ? String(filename) : "";
+          if (!isBuiltModeSourcePath(rel)) return;
+          promoteAppToDevServer(app, rel);
+        },
+      );
+      watcher.on("error", (err) => {
+        handleWatcherError(err as NodeJS.ErrnoException);
+      });
+      app.promoteWatcher = watcher;
+    } catch (err) {
+      handleWatcherError(err as NodeJS.ErrnoException);
+    }
   }
 
   function scheduleAppRestart(
@@ -997,7 +1250,9 @@ export async function runWorkspaceDev(
   }
 
   function failAppStartupTimeout(app: WorkspaceApp): void {
-    if (app.installing || app.ready || app.restartTimer) return;
+    if (app.installing || app.building || app.ready || app.restartTimer) {
+      return;
+    }
     const timeout = formatProxyReadyTimeout(proxyReadyTimeoutMs);
     const message =
       `Timed out waiting ${timeout} for /${app.id} to return ` +
@@ -1065,7 +1320,9 @@ export async function runWorkspaceDev(
   }
 
   function ensureReadinessProbe(app: WorkspaceApp): void {
-    if (app.ready || app.readinessProbe || app.installing) return;
+    if (app.ready || app.readinessProbe || app.installing || app.building) {
+      return;
+    }
     app.readinessProbe = waitForHttpReady(app, Date.now() + proxyReadyTimeoutMs)
       .then((ready) => {
         if (ready) {
@@ -1486,7 +1743,7 @@ export async function runWorkspaceDev(
       stdout.write(
         `[workspace] Mode: ${
           eager ? "eager" : prewarming ? "lazy+prewarm" : "lazy"
-        }\n`,
+        }${builtMode ? "+built (prebuilt servers; edits promote to vite)" : ""}\n`,
       );
       for (const app of apps) {
         stdout.write(
@@ -1515,6 +1772,8 @@ export async function runWorkspaceDev(
     shuttingDown = true;
     server.close();
     for (const app of apps) {
+      app.promoteWatcher?.close();
+      app.promoteWatcher = undefined;
       killAppProcessTree(app.process);
     }
     if (syncTimer) clearTimeout(syncTimer);

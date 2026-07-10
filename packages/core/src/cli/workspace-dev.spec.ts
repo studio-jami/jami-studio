@@ -14,11 +14,14 @@ const sentryMock = vi.hoisted(() => ({
 vi.mock("@sentry/node", () => sentryMock);
 
 import {
+  builtWorkspaceAppServerEntry,
   initialWorkspaceAppIds,
+  isBuiltModeSourcePath,
   isWorkspaceWatcherLimitError,
   runWorkspaceDev,
   shouldEagerStartWorkspaceApps,
   shouldPrewarmWorkspaceApps,
+  shouldRunBuiltWorkspaceApps,
   shouldUsePollingFileWatcher,
   workspacePrewarmConcurrency,
   type WorkspaceDevHandle,
@@ -768,6 +771,133 @@ describe("workspace dev helpers", () => {
       }),
     ).toBe(true);
   });
+
+  it("parses built mode from args or env with opt-outs", () => {
+    expect(shouldRunBuiltWorkspaceApps([], {})).toBe(false);
+    expect(shouldRunBuiltWorkspaceApps(["--built"], {})).toBe(true);
+    expect(shouldRunBuiltWorkspaceApps([], { WORKSPACE_BUILT: "1" })).toBe(
+      true,
+    );
+    expect(
+      shouldRunBuiltWorkspaceApps(["--no-built"], { WORKSPACE_BUILT: "1" }),
+    ).toBe(false);
+    expect(
+      shouldRunBuiltWorkspaceApps(["--built"], { WORKSPACE_BUILT: "0" }),
+    ).toBe(false);
+  });
+
+  it("classifies built-mode source paths", () => {
+    expect(isBuiltModeSourcePath("app/routes/home.tsx")).toBe(true);
+    expect(isBuiltModeSourcePath("actions/list-things.ts")).toBe(true);
+    expect(isBuiltModeSourcePath("package.json")).toBe(true);
+    expect(isBuiltModeSourcePath(".output/server/index.mjs")).toBe(false);
+    expect(isBuiltModeSourcePath(".env")).toBe(false);
+    expect(isBuiltModeSourcePath("node_modules/x/index.js")).toBe(false);
+    expect(isBuiltModeSourcePath("build/client/entry.js")).toBe(false);
+    expect(isBuiltModeSourcePath("data/workspace.db")).toBe(false);
+    expect(isBuiltModeSourcePath("server/notes.db-wal")).toBe(false);
+    expect(isBuiltModeSourcePath("")).toBe(false);
+  });
+});
+
+describe("workspace dev built mode", () => {
+  it("serves the prebuilt server when a fresh build exists", async () => {
+    tmpDir = makeWorkspace(["dispatch"]);
+    createBuiltEntry(path.join(tmpDir, "apps", "dispatch"));
+    const fake = fakeSpawn();
+    handle = await runWorkspaceDev({
+      root: tmpDir,
+      args: ["--built"],
+      env: testEnv(),
+      spawnProcess: fake.spawnProcess,
+      openBrowser: false,
+    });
+    await handle.ready;
+
+    const call = fake.calls().at(0);
+    expect(call?.command).toBe(process.execPath);
+    expect(call?.args[0]).toBe(
+      builtWorkspaceAppServerEntry(path.join(tmpDir, "apps", "dispatch")),
+    );
+    expect(call?.options?.env?.PORT).toBeDefined();
+    expect(call?.options?.env?.APP_BASE_PATH).toBe("/dispatch");
+  });
+
+  it("builds first when no build exists, then serves the built server", async () => {
+    tmpDir = makeWorkspace(["dispatch"]);
+    const appDir = path.join(tmpDir, "apps", "dispatch");
+    const fake = fakeSpawn();
+    handle = await runWorkspaceDev({
+      root: tmpDir,
+      args: ["--built"],
+      env: testEnv(),
+      spawnProcess: fake.spawnProcess,
+      openBrowser: false,
+    });
+    await handle.ready;
+
+    const buildCall = fake.calls().at(0);
+    expect(buildCall?.command).toBe("pnpm");
+    expect(buildCall?.args).toEqual(["--dir", appDir, "run", "build"]);
+    expect(buildCall?.options?.env?.APP_BASE_PATH).toBe("/dispatch");
+
+    // Simulate the build writing the server entry, then exiting cleanly.
+    createBuiltEntry(appDir);
+    buildCall?.child.emit("exit", 0, null);
+
+    await waitUntil(() => fake.calls().length >= 2);
+    const serveCall = fake.calls().at(1);
+    expect(serveCall?.command).toBe(process.execPath);
+    expect(serveCall?.args[0]).toBe(builtWorkspaceAppServerEntry(appDir));
+  });
+
+  it("falls back to the vite dev server when the build fails", async () => {
+    tmpDir = makeWorkspace(["dispatch"]);
+    const fake = fakeSpawn();
+    handle = await runWorkspaceDev({
+      root: tmpDir,
+      args: ["--built"],
+      env: testEnv(),
+      spawnProcess: fake.spawnProcess,
+      openBrowser: false,
+    });
+    await handle.ready;
+
+    const buildCall = fake.calls().at(0);
+    expect(buildCall?.args?.[2]).toBe("run");
+    buildCall?.child.emit("exit", 1, null);
+
+    await waitUntil(() => fake.startedApps().includes("dispatch"));
+    const viteCall = fake.calls().at(-1);
+    expect(viteCall?.command).toBe("pnpm");
+    expect(viteCall?.args).toContain("vite");
+  });
+
+  it("promotes a built app to the vite dev server when source changes", async () => {
+    tmpDir = makeWorkspace(["dispatch"]);
+    const appDir = path.join(tmpDir, "apps", "dispatch");
+    createBuiltEntry(appDir);
+    const fake = fakeSpawn();
+    handle = await runWorkspaceDev({
+      root: tmpDir,
+      args: ["--built"],
+      env: testEnv(),
+      spawnProcess: fake.spawnProcess,
+      openBrowser: false,
+    });
+    await handle.ready;
+
+    expect(fake.calls().at(0)?.command).toBe(process.execPath);
+
+    // Touch a source file; the promote watcher should swap to vite.
+    fs.mkdirSync(path.join(appDir, "app"), { recursive: true });
+    fs.writeFileSync(path.join(appDir, "app", "root.tsx"), "export {};\n");
+
+    await waitUntil(() => fake.startedApps().includes("dispatch"), 3_000);
+    const viteCall = fake.calls().at(-1);
+    expect(viteCall?.args).toContain("vite");
+    expect(handle.apps[0]?.devMode).toBe(true);
+  });
 });
 
 function testEnv(): NodeJS.ProcessEnv {
@@ -826,6 +956,12 @@ function createViteBin(appDir: string): void {
   const binDir = path.join(appDir, "node_modules", ".bin");
   fs.mkdirSync(binDir, { recursive: true });
   fs.writeFileSync(path.join(binDir, "vite"), "");
+}
+
+function createBuiltEntry(appDir: string): void {
+  const serverDir = path.join(appDir, ".output", "server");
+  fs.mkdirSync(serverDir, { recursive: true });
+  fs.writeFileSync(path.join(serverDir, "index.mjs"), "export {};\n");
 }
 
 async function waitUntil(

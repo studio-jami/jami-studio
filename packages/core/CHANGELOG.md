@@ -1,5 +1,11 @@
 # @agent-native/core
 
+## 0.92.12
+
+### Patch Changes
+
+- Workspace dev gateway gains a mixed "built" mode (`--built` / `WORKSPACE_BUILT=1`): apps boot from their prebuilt production Node servers (instant, prod-shaped), the gateway builds an app first when its build is missing or stale, and an app is automatically promoted to the vite dev server the moment one of its source files changes — hot reload where you're editing, built servers everywhere else. A failed build falls back to vite instead of bricking the app. Also: Cloudflare Pages worker bundles now stub uninstalled optional AI SDK provider packages (`ai`, `@ai-sdk/*`, `@openrouter/ai-sdk-provider`, `ai-sdk-ollama`) instead of failing the esbuild bundle with "Could not resolve".
+
 ## 0.92.11
 
 ### Patch Changes
