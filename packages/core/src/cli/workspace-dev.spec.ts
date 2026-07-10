@@ -625,6 +625,39 @@ describe("workspace dev startup", () => {
     expect(fake.startedApps()).toEqual(["dispatch"]);
   });
 
+  it("surfaces a failed child spawn (error event) as a visible retrying failure", async () => {
+    // A spawn `error` (e.g. Windows pnpm-shim ENOENT) fires NO exit event.
+    // Without an error listener the failure was silent: the port never bound
+    // and only the readiness timeout showed. It must enter the same visible
+    // retry path as a crashing child.
+    tmpDir = makeWorkspace(["dispatch"]);
+    const fake = fakeSpawn();
+    handle = await runWorkspaceDev({
+      root: tmpDir,
+      env: testEnv(),
+      spawnProcess: fake.spawnProcess,
+      openBrowser: false,
+    });
+    const { url } = await handle.ready;
+
+    await fetch(`${url}/dispatch`, {
+      headers: { accept: "text/html" },
+    });
+    const appCall = fake.calls().at(-1);
+    expect(appCall).toBeDefined();
+
+    appCall?.child.emit("error", new Error("spawn pnpm ENOENT"));
+
+    const res = await fetch(`${url}/dispatch`, {
+      headers: { accept: "text/html" },
+    });
+    const html = await res.text();
+
+    expect(html).toContain("App failed to start: Dispatch");
+    expect(html).toContain("spawn pnpm ENOENT");
+    expect(fake.startedApps()).toEqual(["dispatch"]);
+  });
+
   it("turns a never-ready child process into a visible retrying failure", async () => {
     tmpDir = makeWorkspace(["dispatch"]);
     const fake = fakeSpawn();

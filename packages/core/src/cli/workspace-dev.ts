@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { spawn, type ChildProcess } from "node:child_process";
+import { execFileSync, spawn, type ChildProcess } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
 import net from "node:net";
@@ -233,6 +233,54 @@ export function shouldUsePollingFileWatcher(
   root = process.cwd(),
 ): boolean {
   return pollingFileWatcherMode(env, root) === "enable";
+}
+
+/**
+ * Default child spawner. On Windows, Node >= 20.12 refuses to spawn the
+ * `pnpm` .cmd/.ps1 shims without a shell — the spawn fails ENOENT silently
+ * (no `error` listener existed), the app port never binds, and only the
+ * readiness timeout surfaced. When the gateway itself was launched by pnpm,
+ * `npm_execpath` points at pnpm's JS entry, so run that through the current
+ * Node executable instead. Everything else spawns as-is.
+ */
+const windowsSafePnpmSpawn: typeof spawn = ((
+  command: string,
+  args: readonly string[],
+  spawnOptions: object,
+) => {
+  if (
+    process.platform === "win32" &&
+    command === "pnpm" &&
+    Array.isArray(args)
+  ) {
+    const execPath = process.env.npm_execpath;
+    if (execPath && /\.[cm]?js$/i.test(execPath)) {
+      return spawn(process.execPath, [execPath, ...args], spawnOptions);
+    }
+  }
+  return spawn(command, args as string[], spawnOptions);
+}) as typeof spawn;
+
+/**
+ * Kill an app child and its WHOLE process tree. `child.kill("SIGTERM")`
+ * reaches only the direct pnpm child on Windows; the vite grandchild keeps
+ * the app port bound, so the gateway respawned forever into
+ * "Port 810x is already in use" (blank apps, dropped sessions). taskkill /T
+ * fells the tree; POSIX keeps the plain signal.
+ */
+function killAppProcessTree(child: ChildProcess | undefined): void {
+  if (!child) return;
+  if (process.platform === "win32" && child.pid) {
+    try {
+      execFileSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
+        stdio: "ignore",
+      });
+      return;
+    } catch {
+      // taskkill unavailable or already exited — fall through to the signal.
+    }
+  }
+  child.kill("SIGTERM");
 }
 
 function devWatcherEnv(
@@ -602,7 +650,7 @@ export async function runWorkspaceDev(
   const env = options.env ?? process.env;
   const root = options.root ?? process.cwd();
   const appsDir = path.join(root, "apps");
-  const spawnProcess = options.spawnProcess ?? spawn;
+  const spawnProcess = options.spawnProcess ?? windowsSafePnpmSpawn;
   const stdout = options.stdout ?? process.stdout;
   const stderr = options.stderr ?? process.stderr;
 
@@ -864,6 +912,29 @@ export async function runWorkspaceDev(
         pipeAppOutput(prefix, chunk, (value) => stderr.write(value)),
       );
     });
+    child.on("error", (error) => {
+      // Without this listener a failed spawn (e.g. the Windows pnpm-shim
+      // ENOENT) was SILENT — no exit event fires, the port never binds, and
+      // only the readiness timeout showed. Surface it and enter the normal
+      // retry path.
+      clearTimeout(stableTimer);
+      const wasInstalling = app.installing;
+      app.process = undefined;
+      app.installing = false;
+      app.ready = false;
+      app.readinessProbe = undefined;
+      if (app.restartTimer || shuttingDown) return;
+      if (wasInstalling) app.installAttempted = false;
+      scheduleAppRestart(app, {
+        code: null,
+        signal: null,
+        installing: wasInstalling,
+        output: String(error),
+        logMessage: `failed to spawn child process: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      });
+    });
     child.on("exit", (code, signal) => {
       clearTimeout(stableTimer);
       const wasInstalling = app.installing;
@@ -943,7 +1014,7 @@ export async function runWorkspaceDev(
       output,
       logMessage: message,
     });
-    app.process?.kill("SIGTERM");
+    killAppProcessTree(app.process);
   }
 
   function forwardedProto(req: http.IncomingMessage): string {
@@ -1444,7 +1515,7 @@ export async function runWorkspaceDev(
     shuttingDown = true;
     server.close();
     for (const app of apps) {
-      app.process?.kill("SIGTERM");
+      killAppProcessTree(app.process);
     }
     if (syncTimer) clearTimeout(syncTimer);
     process.off("SIGINT", handleSigint);
