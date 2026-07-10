@@ -829,6 +829,64 @@ describe("session replay", () => {
     );
   });
 
+  it("abandons uploads and stops the recorder after repeated non-transient 4xx failures", async () => {
+    // A permanently-misconfigured ingest endpoint (e.g. missing storage
+    // credentials -> HTTP 400 on every chunk) must trip the circuit breaker
+    // instead of retrying every 5s forever from every open tab.
+    const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
+    vi.stubGlobal("CompressionStream", undefined);
+    fetchMock.mockImplementation((input: unknown) => {
+      if (String(input).includes("/_agent-native/auth/session")) {
+        return Promise.resolve(
+          new Response(JSON.stringify({ error: "not authenticated" }), {
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(new Response("nope", { status: 400 }));
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const stopRecorder = vi.fn();
+    let recordOptions: any;
+    recordMock.mockImplementation((options) => {
+      recordOptions = options;
+      return stopRecorder;
+    });
+    const { startSessionReplay, flushSessionReplay, isSessionReplayActive } =
+      await freshSessionReplay();
+
+    await startSessionReplay({
+      publicKey: "anpk_test",
+      endpoint: "/api/analytics/replay",
+      maxEventsPerBatch: 1,
+      flushIntervalMs: 100_000,
+    });
+    recordOptions.emit({ type: 3, data: { href: "/first" } });
+    await waitForAssertion(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    await tick();
+
+    // Explicit retries bypass the backoff window; the 4xx counter trips the
+    // circuit at the third consecutive non-transient failure.
+    await flushSessionReplay("retry");
+    await waitForAssertion(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    await flushSessionReplay("retry");
+    await waitForAssertion(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    await waitForAssertion(() =>
+      expect(warn).toHaveBeenCalledWith(
+        "[session-replay] uploads disabled for this recording after repeated failures",
+        expect.any(Error),
+      ),
+    );
+    expect(stopRecorder).toHaveBeenCalled();
+    expect(isSessionReplayActive()).toBe(false);
+
+    // The circuit stays open: further flush attempts never hit the network.
+    await flushSessionReplay("retry");
+    await flushSessionReplay("manual");
+    await tick();
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
   it("does not retry failed batches on every newly queued event", async () => {
     const { fetchMock } = installBrowser("https://app.jami.studio/inbox");
     vi.stubGlobal("CompressionStream", undefined);
@@ -858,10 +916,25 @@ describe("session replay", () => {
     await tick();
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
+    // A failed upload arms the exponential backoff, so an interval flush
+    // inside the backoff window is skipped entirely...
     await flushSessionReplay("interval");
-    await waitForAssertion(() =>
-      expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(2),
-    );
+    await tick();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    // ...and retried once the backoff has elapsed (model the passage of time).
+    const realNow = Date.now.bind(Date);
+    const nowSpy = vi
+      .spyOn(Date, "now")
+      .mockImplementation(() => realNow() + 6_000);
+    try {
+      await flushSessionReplay("interval");
+      await waitForAssertion(() =>
+        expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(2),
+      );
+    } finally {
+      nowSpy.mockRestore();
+    }
     const bodies = await Promise.all(
       fetchMock.mock.calls.map(([, init]) =>
         parseReplayUpload(init as RequestInit),

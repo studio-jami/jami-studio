@@ -59,6 +59,14 @@ interface SessionReplayState {
   flushTimer: number | null;
   maxDurationTimer: number | null;
   flushing: boolean;
+  /** Consecutive upload failures (any cause) since the last success. */
+  uploadFailureCount: number;
+  /** Consecutive non-transient HTTP 4xx failures since the last success. */
+  uploadNonTransientFailureCount: number;
+  /** Exponential-backoff gate: interval flushes are skipped before this. */
+  uploadRetryNotBeforeMs: number;
+  /** Circuit breaker: true once uploads are abandoned for this recording. */
+  uploadDisabled: boolean;
   stopRecorder: ReplayStopFn | null;
   restoreUrlMonitor: (() => void) | null;
   removeLifecycleListeners: (() => void) | null;
@@ -264,6 +272,19 @@ const DEFAULT_MAX_BATCH_BYTES = 256 * 1024;
 const MAX_KEEPALIVE_REPLAY_UPLOAD_BYTES = 60 * 1024;
 const RRWEB_FULL_SNAPSHOT_EVENT_TYPE = 2;
 
+// Upload failure policy. Without it, a permanently-failing upload (e.g. the
+// ingest server rejecting every chunk with a 4xx misconfig error) retried
+// every flush interval forever from every open tab — a self-inflicted DoS on
+// the ingest endpoint — while failed batches accumulated unboundedly.
+const UPLOAD_RETRY_BASE_DELAY_MS = DEFAULT_FLUSH_INTERVAL_MS;
+const UPLOAD_RETRY_MAX_DELAY_MS = 5 * 60 * 1000;
+/** Consecutive failures of ANY cause before uploads are abandoned. */
+const UPLOAD_CONSECUTIVE_FAILURE_LIMIT = 10;
+/** Consecutive non-transient 4xx (not 408/429) before uploads are abandoned. */
+const UPLOAD_NON_TRANSIENT_FAILURE_LIMIT = 3;
+/** Max failed batches retained for retry; older ones are dropped. */
+const MAX_RETRY_BATCHES = 10;
+
 /** rrweb custom-event tag for captured console/window-error entries. */
 export const SESSION_REPLAY_CONSOLE_EVENT_TAG = "agent-native.console";
 /** rrweb custom-event tag for captured fetch/XHR request summaries. */
@@ -344,6 +365,10 @@ function getState(): SessionReplayState {
       flushTimer: null,
       maxDurationTimer: null,
       flushing: false,
+      uploadFailureCount: 0,
+      uploadNonTransientFailureCount: 0,
+      uploadRetryNotBeforeMs: 0,
+      uploadDisabled: false,
       stopRecorder: null,
       restoreUrlMonitor: null,
       removeLifecycleListeners: null,
@@ -1082,9 +1107,7 @@ async function sendReplayUpload(
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
     });
     if (!response.ok) {
-      throw new Error(
-        `Session replay upload failed with HTTP ${response.status}`,
-      );
+      throw new ReplayUploadHttpError(response.status);
     }
     return;
   }
@@ -1102,9 +1125,7 @@ async function sendReplayUpload(
     },
   });
   if (!response.ok) {
-    throw new Error(
-      `Session replay upload failed with HTTP ${response.status}`,
-    );
+    throw new ReplayUploadHttpError(response.status);
   }
 }
 
@@ -1117,6 +1138,13 @@ function isFinalFlushReason(reason: string): boolean {
     "url-blocked",
     "max-duration",
   ].includes(reason);
+}
+
+/** The self-scheduling flush triggers (timer + queue pressure). */
+function isAutomaticFlushReason(reason: string): boolean {
+  return ["interval", "full-snapshot", "max-events", "max-bytes"].includes(
+    reason,
+  );
 }
 
 function shouldReserveSequenceBeforeKeepalive(reason: string): boolean {
@@ -1166,6 +1194,12 @@ function restoreReplayEvents(
   events: QueuedReplayEvent[],
 ): void {
   state.retryBatches.unshift(events);
+  // Bound retry memory: a long outage must not grow batches without limit
+  // (observed: a dev tab ballooning its app server). Newest-failed sits at
+  // the front; trim the stalest from the tail.
+  while (state.retryBatches.length > MAX_RETRY_BATCHES) {
+    state.retryBatches.pop();
+  }
 }
 
 function advanceReplaySequence(
@@ -1197,9 +1231,93 @@ function rollbackReplaySequenceReservation(
   );
 }
 
+class ReplayUploadHttpError extends Error {
+  constructor(readonly status: number) {
+    super(`Session replay upload failed with HTTP ${status}`);
+  }
+}
+
+/** 4xx that will never succeed on retry (408/429 are transient). */
+function isNonTransientUploadError(error: unknown): boolean {
+  return (
+    error instanceof ReplayUploadHttpError &&
+    error.status >= 400 &&
+    error.status < 500 &&
+    error.status !== 408 &&
+    error.status !== 429
+  );
+}
+
+function replayUploadBackoffDelayMs(consecutiveFailures: number): number {
+  return Math.min(
+    UPLOAD_RETRY_BASE_DELAY_MS * 2 ** Math.max(0, consecutiveFailures - 1),
+    UPLOAD_RETRY_MAX_DELAY_MS,
+  );
+}
+
+/**
+ * Circuit breaker: abandon uploads for the rest of this recording. Tears the
+ * recorder down WITHOUT the final flush (the flush is what keeps failing) and
+ * drops buffered batches so a misconfigured ingest endpoint costs one warning
+ * instead of an endless retry storm from every open tab.
+ */
+function disableSessionReplayUploads(
+  state: SessionReplayState,
+  cause: unknown,
+): void {
+  state.uploadDisabled = true;
+  state.queue = [];
+  state.queuedBytes = 0;
+  state.retryBatches = [];
+  try {
+    state.restoreCaptures?.();
+  } catch {
+    // best-effort interceptor teardown
+  }
+  state.restoreCaptures = null;
+  state.active = false;
+  state.addCustomEvent = null;
+  try {
+    state.stopRecorder?.();
+  } catch {
+    // best-effort recorder shutdown
+  }
+  state.stopRecorder = null;
+  if (state.flushTimer) {
+    window.clearInterval(state.flushTimer);
+    state.flushTimer = null;
+  }
+  if (state.maxDurationTimer) {
+    window.clearTimeout(state.maxDurationTimer);
+    state.maxDurationTimer = null;
+  }
+  state.restoreUrlMonitor?.();
+  state.removeLifecycleListeners?.();
+  const previousInternal = replayCaptureInternal;
+  replayCaptureInternal = true;
+  try {
+    console.warn(
+      "[session-replay] uploads disabled for this recording after repeated failures",
+      cause,
+    );
+  } finally {
+    replayCaptureInternal = previousInternal;
+  }
+}
+
 export async function flushSessionReplay(reason = "manual"): Promise<void> {
   const state = getState();
+  if (state.uploadDisabled) return;
   if (!state.options || !hasPendingReplayBatch(state) || state.flushing) return;
+  // Exponential backoff after failures gates the AUTOMATIC flushes (the 5s
+  // interval + queue-pressure triggers that drove the retry storm). Explicit
+  // flushes (manual/retry/stop/lifecycle) still attempt immediately.
+  if (
+    Date.now() < state.uploadRetryNotBeforeMs &&
+    isAutomaticFlushReason(reason)
+  ) {
+    return;
+  }
   const events = state.retryBatches.shift() ?? state.queue.splice(0);
   state.queuedBytes = queuedReplayBytes(state.queue);
   const payload = buildReplayBody(state, reason, events);
@@ -1221,9 +1339,28 @@ export async function flushSessionReplay(reason = "manual"): Promise<void> {
     });
     if (!reservedSequence) advanceReplaySequence(state, payload);
     uploaded = true;
+    state.uploadFailureCount = 0;
+    state.uploadNonTransientFailureCount = 0;
+    state.uploadRetryNotBeforeMs = 0;
   } catch (error) {
     if (reservedSequence) rollbackReplaySequenceReservation(state, payload);
     restoreReplayEvents(state, events);
+    state.uploadFailureCount += 1;
+    if (isNonTransientUploadError(error)) {
+      state.uploadNonTransientFailureCount += 1;
+    } else {
+      state.uploadNonTransientFailureCount = 0;
+    }
+    state.uploadRetryNotBeforeMs =
+      Date.now() + replayUploadBackoffDelayMs(state.uploadFailureCount);
+    if (
+      state.uploadNonTransientFailureCount >=
+        UPLOAD_NON_TRANSIENT_FAILURE_LIMIT ||
+      state.uploadFailureCount >= UPLOAD_CONSECUTIVE_FAILURE_LIMIT
+    ) {
+      disableSessionReplayUploads(state, error);
+      return;
+    }
     // Guard the recorder's own warning so console capture never records it
     // (a captured warning would enqueue an event and retrigger a flush).
     const previousInternal = replayCaptureInternal;
@@ -2135,6 +2272,10 @@ async function startSessionReplayRecorder(
   state.queue = [];
   state.queuedBytes = 0;
   state.retryBatches = [];
+  state.uploadFailureCount = 0;
+  state.uploadNonTransientFailureCount = 0;
+  state.uploadRetryNotBeforeMs = 0;
+  state.uploadDisabled = false;
   state.stopRecorder = null;
   state.lastAuthenticatedProperties = replayUserEmail(initialProperties)
     ? { ...initialProperties }
