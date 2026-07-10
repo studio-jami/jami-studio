@@ -1,5 +1,12 @@
 # @agent-native/core
 
+## 0.92.17
+
+### Patch Changes
+
+- 1dd0867: Cloudflare Pages unified deploy fixes found by running the artifact on workerd: (1) `_routes.json` no longer emits rules covered by another rule's splat (Cloudflare rejects overlapping rules — "/apps/new-app" under "/apps/\*" broke every workspace deploy); (2) stub `detect-libc` in the worker bundle — it calls `process.report.getReport()` at require time, which unenv throws on, killing the worker at module init.
+- 950b77d: workspace-deploy: cap rolldown's rayon thread pool on Windows (RAYON_NUM_THREADS=2 unless overridden). The native thread pool has a race that kills app builds with an access violation (0xC0000005) — intermittently for most apps, deterministically for some (chat under cloudflare_pages). Capping the pool eliminates the crash; combined with the native-crash retry this makes unified workspace builds reliable on Windows.
+
 ## 0.92.16
 
 ### Patch Changes
