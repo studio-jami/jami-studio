@@ -88,15 +88,28 @@ export function isSqlRead(sql: string): boolean {
  * connection the transaction needs. The pool-level error logger still fires
  * on idle-client drops inside transactions.
  */
-export function buildResilientNeonPool(pool: {
-  connect(): Promise<any>;
-  query(
-    sql: string,
-    args?: any[],
-  ): Promise<{ rows: unknown[]; rowCount?: number }>;
-  end(): Promise<void>;
-  on(event: string, listener: (...args: any[]) => void): unknown;
-}): typeof pool {
+export function buildResilientNeonPool(
+  pool: {
+    connect(): Promise<any>;
+    query(
+      sql: string,
+      args?: any[],
+    ): Promise<{ rows: unknown[]; rowCount?: number }>;
+    end(): Promise<void>;
+    on(event: string, listener: (...args: any[]) => void): unknown;
+  },
+  options?: {
+    /**
+     * Route plain queries through pool.query() instead of a manual
+     * connect()/client.query()/release() checkout. Required on Cloudflare
+     * Workers where neonConfig.poolQueryViaFetch routes pool.query() over
+     * Neon's stateless HTTP transport — the manual checkout would bypass
+     * that and pin queries to per-request WebSocket clients.
+     */
+    httpPerQuery?: boolean;
+  },
+): typeof pool {
+  const httpPerQuery = options?.httpPerQuery === true;
   // Preserve all original pool methods and properties; only override `connect`
   // and `query` at the Pool level (used by drizzle's neon-serverless adapter
   // when it calls pool.query() directly, e.g. outside a transaction).
@@ -110,6 +123,19 @@ export function buildResilientNeonPool(pool: {
       rows: unknown[];
       rowCount?: number;
     }> => {
+      if (httpPerQuery) {
+        // Stateless HTTP transport (poolQueryViaFetch): no connection
+        // checkout, no persistent socket — just bound the query itself.
+        return withDbTimeout(
+          "query",
+          () =>
+            pool.query(sql, args ?? []) as Promise<{
+              rows: unknown[];
+              rowCount?: number;
+            }>,
+          dbOpTimeoutMs(),
+        );
+      }
       // Bound the pool.connect() acquire — a frozen Neon WebSocket stalls here
       // before the query ever starts, so a query-level timeout alone won't help.
       let acquireTimedOut = false;
@@ -490,7 +516,9 @@ export function createGetDb<T extends Record<string, unknown>>(schema: T) {
             // same withDbTimeout + retryOnConnectionError protection as the raw
             // DbExec path in client.ts. Reads retry freely; writes only retry on
             // acquire-timeout (pre-send) errors to avoid double-execution.
-            const pool = buildResilientNeonPool(rawPool);
+            const pool = buildResilientNeonPool(rawPool, {
+              httpPerQuery: cfWorker,
+            });
             _db = drizzle(pool, { schema });
           },
         );

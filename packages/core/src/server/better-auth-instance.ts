@@ -48,6 +48,7 @@ import { getAppProductionUrl } from "./app-url.js";
 import { signupAttributionFromCookieHeader } from "./attribution.js";
 import { resolveAuthCookieNamespace } from "./cookie-namespace.js";
 import { getWorkspaceA2ADerivedSecret } from "./derived-secret.js";
+import { isCloudflareRuntime } from "../shared/runtime.js";
 import {
   renderResetPasswordEmail,
   renderVerifySignupEmail,
@@ -1122,14 +1123,27 @@ async function buildDatabaseConfig(
     // opens a raw TCP connection on port 5432 which frequently times out on
     // Netlify Functions / Vercel / CF Workers when Neon's pooler is cold.
     if (isNeonUrl(url)) {
-      const { Pool } = await import("@neondatabase/serverless");
+      const { Pool, neonConfig } = await import("@neondatabase/serverless");
       // Cap the auth pool the same way as the app pool. Better Auth runs a
       // session lookup on essentially every authenticated request, so an
       // un-capped pool here is a primary contributor to "Max client
       // connections reached" across concurrent serverless instances.
+      //
+      // Cloudflare Workers (workerd) forbids reusing I/O objects across
+      // requests — a pooled WebSocket client created by one request and
+      // handed to a later one hangs the worker ("Cannot perform I/O on
+      // behalf of a different request"). Route plain queries over Neon's
+      // stateless HTTP transport and cap WebSocket clients to a single use,
+      // mirroring the app pools in db/client.ts and db/create-get-db.ts.
+      const cfWorker = isCloudflareRuntime();
+      if (cfWorker) {
+        (neonConfig as { poolQueryViaFetch?: boolean }).poolQueryViaFetch =
+          true;
+      }
       _neonAuthPool = new Pool({
         connectionString: url,
         max: neonPoolMax(),
+        ...(cfWorker ? { maxUses: 1 } : {}),
       });
       attachNeonPoolErrorLogger(_neonAuthPool, "db/neon-auth");
       const { drizzle } = await import("drizzle-orm/neon-serverless");
