@@ -3773,6 +3773,14 @@ export default bundle;
 async function main() {
   console.log(`[deploy] Building for ${preset}...`);
 
+  // Sweep stale .deploy-tmp before anything writes into it. A crashed prior
+  // build (any preset) leaves partial artifacts behind; both build paths
+  // mkdirSync over the dir without clearing it, and the stale contents can
+  // silently poison the next build (observed: an interrupted node-preset
+  // build made the following cloudflare_pages build fail with no error
+  // output). Fresh tmp every run is the invariant.
+  fs.rmSync(path.join(cwd, ".deploy-tmp"), { recursive: true, force: true });
+
   switch (preset) {
     case "cloudflare_pages":
     case "cloudflare-pages":

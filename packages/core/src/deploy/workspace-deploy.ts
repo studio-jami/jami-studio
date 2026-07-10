@@ -1024,7 +1024,12 @@ function netlifyFunctionsDir(workspaceRoot: string): string {
 }
 
 function cleanAppBuildOutputs(appDir: string): void {
-  for (const name of ["dist", ".output", "build"]) {
+  // .deploy-tmp: a crashed prior per-app build leaves partial artifacts that
+  // silently poison the next build for that app (observed on Windows: stale
+  // state made a cloudflare_pages build die after the vite phases with no
+  // error output). The deploy post-build also sweeps it, but clean here too
+  // so the unified build never depends on the child's hygiene.
+  for (const name of ["dist", ".output", "build", ".deploy-tmp"]) {
     fs.rmSync(path.join(appDir, name), { recursive: true, force: true });
   }
   fs.rmSync(path.join(appDir, ".netlify", "functions-internal"), {

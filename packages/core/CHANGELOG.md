@@ -1,5 +1,11 @@
 # @agent-native/core
 
+## 0.92.14
+
+### Patch Changes
+
+- Deploy builds sweep stale `.deploy-tmp` before running (both the per-app post-build entry and the workspace-deploy per-app clean list). A crashed prior build left partial artifacts that silently poisoned the next build for that app — observed as a cloudflare_pages unified build dying after the vite phases with no error output.
+
 ## 0.92.13
 
 ### Patch Changes
