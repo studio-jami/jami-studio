@@ -2437,12 +2437,31 @@ export const config = {
 const NETLIFY_DEFAULT_FUNCTION_URL_REDIRECT =
   "/* /.netlify/functions/server 200";
 
+/**
+ * Resolve where the client publish output actually lives for this build.
+ * Single-template builds emit hashed assets at `dist/assets`; mounted builds
+ * (APP_BASE_PATH=/<app>, e.g. every app in a workspace deploy) nest the
+ * client output under the base path at `dist/<app>/assets`.
+ */
+function netlifyClientPublishDir(projectCwd: string): {
+  dir: string;
+  label: string;
+} {
+  const baseSegments = normalizeConfiguredAppBasePath()
+    .split("/")
+    .filter(Boolean);
+  return {
+    dir: path.join(projectCwd, "dist", ...baseSegments),
+    label: ["dist", ...baseSegments].join("/"),
+  };
+}
+
 export function assertSingleTemplateNetlifyBuildOutput(
   projectCwd: string,
 ): void {
   const failures: string[] = [];
   const publishDir = path.join(projectCwd, "dist");
-  const redirectsPath = path.join(publishDir, "_redirects");
+  const clientPublish = netlifyClientPublishDir(projectCwd);
   const internalDir = path.join(projectCwd, ".netlify", "functions-internal");
   const serverDir = path.join(internalDir, "server");
   const serverEntryPath = path.join(serverDir, "server.mjs");
@@ -2451,18 +2470,25 @@ export function assertSingleTemplateNetlifyBuildOutput(
   if (!fs.existsSync(publishDir)) {
     failures.push("missing publish directory: dist");
   } else {
-    const assetsDir = path.join(publishDir, "assets");
+    const assetsDir = path.join(clientPublish.dir, "assets");
     if (
       !fs.existsSync(assetsDir) ||
       fs.readdirSync(assetsDir).every((name) => name.startsWith("."))
     ) {
       failures.push(
-        "dist/assets is missing hashed client assets — the publish dir would load an infinite spinner",
+        `${clientPublish.label}/assets is missing hashed client assets — the publish dir would load an infinite spinner`,
       );
     }
   }
 
-  if (fs.existsSync(publishDir) && fs.existsSync(redirectsPath)) {
+  // `_redirects` may sit at the dist root or (for mounted builds) inside the
+  // base-path dir — reject the incompatible default-function rewrite in both.
+  const redirectsCandidates = [
+    path.join(publishDir, "_redirects"),
+    path.join(clientPublish.dir, "_redirects"),
+  ];
+  for (const redirectsPath of new Set(redirectsCandidates)) {
+    if (!fs.existsSync(publishDir) || !fs.existsSync(redirectsPath)) continue;
     const redirects = fs.readFileSync(redirectsPath, "utf-8");
     if (
       redirects
@@ -2474,7 +2500,7 @@ export function assertSingleTemplateNetlifyBuildOutput(
         )
     ) {
       failures.push(
-        'dist/_redirects must not contain "/* /.netlify/functions/server 200" — Nitro\'s custom config.path: "/*" removes that default function URL',
+        `${path.relative(projectCwd, redirectsPath).replace(/\\/g, "/")} must not contain "/* /.netlify/functions/server 200" — Nitro's custom config.path: "/*" removes that default function URL`,
       );
     }
   }
@@ -2577,7 +2603,19 @@ export function assertSingleTemplateNetlifyBuildOutput(
  */
 export function writeSingleTemplateNetlifyRedirects(projectCwd: string): void {
   const publishDir = path.join(projectCwd, "dist");
-  const redirectsPath = path.join(publishDir, "_redirects");
+  const clientPublish = netlifyClientPublishDir(projectCwd);
+  // `_redirects` may sit at the dist root or (for mounted builds) inside the
+  // base-path dir — strip the harmful rewrite wherever it landed.
+  const redirectsCandidates = new Set([
+    path.join(publishDir, "_redirects"),
+    path.join(clientPublish.dir, "_redirects"),
+  ]);
+  for (const redirectsPath of redirectsCandidates) {
+    stripNetlifyDefaultFunctionRedirect(redirectsPath);
+  }
+}
+
+function stripNetlifyDefaultFunctionRedirect(redirectsPath: string): void {
   if (!fs.existsSync(redirectsPath)) return;
 
   const existing = fs.readFileSync(redirectsPath, "utf-8");

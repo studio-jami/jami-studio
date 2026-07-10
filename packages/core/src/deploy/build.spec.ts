@@ -1294,16 +1294,27 @@ describe("runNitroBuildPipeline", () => {
 describe("durable-background Netlify function emit (single-template, flag-gated)", () => {
   const dirs: string[] = [];
   let previousFlag: string | undefined;
+  let previousBasePath: string | undefined;
+  let previousViteBasePath: string | undefined;
 
   beforeEach(() => {
     previousFlag = process.env.AGENT_CHAT_DURABLE_BACKGROUND;
     delete process.env.AGENT_CHAT_DURABLE_BACKGROUND;
+    previousBasePath = process.env.APP_BASE_PATH;
+    previousViteBasePath = process.env.VITE_APP_BASE_PATH;
+    delete process.env.APP_BASE_PATH;
+    delete process.env.VITE_APP_BASE_PATH;
   });
 
   afterEach(() => {
     if (previousFlag === undefined)
       delete process.env.AGENT_CHAT_DURABLE_BACKGROUND;
     else process.env.AGENT_CHAT_DURABLE_BACKGROUND = previousFlag;
+    if (previousBasePath === undefined) delete process.env.APP_BASE_PATH;
+    else process.env.APP_BASE_PATH = previousBasePath;
+    if (previousViteBasePath === undefined)
+      delete process.env.VITE_APP_BASE_PATH;
+    else process.env.VITE_APP_BASE_PATH = previousViteBasePath;
     for (const d of dirs.splice(0)) {
       fs.rmSync(d, { recursive: true, force: true });
     }
@@ -1574,6 +1585,81 @@ describe("durable-background Netlify function emit (single-template, flag-gated)
 
     expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).toThrow(
       /dist\/assets is missing hashed client assets/,
+    );
+  });
+
+  it("passes a mounted (APP_BASE_PATH) build whose client assets live at dist/<app>/assets", () => {
+    // Workspace deploys build every app with APP_BASE_PATH=/<app>, which nests
+    // the client publish output at dist/<app>/assets. The guard must look for
+    // hashed assets there — not at the single-template dist/assets location —
+    // or every workspace netlify build fails with a false positive.
+    const cwd = setupNetlifyOutput();
+    prepareSingleTemplateNetlifyOutput(cwd);
+    fs.rmSync(path.join(cwd, "dist", "assets"), {
+      recursive: true,
+      force: true,
+    });
+    const mountedAssets = path.join(cwd, "dist", "myapp", "assets");
+    fs.mkdirSync(mountedAssets, { recursive: true });
+    fs.writeFileSync(
+      path.join(mountedAssets, "entry.client-abc.js"),
+      "export {};\n",
+    );
+    process.env.APP_BASE_PATH = "/myapp";
+
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+
+  it("fails a mounted build missing its base-path client assets, naming the mounted path", () => {
+    const cwd = setupNetlifyOutput();
+    prepareSingleTemplateNetlifyOutput(cwd);
+    process.env.APP_BASE_PATH = "/myapp";
+
+    // dist/assets exists (single-template location) but the mounted build's
+    // real client dir dist/myapp/assets does not — that deploy WOULD spin.
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).toThrow(
+      /dist\/myapp\/assets is missing hashed client assets/,
+    );
+  });
+
+  it("strips the incompatible default-function rewrite from a mounted _redirects and passes the guard", () => {
+    const cwd = setupNetlifyOutput();
+    process.env.APP_BASE_PATH = "/myapp";
+    const mountedDir = path.join(cwd, "dist", "myapp");
+    const mountedAssets = path.join(mountedDir, "assets");
+    fs.mkdirSync(mountedAssets, { recursive: true });
+    fs.writeFileSync(
+      path.join(mountedAssets, "entry.client-abc.js"),
+      "export {};\n",
+    );
+    fs.writeFileSync(
+      path.join(mountedDir, "_redirects"),
+      "/* /.netlify/functions/server 200\n",
+    );
+
+    writeSingleTemplateNetlifyRedirects(cwd);
+
+    expect(fs.existsSync(path.join(mountedDir, "_redirects"))).toBe(false);
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+
+  it("fails a mounted build whose base-path _redirects still rewrites to the removed default function URL", () => {
+    const cwd = setupNetlifyOutput();
+    process.env.APP_BASE_PATH = "/myapp";
+    const mountedDir = path.join(cwd, "dist", "myapp");
+    const mountedAssets = path.join(mountedDir, "assets");
+    fs.mkdirSync(mountedAssets, { recursive: true });
+    fs.writeFileSync(
+      path.join(mountedAssets, "entry.client-abc.js"),
+      "export {};\n",
+    );
+    fs.writeFileSync(
+      path.join(mountedDir, "_redirects"),
+      "/* /.netlify/functions/server 200\n",
+    );
+
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).toThrow(
+      /dist\/myapp\/_redirects must not contain/,
     );
   });
 
