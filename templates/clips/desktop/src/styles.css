@@ -1195,6 +1195,7 @@ body[data-clips-route="recording-pill"] #root {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-bottom: 4px;
 }
 
 .popover-list-item {
@@ -1262,6 +1263,27 @@ body[data-clips-route="recording-pill"] #root {
 
 .popover-list-action-primary:hover {
   background: var(--brand-hover);
+}
+
+.popover-list-action-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-color: rgba(34, 197, 94, 0.36);
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+}
+
+.popover-list-action-active:hover {
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.popover-list-action-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
 }
 
 .popover-kv {
@@ -1425,7 +1447,7 @@ body[data-clips-route="recording-pill"] #root {
    content isn't flush with the panel edge. Must follow `.setup` so it wins
    over the shorthand padding above. */
 .setup.popover-view {
-  padding-bottom: 20px;
+  padding-bottom: 26px;
 }
 
 .setup h2 {
@@ -3599,7 +3621,9 @@ body[data-clips-route="recording-pill"] #root {
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 8px;
+  /* Extra horizontal room so the card's drop shadow isn't clipped by the
+     transparent window edges (shadow blur is ~30px). */
+  padding: 12px 32px;
   background: transparent;
   pointer-events: none;
 }
@@ -3813,23 +3837,25 @@ body[data-clips-route="recording-pill"] #root {
 
 .meeting-notification-close {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 18px;
-  height: 18px;
+  top: -8px;
+  left: -8px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(28, 30, 38, 0.98);
+  color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  z-index: 6;
 }
 
 .meeting-notification-close:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(48, 50, 60, 0.98);
   color: white;
 }
 

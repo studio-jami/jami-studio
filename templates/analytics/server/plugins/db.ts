@@ -568,6 +568,8 @@ const runAnalyticsMigrations = runMigrations(
       severity TEXT NOT NULL DEFAULT 'warning',
       channels TEXT NOT NULL DEFAULT '["inbox"]',
       email_recipients TEXT NOT NULL DEFAULT '[]',
+      slack_webhook_url TEXT,
+      webhook_url TEXT,
       enabled BOOLEAN NOT NULL DEFAULT true,
       last_evaluated_at TEXT,
       last_triggered_at TEXT,
@@ -592,6 +594,8 @@ const runAnalyticsMigrations = runMigrations(
       severity TEXT NOT NULL DEFAULT 'warning',
       channels TEXT NOT NULL DEFAULT '["inbox"]',
       email_recipients TEXT NOT NULL DEFAULT '[]',
+      slack_webhook_url TEXT,
+      webhook_url TEXT,
       enabled INTEGER NOT NULL DEFAULT 1,
       last_evaluated_at TEXT,
       last_triggered_at TEXT,
@@ -891,7 +895,7 @@ const runAnalyticsMigrations = runMigrations(
       request_headers TEXT NOT NULL DEFAULT '{}',
       request_body TEXT,
       interval_seconds INTEGER NOT NULL DEFAULT 300,
-      timeout_ms INTEGER NOT NULL DEFAULT 15000,
+      timeout_ms INTEGER NOT NULL DEFAULT 10000,
       expected_status TEXT NOT NULL DEFAULT '{"mode":"class","classes":["2xx"]}',
       assertions TEXT NOT NULL DEFAULT '[]',
       follow_redirects BOOLEAN NOT NULL DEFAULT true,
@@ -921,7 +925,7 @@ const runAnalyticsMigrations = runMigrations(
       request_headers TEXT NOT NULL DEFAULT '{}',
       request_body TEXT,
       interval_seconds INTEGER NOT NULL DEFAULT 300,
-      timeout_ms INTEGER NOT NULL DEFAULT 15000,
+      timeout_ms INTEGER NOT NULL DEFAULT 10000,
       expected_status TEXT NOT NULL DEFAULT '{"mode":"class","classes":["2xx"]}',
       assertions TEXT NOT NULL DEFAULT '[]',
       follow_redirects INTEGER NOT NULL DEFAULT 1,
@@ -995,6 +999,7 @@ const runAnalyticsMigrations = runMigrations(
       cause TEXT NOT NULL DEFAULT '',
       last_error TEXT,
       notification_id TEXT,
+      notification_delivered BOOLEAN NOT NULL DEFAULT false,
       checks_failed INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (now()::text),
       owner_email TEXT NOT NULL DEFAULT 'local@localhost',
@@ -1011,6 +1016,7 @@ const runAnalyticsMigrations = runMigrations(
       cause TEXT NOT NULL DEFAULT '',
       last_error TEXT,
       notification_id TEXT,
+      notification_delivered INTEGER NOT NULL DEFAULT 0,
       checks_failed INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       owner_email TEXT NOT NULL DEFAULT 'local@localhost',
@@ -1113,6 +1119,135 @@ const runAnalyticsMigrations = runMigrations(
       version: 105,
       name: "status-pages-scope-updated-idx",
       sql: `CREATE INDEX IF NOT EXISTS status_pages_scope_updated_idx ON status_pages (owner_email, org_id, updated_at)`,
+    },
+    {
+      version: 106,
+      name: "uptime-monitors-slack-webhook-url",
+      sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS slack_webhook_url TEXT`,
+    },
+    {
+      version: 107,
+      name: "uptime-monitors-webhook-url",
+      sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS webhook_url TEXT`,
+    },
+    {
+      version: 108,
+      name: "analytics-alert-rules-slack-webhook-url",
+      sql: `ALTER TABLE analytics_alert_rules ADD COLUMN IF NOT EXISTS slack_webhook_url TEXT`,
+    },
+    {
+      version: 109,
+      name: "analytics-alert-rules-webhook-url",
+      sql: `ALTER TABLE analytics_alert_rules ADD COLUMN IF NOT EXISTS webhook_url TEXT`,
+    },
+    {
+      version: 110,
+      name: "dashboards-updated-by",
+      sql: `ALTER TABLE dashboards ADD COLUMN IF NOT EXISTS updated_by TEXT`,
+    },
+    {
+      version: 111,
+      name: "dashboard-revisions-table",
+      sql: {
+        postgres: `CREATE TABLE IF NOT EXISTS dashboard_revisions (
+      id TEXT PRIMARY KEY,
+      dashboard_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      title TEXT NOT NULL,
+      config TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (now()::text),
+      created_by TEXT,
+      owner_email TEXT NOT NULL DEFAULT 'local@localhost',
+      org_id TEXT
+    )`,
+        sqlite: `CREATE TABLE IF NOT EXISTS dashboard_revisions (
+      id TEXT PRIMARY KEY,
+      dashboard_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      title TEXT NOT NULL,
+      config TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_by TEXT,
+      owner_email TEXT NOT NULL DEFAULT 'local@localhost',
+      org_id TEXT
+    )`,
+      },
+    },
+    {
+      version: 112,
+      name: "dashboard-revisions-dashboard-created-idx",
+      sql: `CREATE INDEX IF NOT EXISTS dashboard_revisions_dashboard_created_idx ON dashboard_revisions (dashboard_id, created_at)`,
+    },
+    {
+      version: 113,
+      name: "analysis-revisions-table",
+      sql: {
+        postgres: `CREATE TABLE IF NOT EXISTS analysis_revisions (
+      id TEXT PRIMARY KEY,
+      analysis_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      question TEXT NOT NULL DEFAULT '',
+      instructions TEXT NOT NULL DEFAULT '',
+      data_sources TEXT NOT NULL DEFAULT '[]',
+      result_markdown TEXT NOT NULL DEFAULT '',
+      result_data TEXT,
+      created_at TEXT NOT NULL DEFAULT (now()::text),
+      created_by TEXT,
+      owner_email TEXT NOT NULL DEFAULT 'local@localhost',
+      org_id TEXT
+    )`,
+        sqlite: `CREATE TABLE IF NOT EXISTS analysis_revisions (
+      id TEXT PRIMARY KEY,
+      analysis_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      question TEXT NOT NULL DEFAULT '',
+      instructions TEXT NOT NULL DEFAULT '',
+      data_sources TEXT NOT NULL DEFAULT '[]',
+      result_markdown TEXT NOT NULL DEFAULT '',
+      result_data TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_by TEXT,
+      owner_email TEXT NOT NULL DEFAULT 'local@localhost',
+      org_id TEXT
+    )`,
+      },
+    },
+    {
+      version: 114,
+      name: "analysis-revisions-analysis-created-idx",
+      sql: `CREATE INDEX IF NOT EXISTS analysis_revisions_analysis_created_idx ON analysis_revisions (analysis_id, created_at)`,
+    },
+    {
+      version: 115,
+      name: "uptime-monitors-timeout-10s",
+      sql: {
+        postgres: `
+        ALTER TABLE monitors ALTER COLUMN timeout_ms SET DEFAULT 10000;
+        UPDATE monitors
+        SET timeout_ms = 10000, updated_at = COALESCE(NULLIF(updated_at, ''), now()::text)
+        WHERE timeout_ms IS NULL OR timeout_ms < 10000 OR timeout_ms = 15000
+      `,
+        sqlite: `
+        UPDATE monitors
+        SET timeout_ms = 10000, updated_at = COALESCE(NULLIF(updated_at, ''), datetime('now'))
+        WHERE timeout_ms IS NULL OR timeout_ms < 10000 OR timeout_ms = 15000
+      `,
+      },
+    },
+    {
+      version: 116,
+      name: "uptime-monitor-check-diagnostics",
+      sql: `ALTER TABLE monitor_check_results ADD COLUMN IF NOT EXISTS diagnostics TEXT NOT NULL DEFAULT '{}'`,
+    },
+    {
+      version: 117,
+      name: "uptime-monitor-incident-notification-delivered",
+      sql: {
+        postgres: `ALTER TABLE monitor_incidents ADD COLUMN IF NOT EXISTS notification_delivered BOOLEAN NOT NULL DEFAULT false`,
+        sqlite: `ALTER TABLE monitor_incidents ADD COLUMN IF NOT EXISTS notification_delivered INTEGER NOT NULL DEFAULT 0`,
+      },
     },
   ],
   { table: "analytics_migrations" },

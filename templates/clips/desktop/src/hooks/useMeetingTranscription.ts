@@ -245,6 +245,14 @@ export function useMeetingTranscription({
       const existing = sessionRef.current;
       if (existing) {
         if (!existing.stopping && existing.meetingId === meetingId) {
+          await invoke("recording_pill_show", {
+            meetingId: existing.meetingId,
+            mode: "meeting",
+          }).catch(() => {});
+          emit("clips:pill-context", {
+            meetingId: existing.meetingId,
+            mode: "meeting",
+          }).catch(() => {});
           emit("meetings:hide-notification", { meetingId }).catch(() => {});
           return;
         }
@@ -282,7 +290,13 @@ export function useMeetingTranscription({
         };
         sessionRef.current = session;
         await invoke("set_recording_state", { active: true }).catch(() => {});
-        await invoke("set_meeting_active", { active: true }).catch(() => {});
+        await invoke("set_meeting_active", {
+          active: true,
+          meetingId: resolvedMeetingId,
+        }).catch(() => {});
+        emit("meetings:transcription-started", {
+          meetingId: resolvedMeetingId,
+        }).catch(() => {});
 
         const scheduleFlush = () => {
           if (session.flushTimer) window.clearTimeout(session.flushTimer);
@@ -363,9 +377,7 @@ export function useMeetingTranscription({
         };
 
         // Resume the engine that initial start settled on (no fallback here —
-        // the engine choice was already made below). Keep voice processing
-        // off: AEC/ducking on the shared mic can make Zoom/Meet callers hear
-        // the local user at a whisper while Clips is transcribed.
+        // the engine choice was already made below).
         const startAudio = async () => {
           await restartTranscriptionEngine(
             session.engine,
@@ -374,7 +386,6 @@ export function useMeetingTranscription({
               label: selectedMicLabel,
             },
             true,
-            false,
           );
         };
 
@@ -545,9 +556,6 @@ export function useMeetingTranscription({
 
         session.engine = await startTranscriptionEngine({
           mic: { deviceId: selectedMicId, label: selectedMicLabel },
-          // Match clip recordings: VoiceProcessingIO AEC/ducking on the shared
-          // mic can tank live meeting volume for remote participants.
-          voiceProcessing: false,
         });
 
         await invoke("silence_detector_start", {

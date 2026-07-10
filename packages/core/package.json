@@ -1,6 +1,6 @@
 {
   "name": "@agent-native/core",
-  "version": "0.91.2",
+  "version": "0.92.10",
   "description": "Framework for agent-native application development — where AI agents and UI share SQL state, actions, and context",
   "homepage": "https://github.com/studio-jami/jami-studio#readme",
   "bugs": {
@@ -235,7 +235,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@agent-native/toolkit": "workspace:*",
+    "@agent-native/toolkit": "workspace:^",
     "@amplitude/analytics-browser": "^2.41.1",
     "@anthropic-ai/sdk": "^0.91.1",
     "@anthropic-ai/tokenizer": "0.0.4",
