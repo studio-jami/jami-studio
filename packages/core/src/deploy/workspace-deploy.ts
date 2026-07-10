@@ -424,9 +424,23 @@ function writeCloudflareRoutingManifest(distDir: string, apps: string[]): void {
     include.push("/apps/*");
     if (dispatchFaviconAsset) include.push("/favicon.ico");
   }
+  // Cloudflare rejects a _routes.json where a splat rule overlaps any other
+  // rule (e.g. "/apps/*" + "/apps/new-app"). Drop every rule already covered
+  // by another rule's splat, and exact duplicates.
+  const splatPrefixes = include
+    .filter((r) => r.endsWith("/*"))
+    .map((r) => r.slice(0, -1));
+  const dedupedInclude = [
+    ...new Set(
+      include.filter(
+        (r) =>
+          !splatPrefixes.some((p) => r !== `${p}*` && r.startsWith(p)),
+      ),
+    ),
+  ];
   const routes = {
     version: 1,
-    include,
+    include: dedupedInclude,
     exclude: [],
   };
   fs.writeFileSync(

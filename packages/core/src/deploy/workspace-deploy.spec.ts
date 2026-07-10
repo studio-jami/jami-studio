@@ -1096,12 +1096,23 @@ describe("workspace deploy", () => {
     expect(routes.include).toContain("/approval");
     expect(routes.include).toContain("/extensions");
     expect(routes.include).toContain("/thread-debug");
-    expect(routes.include).toContain("/apps/new-app");
+    // "/apps/new-app" is covered by the "/apps/*" splat — Cloudflare rejects
+    // overlapping rules, so the dedupe must drop it.
+    expect(routes.include).not.toContain("/apps/new-app");
     expect(routes.include).toContain("/apps/*");
     expect(routes.include).toContain("/dispatch");
     expect(routes.include).toContain("/dispatch/*");
     expect(routes.include).toContain("/starter");
     expect(routes.include).toContain("/starter/*");
+    // No rule may be covered by another rule's splat (Cloudflare validation).
+    const splats = routes.include
+      .filter((r) => r.endsWith("/*"))
+      .map((r) => r.slice(0, -1));
+    for (const rule of routes.include) {
+      expect(
+        splats.some((p) => rule !== `${p}*` && rule.startsWith(p)),
+      ).toBe(false);
+    }
 
     const worker = fs.readFileSync(
       path.join(tmpDir, "dist", "_worker.js"),

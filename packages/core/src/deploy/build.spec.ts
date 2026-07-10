@@ -806,6 +806,9 @@ describe("CLOUDFLARE_WORKER_ESBUILD_EXTERNALS", () => {
     expect(CLOUDFLARE_WORKER_STUB_MODULES["playwright/test"]).toContain(
       "chromium",
     );
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["detect-libc"]).toContain(
+      "familySync",
+    );
   });
 
   it("stubs node builtins that Cloudflare Pages rejects at upload time", () => {

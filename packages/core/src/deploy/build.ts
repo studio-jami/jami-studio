@@ -101,6 +101,22 @@ export const CLOUDFLARE_WORKER_ESBUILD_EXTERNALS = [
   "fsevents",
 ];
 export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
+  // detect-libc calls process.report.getReport() at require time to sniff
+  // musl vs glibc; unenv's process.report stub throws "not implemented",
+  // killing the worker at module init. Stub it with static glibc answers —
+  // nothing that consults libc can run on workerd anyway.
+  "detect-libc": [
+    "export const GLIBC = 'glibc';",
+    "export const MUSL = 'musl';",
+    "export const family = async () => null;",
+    "export const familySync = () => null;",
+    "export const version = async () => null;",
+    "export const versionSync = () => null;",
+    "export const isNonGlibcLinux = async () => false;",
+    "export const isNonGlibcLinuxSync = () => false;",
+    "export default { GLIBC, MUSL, family, familySync, version, versionSync, isNonGlibcLinux, isNonGlibcLinuxSync };",
+    "",
+  ].join("\n"),
   "better-sqlite3":
     "export default {}; export const Database = class {}; export const watch = () => ({ close() {} });\n",
   "node-pty":
