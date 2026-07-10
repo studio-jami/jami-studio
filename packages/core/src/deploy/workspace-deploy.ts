@@ -224,6 +224,15 @@ function buildOneApp(
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     NITRO_PRESET: preset,
+    // Windows: rolldown's rayon thread pool has a native race that
+    // intermittently (and for some apps deterministically) kills the build
+    // with an access violation (0xC0000005). Capping the pool avoids the
+    // race entirely; verified: chat's cloudflare_pages build crashed 100%
+    // in-sequence at default threads and passes at 2. Respect an explicit
+    // operator override.
+    ...(process.platform === "win32"
+      ? { RAYON_NUM_THREADS: process.env.RAYON_NUM_THREADS ?? "2" }
+      : {}),
     AGENT_NATIVE_WORKSPACE: "1",
     AGENT_NATIVE_WORKSPACE_APP_ID: app,
     VITE_AGENT_NATIVE_WORKSPACE: "1",
