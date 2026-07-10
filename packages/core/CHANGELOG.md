@@ -1,5 +1,20 @@
 # @agent-native/core
 
+## 0.92.11
+
+### Patch Changes
+
+- ae05d8c: Fix agent-action discovery silently skipping every action on Node >= 23.6: native TS type stripping lets the root action.ts import succeed, but does no specifier rewriting, so child `./helper.js` -> helper.ts and extensionless-TS imports fail with ERR_MODULE_NOT_FOUND — and the jiti fallback only triggered on `Unknown file extension ".ts"`. Discovery now also retries with jiti on ERR_MODULE_NOT_FOUND, restoring full action registration on Node 24 without the `--no-experimental-strip-types` workaround.
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+- c12085d: Fix Cloudflare/Deno deploy builds failing on Windows with `spawnSync ...\esbuild\bin\esbuild ENOENT`: `esbuild/bin/esbuild` is a `#!/usr/bin/env node` JS shim and shebangs don't exist on Windows, so spawning it directly fails even though the file exists. Both esbuild invocations in the deploy build now run node-shebang shims through the current Node executable (native binaries and PATH lookups still spawn directly).
+- ce61db1: Fix stale agent navigation commands bouncing users off the page they just clicked: one-shot commands (`navigate*`, `__set_url__*`) persisted in application_state were re-consumed on every app mount, so a row left behind by a lost consume-DELETE (crash-looped app, killed tab, failed fetch) yanked the user away hours later. Timestamped commands (the framework's writers embed `Date.now()` in `_writeId`) now expire after 120s — expired rows are deleted at read time instead of applied. Configurable via the new `commandTtlMs` option (`false` disables); commands without a parseable timestamp are still always applied for back-compat with external writers.
+- dce7e57: Fix workspace Netlify builds failing the single-template deploy guard: mounted apps (APP_BASE_PATH=/<app>) publish hashed client assets at dist/<app>/assets, but the guard only checked dist/assets and aborted every `agent-native deploy --preset netlify` workspace build with "dist/assets is missing hashed client assets". The guard and the `_redirects` cleanup are now base-path aware (checking and stripping the incompatible default-function rewrite at both the dist root and the mounted dir).
+- 89fa739: Update Nitro to `3.0.260429-beta` to remediate the open-redirect and proxy-scope-bypass Dependabot advisories.
+- 27930b8: Fix the session-replay upload retry storm: a permanently-failing chunk upload (e.g. HTTP 400 from a misconfigured ingest endpoint) retried every flush interval forever from every open tab — a self-inflicted DoS on the ingest server — while failed batches accumulated without bound. `flushSessionReplay` now applies exponential backoff (5s base, 5min cap) to automatic flush triggers, keeps at most 10 failed batches, and trips a circuit breaker (recorder stopped, buffers dropped, one warning) after 3 consecutive non-transient 4xx failures or 10 consecutive failures of any cause. Explicit flushes (manual/retry/lifecycle) still attempt immediately.
+- 77cf4eb: Fix the Windows workspace-gateway orphan-vite loop and silent pnpm spawn failure: (1) app restarts/shutdown killed only the direct pnpm child with SIGTERM, orphaning the vite grandchild that kept the app port bound — the gateway then respawned forever into "Port 810x is already in use" (blank apps, dropped sessions); child teardown now fells the whole process tree via `taskkill /T` on Windows. (2) Node >= 20.12 refuses to spawn pnpm's .cmd/.ps1 shims without a shell, failing ENOENT with no `error` listener — the default spawner now runs pnpm's JS entry (`npm_execpath`) through the current Node executable on Windows, and a new child `error` handler surfaces any spawn failure into the visible retry path instead of silence.
+- Updated dependencies [d1d1a12]
+  - @agent-native/toolkit@0.4.6
+
 ## 0.92.10
 
 ### Patch Changes

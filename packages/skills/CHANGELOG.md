@@ -1,5 +1,20 @@
 # @agent-native/skills
 
+## 0.2.282
+
+### Patch Changes
+
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+- Updated dependencies [ae05d8c]
+- Updated dependencies [d1d1a12]
+- Updated dependencies [c12085d]
+- Updated dependencies [ce61db1]
+- Updated dependencies [dce7e57]
+- Updated dependencies [89fa739]
+- Updated dependencies [27930b8]
+- Updated dependencies [77cf4eb]
+  - @agent-native/core@0.92.11
+
 ## 0.2.281
 
 ### Patch Changes

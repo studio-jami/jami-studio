@@ -1,5 +1,11 @@
 # @agent-native/dispatch
 
+## 0.13.14
+
+### Patch Changes
+
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+
 ## 0.13.13
 
 ### Patch Changes

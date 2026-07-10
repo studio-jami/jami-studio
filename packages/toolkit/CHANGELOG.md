@@ -1,5 +1,11 @@
 # @agent-native/toolkit
 
+## 0.4.6
+
+### Patch Changes
+
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+
 ## 0.4.5
 
 ### Patch Changes

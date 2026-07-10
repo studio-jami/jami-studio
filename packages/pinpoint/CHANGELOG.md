@@ -1,5 +1,11 @@
 # @agent-native/pinpoint
 
+## 0.1.12
+
+### Patch Changes
+
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+
 ## 0.1.11
 
 ### Patch Changes

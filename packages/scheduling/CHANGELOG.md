@@ -1,5 +1,14 @@
 # @agent-native/scheduling
 
+## 0.1.24
+
+### Patch Changes
+
+- d1d1a12: Update package metadata to point at the Jami Studio repository.
+- 3f45267: Fix Windows workspace install builds by avoiding shell-only copy/path behavior.
+- Updated dependencies [d1d1a12]
+  - @agent-native/toolkit@0.4.6
+
 ## 0.1.23
 
 ### Patch Changes
