@@ -465,6 +465,26 @@ describe("attachNeonPoolErrorLogger", () => {
     );
   });
 
+  it("skips the 'connect' listener on Cloudflare Workers so poolQueryViaFetch stays enabled", async () => {
+    // @neondatabase/serverless disables its HTTP query path the moment any
+    // non-'error' listener is registered on the pool (hasFetchUnsupportedListeners).
+    // On workerd the HTTP path is mandatory (cross-request I/O rules), so the
+    // logger must only attach the pool-level 'error' listener there.
+    (globalThis as Record<string, unknown>).__cf_env = {};
+    try {
+      const on = vi.fn();
+      const pool = { on };
+      const { attachNeonPoolErrorLogger } = await import("./client.js");
+
+      attachNeonPoolErrorLogger(pool, "db/neon");
+
+      expect(on).toHaveBeenCalledTimes(1);
+      expect(on).toHaveBeenCalledWith("error", expect.any(Function));
+    } finally {
+      delete (globalThis as Record<string, unknown>).__cf_env;
+    }
+  });
+
   it("keeps a dropped client's 'error' event from crashing the process", async () => {
     // Reproduces the highest-volume production crash: a checked-out neon client
     // whose socket drops emits 'error'; with no listener Node turns that into an

@@ -938,6 +938,17 @@ export function attachNeonPoolErrorLogger(
     );
   });
 
+  // On Cloudflare Workers, DO NOT attach the per-client 'connect' listener
+  // below. @neondatabase/serverless disables its poolQueryViaFetch HTTP path
+  // the moment ANY non-'error' listener is registered on the pool
+  // (hasFetchUnsupportedListeners) — silently reverting every plain query to
+  // a WebSocket checkout. Combined with the single-use clients workerd
+  // requires, that churns a new WebSocket per query until the isolate hits
+  // its connection cap and pool.connect() hangs forever. The listener's
+  // purpose (preventing Node's uncaught-'error' process crash) doesn't apply
+  // on workerd, where an unhandled emit can't kill a process.
+  if (isCloudflareRuntime()) return;
+
   // Attach a persistent 'error' listener to EVERY client for its whole lifetime.
   //
   // @neondatabase/serverless mirrors pg-pool, which only keeps its own idle
