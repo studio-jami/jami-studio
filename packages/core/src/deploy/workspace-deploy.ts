@@ -228,10 +228,12 @@ function buildOneApp(
     // intermittently (and for some apps deterministically) kills the build
     // with an access violation (0xC0000005). Capping the pool avoids the
     // race entirely; verified: chat's cloudflare_pages build crashed 100%
-    // in-sequence at default threads and passes at 2. Respect an explicit
-    // operator override.
+    // in-sequence at default threads and STILL crashed at 2 (forms died at
+    // 2 in a full 14-app sequence) — only a single rayon thread has proven
+    // green across the whole workspace. Respect an explicit operator
+    // override.
     ...(process.platform === "win32"
-      ? { RAYON_NUM_THREADS: process.env.RAYON_NUM_THREADS ?? "2" }
+      ? { RAYON_NUM_THREADS: process.env.RAYON_NUM_THREADS ?? "1" }
       : {}),
     AGENT_NATIVE_WORKSPACE: "1",
     AGENT_NATIVE_WORKSPACE_APP_ID: app,

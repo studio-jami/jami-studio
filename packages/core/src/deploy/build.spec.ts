@@ -809,6 +809,12 @@ describe("CLOUDFLARE_WORKER_ESBUILD_EXTERNALS", () => {
     expect(CLOUDFLARE_WORKER_STUB_MODULES["detect-libc"]).toContain(
       "familySync",
     );
+    // sharp loads its native binary at require time and kills the worker
+    // at module init — the stub must be callable and throw at call time.
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["sharp"]).toContain("Proxy");
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["sharp"]).toContain(
+      "sharp unavailable",
+    );
   });
 
   it("stubs node builtins that Cloudflare Pages rejects at upload time", () => {
@@ -828,6 +834,17 @@ describe("CLOUDFLARE_WORKER_ESBUILD_EXTERNALS", () => {
     expect(CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES.module).toContain(
       "createRequire",
     );
+  });
+
+  it("exposes overridden members through the builtin stub default export", () => {
+    // os.tmpdir() must return "/tmp" through BOTH the named export and the
+    // default export — dependencies call it as `import os from "os"` and a
+    // bare throwing proxy killed workers at module init.
+    const osStub = CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES.os;
+    expect(osStub).toContain('export const tmpdir = () => "/tmp";');
+    expect(osStub).toContain("const __members = {");
+    expect(osStub).toMatch(/__members = \{[^}]*\btmpdir\b/);
+    expect(osStub).toContain("prop in target ? target[prop]");
   });
 });
 

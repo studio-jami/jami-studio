@@ -119,6 +119,16 @@ export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
   ].join("\n"),
   "better-sqlite3":
     "export default {}; export const Database = class {}; export const watch = () => ({ close() {} });\n",
+  // sharp loads its native binary (@img/sharp-<platform>) at require time and
+  // throws "Could not load the sharp module using the linux- runtime" at
+  // worker module init. Stub it with a callable that throws at call time —
+  // image processing can't run on workerd regardless.
+  sharp: [
+    "const unavailable = () => { throw new Error('sharp unavailable in Cloudflare Pages worker'); };",
+    "const sharp = new Proxy(unavailable, { get: (_t, prop) => (prop === 'default' ? sharp : unavailable), apply: unavailable });",
+    "export default sharp;",
+    "",
+  ].join("\n"),
   "node-pty":
     "export default {}; export const watch = () => ({ close() {} });\n",
   chokidar: "export default {}; export const watch = () => ({ close() {} });\n",
@@ -274,13 +284,20 @@ function cloudflareNodeBuiltinStubSource(
   const exports = Array.from(new Set(namedExports))
     .filter((name) => !overridden.has(name))
     .sort();
+  // The default export must expose the SAME members as the named exports —
+  // including functional overrides like os.tmpdir() — because most consumers
+  // use the default import (`import os from "os"; os.tmpdir()`). A bare
+  // throwing proxy here killed workers at module init whenever a dependency
+  // called an overridden member through the default export.
+  const allNames = Array.from(new Set([...overridden, ...exports])).sort();
   return [
     `const unavailable = (name) => (..._args) => { throw new Error(name + " is unavailable in Cloudflare Pages workers"); };`,
-    `const proxy = new Proxy({}, { get(_target, prop) { return unavailable("${moduleName}." + String(prop)); } });`,
     ...overrides,
     ...exports.map(
       (name) => `export const ${name} = unavailable("${moduleName}.${name}");`,
     ),
+    `const __members = { ${allNames.join(", ")} };`,
+    `const proxy = new Proxy(__members, { get(target, prop) { return prop in target ? target[prop] : unavailable("${moduleName}." + String(prop)); } });`,
     "export default proxy;",
     "",
   ].join("\n");
@@ -1881,6 +1898,13 @@ async function buildCloudflarePages() {
       /\bimport\s*\{\s*createRequire\s+as\s+([\w$]+)\s*\}\s*from\s*["'](?:node:)?module["']\s*;/g,
       "var $1 = function() { return typeof require !== 'undefined' ? require : function(m) { throw new Error('require not supported: ' + m); }; };",
     );
+
+    // Patch remaining import.meta.url occurrences — when wrangler/Pages
+    // re-bundles the worker, inner modules get an emptied import.meta, so
+    // fileURLToPath(import.meta.url) throws at module init ("path" argument
+    // must be string, received undefined). Same treatment as the Vite
+    // server-build path: replace with a stable synthetic file URL.
+    code = code.replace(/\bimport\.meta\.url\b/g, '"file:///worker.mjs"');
 
     // Patch setInterval/setTimeout at module scope — CF Workers disallows timers in global scope.
     // Some dependencies (e.g. Anthropic SDK rate limiter) call setInterval at module init.
