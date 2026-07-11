@@ -19,6 +19,8 @@ type ReactRouterManifestRoute = {
   path?: string;
   index?: boolean;
   module?: string;
+  hasLoader?: boolean;
+  hasAction?: boolean;
   clientActionModule?: string;
   clientLoaderModule?: string;
   hydrateFallbackModule?: string;
@@ -157,6 +159,21 @@ function dataRouteUrlForHref(href: string): string | null {
 function hasReactRouterManifestRoutes(): boolean {
   const routes = window.__reactRouterManifest?.routes;
   return Boolean(routes && Object.keys(routes).length > 0);
+}
+
+/**
+ * Whether ANY route in the client manifest advertises a server loader or
+ * action. Static-shell deployments (Cloudflare Pages worker without a React
+ * Router request handler) strip these flags at build time — `.data` requests
+ * can never be served there, so warming them only produces 404 noise.
+ */
+function manifestAdvertisesServerData(): boolean {
+  for (const route of Object.values(
+    window.__reactRouterManifest?.routes ?? {},
+  )) {
+    if (route.hasLoader || route.hasAction) return true;
+  }
+  return false;
 }
 
 function manifestRoutesSignature(
@@ -391,7 +408,11 @@ export function AgentNativeRouteWarmup({
     // manifests that point at built JS assets, where SSR `.data` requests have
     // the CDN cache headers this feature relies on.
     const hasRouteAssets = hasManifestRoutes && hasWarmableRouteAssets();
-    const warmData = resolved.data && hasRouteAssets;
+    // `.data` warmup only makes sense when the deployment can actually serve
+    // React Router single-fetch requests — static-shell workers strip the
+    // hasLoader/hasAction flags, and warming there guarantees a 404 per link.
+    const warmData =
+      resolved.data && hasRouteAssets && manifestAdvertisesServerData();
     const warmModules = resolved.modules && hasRouteAssets;
     if (!warmData && !warmModules) return;
 
@@ -536,6 +557,7 @@ export const __routeWarmupInternalsForTests = {
   getManifestRouteTree,
   hasReactRouterManifestRoutes,
   hasWarmableRouteAssets,
+  manifestAdvertisesServerData,
   parseBuildTimeRouteWarmupConfig,
   renderWarmupLinksForSelector,
   routeAssetUrlsForHref,

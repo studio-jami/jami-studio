@@ -8,6 +8,7 @@ const {
   getManifestRouteTree,
   hasReactRouterManifestRoutes,
   hasWarmableRouteAssets,
+  manifestAdvertisesServerData,
   parseBuildTimeRouteWarmupConfig,
   renderWarmupLinksForSelector,
   routeAssetUrlsForHref,
@@ -70,6 +71,30 @@ describe("route warmup runtime helpers", () => {
       },
     };
     expect(hasReactRouterManifestRoutes()).toBe(true);
+  });
+
+  it("only warms .data when the manifest advertises a server loader/action", () => {
+    // Static-shell deployments strip hasLoader/hasAction at build time —
+    // .data can never be served there and warmup must not 404-spam.
+    window.__reactRouterManifest = {
+      routes: {
+        root: { id: "root", path: "/", module: "/assets/root-AbC123.js" },
+        "routes/chat": {
+          id: "routes/chat",
+          parentId: "root",
+          path: "chat",
+          module: "/assets/chat-DeF456.js",
+        },
+      },
+    };
+    expect(manifestAdvertisesServerData()).toBe(false);
+
+    window.__reactRouterManifest.routes["routes/chat"].hasLoader = true;
+    expect(manifestAdvertisesServerData()).toBe(true);
+
+    window.__reactRouterManifest.routes["routes/chat"].hasLoader = false;
+    window.__reactRouterManifest.routes.root.hasAction = true;
+    expect(manifestAdvertisesServerData()).toBe(true);
   });
 
   it("recognizes production route manifests without relying on import.meta.env", () => {
