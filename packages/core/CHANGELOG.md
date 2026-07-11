@@ -1,5 +1,21 @@
 # @agent-native/core
 
+## 0.92.30
+
+### Patch Changes
+
+- 6b64db7: Collab routes decode percent-encoded `docId` router params. Structured docIds
+  (`plan:<id>:<block>`) that clients percent-encode as a path segment
+  (`plan%3A...`) reached resolvers undecoded — prefix checks failed and the
+  request 404'd even though the raw-colon form worked. Malformed escape
+  sequences fall back to the raw value.
+- 7bcb7c1: Route warmup skips `.data` prefetching when the client manifest advertises no
+  server loaders/actions. Static-shell deployments (Cloudflare Pages worker
+  without a React Router request handler) strip those flags at build time —
+  `.data` requests can never be served there, so warming them produced a
+  guaranteed 404 per hovered/visible link (the residual `chat.data` 404 seen
+  after the manifest strip landed). SSR deployments are unaffected.
+
 ## 0.92.29
 
 ### Patch Changes
