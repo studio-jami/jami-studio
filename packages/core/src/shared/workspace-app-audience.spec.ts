@@ -1,9 +1,39 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
+import { setModuleGraphEnvDefaults } from "./global-scope.js";
 import {
   normalizeWorkspaceAppPathList,
+  workspaceAppAudienceFromEnv,
+  workspaceAppRouteAccessFromEnv,
   workspaceAppRouteAccessFromPackageJson,
 } from "./workspace-app-audience.js";
+
+afterEach(() => {
+  setModuleGraphEnvDefaults(null);
+});
+
+describe("env readers fall back to module-graph defaults (unified workerd deploys)", () => {
+  it("reads audience and route access from module-graph defaults when process.env lacks them", () => {
+    setModuleGraphEnvDefaults({
+      AGENT_NATIVE_WORKSPACE_APP_AUDIENCE: "public",
+      AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS:
+        '["/track","/api/analytics/track"]',
+    });
+    expect(workspaceAppAudienceFromEnv()).toBe("public");
+    expect(workspaceAppRouteAccessFromEnv().publicPaths).toEqual([
+      "/track",
+      "/api/analytics/track",
+    ]);
+  });
+
+  it("explicit env objects never consult module-graph defaults", () => {
+    setModuleGraphEnvDefaults({
+      AGENT_NATIVE_WORKSPACE_APP_AUDIENCE: "public",
+    });
+    expect(workspaceAppAudienceFromEnv({})).toBeUndefined();
+    expect(workspaceAppRouteAccessFromEnv({}).publicPaths).toEqual([]);
+  });
+});
 
 describe("workspaceAppRouteAccessFromPackageJson", () => {
   it("returns undefined fields when keys are absent", () => {

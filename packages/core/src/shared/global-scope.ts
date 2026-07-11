@@ -73,3 +73,35 @@ export function __deleteScopedGlobal(base: string): void {
   const key = Symbol.for(scopedGlobalKeyName(base));
   delete (globalThis as unknown as Record<symbol, unknown>)[key];
 }
+
+/**
+ * Per-module-graph env defaults for unified workspace deployments.
+ *
+ * workerd has no filesystem and no ambient build env, so per-app workspace
+ * config (app id, base path, audience, public/protected route lists) must be
+ * baked into the artifact. It CANNOT go through `process.env`: the unified
+ * worker shares ONE `process.env` across every app's module graph, so the
+ * first app's baked values would poison every sibling (the exact issue-35
+ * class the scope id above exists for — observed live as every app stripping
+ * paths against dispatch's base path, 401ing all framework routes).
+ *
+ * Instead the generated scope-init module stores this graph's per-app values
+ * here (module scope = per app bundle), and env readers fall back to
+ * `getModuleGraphEnvDefault` when the ambient env lacks the key. Real runtime
+ * env still wins; dev/single-app graphs never set defaults, so behavior is
+ * unchanged there.
+ */
+let moduleGraphEnvDefaults: Record<string, string> | null = null;
+
+/** Set (or clear with `null`) this module graph's baked env defaults. */
+export function setModuleGraphEnvDefaults(
+  defaults: Record<string, string> | null,
+): void {
+  moduleGraphEnvDefaults =
+    defaults && Object.keys(defaults).length > 0 ? { ...defaults } : null;
+}
+
+/** This module graph's baked default for `key`, or undefined. */
+export function getModuleGraphEnvDefault(key: string): string | undefined {
+  return moduleGraphEnvDefaults?.[key];
+}

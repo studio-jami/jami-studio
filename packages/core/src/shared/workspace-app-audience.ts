@@ -1,3 +1,5 @@
+import { getModuleGraphEnvDefault } from "./global-scope.js";
+
 export const WORKSPACE_APP_AUDIENCES = ["internal", "public"] as const;
 
 export type WorkspaceAppAudience = (typeof WORKSPACE_APP_AUDIENCES)[number];
@@ -48,7 +50,12 @@ export function workspaceAppAudienceFromEnv(
   const source = env ?? (typeof process !== "undefined" ? process.env : {});
   const raw =
     source.AGENT_NATIVE_WORKSPACE_APP_AUDIENCE ??
-    source.VITE_AGENT_NATIVE_WORKSPACE_APP_AUDIENCE;
+    source.VITE_AGENT_NATIVE_WORKSPACE_APP_AUDIENCE ??
+    // Unified workerd deployments deliver per-app config via the module
+    // graph (shared process.env would cross-poison sibling apps).
+    (env === undefined
+      ? getModuleGraphEnvDefault("AGENT_NATIVE_WORKSPACE_APP_AUDIENCE")
+      : undefined);
   if (raw === undefined) return undefined;
   return normalizeWorkspaceAppAudience(raw);
 }
@@ -57,14 +64,18 @@ export function workspaceAppRouteAccessFromEnv(
   env?: Record<string, string | undefined>,
 ): WorkspaceAppRouteAccess {
   const source = env ?? (typeof process !== "undefined" ? process.env : {});
+  const moduleGraphFallback = (key: string) =>
+    env === undefined ? getModuleGraphEnvDefault(key) : undefined;
   return {
     publicPaths: normalizeWorkspaceAppPathList(
       source.AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS ??
-        source.VITE_AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS,
+        source.VITE_AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS ??
+        moduleGraphFallback("AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS"),
     ),
     protectedPaths: normalizeWorkspaceAppPathList(
       source.AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS ??
-        source.VITE_AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS,
+        source.VITE_AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS ??
+        moduleGraphFallback("AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS"),
     ),
   };
 }

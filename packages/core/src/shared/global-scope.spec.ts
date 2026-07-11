@@ -9,9 +9,11 @@ import type { FileUploadProvider } from "../file-upload/types.js";
 import {
   __deleteScopedGlobal,
   getGlobalScopeId,
+  getModuleGraphEnvDefault,
   getScopedGlobal,
   scopedGlobalKeyName,
   setGlobalScopeId,
+  setModuleGraphEnvDefaults,
 } from "./global-scope.js";
 
 function makeProvider(id: string): FileUploadProvider {
@@ -37,6 +39,7 @@ afterEach(() => {
     }
   }
   setGlobalScopeId(null);
+  setModuleGraphEnvDefaults(null);
 });
 
 describe("global-scope", () => {
@@ -99,5 +102,26 @@ describe("global-scope", () => {
     // Unscoped (dev / single-app) registries are independent of both.
     setGlobalScopeId(null);
     expect(listFileUploadProviders()).toEqual([]);
+  });
+
+  it("module-graph env defaults are per-graph state, not process.env", () => {
+    expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBeUndefined();
+
+    setModuleGraphEnvDefaults({
+      APP_BASE_PATH: "/calendar",
+      AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS: '["/track"]',
+    });
+    expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBe("/calendar");
+    expect(
+      getModuleGraphEnvDefault("AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS"),
+    ).toBe('["/track"]');
+    // Never leaks into the shared process env.
+    expect(process.env.APP_BASE_PATH).not.toBe("/calendar");
+
+    // Cleared with null; empty objects are treated as cleared.
+    setModuleGraphEnvDefaults(null);
+    expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBeUndefined();
+    setModuleGraphEnvDefaults({});
+    expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBeUndefined();
   });
 });
