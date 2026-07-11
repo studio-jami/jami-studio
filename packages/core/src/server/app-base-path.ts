@@ -1,3 +1,5 @@
+import { getModuleGraphEnvDefault } from "../shared/global-scope.js";
+
 export function normalizeAppBasePath(value: string | undefined): string {
   if (!value || value === "/") return "";
   const trimmed = value.trim();
@@ -8,7 +10,16 @@ export function normalizeAppBasePath(value: string | undefined): string {
 
 export function getConfiguredAppBasePath(): string {
   return normalizeAppBasePath(
-    process.env.VITE_APP_BASE_PATH || process.env.APP_BASE_PATH,
+    process.env.VITE_APP_BASE_PATH ||
+      process.env.APP_BASE_PATH ||
+      // Unified workerd deployments deliver per-app config via the module
+      // graph (shared process.env would cross-poison sibling apps). Without
+      // this, the auth guard cannot strip the mount prefix, so app-declared
+      // public paths outside /api and /_agent-native (e.g. analytics
+      // /track) never match on the unified worker. Matches the Netlify
+      // preset, which delivers the same value via per-function env.
+      getModuleGraphEnvDefault("VITE_APP_BASE_PATH") ||
+      getModuleGraphEnvDefault("APP_BASE_PATH"),
   );
 }
 
@@ -34,7 +45,9 @@ export function getAppBasePathFromViteEnv(): string {
       process.env.APP_BASE_PATH ||
       metaEnv?.VITE_APP_BASE_PATH ||
       metaEnv?.APP_BASE_PATH ||
-      metaEnv?.BASE_URL,
+      metaEnv?.BASE_URL ||
+      getModuleGraphEnvDefault("VITE_APP_BASE_PATH") ||
+      getModuleGraphEnvDefault("APP_BASE_PATH"),
   );
 }
 
