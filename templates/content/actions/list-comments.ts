@@ -32,12 +32,11 @@ function parseMentions(value: string | null): Mention[] {
 export default defineAction({
   description: "List all comments on a document, grouped by thread.",
   schema: z.object({
-    documentId: z.string().optional().describe("Document ID (required)"),
+    documentId: z.string().min(1).describe("Document ID (required)"),
   }),
   http: { method: "GET" },
   run: async (args) => {
     const documentId = args.documentId;
-    if (!documentId) throw new Error("--documentId is required");
 
     const access = await assertAccess("document", documentId, "viewer");
     const ownerEmail = access.resource.ownerEmail as string;
