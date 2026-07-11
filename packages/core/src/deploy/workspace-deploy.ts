@@ -178,6 +178,7 @@ export async function runWorkspaceDeploy(
   } else if (preset === "vercel") {
     writeVercelBuildConfig(vercelOutputDir, apps);
   } else {
+    dedupeCloudflareWorkspaceYjs(distDir, apps);
     writeCloudflareRoutingManifest(distDir, apps);
   }
 
@@ -406,6 +407,58 @@ function copyVercelAppBuildIntoWorkspace(
 }
 
 /**
+ * Collapse every app's Yjs copy onto ONE shared module in the unified
+ * Cloudflare artifact. wrangler re-bundles all app workers into a single
+ * final bundle behind the dispatcher, so per-app Yjs copies all land in one
+ * isolate — Yjs's own guard logs "Yjs was already imported. This breaks
+ * constructor checks" once per extra copy, and Yjs objects crossing copies
+ * fail instanceof checks (real-time collab risk). Per-app builds emit Yjs as
+ * a standalone `dist/<app>/_worker.js/_libs/yjs.mjs` (see deploy/build.ts);
+ * here the first copy is hoisted to `dist/_yjs/yjs.mjs` and every app's lib
+ * becomes a re-export shim of it, so esbuild's path-keyed module dedupe
+ * instantiates Yjs exactly once.
+ */
+export function dedupeCloudflareWorkspaceYjs(
+  distDir: string,
+  apps: string[],
+): string[] {
+  const libPaths = apps
+    .map((app) => path.join(distDir, app, "_worker.js", "_libs", "yjs.mjs"))
+    .filter((libPath) => fs.existsSync(libPath));
+  if (libPaths.length === 0) return [];
+
+  const sharedFile = path.join(distDir, "_yjs", "yjs.mjs");
+  fs.mkdirSync(path.dirname(sharedFile), { recursive: true });
+  fs.copyFileSync(libPaths[0], sharedFile);
+  for (const libPath of libPaths) {
+    const rel = path
+      .relative(path.dirname(libPath), sharedFile)
+      .split(path.sep)
+      .join("/");
+    fs.writeFileSync(
+      libPath,
+      `export * from "${rel.startsWith(".") ? rel : `./${rel}`}";\n`,
+    );
+  }
+
+  // Keep the shared module (and the dispatcher worker) out of the public
+  // static asset set. `.assetsignore` is only honored at the output root.
+  const assetsIgnorePath = path.join(distDir, ".assetsignore");
+  const existing = fs.existsSync(assetsIgnorePath)
+    ? fs.readFileSync(assetsIgnorePath, "utf-8")
+    : "";
+  const lines = new Set(existing.split(/\r?\n/).filter(Boolean));
+  lines.add("_worker.js");
+  lines.add("_yjs");
+  fs.writeFileSync(assetsIgnorePath, [...lines].join("\n") + "\n");
+
+  console.log(
+    `[workspace-deploy] Deduped yjs across ${libPaths.length} app worker(s) into _yjs/yjs.mjs`,
+  );
+  return libPaths;
+}
+
+/**
  * Write the Cloudflare Pages `_routes.json` and a dispatcher `_worker.js` at
  * the workspace dist root so each app is reachable under /<app>/*.
  */
@@ -435,8 +488,7 @@ function writeCloudflareRoutingManifest(distDir: string, apps: string[]): void {
   const dedupedInclude = [
     ...new Set(
       include.filter(
-        (r) =>
-          !splatPrefixes.some((p) => r !== `${p}*` && r.startsWith(p)),
+        (r) => !splatPrefixes.some((p) => r !== `${p}*` && r.startsWith(p)),
       ),
     ),
   ];

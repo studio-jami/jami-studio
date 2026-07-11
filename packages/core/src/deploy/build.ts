@@ -1826,6 +1826,13 @@ async function buildCloudflarePages() {
     "--conditions=workerd,worker,import",
     // The ssr-handler imports a virtual module that only exists at dev time
     "--external:virtual:react-router/server-build",
+    // Keep Yjs out of the monolithic bundle so it can be emitted as a
+    // standalone _libs/yjs.mjs below. On unified workspace deploys the
+    // workspace assembly step points every app's lib at ONE shared copy so
+    // wrangler's final re-bundle instantiates Yjs exactly once — inlining it
+    // here would put N copies in a single isolate (Yjs logs "Yjs was already
+    // imported" per extra copy and cross-copy instanceof checks break).
+    "--external:yjs",
     `--alias:#nitro/virtual/server-assets=${nitroServerAssetsStub}`,
     // Banner: override the __require shim that esbuild generates for CJS modules.
     // This provides a real require() backed by ESM imports of node builtins.
@@ -1843,6 +1850,15 @@ async function buildCloudflarePages() {
   execFileSync(esbuildCommand.file, esbuildCommand.args, {
     stdio: "inherit",
     cwd,
+  });
+
+  // Bundle the one real Yjs copy into _libs/yjs.mjs and rewrite the bare
+  // imports the --external:yjs flag left behind (see the flag comment above).
+  bundleSharedYjsLibForWorkerOutput({
+    workerOutDir,
+    esbuildBin,
+    projectCwd: cwd,
+    tmpDir,
   });
 
   // Clean up tmp
@@ -2692,6 +2708,112 @@ export function rewriteBareYjsImportsForServerlessOutput(
   }
 
   return bareImports;
+}
+
+/**
+ * Resolve Yjs's ESM entry for bundling into a worker `_libs/yjs.mjs`.
+ * Templates don't depend on `yjs` directly (it's a core dependency), so when
+ * the project itself can't resolve it, resolve through the installed
+ * `@agent-native/core` package location instead.
+ */
+export function resolveYjsEsmEntry(projectCwd: string): string | null {
+  const resolveFrom = (base: string): string | null => {
+    try {
+      return createRequire(path.join(base, "package.json")).resolve("yjs");
+    } catch {
+      return null;
+    }
+  };
+  let resolved = resolveFrom(projectCwd);
+  if (!resolved) {
+    try {
+      const corePkg = createRequire(
+        path.join(projectCwd, "package.json"),
+      ).resolve("@agent-native/core/package.json");
+      resolved = resolveFrom(path.dirname(fs.realpathSync(corePkg)));
+    } catch {
+      resolved = null;
+    }
+  }
+  if (!resolved) return null;
+  // require.resolve returns the CJS entry; prefer the sibling ESM build so
+  // `export * from` re-exports Yjs's real named exports statically.
+  const esmSibling = resolved.replace(/\.c?js$/, ".mjs");
+  return esmSibling !== resolved && fs.existsSync(esmSibling)
+    ? esmSibling
+    : resolved;
+}
+
+/**
+ * Emit Yjs as a standalone `_libs/yjs.mjs` in the Cloudflare worker output
+ * and rewrite every bare `yjs` import (left external by the main esbuild
+ * bundle) to it. Keeping Yjs in its own module file is what lets the unified
+ * workspace assembly (`workspace-deploy.ts`) collapse all apps onto ONE
+ * shared copy — wrangler's final re-bundle dedupes modules by file path, so
+ * N inlined copies would otherwise land in a single isolate and trip Yjs's
+ * "Yjs was already imported. This breaks constructor checks" guard.
+ */
+export function bundleSharedYjsLibForWorkerOutput(opts: {
+  workerOutDir: string;
+  esbuildBin: string;
+  projectCwd: string;
+  tmpDir: string;
+}): string[] {
+  const { workerOutDir, esbuildBin, projectCwd, tmpDir } = opts;
+
+  // Fail loud on CJS require sites — the import rewrite below cannot fix a
+  // `require("yjs")`, and leaving one would crash at runtime instead.
+  const requireSites: string[] = [];
+  let hasBareImport = false;
+  walkServerJavaScriptFiles(workerOutDir, (filePath) => {
+    const source = fs.readFileSync(filePath, "utf-8");
+    if (/\brequire\(\s*["']yjs["']\s*\)/.test(source)) {
+      requireSites.push(filePath);
+    }
+    if (hasBareYjsRuntimeImport(source)) hasBareImport = true;
+  });
+  if (requireSites.length > 0) {
+    throw new Error(
+      `[deploy] Cloudflare worker output left CJS require("yjs") sites the Yjs lib rewrite cannot fix: ${requireSites.join(", ")}`,
+    );
+  }
+  if (!hasBareImport) return [];
+
+  const yjsEntry = resolveYjsEsmEntry(projectCwd);
+  if (!yjsEntry) {
+    throw new Error(
+      "[deploy] Cloudflare worker output imports yjs but the package could not be resolved for _libs bundling",
+    );
+  }
+
+  const libsDir = path.join(workerOutDir, "_libs");
+  fs.mkdirSync(libsDir, { recursive: true });
+  const entryFile = path.join(tmpDir, "_yjs-lib-entry.js");
+  // Forward slashes: backslashes in an import specifier are escape sequences.
+  fs.writeFileSync(
+    entryFile,
+    `export * from "${yjsEntry.split(path.sep).join("/")}";\n`,
+  );
+  const command = esbuildSpawnCommand(esbuildBin, [
+    entryFile,
+    "--bundle",
+    `--outfile=${path.join(libsDir, "yjs.mjs")}`,
+    "--format=esm",
+    "--platform=browser",
+    "--target=es2022",
+    "--minify",
+    "--conditions=workerd,worker,import",
+  ]);
+  execFileSync(command.file, command.args, {
+    stdio: "inherit",
+    cwd: projectCwd,
+  });
+
+  const rewritten = rewriteBareYjsImportsForServerlessOutput(workerOutDir);
+  console.log(
+    `[deploy] Bundled yjs into _libs/yjs.mjs (${rewritten.length} import site file(s) rewritten)`,
+  );
+  return rewritten;
 }
 
 export function assertSingleTemplateNetlifyBuildOutput(

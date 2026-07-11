@@ -1,4 +1,5 @@
 import fs from "fs";
+import { createRequire } from "module";
 import path from "path";
 import { pathToFileURL } from "url";
 
@@ -12,6 +13,7 @@ import {
 import {
   addImmutableAssetRouteRulesForClientBuild,
   assertSingleTemplateNetlifyBuildOutput,
+  bundleSharedYjsLibForWorkerOutput,
   CLOUDFLARE_WORKER_ESBUILD_EXTERNALS,
   CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES,
   CLOUDFLARE_WORKER_STUB_MODULES,
@@ -27,6 +29,7 @@ import {
   isDurableBackgroundDeployEnabled,
   NITRO_RUNTIME_IGNORE_PATTERNS,
   nitroNoExternalsForPreset,
+  resolveYjsEsmEntry,
   rewriteBareYjsImportsForServerlessOutput,
   runNitroBuildPipeline,
   sanitizeServerlessFunctionPackageManifest,
@@ -1808,6 +1811,104 @@ describe("durable-background Netlify function emit (single-template, flag-gated)
     prepareSingleTemplateNetlifyOutput(cwd);
 
     expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+});
+
+describe("Cloudflare worker Yjs lib extraction", () => {
+  const dirs: string[] = [];
+
+  afterEach(() => {
+    for (const d of dirs.splice(0)) {
+      fs.rmSync(d, { recursive: true, force: true });
+    }
+  });
+
+  function setupWorkerOut(): { workerOutDir: string; tmpDir: string } {
+    const cwd = fs.mkdtempSync(path.join(process.cwd(), ".tmp-yjs-lib-"));
+    dirs.push(cwd);
+    const workerOutDir = path.join(cwd, "dist", "_worker.js");
+    const tmpDir = path.join(cwd, ".deploy-tmp");
+    fs.mkdirSync(workerOutDir, { recursive: true });
+    fs.mkdirSync(tmpDir, { recursive: true });
+    return { workerOutDir, tmpDir };
+  }
+
+  function specEsbuildBin(): string {
+    const req = createRequire(path.join(process.cwd(), "package.json"));
+    return path.join(
+      path.dirname(req.resolve("esbuild/package.json")),
+      "bin",
+      "esbuild",
+    );
+  }
+
+  it("resolves Yjs's ESM entry through the core package when the project lacks a direct dep", () => {
+    const entry = resolveYjsEsmEntry(process.cwd());
+    expect(entry).toBeTruthy();
+    expect(fs.existsSync(entry!)).toBe(true);
+    expect(entry!.endsWith(".mjs")).toBe(true);
+  });
+
+  it("is a no-op when the worker output has no bare yjs imports", () => {
+    const { workerOutDir, tmpDir } = setupWorkerOut();
+    fs.writeFileSync(
+      path.join(workerOutDir, "index.js"),
+      'import x from "./chunks/a.js";export default x;\n',
+    );
+
+    expect(
+      bundleSharedYjsLibForWorkerOutput({
+        workerOutDir,
+        esbuildBin: specEsbuildBin(),
+        projectCwd: process.cwd(),
+        tmpDir,
+      }),
+    ).toEqual([]);
+    expect(fs.existsSync(path.join(workerOutDir, "_libs", "yjs.mjs"))).toBe(
+      false,
+    );
+  });
+
+  it("fails loud on CJS require('yjs') sites the rewrite cannot fix", () => {
+    const { workerOutDir, tmpDir } = setupWorkerOut();
+    fs.writeFileSync(
+      path.join(workerOutDir, "index.js"),
+      'const Y = require("yjs");module.exports = Y;\n',
+    );
+
+    expect(() =>
+      bundleSharedYjsLibForWorkerOutput({
+        workerOutDir,
+        esbuildBin: specEsbuildBin(),
+        projectCwd: process.cwd(),
+        tmpDir,
+      }),
+    ).toThrow(/require\("yjs"\) sites/);
+  });
+
+  it("bundles Yjs into _libs/yjs.mjs and rewrites the bare imports to it", () => {
+    const { workerOutDir, tmpDir } = setupWorkerOut();
+    const indexFile = path.join(workerOutDir, "index.js");
+    fs.writeFileSync(indexFile, 'import*as Y from"yjs";console.log(Y.Doc);\n');
+
+    const rewritten = bundleSharedYjsLibForWorkerOutput({
+      workerOutDir,
+      esbuildBin: specEsbuildBin(),
+      projectCwd: process.cwd(),
+      tmpDir,
+    });
+
+    expect(rewritten).toEqual([indexFile]);
+    const lib = fs.readFileSync(
+      path.join(workerOutDir, "_libs", "yjs.mjs"),
+      "utf-8",
+    );
+    // The real Yjs module (its double-import guard string proves it's the
+    // genuine package, not a stub).
+    expect(lib).toContain("Yjs was already imported");
+    const index = fs.readFileSync(indexFile, "utf-8");
+    expect(index).toContain('from"./_libs/yjs.mjs"');
+    expect(index).not.toMatch(/from\s*["']yjs["']/);
   });
 });
 

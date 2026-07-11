@@ -7,7 +7,10 @@ import { pathToFileURL } from "url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IMMUTABLE_ASSET_CACHE_CONTROL } from "./immutable-assets.js";
-import { runWorkspaceDeploy } from "./workspace-deploy.js";
+import {
+  dedupeCloudflareWorkspaceYjs,
+  runWorkspaceDeploy,
+} from "./workspace-deploy.js";
 
 let tmpDir: string;
 let previousAppBasePath: string | undefined;
@@ -187,7 +190,7 @@ describe("workspace deploy", () => {
   it("does not retry an app build that fails with an ordinary exit code", async () => {
     makeWorkspaceApp(tmpDir, "dispatch");
     let attempts = 0;
-    execFile.mockImplementation((((_cmd: string, args: unknown) => {
+    execFile.mockImplementation(((_cmd: string, args: unknown) => {
       if (Array.isArray(args) && args[0] === "--filter") {
         attempts++;
         const error = new Error("build failed") as Error & { status: number };
@@ -195,7 +198,7 @@ describe("workspace deploy", () => {
         throw error;
       }
       return Buffer.from("");
-    }) as unknown) as typeof execFileSync);
+    }) as unknown as typeof execFileSync);
 
     await expect(
       runWorkspaceDeploy({
@@ -1109,9 +1112,9 @@ describe("workspace deploy", () => {
       .filter((r) => r.endsWith("/*"))
       .map((r) => r.slice(0, -1));
     for (const rule of routes.include) {
-      expect(
-        splats.some((p) => rule !== `${p}*` && rule.startsWith(p)),
-      ).toBe(false);
+      expect(splats.some((p) => rule !== `${p}*` && rule.startsWith(p))).toBe(
+        false,
+      );
     }
 
     const worker = fs.readFileSync(
@@ -1184,6 +1187,77 @@ describe("workspace deploy", () => {
     expect(worker).not.toContain('pathname === "/_agent-native"');
     expect(worker).not.toContain('pathname === "/.well-known"');
     expect(worker).not.toContain('pathname === "/favicon.ico"');
+  });
+});
+
+// wrangler re-bundles every app worker into ONE final bundle behind the
+// dispatcher, so per-app Yjs copies all land in a single isolate — Yjs's own
+// guard logs "Yjs was already imported" once per extra copy and cross-copy
+// instanceof checks break. The assembly step must collapse every app's
+// _libs/yjs.mjs onto ONE hoisted shared module.
+describe("dedupeCloudflareWorkspaceYjs", () => {
+  let distDir: string;
+
+  beforeEach(() => {
+    distDir = fs.mkdtempSync(path.join(os.tmpdir(), "an-yjs-dedupe-"));
+  });
+
+  afterEach(() => {
+    fs.rmSync(distDir, { recursive: true, force: true });
+  });
+
+  function writeAppYjsLib(app: string, content: string): string {
+    const libPath = path.join(distDir, app, "_worker.js", "_libs", "yjs.mjs");
+    fs.mkdirSync(path.dirname(libPath), { recursive: true });
+    fs.writeFileSync(libPath, content);
+    return libPath;
+  }
+
+  it("hoists one shared copy and shims every app's lib to re-export it", () => {
+    const yjsSource = "export const Doc = class {};\n";
+    const dispatchLib = writeAppYjsLib("dispatch", yjsSource);
+    const planLib = writeAppYjsLib("plan", yjsSource);
+
+    const shimmed = dedupeCloudflareWorkspaceYjs(distDir, [
+      "dispatch",
+      "plan",
+      "no-collab-app",
+    ]);
+
+    expect(shimmed).toEqual([dispatchLib, planLib]);
+    expect(
+      fs.readFileSync(path.join(distDir, "_yjs", "yjs.mjs"), "utf-8"),
+    ).toBe(yjsSource);
+    // Both app libs become path-identical re-export shims so esbuild's
+    // module dedupe instantiates Yjs exactly once.
+    for (const lib of [dispatchLib, planLib]) {
+      expect(fs.readFileSync(lib, "utf-8")).toBe(
+        'export * from "../../../_yjs/yjs.mjs";\n',
+      );
+    }
+  });
+
+  it("keeps the shared module out of the public static asset set", () => {
+    writeAppYjsLib("dispatch", "export {};\n");
+
+    dedupeCloudflareWorkspaceYjs(distDir, ["dispatch"]);
+
+    const assetsIgnore = fs.readFileSync(
+      path.join(distDir, ".assetsignore"),
+      "utf-8",
+    );
+    expect(assetsIgnore).toContain("_yjs");
+    expect(assetsIgnore).toContain("_worker.js");
+  });
+
+  it("is a no-op when no app emitted a Yjs lib", () => {
+    fs.mkdirSync(path.join(distDir, "dispatch", "_worker.js"), {
+      recursive: true,
+    });
+
+    expect(dedupeCloudflareWorkspaceYjs(distDir, ["dispatch"])).toEqual([]);
+    expect(fs.existsSync(path.join(distDir, "_yjs"))).toBe(false);
+    expect(fs.existsSync(path.join(distDir, ".assetsignore"))).toBe(false);
   });
 });
 
