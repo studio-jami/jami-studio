@@ -4,15 +4,11 @@
  * Mounted under /_agent-native/collab/ by the collab plugin.
  */
 
-import {
-  defineEventHandler,
-  setResponseStatus,
-  getRouterParam,
-  getQuery,
-} from "h3";
+import { defineEventHandler, setResponseStatus, getQuery } from "h3";
 import type { H3Event } from "h3";
 
 import { readBody } from "../server/h3-helpers.js";
+import { getCollabDocIdParam } from "./param.js";
 import { uint8ArrayToBase64, base64ToUint8Array } from "./storage.js";
 import * as manager from "./ydoc-manager.js";
 import { searchAndReplace as doSearchAndReplace } from "./ydoc-manager.js";
@@ -44,7 +40,7 @@ function enforcePayloadLimit(event: H3Event, body: unknown): boolean {
  * Returns full Yjs document state as base64 for initial client load.
  */
 export const getCollabState = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
@@ -82,7 +78,7 @@ export const getCollabState = defineEventHandler(async (event: H3Event) => {
  * Body: { update: string (base64), requestSource?: string }
  */
 export const postCollabUpdate = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
@@ -117,7 +113,7 @@ export const postCollabUpdate = defineEventHandler(async (event: H3Event) => {
  * Body: { text: string, fieldName?: string, requestSource?: string }
  */
 export const postCollabText = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
@@ -158,7 +154,7 @@ export const postCollabText = defineEventHandler(async (event: H3Event) => {
  */
 export const postCollabSearchReplace = defineEventHandler(
   async (event: H3Event) => {
-    const docId = getRouterParam(event, "docId");
+    const docId = getCollabDocIdParam(event);
     if (!docId) {
       setResponseStatus(event, 400);
       return { error: "docId required" };

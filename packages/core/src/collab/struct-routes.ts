@@ -5,12 +5,13 @@
  * the text-based routes in routes.ts.
  */
 
-import { defineEventHandler, setResponseStatus, getRouterParam } from "h3";
+import { defineEventHandler, setResponseStatus } from "h3";
 import type { H3Event } from "h3";
 import { getQuery } from "h3";
 
 import { readBody } from "../server/h3-helpers.js";
 import type { PatchOp } from "./json-to-yjs.js";
+import { getCollabDocIdParam } from "./param.js";
 import * as manager from "./ydoc-manager.js";
 
 /** Default maximum payload size (2 MB). Overridden by plugin via event.context. */
@@ -39,7 +40,7 @@ function enforcePayloadLimit(event: H3Event, body: unknown): boolean {
  * Body: { json: any, fieldName?: string, type?: "map"|"array", requestSource?: string }
  */
 export const postCollabJson = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
@@ -80,7 +81,7 @@ export const postCollabJson = defineEventHandler(async (event: H3Event) => {
  * Body: { ops: PatchOp[], fieldName?: string, requestSource?: string }
  */
 export const postCollabPatch = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
@@ -119,7 +120,7 @@ export const postCollabPatch = defineEventHandler(async (event: H3Event) => {
  * Query param: fieldName (default: "data")
  */
 export const getCollabJson = defineEventHandler(async (event: H3Event) => {
-  const docId = getRouterParam(event, "docId");
+  const docId = getCollabDocIdParam(event);
   if (!docId) {
     setResponseStatus(event, 400);
     return { error: "docId required" };
