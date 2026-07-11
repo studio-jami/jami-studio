@@ -213,6 +213,37 @@ describe("generateWorkerEntry", () => {
     expect(unscoped).not.toContain("_scope-init.js");
   });
 
+  it("emits mounted custom-route matchers so non-/api h3 routes strip the mount prefix", () => {
+    const source = generateWorkerEntry(
+      [
+        { method: "post", route: "/track", absPath: "/x/track.post.ts" },
+        {
+          method: "get",
+          route: "/status/:slug",
+          absPath: "/x/status/[slug].get.ts",
+        },
+        {
+          method: "post",
+          route: "/api/analytics/track",
+          absPath: "/x/api/analytics/track.post.ts",
+        },
+      ] as never,
+      [],
+      [],
+      [],
+      null,
+      [],
+      "/analytics",
+      { appScopeId: "analytics" },
+    );
+    // Custom routes outside /api get matchers…
+    expect(source).toContain('["POST", new RegExp("^/track$")]');
+    expect(source).toContain('["GET", new RegExp("^/status/[^/]+$")]');
+    // …while /api routes rely on the existing isApiPath strip.
+    expect(source).not.toContain("api/analytics/track$");
+    expect(source).toContain("matchesMountedCustomRoute(request.method, strippedPathname)");
+  });
+
   it("generateScopeInitSource calls setGlobalScopeId with the app id via the lean subpath", () => {
     const source = generateScopeInitSource("clips");
     expect(source).toContain(

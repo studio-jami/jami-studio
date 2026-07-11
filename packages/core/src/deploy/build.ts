@@ -882,6 +882,29 @@ export function generateWorkerEntry(
   const routeImports: string[] = [];
   const routeRegistrations: string[] = [];
 
+  // Custom h3 routes outside /api and /_agent-native need the mount prefix
+  // stripped on mounted deployments (exact route-table matches only). Build
+  // regex matchers from the discovered route patterns at generation time.
+  const mountedCustomRouteMatchers = routes
+    .filter(
+      (r) =>
+        !r.route.startsWith("/api/") &&
+        r.route !== "/api" &&
+        !r.route.startsWith("/_agent-native"),
+    )
+    .map((r) => {
+      const pattern = r.route
+        .split("/")
+        .map((segment) => {
+          if (segment === "**" || segment.startsWith("**:")) return ".*";
+          if (segment.startsWith(":")) return "[^/]+";
+          return segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        })
+        .join("/");
+      return `[${JSON.stringify(r.method.toUpperCase())}, new RegExp(${JSON.stringify(`^${pattern}$`)})]`;
+    });
+  const mountedCustomRouteMatchersSource = `[${mountedCustomRouteMatchers.join(", ")}]`;
+
   for (let i = 0; i < routes.length; i++) {
     const r = routes[i];
     const varName = `route_${i}`;
@@ -1058,6 +1081,22 @@ function isFrameworkPath(pathname) {
   );
 }
 
+// Registered custom h3 routes OUTSIDE /api and /_agent-native (e.g. an
+// analytics /track ingest route). On a mounted deployment these arrive as
+// /<app>/track; the h3 app registered them bare, so the mount prefix must be
+// stripped for them too — but ONLY for exact route-table matches, so page
+// paths keep their full pathname for the React Router shell fallback.
+const MOUNTED_CUSTOM_ROUTE_MATCHERS = ${mountedCustomRouteMatchersSource};
+
+function matchesMountedCustomRoute(method, pathname) {
+  const m = method === "HEAD" ? "GET" : method;
+  for (const [routeMethod, pattern] of MOUNTED_CUSTOM_ROUTE_MATCHERS) {
+    if (routeMethod !== m) continue;
+    if (pattern.test(pathname)) return true;
+  }
+  return false;
+}
+
 function requestWithMountedApiPrefixStripped(request) {
   const basePath = getAppBasePath();
   if (!basePath) return request;
@@ -1066,7 +1105,11 @@ function requestWithMountedApiPrefixStripped(request) {
   if (strippedPathname === url.pathname) {
     return request;
   }
-  if (!isApiPath(strippedPathname) && !isFrameworkPath(strippedPathname)) {
+  if (
+    !isApiPath(strippedPathname) &&
+    !isFrameworkPath(strippedPathname) &&
+    !matchesMountedCustomRoute(request.method, strippedPathname)
+  ) {
     return request;
   }
   url.pathname = strippedPathname;
