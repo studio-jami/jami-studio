@@ -547,7 +547,10 @@ export default function Root() {
   const [queryClient] = useState(() => createAgentNativeQueryClient());
   const [cmdkOpen, setCmdkOpen] = useState(false);
   const location = useLocation();
-  const loaderData = useLoaderData<typeof loader>();
+  // Static-shell serverless deployments never run the root loader (the
+  // client manifest strips hasLoader), so loader data can be null at
+  // hydration — fall back exactly like Layout does.
+  const loaderData = useLoaderData<typeof loader>() ?? DEFAULT_LOADER_DATA;
   useCommandMenuShortcut(
     useCallback(() => setCmdkOpen(true), []),
     {
