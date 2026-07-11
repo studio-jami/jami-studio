@@ -1201,13 +1201,27 @@ async function fetchStaticAppShell(request, env) {
   if (!env?.ASSETS || !isStaticAppShellRequest(request)) return null;
   const basePath = getAppBasePath();
   const p = stripAppBasePath(new URL(request.url).pathname);
-  const shellRequest = requestWithPathname(
-    requestWithMethod(request, "GET"),
-    "/index.html",
-  );
+  // Workspace deployments serve each app's static files under its base path
+  // (/dispatch/index.html on the unified origin) — an unprefixed
+  // "/index.html" 404s against the shared ASSETS binding and authed deep
+  // links (e.g. /dispatch/overview) leaked h3's JSON 404 instead of the SPA
+  // shell. Try the base-path-prefixed shell first, fall back to the root
+  // shell for single-app deployments.
   let response;
   try {
-    response = await env.ASSETS.fetch(shellRequest);
+    if (basePath) {
+      response = await env.ASSETS.fetch(
+        requestWithPathname(
+          requestWithMethod(request, "GET"),
+          basePath + "/index.html",
+        ),
+      );
+    }
+    if (!response || response.status === 404) {
+      response = await env.ASSETS.fetch(
+        requestWithPathname(requestWithMethod(request, "GET"), "/index.html"),
+      );
+    }
   } catch {
     return null;
   }

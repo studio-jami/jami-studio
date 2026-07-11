@@ -518,6 +518,12 @@ export default (event) =>
   });
 
   it("serves a static app shell without bundling React Router SSR", async () => {
+    // Earlier tests in this file fetch with `{ APP_BASE_PATH: "/docs" }`,
+    // which the generated entry copies into process.env permanently (mirrors
+    // per-isolate env on workerd). Reset so this single-app-shaped test
+    // isn't polluted by workspace base paths.
+    delete process.env.APP_BASE_PATH;
+    delete process.env.VITE_APP_BASE_PATH;
     const source = generateWorkerEntry([], [], [], [], null, [], "", {
       includeReactRouterSsr: false,
     });
