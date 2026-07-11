@@ -1580,7 +1580,10 @@ export default function RecordRoute() {
               spaceIds: spaceIdFromUrl ? [spaceIdFromUrl] : undefined,
               folderId: folderIdFromUrl ?? undefined,
               mimeType: uploadMimeType,
-              requestStreaming: false,
+              // Streaming lets deployments without SQL chunk scratch (remote
+              // DB + S3-compatible storage) relay chunks straight to the
+              // provider. The server decides; buffered stays the fallback.
+              requestStreaming: true,
             }),
           },
         );
@@ -1596,10 +1599,18 @@ export default function RecordRoute() {
           );
         }
         const created = (await res.json()) as {
-          result?: { id: string; uploadChunkUrl: string; abortUrl?: string };
+          result?: {
+            id: string;
+            uploadChunkUrl: string;
+            abortUrl?: string;
+            uploadMode?: UploadMode;
+            uploadChunkBytes?: number;
+          };
           id?: string;
           uploadChunkUrl?: string;
           abortUrl?: string;
+          uploadMode?: UploadMode;
+          uploadChunkBytes?: number;
         };
         const info =
           created.result ??
@@ -1607,6 +1618,8 @@ export default function RecordRoute() {
             id: string;
             uploadChunkUrl: string;
             abortUrl?: string;
+            uploadMode?: UploadMode;
+            uploadChunkBytes?: number;
           });
         if (!info?.id) {
           throw new Error("create-recording did not return an id");
@@ -1616,14 +1629,22 @@ export default function RecordRoute() {
         if (isStale()) throw makeAbortError("Upload cancelled");
         const uploadBase = `${appBasePath()}${info.uploadChunkUrl}`;
 
-        const totalChunks = Math.max(
-          1,
-          Math.ceil(uploadBlob.size / UPLOAD_CHUNK_BYTES),
-        );
+        // Streaming mode relays each chunk to the provider as one part — the
+        // provider dictates the part size (S3 multipart: uniform >=5 MiB) and
+        // parts must arrive in order, so the parallel pool drops to 1.
+        const streamingUpload = info.uploadMode === "streaming";
+        const chunkBytes =
+          streamingUpload &&
+          typeof info.uploadChunkBytes === "number" &&
+          info.uploadChunkBytes > 0
+            ? info.uploadChunkBytes
+            : UPLOAD_CHUNK_BYTES;
+
+        const totalChunks = Math.max(1, Math.ceil(uploadBlob.size / chunkBytes));
 
         const chunkDescs = Array.from({ length: totalChunks }, (_, i) => {
-          const start = i * UPLOAD_CHUNK_BYTES;
-          const end = Math.min(start + UPLOAD_CHUNK_BYTES, uploadBlob.size);
+          const start = i * chunkBytes;
+          const end = Math.min(start + chunkBytes, uploadBlob.size);
           const isFinal = i === totalChunks - 1;
           return {
             index: i,
@@ -1707,7 +1728,12 @@ export default function RecordRoute() {
 
         await Promise.all(
           Array.from(
-            { length: Math.min(UPLOAD_PARALLELISM, parallelChunks.length) },
+            {
+              length: Math.min(
+                streamingUpload ? 1 : UPLOAD_PARALLELISM,
+                parallelChunks.length,
+              ),
+            },
             worker,
           ),
         );

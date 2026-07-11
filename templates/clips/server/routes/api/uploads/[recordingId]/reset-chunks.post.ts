@@ -28,6 +28,7 @@ import {
   writeAppState,
   deleteAppStateByPrefix,
 } from "@agent-native/core/application-state";
+import { getActiveFileUploadProviderForRequest } from "@agent-native/core/file-upload";
 import { runWithRequestContext } from "@agent-native/core/server";
 import { MAX_UPLOAD_BYTES as MAX_RECORDING_UPLOAD_BYTES } from "@shared/upload-limits.js";
 import { and, eq } from "drizzle-orm";
@@ -44,7 +45,12 @@ import {
   getEventOwnerContext,
   ownerEmailMatches,
 } from "../../../../lib/recordings.js";
-import { deleteResumableSession } from "../../../../lib/resumable-session.js";
+import {
+  deleteResumableSession,
+  setResumableSession,
+} from "../../../../lib/resumable-session.js";
+import { shouldEnableStreamingUpload } from "../../../../lib/streaming-upload-mode.js";
+import { maxChunkUploadBytes } from "../../../../lib/upload-chunk-limits.js";
 
 interface CompressionMeta {
   originalBytes?: number;
@@ -77,6 +83,7 @@ export default defineEventHandler(async (event: H3Event) => {
   const { userEmail: ownerEmail, orgId } = await getEventOwnerContext(event);
   const body = (await readBody(event).catch(() => null)) as {
     compression?: CompressionMeta | null;
+    mimeType?: string;
   } | null;
 
   // Sanitize compression metadata. The recorder is the only client we trust
@@ -116,6 +123,45 @@ export default defineEventHandler(async (event: H3Event) => {
     // Clear any stale resumable session so a buffered retry does not
     // accidentally route through handleResumableChunk with stale offsets.
     await deleteResumableSession(recordingId).catch(() => {});
+
+    // Re-initialize a fresh streaming session for the re-upload when the
+    // deployment streams to the provider (production / remote DB, where SQL
+    // chunk scratch is unavailable). Without this, the post-compression
+    // re-upload would fall into the buffered path and 409.
+    let uploadMode: "streaming" | "buffered" = "buffered";
+    let uploadChunkBytes: number | undefined;
+    const reuploadMimeType =
+      compression?.outputMimeType || body?.mimeType || "video/webm";
+    const uploadProvider = await getActiveFileUploadProviderForRequest();
+    const providerChunkBytes = uploadProvider?.resumable?.preferredChunkBytes;
+    if (
+      uploadProvider?.resumable &&
+      shouldEnableStreamingUpload({ mimeType: reuploadMimeType }) &&
+      (!providerChunkBytes || providerChunkBytes <= maxChunkUploadBytes())
+    ) {
+      try {
+        const ext = /mp4|quicktime/i.test(reuploadMimeType) ? "mp4" : "webm";
+        const session = await uploadProvider.resumable.startSession(
+          `${recordingId}.${ext}`,
+          reuploadMimeType.split(";")[0]?.trim() || "video/webm",
+          MAX_RECORDING_UPLOAD_BYTES,
+        );
+        await setResumableSession(recordingId, {
+          providerId: uploadProvider.id,
+          sessionId: session.sessionId,
+          meta: { ...session.meta, stableUrl: true, recordAsset: false },
+          bytesUploaded: 0,
+          lastCommittedIndex: -1,
+        });
+        uploadMode = "streaming";
+        uploadChunkBytes = providerChunkBytes;
+      } catch (err) {
+        console.warn(
+          `[reset-chunks] resumable session re-init failed, falling back to buffered:`,
+          err instanceof Error ? err.message : String(err),
+        );
+      }
+    }
 
     // Reset the per-recording upload progress so the UI poller sees the
     // re-upload restart from 0 and doesn't briefly show "100% then
@@ -158,6 +204,8 @@ export default defineEventHandler(async (event: H3Event) => {
       recordingId,
       chunksCleared: cleared,
       compressionRecorded: !!compression,
+      uploadMode,
+      ...(uploadChunkBytes ? { uploadChunkBytes } : {}),
     };
   });
 });

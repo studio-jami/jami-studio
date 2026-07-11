@@ -57,13 +57,14 @@ import {
   shouldRejectVideoUploadWithoutStorage,
   STORAGE_SETUP_REQUIRED_REASON,
 } from "../../../../lib/video-storage.js";
+import { maxChunkUploadBytes } from "../../../../lib/upload-chunk-limits.js";
 
 const RECORDING_TOO_LARGE_REASON = `Recording exceeds the ${Math.round(MAX_RECORDING_UPLOAD_BYTES / (1024 * 1024))} MB size limit. Please record a shorter clip.`;
 
-// Netlify functions have a 6 MB buffered request cap, but binary requests
-// are base64 encoded by the gateway and effectively cap out around 4.5 MB.
-// Keep our own cap lower so dev/local failures match production.
-const MAX_CHUNK_BYTES = 4 * 1024 * 1024;
+// Platform-aware: Netlify's buffered-request gateway caps chunks at 4 MiB;
+// other runtimes allow the 5 MiB parts S3-compatible multipart needs. See
+// server/lib/upload-chunk-limits.ts.
+const MAX_CHUNK_BYTES = maxChunkUploadBytes();
 
 const ALLOWED_RECORDING_MIME_TYPES = new Set([
   "video/webm",
@@ -760,6 +761,16 @@ async function handleResumableChunk(
         };
       }
     } else {
+      // Enforce the recording size ceiling server-side — the provider session
+      // was opened with this budget but S3-style multipart uploads do not
+      // enforce it themselves.
+      if (
+        session.bytesUploaded + bytes.byteLength >
+        MAX_RECORDING_UPLOAD_BYTES
+      ) {
+        setResponseStatus(event, 413);
+        return { ok: false, error: RECORDING_TOO_LARGE_REASON };
+      }
       // Forward the data chunk to the provider and advance offsets only after
       // the provider confirms receipt (308 Resume Incomplete for non-final, 2xx for final).
       const start = session.bytesUploaded;

@@ -27,6 +27,7 @@ import {
   generateWorkerEntry,
   generateScopeInitSource,
   workspaceAppScopeIdFromBasePath,
+  workspaceEnvDefaultsFromBuildEnv,
   stripServerDataFlagsFromClientManifest,
   getNodeBuiltinNames,
   isDurableBackgroundDeployEnabled,
@@ -217,6 +218,55 @@ describe("generateWorkerEntry", () => {
       'import { setGlobalScopeId } from "@agent-native/core/global-scope";',
     );
     expect(source).toContain('setGlobalScopeId("clips");');
+    // No env-defaults block when none are provided.
+    expect(source).not.toContain("Baked per-app workspace env defaults");
+  });
+
+  it("generateScopeInitSource bakes workspace env defaults without overriding runtime env", () => {
+    const source = generateScopeInitSource("calendar", {
+      AGENT_NATIVE_WORKSPACE_APPS_JSON: '[{"id":"calendar","path":"/calendar"}]',
+      AGENT_NATIVE_WORKSPACE_APP_ID: "calendar",
+      EMPTY_IGNORED: "",
+    });
+    expect(source).toContain("Baked per-app workspace env defaults");
+    expect(source).toContain("AGENT_NATIVE_WORKSPACE_APPS_JSON");
+    expect(source).toContain('\\"id\\":\\"calendar\\"');
+    // Defaults semantics: only assign when the key is absent at runtime.
+    expect(source).toContain("if (processRef.env[key] === undefined)");
+    // Empty values must not be baked.
+    expect(source).not.toContain("EMPTY_IGNORED");
+    // setGlobalScopeId still runs first.
+    expect(source.indexOf("setGlobalScopeId")).toBeLessThan(
+      source.indexOf("Baked per-app workspace env defaults"),
+    );
+  });
+
+  it("workspaceEnvDefaultsFromBuildEnv snapshots workspace keys only for workspace builds", () => {
+    const workspaceEnv = {
+      AGENT_NATIVE_WORKSPACE: "1",
+      AGENT_NATIVE_WORKSPACE_APP_ID: "calendar",
+      APP_BASE_PATH: "/calendar",
+      AGENT_NATIVE_WORKSPACE_APPS_JSON: '[{"id":"calendar"}]',
+      VITE_AGENT_NATIVE_WORKSPACE_APPS_JSON: '[{"id":"calendar"}]',
+      UNRELATED_KEY: "nope",
+      DATABASE_URL: "postgres://secret",
+    } as NodeJS.ProcessEnv;
+    const defaults = workspaceEnvDefaultsFromBuildEnv(workspaceEnv);
+    expect(defaults.AGENT_NATIVE_WORKSPACE).toBe("1");
+    expect(defaults.AGENT_NATIVE_WORKSPACE_APP_ID).toBe("calendar");
+    expect(defaults.AGENT_NATIVE_WORKSPACE_APPS_JSON).toBe(
+      '[{"id":"calendar"}]',
+    );
+    // Never bakes non-workspace keys (no secrets in the artifact).
+    expect(defaults).not.toHaveProperty("UNRELATED_KEY");
+    expect(defaults).not.toHaveProperty("DATABASE_URL");
+
+    // Standalone builds bake nothing.
+    expect(
+      workspaceEnvDefaultsFromBuildEnv({
+        APP_BASE_PATH: "/calendar",
+      } as NodeJS.ProcessEnv),
+    ).toEqual({});
   });
 
   it("workspaceAppScopeIdFromBasePath derives the app id from mounted base paths", () => {

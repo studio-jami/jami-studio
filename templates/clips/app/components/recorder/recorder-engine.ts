@@ -549,6 +549,12 @@ export class RecorderEngine {
   private uploadAbort: AbortController | null = null;
   private uploadMode: UploadMode = "buffered";
   /**
+   * Server/provider-negotiated chunk size (from create-recording's
+   * `uploadChunkBytes`, e.g. 5 MiB for S3 multipart parts). Null = use the
+   * GCS-aligned STREAM_CHUNK_BYTES default.
+   */
+  private streamChunkBytes: number | null = null;
+  /**
    * Streaming-path buffer. MediaRecorder blobs accumulate here until at least
    * STREAM_CHUNK_BYTES is available, then a 256 KiB-aligned slice is PUT to API
    * as a non-final chunk. The unaligned remainder is held and uploaded as the
@@ -1124,11 +1130,17 @@ export class RecorderEngine {
     uploadUrl: string;
     abortUrl: string;
     uploadMode?: UploadMode;
+    uploadChunkBytes?: number;
   }): void {
     this.opts.recordingId = target.recordingId;
     this.opts.uploadUrl = target.uploadUrl;
     this.opts.abortUrl = target.abortUrl;
     this.opts.uploadMode = target.uploadMode ?? "buffered";
+    this.streamChunkBytes =
+      typeof target.uploadChunkBytes === "number" &&
+      target.uploadChunkBytes > 0
+        ? target.uploadChunkBytes
+        : null;
   }
 
   // -------------------------------------------------------------------------
@@ -1550,6 +1562,7 @@ export class RecorderEngine {
   private async resetUploadedChunks(
     compression: CompressionUploadMeta | null,
     signal?: AbortSignal,
+    mimeType?: string,
   ): Promise<void> {
     const resetUrl = `${appBasePath()}/api/uploads/${
       this.opts.recordingId
@@ -1559,7 +1572,10 @@ export class RecorderEngine {
       resetRes = await fetch(resetUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ compression }),
+        body: JSON.stringify({
+          compression,
+          mimeType: mimeType ?? this.mimeType ?? undefined,
+        }),
         signal,
       });
     } catch (err) {
@@ -1582,6 +1598,26 @@ export class RecorderEngine {
           resetRes.status
         }). ${text || resetRes.statusText}`,
       );
+    }
+    // The server may have re-initialized a fresh provider streaming session
+    // for the re-upload (remote-DB deployments cannot buffer chunks in SQL).
+    // Honor its negotiated mode/chunk size for the slicing pass that follows.
+    try {
+      const resetInfo = (await resetRes.json()) as {
+        uploadMode?: UploadMode;
+        uploadChunkBytes?: number;
+      } | null;
+      if (resetInfo?.uploadMode) {
+        this.opts.uploadMode = resetInfo.uploadMode;
+        this.uploadMode = resetInfo.uploadMode;
+        this.streamChunkBytes =
+          typeof resetInfo.uploadChunkBytes === "number" &&
+          resetInfo.uploadChunkBytes > 0
+            ? resetInfo.uploadChunkBytes
+            : null;
+      }
+    } catch {
+      // Older servers return no JSON body — keep the current mode.
     }
   }
 
@@ -1670,7 +1706,11 @@ export class RecorderEngine {
             outputMimeType: compression.outputMimeType,
           }
         : null;
-      await this.resetUploadedChunks(compressionPayload, abort.signal);
+      await this.resetUploadedChunks(
+        compressionPayload,
+        abort.signal,
+        compression.outputMimeType,
+      );
 
       if (compressionError) {
         // Compression itself failed — we still hold the original assembled
@@ -1872,22 +1912,21 @@ export class RecorderEngine {
   }
 
   /**
-   * Drain the streaming buffer in 256 KiB-aligned chunks.
+   * Drain the streaming buffer in aligned chunks.
    * GCS rejects non-final resumable chunks that are not a multiple of 256 KiB,
-   * so we slice on STREAM_CHUNK_BYTES boundaries and carry the remainder. The
-   * leftover is uploaded as the final chunk on stop().
+   * so the default slices on STREAM_CHUNK_BYTES boundaries and carries the
+   * remainder; providers with their own part-size rules (S3 multipart needs
+   * uniform >=5 MiB parts) negotiate `streamChunkBytes` via create-recording.
+   * The leftover is uploaded as the final chunk on stop().
    */
   private flushAlignedStreamChunks(): void {
-    while (this.pendingStreamBytes >= STREAM_CHUNK_BYTES) {
+    const chunkBytes = this.streamChunkBytes ?? STREAM_CHUNK_BYTES;
+    while (this.pendingStreamBytes >= chunkBytes) {
       const combined = new Blob(this.pendingStreamBlobs, {
         type: this.mimeType,
       });
-      const head = combined.slice(0, STREAM_CHUNK_BYTES, this.mimeType);
-      const tail = combined.slice(
-        STREAM_CHUNK_BYTES,
-        combined.size,
-        this.mimeType,
-      );
+      const head = combined.slice(0, chunkBytes, this.mimeType);
+      const tail = combined.slice(chunkBytes, combined.size, this.mimeType);
       this.pendingStreamBlobs = tail.size > 0 ? [tail] : [];
       this.pendingStreamBytes = tail.size;
       const index = this.chunkIndex++;
@@ -1945,8 +1984,15 @@ export class RecorderEngine {
 
     // Keep binary uploads comfortably under Netlify's effective function
     // payload limit. This mirrors the local-file upload path in record.tsx.
-    const UPLOAD_SLICE_BYTES = 3 * 1024 * 1024;
-    const PARALLELISM = 4;
+    // Streaming mode uses the provider-negotiated part size instead (S3
+    // multipart needs uniform >=5 MiB parts) and MUST upload sequentially —
+    // the resumable chunk route advances provider offsets in index order.
+    const streaming = (this.opts.uploadMode ?? this.uploadMode) === "streaming";
+    const UPLOAD_SLICE_BYTES =
+      streaming && this.streamChunkBytes
+        ? this.streamChunkBytes
+        : 3 * 1024 * 1024;
+    const PARALLELISM = streaming ? 1 : 4;
     const totalSlices = Math.max(1, Math.ceil(blob.size / UPLOAD_SLICE_BYTES));
 
     const slices = Array.from({ length: totalSlices }, (_, i) => {

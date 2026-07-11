@@ -24,6 +24,7 @@ import {
 } from "../server/lib/recordings.js";
 import { setResumableSession } from "../server/lib/resumable-session.js";
 import { shouldEnableStreamingUpload } from "../server/lib/streaming-upload-mode.js";
+import { maxChunkUploadBytes } from "../server/lib/upload-chunk-limits.js";
 import { createRecordingSchema } from "./lib/create-recording-schema.js";
 import { DEFAULT_RECORDING_TITLE } from "./lib/title-source.js";
 
@@ -86,14 +87,24 @@ export default defineAction({
     // to the SQL chunk path when no provider supports resumable uploads or the
     // init fails.
     let uploadMode: UploadMode = "buffered";
+    let uploadChunkBytes: number | undefined;
     const uploadProvider = await getActiveFileUploadProviderForRequest();
+    const providerChunkBytes = uploadProvider?.resumable?.preferredChunkBytes;
+    const chunkBytesViable =
+      !providerChunkBytes || providerChunkBytes <= maxChunkUploadBytes();
+    if (providerChunkBytes && !chunkBytesViable) {
+      console.warn(
+        `[create-recording] provider ${uploadProvider?.id} needs ${providerChunkBytes}-byte chunks but this platform caps chunk POSTs at ${maxChunkUploadBytes()} bytes — falling back to buffered`,
+      );
+    }
     if (
       args.requestStreaming === true &&
       shouldEnableStreamingUpload({
         client: args.streamingUploadClient,
         mimeType: args.mimeType,
       }) &&
-      uploadProvider?.resumable
+      uploadProvider?.resumable &&
+      chunkBytesViable
     ) {
       try {
         const recordingMimeType =
@@ -120,6 +131,7 @@ export default defineAction({
           lastCommittedIndex: -1,
         });
         uploadMode = "streaming";
+        uploadChunkBytes = providerChunkBytes;
         console.log(
           `[create-recording] resumable session ready for ${id}: provider=${uploadProvider.id}`,
         );
@@ -140,6 +152,9 @@ export default defineAction({
       // Frontend substitutes {index}/{total}/{isFinal}
       uploadChunkUrlTemplate: `/api/uploads/${id}/chunk?index={index}&total={total}&isFinal={isFinal}`,
       uploadMode,
+      // Provider-preferred chunk size for streaming mode (e.g. S3 multipart
+      // needs uniform >=5 MiB parts). Clients slice on this boundary.
+      ...(uploadChunkBytes ? { uploadChunkBytes } : {}),
     };
   },
 });

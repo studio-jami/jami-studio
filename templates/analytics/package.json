@@ -3,6 +3,11 @@
   "displayName": "Agent-Native Analytics",
   "private": true,
   "type": "module",
+  "agent-native": {
+    "workspaceApp": {
+      "publicPaths": ["/track", "/api/analytics/track", "/api/analytics/replay"]
+    }
+  },
   "scripts": {
     "dev": "DATABASE_URL=${ANALYTICS_DATABASE_URL:-file:./data/app.db} agent-native dev",
     "build": "agent-native build && tsx scripts/emit-netlify-dashboard-report-cron.ts",

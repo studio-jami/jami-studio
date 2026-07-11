@@ -67,6 +67,15 @@ export interface FileUploadProvider {
    * during recording instead of assembling the full blob after stop().
    */
   resumable?: {
+    /**
+     * Provider-preferred chunk size in bytes. Servers surface this to upload
+     * clients so each relayed chunk maps to one provider part. S3-compatible
+     * multipart uploads require every part except the last to be >= 5 MiB
+     * (and R2 additionally requires uniform part sizes), so an S3-backed
+     * provider sets 5 MiB here while GCS-style providers can omit it and
+     * accept the client default.
+     */
+    preferredChunkBytes?: number;
     startSession(
       filename: string,
       mimeType: string,
