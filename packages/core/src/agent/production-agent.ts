@@ -1,4 +1,4 @@
-import Ajv, { type ValidateFunction } from "ajv";
+import Ajv from "ajv";
 import {
   defineEventHandler,
   getHeader,
@@ -2650,12 +2650,74 @@ const rawToolInputAjv = new Ajv({
   removeAdditional: false,
 });
 
-const rawToolInputValidatorCache = new WeakMap<object, ValidateFunction>();
+type RawToolInputValidator = (input: unknown) => string | null;
 
-function getRawToolInputValidator(schema: RawJsonSchema): ValidateFunction {
+const rawToolInputValidatorCache = new WeakMap<object, RawToolInputValidator>();
+
+function ajvRawToolInputValidator(
+  schema: RawJsonSchema,
+): RawToolInputValidator {
+  const validate = rawToolInputAjv.compile(schema);
+  return (input) =>
+    validate(input)
+      ? null
+      : rawToolInputAjv.errorsText(validate.errors, {
+          separator: "; ",
+          dataVar: "input",
+        });
+}
+
+/**
+ * Non-codegen structural fallback for runtimes that forbid dynamic code
+ * generation. Ajv compiles validators via `new Function`, which workerd
+ * (Cloudflare Workers) rejects with `EvalError: Code generation from strings
+ * disallowed` — previously EVERY raw-JSON-schema tool call was refused with
+ * "tool schema is invalid" (the slides agent, dispatch's tool-search, and
+ * any action without a live zod schema were unusable on the unified worker).
+ * This fallback only enforces object-ness and `required` keys; anything
+ * subtler is left to the action's own authoritative parameter validation at
+ * execution time. Deliberately permissive: Ajv runs with `coerceTypes`, so
+ * per-property type checks here would reject inputs Ajv would have coerced.
+ */
+export function validateRawToolInputWithoutCodegen(
+  schema: RawJsonSchema,
+  input: unknown,
+): string | null {
+  if (!schema || typeof schema !== "object") return null;
+  const schemaRecord = schema as Record<string, unknown>;
+  if (schemaRecord.type !== "object") return null;
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return "input must be object";
+  }
+  const errors: string[] = [];
+  const required = schemaRecord.required;
+  if (Array.isArray(required)) {
+    for (const key of required) {
+      if (
+        typeof key === "string" &&
+        (input as Record<string, unknown>)[key] === undefined
+      ) {
+        errors.push(`input must have required property '${key}'`);
+      }
+    }
+  }
+  return errors.length > 0 ? errors.join("; ") : null;
+}
+
+function getRawToolInputValidator(
+  schema: RawJsonSchema,
+): RawToolInputValidator {
   const cached = rawToolInputValidatorCache.get(schema);
   if (cached) return cached;
-  const validator = rawToolInputAjv.compile(schema);
+  let validator: RawToolInputValidator;
+  try {
+    validator = ajvRawToolInputValidator(schema);
+  } catch {
+    // Ajv could not compile (codegen-restricted runtime or a schema Ajv
+    // rejects). Degrade to the structural fallback instead of refusing the
+    // tool call — the action still validates its parameters when it runs.
+    validator = (input) => validateRawToolInputWithoutCodegen(schema, input);
+  }
   rawToolInputValidatorCache.set(schema, validator);
   return validator;
 }
@@ -2675,17 +2737,13 @@ function validateRawToolInput(
   if (!shouldValidateRawToolParameters(entry)) return null;
   const parameters = entry.tool.parameters;
   if (!parameters) return null;
-  let validator: ValidateFunction;
+  let validator: RawToolInputValidator;
   try {
     validator = getRawToolInputValidator(parameters);
   } catch (err) {
     return `tool schema is invalid: ${sanitizeToolErrorValue(err)}`;
   }
-  if (validator(input === undefined ? {} : input)) return null;
-  return rawToolInputAjv.errorsText(validator.errors, {
-    separator: "; ",
-    dataVar: "input",
-  });
+  return validator(input === undefined ? {} : input);
 }
 
 /**
