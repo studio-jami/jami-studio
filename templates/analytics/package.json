@@ -5,7 +5,11 @@
   "type": "module",
   "agent-native": {
     "workspaceApp": {
-      "publicPaths": ["/track", "/api/analytics/track", "/api/analytics/replay"]
+      "publicPaths": [
+        "/track",
+        "/api/analytics/track",
+        "/api/analytics/replay"
+      ]
     }
   },
   "scripts": {
