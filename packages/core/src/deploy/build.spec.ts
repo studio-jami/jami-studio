@@ -826,6 +826,16 @@ describe("CLOUDFLARE_WORKER_ESBUILD_EXTERNALS", () => {
     );
   });
 
+  it("bundles the real @anthropic-ai/sdk (never a stub) — the BYOK agent engine constructs it at runtime", () => {
+    // The SDK is pure fetch-based JS that runs on workerd. An empty-class
+    // stub made every agent chat run on the unified Cloudflare runtime die
+    // with "Cannot read properties of undefined (reading 'stream')".
+    expect(CLOUDFLARE_WORKER_STUB_MODULES["@anthropic-ai/sdk"]).toBeUndefined();
+    expect(CLOUDFLARE_WORKER_ESBUILD_EXTERNALS).not.toContain(
+      "@anthropic-ai/sdk",
+    );
+  });
+
   it("stubs node builtins that Cloudflare Pages rejects at upload time", () => {
     expect(CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES.child_process).toContain(
       "execFileSync",

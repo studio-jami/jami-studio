@@ -134,7 +134,12 @@ export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
   chokidar: "export default {}; export const watch = () => ({ close() {} });\n",
   fsevents: "export default {}; export const watch = () => ({ close() {} });\n",
   dotenv: "export default {}; export const config = () => ({ parsed: {} });\n",
-  "@anthropic-ai/sdk": "export default class Anthropic {}\n",
+  // NOTE: @anthropic-ai/sdk is deliberately NOT stubbed. It is pure
+  // fetch-based JS that runs fine on workerd, and the BYOK Anthropic engine
+  // (agent chat) constructs it at runtime — an empty-class stub makes every
+  // agent run die with "Cannot read properties of undefined (reading
+  // 'stream')". Only its tokenizer (WASM, unbundleable) stays stubbed; the
+  // token-count call sites degrade to char/4 estimates.
   "@anthropic-ai/tokenizer":
     "export default {}; export const countTokens = undefined;\n",
   "@sentry/node": [
