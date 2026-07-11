@@ -6,6 +6,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   discoverActionFiles,
+  discoverApiRoutes,
   parseActionHttpConfig,
   parseRouteFile,
 } from "./route-discovery.js";
@@ -103,6 +104,38 @@ describe("parseRouteFile", () => {
       method: "get",
       route: "/api/:org/:repo/issues",
     });
+  });
+});
+
+describe("discoverApiRoutes", () => {
+  it("includes top-level route files but not page catch-alls or non-api dirs", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "an-routes-"));
+    try {
+      const routesDir = path.join(dir, "server/routes");
+      fs.mkdirSync(path.join(routesDir, "api"), { recursive: true });
+      fs.mkdirSync(path.join(routesDir, "webhooks"), { recursive: true });
+      fs.writeFileSync(path.join(routesDir, "api", "events.get.ts"), "");
+      // Top-level ingest route (analytics /track pattern) — must be mounted.
+      fs.writeFileSync(path.join(routesDir, "track.post.ts"), "");
+      fs.writeFileSync(path.join(routesDir, "track.options.ts"), "");
+      // Page catch-all — the static shell owns pages; must stay unmounted.
+      fs.writeFileSync(path.join(routesDir, "[...page].get.ts"), "");
+      // Non-api subdirectory routes stay out of the worker route table.
+      fs.writeFileSync(
+        path.join(routesDir, "webhooks", "github.post.ts"),
+        "",
+      );
+
+      const routes = await discoverApiRoutes(dir);
+      const byRoute = routes.map((r) => `${r.method} ${r.route}`).sort();
+      expect(byRoute).toEqual([
+        "get /api/events",
+        "options /track",
+        "post /track",
+      ]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 

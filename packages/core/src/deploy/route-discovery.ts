@@ -88,15 +88,41 @@ export interface DiscoveredRoute {
 
 /**
  * Discover all API routes in a project's server/routes/ directory.
+ *
+ * Scans the `/api` and `/_agent-native` subtrees plus TOP-LEVEL route files
+ * (e.g. analytics `track.post.ts` → `POST /track`, an ingest endpoint that
+ * deliberately lives outside `/api`). Top-level catch-alls (`[...page].get.ts`
+ * — the SSR page fallback every template ships) are excluded: on serverless
+ * workers pages are served by the static app shell, and mounting the
+ * catch-all would shadow it.
  */
 export async function discoverApiRoutes(
   cwd: string,
 ): Promise<DiscoveredRoute[]> {
+  const fs = await getFs();
+  const routesDir = path.join(cwd, "server/routes");
   const apiDir = path.join(cwd, "server/routes/api");
   const agentNativeDir = path.join(cwd, "server/routes/_agent-native");
+  const topLevelFiles: string[] = [];
+  try {
+    if (fs.existsSync(routesDir)) {
+      for (const entry of fs.readdirSync(routesDir, { withFileTypes: true })) {
+        if (entry.isDirectory()) continue;
+        if (!entry.name.endsWith(".ts") && !entry.name.endsWith(".js")) {
+          continue;
+        }
+        // Skip page catch-alls — the static shell owns page serving.
+        if (entry.name.startsWith("[...")) continue;
+        topLevelFiles.push(entry.name);
+      }
+    }
+  } catch {
+    // Edge runtime — no filesystem.
+  }
   const routeFiles = [
     ...(await discoverFiles(apiDir, "api")),
     ...(await discoverFiles(agentNativeDir, "_agent-native")),
+    ...topLevelFiles,
   ];
   const routes: DiscoveredRoute[] = [];
 
