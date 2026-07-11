@@ -665,6 +665,7 @@ interface ReactRouterAssetManifestRoute {
   imports?: string[];
   css?: string[];
   hasLoader?: boolean;
+  hasAction?: boolean;
   clientActionModule?: string;
   clientLoaderModule?: string;
   clientMiddlewareModule?: string;
@@ -1457,6 +1458,63 @@ function findReactRouterManifest(distDir: string): ReactRouterAssetManifest {
   return JSON.parse(match[1].replace(/;$/, "")) as ReactRouterAssetManifest;
 }
 
+/**
+ * Align the React Router CLIENT manifest with the static-shell worker.
+ *
+ * The Cloudflare Pages worker intentionally ships NO React Router request
+ * handler (`includeReactRouterSsr = false` keeps the merged worker under the
+ * platform bundle-size limit; navigations get the static app shell instead).
+ * Templates build with `ssr: true`, so the emitted client manifest still
+ * advertises `hasLoader`/`hasAction` for routes with server exports — and the
+ * hydrated router then issues single-fetch `GET <route>.data` requests on
+ * every client-side navigation into such a route. Nothing serves them: the
+ * request 404s and React Router trips the route ErrorBoundary
+ * (`No result found for routeId "..."`), breaking in-app navigation on every
+ * app of a unified workspace deployment.
+ *
+ * Stripping the server-only flags makes client-side navigation behave exactly
+ * like the initial static-shell load already does: render with client data
+ * only (server loaders never run anywhere in this deployment shape).
+ * `hasClientLoader` / `hasClientAction` are preserved untouched.
+ */
+export function stripServerDataFlagsFromClientManifest(distDir: string): void {
+  const assetsDir = path.join(distDir, "assets");
+  if (!fs.existsSync(assetsDir)) return;
+  const manifestFile = fs
+    .readdirSync(assetsDir)
+    .find((file) => /^manifest-[\w-]+\.js$/.test(file));
+  if (!manifestFile) return;
+
+  const manifestPath = path.join(assetsDir, manifestFile);
+  const source = fs.readFileSync(manifestPath, "utf8");
+  const match = source.match(/^window\.__reactRouterManifest=(.*);?\s*$/);
+  if (!match) return;
+
+  const manifest = JSON.parse(
+    match[1].replace(/;$/, ""),
+  ) as ReactRouterAssetManifest;
+  let stripped = 0;
+  for (const route of Object.values(manifest.routes ?? {})) {
+    if (route.hasLoader) {
+      route.hasLoader = false;
+      stripped++;
+    }
+    if (route.hasAction) {
+      route.hasAction = false;
+      stripped++;
+    }
+  }
+  if (stripped === 0) return;
+
+  fs.writeFileSync(
+    manifestPath,
+    `window.__reactRouterManifest=${JSON.stringify(manifest)};`,
+  );
+  console.log(
+    `[deploy] Stripped ${stripped} server loader/action flag(s) from ${manifestFile} — the static-shell worker has no React Router handler, so single-fetch .data requests would 404.`,
+  );
+}
+
 function collectModulePreloads(
   manifest: ReactRouterAssetManifest,
   route: ReactRouterAssetManifestRoute,
@@ -1672,6 +1730,12 @@ async function buildCloudflarePages() {
   const tmpDir = path.join(cwd, ".deploy-tmp");
   fs.mkdirSync(tmpDir, { recursive: true });
   writeCloudflarePagesStaticShell({ serverDir, distDir, tmpDir });
+
+  // AFTER the shell is written (its manifest fallback reads the original
+  // hasLoader flag to pick the embedded root-loader turbo stream): align the
+  // client manifest with the handler-less worker so client-side navigations
+  // don't issue .data single-fetch requests that can only 404.
+  stripServerDataFlagsFromClientManifest(distDir);
 
   // Exclude _worker.js from being served as a public asset
   fs.writeFileSync(path.join(distDir, ".assetsignore"), "_worker.js\n");

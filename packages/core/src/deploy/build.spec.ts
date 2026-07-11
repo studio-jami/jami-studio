@@ -27,6 +27,7 @@ import {
   generateWorkerEntry,
   generateScopeInitSource,
   workspaceAppScopeIdFromBasePath,
+  stripServerDataFlagsFromClientManifest,
   getNodeBuiltinNames,
   isDurableBackgroundDeployEnabled,
   NITRO_RUNTIME_IGNORE_PATTERNS,
@@ -672,6 +673,75 @@ export default (event) =>
     expect(html).toContain("en-US");
     expect(html).toContain("system");
     expect(html).toContain("messages");
+  });
+
+  it("strips server loader/action flags from the client manifest (handler-less static-shell worker)", () => {
+    const dir = makeTempDir();
+    const assetsDir = path.join(dir, "assets");
+    fs.mkdirSync(assetsDir, { recursive: true });
+    const manifest = {
+      entry: { module: "/assets/entry.client-abc.js" },
+      routes: {
+        root: {
+          id: "root",
+          module: "/assets/root-ghi.js",
+          hasLoader: true,
+          clientLoaderModule: "/assets/root-client-loader.js",
+        },
+        "routes/overview": {
+          id: "routes/overview",
+          module: "/assets/overview-xyz.js",
+          hasLoader: true,
+          hasAction: true,
+        },
+        "routes/plain": {
+          id: "routes/plain",
+          module: "/assets/plain-xyz.js",
+        },
+      },
+      url: "/assets/manifest-123.js",
+    };
+    const manifestPath = path.join(assetsDir, "manifest-123abc.js");
+    fs.writeFileSync(
+      manifestPath,
+      `window.__reactRouterManifest=${JSON.stringify(manifest)};`,
+    );
+
+    stripServerDataFlagsFromClientManifest(dir);
+
+    const rewritten = fs.readFileSync(manifestPath, "utf8");
+    const parsed = JSON.parse(
+      rewritten.match(/^window\.__reactRouterManifest=(.*);$/)![1],
+    );
+    expect(parsed.routes.root.hasLoader).toBe(false);
+    expect(parsed.routes["routes/overview"].hasLoader).toBe(false);
+    expect(parsed.routes["routes/overview"].hasAction).toBe(false);
+    // Client-side data hooks stay intact.
+    expect(parsed.routes.root.clientLoaderModule).toBe(
+      "/assets/root-client-loader.js",
+    );
+    expect(parsed.routes["routes/plain"]).toEqual(
+      manifest.routes["routes/plain"],
+    );
+    // Still a loadable script assigning the global.
+    expect(rewritten.startsWith("window.__reactRouterManifest=")).toBe(true);
+  });
+
+  it("leaves a loader-free client manifest untouched", () => {
+    const dir = makeTempDir();
+    const assetsDir = path.join(dir, "assets");
+    fs.mkdirSync(assetsDir, { recursive: true });
+    const source = `window.__reactRouterManifest=${JSON.stringify({
+      entry: { module: "/assets/entry.js" },
+      routes: { root: { id: "root", module: "/assets/root.js" } },
+      url: "/assets/manifest-1.js",
+    })};`;
+    const manifestPath = path.join(assetsDir, "manifest-1abc.js");
+    fs.writeFileSync(manifestPath, source);
+
+    stripServerDataFlagsFromClientManifest(dir);
+
+    expect(fs.readFileSync(manifestPath, "utf8")).toBe(source);
   });
 
   it("injects runtime browser Sentry config into generated worker SSR HTML", async () => {
