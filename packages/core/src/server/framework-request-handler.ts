@@ -17,6 +17,7 @@ import { setResponseHeader, setResponseStatus } from "h3";
 import { getMissingDefaultPlugins } from "../deploy/route-discovery.js";
 import { getConfiguredAppBasePath } from "./app-base-path.js";
 import { captureError } from "./capture-error.js";
+import { isCloudflareRuntime } from "../shared/runtime.js";
 
 const BOOTSTRAPPED = new WeakSet<object>();
 const IN_BOOTSTRAP = new WeakSet<object>();
@@ -42,6 +43,56 @@ function getAppBasePath(): string {
 
 function pathMatchesPrefix(reqPath: string, prefix: string): boolean {
   return reqPath === prefix || reqPath.startsWith(prefix + "/");
+}
+
+/**
+ * Cloudflare Workers (workerd) cancels pending I/O owned by a request the
+ * moment its response returns — a promise created during request A that
+ * hasn't settled by then FREEZES forever. Plugin-init and bootstrap promises
+ * are created during an app's first request and awaited by later requests'
+ * readiness gates, so an early-responding first request (e.g. an auth route
+ * that doesn't match the pending inits' paths) permanently wedges every
+ * later framework-route request. Tie the promise to the creating request's
+ * `waitUntil` so its I/O stays alive until it settles.
+ */
+function extendRequestLifetimeOverInit(promise: Promise<unknown>): void {
+  try {
+    (
+      globalThis as {
+        __cf_ctx?: { waitUntil?: (p: Promise<unknown>) => void };
+      }
+    ).__cf_ctx?.waitUntil?.(promise);
+  } catch {
+    /* not on Cloudflare or ctx unavailable — nothing to extend */
+  }
+}
+
+/**
+ * Bound a readiness-gate await on workerd. Insurance against any init
+ * promise that still froze (e.g. created before __cf_ctx existed): a
+ * bounded wait turns a permanently hung request into a slow one that
+ * proceeds — the route either works (init actually finished) or 404/503s
+ * (retryable) instead of hanging until the runtime kills the request.
+ */
+async function awaitBounded(promise: Promise<unknown>): Promise<void> {
+  if (!isCloudflareRuntime()) {
+    await promise;
+    return;
+  }
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<void>((resolve) => {
+    timer = setTimeout(() => {
+      console.warn(
+        "[agent-native] readiness gate timed out waiting for plugin init (20s) — proceeding; the init promise may have been frozen by a prior request's completion",
+      );
+      resolve();
+    }, 20_000);
+  });
+  try {
+    await Promise.race([promise, timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 function supportsAppBasePathMount(path: string): boolean {
@@ -142,6 +193,9 @@ export function getH3App(nitroApp: any): H3AppShim {
           tags: { phase: "default-plugin-bootstrap" },
         });
       },
+    );
+    extendRequestLifetimeOverInit(
+      nitroApp[BOOTSTRAP_PROMISE_KEY] as Promise<unknown>,
     );
 
     // Readiness gate: Nitro v3 doesn't await async plugins, so routes
@@ -257,7 +311,7 @@ async function awaitFrameworkRoutesReadyForRequest(
 ): Promise<void> {
   if (!nitroApp) return;
   const bootstrapPromise = nitroApp[BOOTSTRAP_PROMISE_KEY];
-  if (bootstrapPromise) await bootstrapPromise;
+  if (bootstrapPromise) await awaitBounded(bootstrapPromise);
   await awaitPluginsReady(nitroApp, reqPath);
 }
 
@@ -306,6 +360,7 @@ export function trackPluginInit(
     promise: safe,
     paths: options.paths?.filter(Boolean),
   };
+  extendRequestLifetimeOverInit(safe);
   const existing = nitroApp[PLUGIN_READY_KEY] as PluginReadyEntry[] | undefined;
   if (existing) {
     existing.push(entry);
@@ -426,7 +481,7 @@ export async function awaitPluginsReady(
     : entries;
 
   if (relevant.length) {
-    await Promise.all(relevant.map((entry) => entry.promise));
+    await Promise.all(relevant.map((entry) => awaitBounded(entry.promise)));
     const completed = new Set(relevant);
     const latest =
       (nitroApp[PLUGIN_READY_KEY] as PluginReadyEntry[] | undefined) ?? [];
