@@ -8,17 +8,19 @@
 
 import { z } from "zod";
 
+import { getScopedGlobal } from "../shared/global-scope.js";
 import type { EventDefinition } from "./types.js";
 
 // Pin to globalThis so multiple ESM graphs (dev-mode Vite + Nitro, symlinks,
 // dist/ vs src/) share a single registry. Same pattern as secrets/register.ts.
-const REGISTRY_KEY = Symbol.for("@agent-native/core/event-bus.registry");
-interface GlobalWithRegistry {
-  [REGISTRY_KEY]?: Map<string, EventDefinition>;
+// Scope-aware + lazily resolved so unified workspace deployments (all apps in
+// one isolate) keep per-app event definitions. See shared/global-scope.
+function getEventRegistry(): Map<string, EventDefinition> {
+  return getScopedGlobal(
+    "agent-native.event-bus.registry",
+    () => new Map<string, EventDefinition>(),
+  );
 }
-const registry: Map<string, EventDefinition> = ((
-  globalThis as unknown as GlobalWithRegistry
-)[REGISTRY_KEY] ??= new Map());
 
 /**
  * Register (or replace) an event definition.
@@ -36,22 +38,22 @@ export function registerEvent(def: EventDefinition): void {
   if (!def.payloadSchema) {
     throw new Error("registerEvent: def.payloadSchema is required");
   }
-  registry.set(def.name, def);
+  getEventRegistry().set(def.name, def);
 }
 
 /** Return all registered events in registration order. */
 export function listEvents(): EventDefinition[] {
-  return Array.from(registry.values());
+  return Array.from(getEventRegistry().values());
 }
 
 /** Look up a single registered event by name. */
 export function getEvent(name: string): EventDefinition | undefined {
-  return registry.get(name);
+  return getEventRegistry().get(name);
 }
 
 /** Test helper — clears the registry between runs. */
 export function __resetEventRegistry(): void {
-  registry.clear();
+  getEventRegistry().clear();
   registerBuiltInEvents();
 }
 

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { emit as emitBusEvent } from "../event-bus/bus.js";
 import { registerEvent } from "../event-bus/registry.js";
 import type { EventDefinition } from "../event-bus/types.js";
+import { getScopedGlobal } from "../shared/global-scope.js";
 import { truncate } from "../shared/truncate.js";
 import { insertNotification, updateDeliveredChannels } from "./store.js";
 import {
@@ -38,15 +39,16 @@ registerEvent({
   },
 });
 
-const REGISTRY_KEY = Symbol.for("@agent-native/core/notifications.registry");
-interface GlobalWithRegistry {
-  [REGISTRY_KEY]?: Map<string, NotificationChannel>;
-}
+const REGISTRY_BASE_KEY = "agent-native.notifications.registry";
 
+// globalThis-pinned so one app's ESM graphs share one channel registry, but
+// scope-aware + lazily resolved so unified workspace deployments (all apps in
+// one isolate) keep per-app channels. See shared/global-scope.
 function getRegistry(): Map<string, NotificationChannel> {
-  const g = globalThis as unknown as GlobalWithRegistry;
-  if (!g[REGISTRY_KEY]) g[REGISTRY_KEY] = new Map();
-  return g[REGISTRY_KEY];
+  return getScopedGlobal(
+    REGISTRY_BASE_KEY,
+    () => new Map<string, NotificationChannel>(),
+  );
 }
 
 export function registerNotificationChannel(

@@ -13,6 +13,7 @@
  * automatically by the core-routes plugin).
  */
 
+import { getScopedGlobal } from "../shared/global-scope.js";
 import { registerTrackingProvider } from "./registry.js";
 import type { TrackingProvider, TrackingEvent } from "./types.js";
 
@@ -36,27 +37,29 @@ interface EnqueueOptions {
 
 // Use globalThis so multiple ESM graph instances (Vite dev + Nitro symlinks)
 // share one queue, matching the same pattern as the tracking registry.
-const QUEUE_KEY = Symbol.for("@agent-native/core/tracking.queue");
-const TIMER_KEY = Symbol.for("@agent-native/core/tracking.timer");
+// Scope-aware + lazily resolved so unified workspace deployments keep
+// per-app queues/timers. See shared/global-scope.
+const QUEUE_BASE_KEY = "agent-native.tracking.queue";
+const TIMER_BASE_KEY = "agent-native.tracking.timer";
 
-interface GlobalWithQueue {
-  [QUEUE_KEY]?: QueuedEvent[];
-  [TIMER_KEY]?: ReturnType<typeof setTimeout> | null;
+interface TimerBox {
+  timer: ReturnType<typeof setTimeout> | null;
 }
 
 function getQueue(): QueuedEvent[] {
-  const g = globalThis as unknown as GlobalWithQueue;
-  if (!g[QUEUE_KEY]) g[QUEUE_KEY] = [];
-  return g[QUEUE_KEY]!;
+  return getScopedGlobal(QUEUE_BASE_KEY, () => [] as QueuedEvent[]);
+}
+
+function getTimerBox(): TimerBox {
+  return getScopedGlobal(TIMER_BASE_KEY, () => ({ timer: null }) as TimerBox);
 }
 
 function getTimer(): ReturnType<typeof setTimeout> | null {
-  const g = globalThis as unknown as GlobalWithQueue;
-  return g[TIMER_KEY] ?? null;
+  return getTimerBox().timer;
 }
 
 function setTimer(t: ReturnType<typeof setTimeout> | null): void {
-  (globalThis as unknown as GlobalWithQueue)[TIMER_KEY] = t;
+  getTimerBox().timer = t;
 }
 
 function enqueue(

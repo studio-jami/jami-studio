@@ -9,6 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 
+import { getScopedGlobal } from "../shared/global-scope.js";
 import { getEvent } from "./registry.js";
 import type { EventMeta } from "./types.js";
 
@@ -19,21 +20,18 @@ interface BusState {
   subscriptions: Map<string, { event: string; handler: Handler }>;
 }
 
-const BUS_KEY = Symbol.for("@agent-native/core/event-bus.bus");
-interface GlobalWithBus {
-  [BUS_KEY]?: BusState;
-}
-
+// globalThis-pinned so one app's ESM graphs share one bus, but scope-aware +
+// lazily resolved so unified workspace deployments (all apps in one isolate)
+// keep per-app buses — one app's handlers never fire for a same-named event
+// emitted by a sibling app. See shared/global-scope.
 function getBus(): BusState {
-  const g = globalThis as unknown as GlobalWithBus;
-  if (!g[BUS_KEY]) {
+  return getScopedGlobal("agent-native.event-bus.bus", () => {
     const emitter = new EventEmitter();
     // Many integrations may subscribe to the same event; lift the warning
     // ceiling rather than printing MaxListenersExceededWarning at runtime.
     emitter.setMaxListeners(0);
-    g[BUS_KEY] = { emitter, subscriptions: new Map() };
-  }
-  return g[BUS_KEY]!;
+    return { emitter, subscriptions: new Map() };
+  });
 }
 
 export function subscribe(event: string, handler: Handler): string {

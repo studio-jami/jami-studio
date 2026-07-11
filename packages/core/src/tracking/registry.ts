@@ -1,14 +1,14 @@
+import { getScopedGlobal } from "../shared/global-scope.js";
 import type { TrackingProvider, TrackingEvent } from "./types.js";
 
-const REGISTRY_KEY = Symbol.for("@agent-native/core/tracking.registry");
-interface GlobalWithRegistry {
-  [REGISTRY_KEY]?: Map<string, TrackingProvider>;
-}
-
+// globalThis-pinned so one app's ESM graphs share one provider registry, but
+// scope-aware + lazily resolved so unified workspace deployments (all apps in
+// one isolate) keep per-app tracking providers. See shared/global-scope.
 function getRegistry(): Map<string, TrackingProvider> {
-  const g = globalThis as unknown as GlobalWithRegistry;
-  if (!g[REGISTRY_KEY]) g[REGISTRY_KEY] = new Map();
-  return g[REGISTRY_KEY];
+  return getScopedGlobal(
+    "agent-native.tracking.registry",
+    () => new Map<string, TrackingProvider>(),
+  );
 }
 
 export function registerTrackingProvider(provider: TrackingProvider): void {

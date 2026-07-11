@@ -17,6 +17,8 @@
  *   });
  */
 
+import { getScopedGlobal } from "../shared/global-scope.js";
+
 export interface ShareableResourceRegistration {
   /** Stable identifier used across actions, UI, and analytics. e.g. "document". */
   type: string;
@@ -134,10 +136,9 @@ export interface ShareableResourceRegistration {
 // Nitro plugin graph) wouldn't be visible to the framework's auto-mounted
 // share-resource action (loaded via `import("../sharing/actions/...js")` in a
 // different module instance). Using globalThis collapses them back to one Map.
-const REGISTRY_KEY = "__agentNativeShareableResources__";
+// Scope-aware + lazily resolved so unified workspace deployments (all apps in
+// one isolate) keep per-app registrations. See shared/global-scope.
 type RegistryStore = Map<string, ShareableResourceRegistration>;
-const globalRegistry: { [K in typeof REGISTRY_KEY]?: RegistryStore } =
-  globalThis as any;
 
 function isTestRuntime(): boolean {
   return (
@@ -155,12 +156,10 @@ function registrationCameFromTestFile(): boolean {
 }
 
 function getRegistry(): RegistryStore {
-  let r = globalRegistry[REGISTRY_KEY];
-  if (!r) {
-    r = new Map<string, ShareableResourceRegistration>();
-    globalRegistry[REGISTRY_KEY] = r;
-  }
-  return r;
+  return getScopedGlobal(
+    "agent-native.sharing.shareable-resources",
+    () => new Map<string, ShareableResourceRegistration>(),
+  );
 }
 
 export function registerShareableResource(

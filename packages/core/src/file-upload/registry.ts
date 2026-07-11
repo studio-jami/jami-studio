@@ -1,3 +1,4 @@
+import { getScopedGlobal } from "../shared/global-scope.js";
 import { builderFileUploadProvider } from "./builder.js";
 import type {
   FileUploadInput,
@@ -12,30 +13,38 @@ import type {
 // even though `registerFileUploadProvider` succeeded. Pinning the singletons
 // on `globalThis` guarantees one set of providers per Node process,
 // independent of how the bundler split the chunks.
-interface FileUploadGlobals {
-  __agentNativeFileUploadProviders?: Map<string, FileUploadProvider>;
-  __agentNativeFileUploadWarnedFallback?: { value: boolean };
+//
+// Why scope-aware + lazy: on a unified workspace deployment every app shares
+// one isolate, so a raw globalThis pin would merge every app's providers into
+// one map (an /assets upload was served by clips' provider). The keys are
+// namespaced per app via `getScopedGlobal`, resolved lazily on every access
+// so the scope id set by the generated worker entry is always honored.
+function getProviders(): Map<string, FileUploadProvider> {
+  return getScopedGlobal(
+    "agent-native.file-upload.providers",
+    () => new Map<string, FileUploadProvider>(),
+  );
 }
-const globals = globalThis as typeof globalThis & FileUploadGlobals;
-const providers: Map<string, FileUploadProvider> =
-  (globals.__agentNativeFileUploadProviders ??= new Map());
-const warnedFallbackRef: { value: boolean } =
-  (globals.__agentNativeFileUploadWarnedFallback ??= { value: false });
+function getWarnedFallbackRef(): { value: boolean } {
+  return getScopedGlobal("agent-native.file-upload.warned-fallback", () => ({
+    value: false,
+  }));
+}
 
 /**
  * Register a file upload provider. Call from a server plugin or app
  * bootstrap. Idempotent per id — later calls with the same id replace.
  */
 export function registerFileUploadProvider(provider: FileUploadProvider): void {
-  providers.set(provider.id, provider);
+  getProviders().set(provider.id, provider);
 }
 
 export function unregisterFileUploadProvider(id: string): void {
-  providers.delete(id);
+  getProviders().delete(id);
 }
 
 export function listFileUploadProviders(): FileUploadProvider[] {
-  return [...providers.values()];
+  return [...getProviders().values()];
 }
 
 /**
@@ -45,7 +54,7 @@ export function listFileUploadProviders(): FileUploadProvider[] {
  * SQL fallback.
  */
 export function getActiveFileUploadProvider(): FileUploadProvider | null {
-  for (const provider of providers.values()) {
+  for (const provider of getProviders().values()) {
     if (provider.isConfigured()) return provider;
   }
   if (builderFileUploadProvider.isConfigured()) {
@@ -55,7 +64,7 @@ export function getActiveFileUploadProvider(): FileUploadProvider | null {
 }
 
 export async function getActiveFileUploadProviderForRequest(): Promise<FileUploadProvider | null> {
-  for (const provider of providers.values()) {
+  for (const provider of getProviders().values()) {
     if (provider.isConfigured()) return provider;
     if (provider.isConfiguredForRequest) {
       try {
@@ -113,6 +122,7 @@ export async function uploadFile(
     return await builderFileUploadProvider.upload(input);
   }
 
+  const warnedFallbackRef = getWarnedFallbackRef();
   if (!warnedFallbackRef.value) {
     warnedFallbackRef.value = true;
     console.warn(

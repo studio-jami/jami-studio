@@ -25,6 +25,8 @@ import {
   generateCloudflarePagesStaticShellFromManifest,
   generateProvidedPluginsNitroPluginSource,
   generateWorkerEntry,
+  generateScopeInitSource,
+  workspaceAppScopeIdFromBasePath,
   getNodeBuiltinNames,
   isDurableBackgroundDeployEnabled,
   NITRO_RUNTIME_IGNORE_PATTERNS,
@@ -189,6 +191,40 @@ describe("generateWorkerEntry", () => {
     expect(
       source.indexOf('markGeneratedPluginProvided(nitroApp, "core-routes");'),
     ).toBeLessThan(source.indexOf("await defaultPlugin_0(nitroApp);"));
+  });
+
+  it("emits the per-app scope-init module as the FIRST import when appScopeId is set", () => {
+    const source = generateWorkerEntry([], [], [], [], null, [], "/assets", {
+      appScopeId: "assets",
+    });
+
+    const scopeImportIndex = source.indexOf('import "./_scope-init.js";');
+    expect(scopeImportIndex).toBeGreaterThan(-1);
+    // Must be evaluated before every other import so globalThis-pinned
+    // registries resolve per-app keys on unified workspace deployments.
+    const firstOtherImport = source.indexOf("import {");
+    expect(scopeImportIndex).toBeLessThan(firstOtherImport);
+
+    // Unmounted (single-app) builds stay unscoped.
+    const unscoped = generateWorkerEntry([], [], [], [], null, [], "", {});
+    expect(unscoped).not.toContain("_scope-init.js");
+  });
+
+  it("generateScopeInitSource calls setGlobalScopeId with the app id via the lean subpath", () => {
+    const source = generateScopeInitSource("clips");
+    expect(source).toContain(
+      'import { setGlobalScopeId } from "@agent-native/core/global-scope";',
+    );
+    expect(source).toContain('setGlobalScopeId("clips");');
+  });
+
+  it("workspaceAppScopeIdFromBasePath derives the app id from mounted base paths", () => {
+    expect(workspaceAppScopeIdFromBasePath("/assets")).toBe("assets");
+    expect(workspaceAppScopeIdFromBasePath("assets")).toBe("assets");
+    expect(workspaceAppScopeIdFromBasePath("/assets/")).toBe("assets");
+    expect(workspaceAppScopeIdFromBasePath("")).toBeNull();
+    expect(workspaceAppScopeIdFromBasePath("/")).toBeNull();
+    expect(workspaceAppScopeIdFromBasePath(undefined)).toBeNull();
   });
 
   it("strips mounted /api prefixes and removes bodies for HEAD on GET API routes", async () => {

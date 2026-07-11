@@ -6,6 +6,7 @@ import {
   encryptSecretValue,
   getSecretEncryptionKey,
 } from "../secrets/crypto.js";
+import { getScopedGlobal } from "../shared/global-scope.js";
 import type {
   PrivateBlobDeleteResult,
   PrivateBlobHandle,
@@ -13,11 +14,6 @@ import type {
   PrivateBlobPutInput,
   PrivateBlobReadResult,
 } from "./types.js";
-
-interface PrivateBlobGlobals {
-  __agentNativePrivateBlobProviders?: Map<string, PrivateBlobProvider>;
-  __agentNativePrivateBlobPublicUploadFallback?: { enabled: boolean };
-}
 
 interface EncryptedPayload {
   iv: string;
@@ -44,13 +40,21 @@ interface PublicUploadDescriptor {
 }
 
 const PUBLIC_UPLOAD_HANDLE_PREFIX = "public-upload:v1:";
-const globals = globalThis as typeof globalThis & PrivateBlobGlobals;
-const providers: Map<string, PrivateBlobProvider> =
-  (globals.__agentNativePrivateBlobProviders ??= new Map());
-const publicUploadFallbackRef: { enabled: boolean } =
-  (globals.__agentNativePrivateBlobPublicUploadFallback ??= {
-    enabled: true,
-  });
+// globalThis-pinned so an app's multiple ESM graphs share one registry, but
+// scope-aware + lazily resolved so unified workspace deployments (all apps
+// in one isolate) keep per-app provider registries. See shared/global-scope.
+function getProviders(): Map<string, PrivateBlobProvider> {
+  return getScopedGlobal(
+    "agent-native.private-blob.providers",
+    () => new Map<string, PrivateBlobProvider>(),
+  );
+}
+function getPublicUploadFallbackRef(): { enabled: boolean } {
+  return getScopedGlobal(
+    "agent-native.private-blob.public-upload-fallback",
+    () => ({ enabled: true }),
+  );
+}
 
 function toBytes(data: Uint8Array | Buffer): Uint8Array {
   return data instanceof Uint8Array ? data : new Uint8Array(data);
@@ -178,19 +182,19 @@ async function readViaEncryptedPublicUpload(
 export function registerPrivateBlobProvider(
   provider: PrivateBlobProvider,
 ): void {
-  providers.set(provider.id, provider);
+  getProviders().set(provider.id, provider);
 }
 
 export function unregisterPrivateBlobProvider(id: string): void {
-  providers.delete(id);
+  getProviders().delete(id);
 }
 
 export function listPrivateBlobProviders(): PrivateBlobProvider[] {
-  return [...providers.values()];
+  return [...getProviders().values()];
 }
 
 export function getActivePrivateBlobProvider(): PrivateBlobProvider | null {
-  for (const provider of providers.values()) {
+  for (const provider of getProviders().values()) {
     if (provider.isConfigured()) return provider;
   }
   return null;
@@ -199,7 +203,7 @@ export function getActivePrivateBlobProvider(): PrivateBlobProvider | null {
 export function setPrivateBlobPublicUploadFallbackEnabled(
   enabled: boolean,
 ): void {
-  publicUploadFallbackRef.enabled = enabled;
+  getPublicUploadFallbackRef().enabled = enabled;
 }
 
 export async function putPrivateBlob(
@@ -207,7 +211,7 @@ export async function putPrivateBlob(
 ): Promise<PrivateBlobHandle | null> {
   const provider = getActivePrivateBlobProvider();
   if (provider) return provider.put(input);
-  if (!publicUploadFallbackRef.enabled) return null;
+  if (!getPublicUploadFallbackRef().enabled) return null;
   if (process.env.AGENT_NATIVE_PRIVATE_BLOB_PUBLIC_UPLOAD_FALLBACK === "0") {
     return null;
   }
@@ -217,7 +221,7 @@ export async function putPrivateBlob(
 export async function readPrivateBlob(
   handle: PrivateBlobHandle,
 ): Promise<PrivateBlobReadResult> {
-  const provider = providers.get(handle.provider);
+  const provider = getProviders().get(handle.provider);
   if (provider) return provider.read(handle);
   if (isPublicUploadFallbackHandle(handle)) {
     return readViaEncryptedPublicUpload(handle);
@@ -228,7 +232,7 @@ export async function readPrivateBlob(
 export async function deletePrivateBlob(
   handle: PrivateBlobHandle,
 ): Promise<PrivateBlobDeleteResult> {
-  const provider = providers.get(handle.provider);
+  const provider = getProviders().get(handle.provider);
   if (provider) return provider.delete(handle);
   if (isPublicUploadFallbackHandle(handle)) {
     return {

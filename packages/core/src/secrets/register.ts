@@ -7,6 +7,8 @@
  * secrets are picked up without a restart.
  */
 
+import { getScopedGlobal } from "../shared/global-scope.js";
+
 export type SecretScope = "user" | "workspace" | "org";
 export type SecretKind = "api-key" | "oauth";
 
@@ -60,13 +62,14 @@ export interface RegisteredSecret {
 // template's `register-secrets.ts` side-effect module may populate one
 // registry instance while the /_agent-native/secrets route reads from
 // another — net effect: the UI sees an empty list.
-const REGISTRY_KEY = Symbol.for("@agent-native/core/secrets.registry");
-interface GlobalWithRegistry {
-  [REGISTRY_KEY]?: Map<string, RegisteredSecret>;
+// Scope-aware + lazily resolved so unified workspace deployments (all apps in
+// one isolate) keep per-app secret registrations. See shared/global-scope.
+function getSecretsRegistry(): Map<string, RegisteredSecret> {
+  return getScopedGlobal(
+    "agent-native.secrets.registry",
+    () => new Map<string, RegisteredSecret>(),
+  );
 }
-const registry: Map<string, RegisteredSecret> = ((
-  globalThis as unknown as GlobalWithRegistry
-)[REGISTRY_KEY] ??= new Map());
 
 /**
  * Register (or override) a required secret.
@@ -92,12 +95,12 @@ export function registerRequiredSecret(secret: RegisteredSecret): void {
       `registerRequiredSecret: secret.kind must be "api-key" or "oauth" (got "${secret.kind}")`,
     );
   }
-  if (registry.has(secret.key) && process.env.DEBUG) {
+  if (getSecretsRegistry().has(secret.key) && process.env.DEBUG) {
     console.log(
       `[agent-native] Overriding registered secret "${secret.key}" with new registration.`,
     );
   }
-  registry.set(secret.key, secret);
+  getSecretsRegistry().set(secret.key, secret);
 
   // Auto-inject an onboarding step for required secrets. Done via dynamic
   // import to avoid a load-order cycle between register and the onboarding
@@ -115,15 +118,15 @@ export function registerRequiredSecret(secret: RegisteredSecret): void {
 
 /** Return all registered secrets in registration order. */
 export function listRequiredSecrets(): RegisteredSecret[] {
-  return Array.from(registry.values());
+  return Array.from(getSecretsRegistry().values());
 }
 
 /** Look up a single registered secret by key. */
 export function getRequiredSecret(key: string): RegisteredSecret | undefined {
-  return registry.get(key);
+  return getSecretsRegistry().get(key);
 }
 
 /** Test helper — clears the registry between runs. */
 export function __resetSecretsRegistry(): void {
-  registry.clear();
+  getSecretsRegistry().clear();
 }

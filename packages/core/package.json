@@ -97,6 +97,7 @@
     "./embedding/react": "./dist/embedding/react.js",
     "./onboarding": "./dist/onboarding/index.js",
     "./shared": "./dist/shared/index.js",
+    "./global-scope": "./dist/shared/global-scope.js",
     "./voice": "./dist/voice/index.js",
     "./scripts": "./dist/scripts/index.js",
     "./application-state": "./dist/application-state/index.js",
