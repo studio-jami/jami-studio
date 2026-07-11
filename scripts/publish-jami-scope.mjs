@@ -43,6 +43,66 @@ function readManifest(pkg) {
   return { file, raw: fs.readFileSync(file, "utf8") };
 }
 
+// --- Failure-path hardening -------------------------------------------------
+// The rewrite window (manifest renamed to @jami-studio/*) must never survive
+// the process: a Ctrl-C / crash between the rewrite and the finally-restore
+// once left packages/core/package.json renamed, which broke the next
+// `changeset version` ("not in the workspace"). Two layers:
+//   1. A sidecar backup (`package.json.jami-publish-backup`) written before
+//      every rewrite and removed after restore. Any run STARTS by restoring
+//      stale backups left by a killed run (self-heal).
+//   2. exit/SIGINT/SIGTERM hooks restore any outstanding backup immediately.
+const BACKUP_SUFFIX = ".jami-publish-backup";
+const outstanding = new Map(); // file -> raw
+
+function backupPath(file) {
+  return file + BACKUP_SUFFIX;
+}
+
+function beginRewrite(file, raw) {
+  fs.writeFileSync(backupPath(file), raw);
+  outstanding.set(file, raw);
+}
+
+function endRewrite(file, raw) {
+  fs.writeFileSync(file, raw);
+  fs.rmSync(backupPath(file), { force: true });
+  outstanding.delete(file);
+}
+
+function restoreOutstanding() {
+  for (const [file, raw] of outstanding) {
+    try {
+      fs.writeFileSync(file, raw);
+      fs.rmSync(backupPath(file), { force: true });
+      console.error(`[publish-jami-scope] restored ${path.relative(ROOT, file)} after abnormal exit`);
+    } catch {
+      // best-effort: the sidecar backup file still exists for the next run
+    }
+  }
+  outstanding.clear();
+}
+
+process.on("exit", restoreOutstanding);
+for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+  process.on(sig, () => {
+    restoreOutstanding();
+    process.exit(130);
+  });
+}
+
+// Self-heal: restore any stale backups a previously killed run left behind.
+for (const p of ORDER) {
+  const file = path.join(ROOT, "packages", p, "package.json");
+  const bak = backupPath(file);
+  if (fs.existsSync(bak)) {
+    fs.copyFileSync(bak, file);
+    fs.rmSync(bak, { force: true });
+    console.warn(`[publish-jami-scope] self-heal: restored ${path.relative(ROOT, file)} from stale backup`);
+  }
+}
+// -----------------------------------------------------------------------------
+
 // Collect current versions of all publishable packages (by canonical name).
 const versions = {};
 for (const p of ORDER) {
@@ -88,6 +148,7 @@ for (const p of ORDER) {
     copiedReadme = true;
   }
 
+  beginRewrite(file, raw);
   fs.writeFileSync(file, JSON.stringify(j, null, 2) + "\n");
   try {
     // 3. Publish the rewritten manifest. --provenance=false: provenance needs
@@ -96,10 +157,10 @@ for (const p of ORDER) {
     published.push(`${j.name}@${j.version}`);
   } catch (err) {
     failed.push(`${j.name}@${j.version}`);
-    console.error(`FAILED: ${j.name} — ${err.message}`);
+    console.error(`FAILED: ${j.name} \u2014 ${err.message}`);
   } finally {
     // 4. Restore the canonical manifest no matter what.
-    fs.writeFileSync(file, raw);
+    endRewrite(file, raw);
     if (copiedReadme) fs.rmSync(readmeTarget);
   }
   if (failed.length) break; // dep order matters; do not publish on a broken base
