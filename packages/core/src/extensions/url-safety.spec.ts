@@ -1,9 +1,11 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   isBlockedExtensionUrl,
   isBlockedExtensionUrlWithDns,
+  isTrustedInternalUrl,
   ssrfSafeFetch,
+  trustedInternalOrigins,
 } from "./url-safety.js";
 
 describe("isBlockedExtensionUrl", () => {
@@ -128,5 +130,98 @@ describe("ssrfSafeFetch httpsOnly", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     // The followed hop's body must be drained so its connection is released.
     expect(redirectResponse.bodyUsed).toBe(true);
+  });
+});
+
+// The deployment's OWN configured origins (APP_URL, gateway URL, workspace app
+// manifest URLs) are operator config, not user input — a fetch to them is a
+// self-call. Without this allowance every workspace-internal A2A call
+// (call-agent to a sibling app) was SSRF-blocked in local dev and self-hosted
+// private networks, where the deployment origin is loopback/RFC-1918.
+describe("ssrfSafeFetch trusted internal origins (workspace self-calls)", () => {
+  const ENV_KEYS = [
+    "APP_URL",
+    "BETTER_AUTH_URL",
+    "WEBHOOK_BASE_URL",
+    "WORKSPACE_GATEWAY_URL",
+    "AGENT_NATIVE_WORKSPACE_APPS_JSON",
+  ] as const;
+  const saved: Record<string, string | undefined> = {};
+
+  beforeEach(() => {
+    for (const key of ENV_KEYS) {
+      saved[key] = process.env[key];
+      delete process.env[key];
+    }
+  });
+
+  afterEach(() => {
+    for (const key of ENV_KEYS) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+    vi.unstubAllGlobals();
+  });
+
+  it("collects origins from APP_URL and the workspace app manifest", () => {
+    process.env.APP_URL = "http://127.0.0.1:8787";
+    process.env.AGENT_NATIVE_WORKSPACE_APPS_JSON = JSON.stringify([
+      { id: "forms", url: "http://127.0.0.1:8787/forms" },
+      { id: "broken", url: "not a url" },
+    ]);
+    expect(trustedInternalOrigins()).toEqual(
+      new Set(["http://127.0.0.1:8787"]),
+    );
+    expect(
+      isTrustedInternalUrl("http://127.0.0.1:8787/forms/_agent-native/a2a"),
+    ).toBe(true);
+    // Same host, different port = different origin — NOT trusted.
+    expect(isTrustedInternalUrl("http://127.0.0.1:9999/")).toBe(false);
+  });
+
+  it("allows a fetch to a configured loopback origin (workspace A2A self-call)", async () => {
+    process.env.APP_URL = "http://127.0.0.1:8787";
+    const fetchMock = vi.fn(async () => new Response("ok", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const response = await ssrfSafeFetch(
+      "http://127.0.0.1:8787/forms/_agent-native/a2a",
+    );
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("still blocks private addresses that are NOT configured origins", async () => {
+    process.env.APP_URL = "http://127.0.0.1:8787";
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(ssrfSafeFetch("http://192.168.1.1/steal")).rejects.toThrow(
+      /SSRF blocked: refusing to fetch private\/internal address/,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("re-validates redirect hops — a trusted origin cannot 30x into the private network", async () => {
+    process.env.APP_URL = "http://127.0.0.1:8787";
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { location: "http://169.254.169.254/latest/meta-data" },
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(ssrfSafeFetch("http://127.0.0.1:8787/forms")).rejects.toThrow(
+      /SSRF blocked: refusing to fetch private\/internal address/,
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("blocks loopback with no configured internal origins (default posture unchanged)", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(ssrfSafeFetch("http://127.0.0.1:8787/")).rejects.toThrow(
+      /SSRF blocked: refusing to fetch private\/internal address/,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

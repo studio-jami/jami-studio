@@ -149,6 +149,55 @@ export async function isBlockedExtensionUrlWithDns(
 }
 
 /**
+ * Origins the deployment itself declares as its own surfaces. These come from
+ * operator-controlled configuration (env), NOT from user/agent input, so a
+ * fetch to them is a self-call, not an SSRF: cross-app A2A on a workspace
+ * (call-agent) targets sibling apps at the deployment's own base URL, and in
+ * local dev / self-hosted private networks that origin is a loopback or
+ * RFC-1918 address the private-address guard would otherwise block — which
+ * broke every workspace-internal agent call on `wrangler pages dev` and the
+ * dev gateway. Only EXACT origin matches (scheme + host + port) are trusted;
+ * everything else keeps the full SSRF policy (including redirect hops).
+ */
+export function trustedInternalOrigins(): Set<string> {
+  const origins = new Set<string>();
+  const addUrl = (value: unknown) => {
+    if (typeof value !== "string" || !value.trim()) return;
+    try {
+      origins.add(new URL(value).origin);
+    } catch {
+      // Ignore malformed configured URLs — they never matched anything.
+    }
+  };
+  const env = (globalThis as any)?.process?.env ?? {};
+  addUrl(env.APP_URL);
+  addUrl(env.BETTER_AUTH_URL);
+  addUrl(env.WEBHOOK_BASE_URL);
+  addUrl(env.WORKSPACE_GATEWAY_URL);
+  const manifestJson = env.AGENT_NATIVE_WORKSPACE_APPS_JSON;
+  if (typeof manifestJson === "string" && manifestJson.trim()) {
+    try {
+      const apps = JSON.parse(manifestJson);
+      if (Array.isArray(apps)) {
+        for (const app of apps) addUrl(app?.url);
+      }
+    } catch {
+      // Malformed manifest — no trusted origins from it.
+    }
+  }
+  return origins;
+}
+
+/** True when `url`'s origin exactly matches a configured internal origin. */
+export function isTrustedInternalUrl(url: string): boolean {
+  try {
+    return trustedInternalOrigins().has(new URL(url).origin);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Build an undici Dispatcher whose connect-time DNS lookup runs through a
  * private-IP guard. This closes the TOCTOU gap where:
  *   1. We resolve hostname → public IP and pass.
@@ -267,7 +316,13 @@ export async function ssrfSafeFetch(
         `SSRF blocked: refusing to fetch non-HTTPS address (${currentUrl})`,
       );
     }
-    if (await isBlockedExtensionUrlWithDns(currentUrl)) {
+    // The deployment's own configured origins are self-calls (workspace A2A,
+    // self-dispatch), not attacker-controlled targets — skip only the
+    // private-address block for exact origin matches. Each redirect hop is
+    // still re-validated, so a trusted origin cannot 30x into the private
+    // network.
+    const trustedHop = isTrustedInternalUrl(currentUrl);
+    if (!trustedHop && (await isBlockedExtensionUrlWithDns(currentUrl))) {
       throw new Error(
         `SSRF blocked: refusing to fetch private/internal address (${currentUrl})`,
       );
@@ -276,7 +331,9 @@ export async function ssrfSafeFetch(
       ...init,
       redirect: "manual",
     };
-    if (dispatcher) fetchOpts.dispatcher = dispatcher;
+    // The connect-time guard would also reject a trusted internal origin's
+    // loopback/private IP at the TCP layer — attach it only to untrusted hops.
+    if (dispatcher && !trustedHop) fetchOpts.dispatcher = dispatcher;
 
     const response = await fetch(currentUrl, fetchOpts);
     if (response.status >= 300 && response.status < 400) {
