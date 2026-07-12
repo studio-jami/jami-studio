@@ -93,6 +93,7 @@ import {
   MCP_EMBED_CORS_ALLOW_HEADERS,
   shouldAllowMcpEmbedCredentials,
 } from "../shared/mcp-embed-headers.js";
+import { isNodeRuntime } from "../shared/runtime.js";
 import { track } from "../tracking/index.js";
 import { registerBuiltinProviders } from "../tracking/providers.js";
 import { validateTrackPayload } from "../tracking/route.js";
@@ -1230,6 +1231,19 @@ export function createCoreRoutesPlugin(
           defineEventHandler(() => ({
             message: process.env.PING_MESSAGE ?? "pong",
           })),
+        );
+      }
+
+      // Available CLIs — the real endpoint lives in the terminal plugin,
+      // which is Node-only and never ships to edge runtimes. Mount an
+      // empty-list fallback there so the agent panel's feature probe gets a
+      // clean 200 instead of console-noise 404s (issue: optional-endpoint
+      // graceful feature detection). Node runtimes keep the terminal
+      // plugin's real handler.
+      if (!isNodeRuntime()) {
+        getH3App(nitroApp).use(
+          `${P}/available-clis`,
+          defineEventHandler(() => []),
         );
       }
 
