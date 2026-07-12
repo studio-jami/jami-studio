@@ -1759,8 +1759,15 @@ export function generateCloudflarePagesStaticShellFromManifest(
   const encodedInitialState = rootRoute.hasLoader
     ? DEFAULT_ROOT_LOADER_REACT_ROUTER_TURBO_STREAM
     : EMPTY_REACT_ROUTER_TURBO_STREAM;
+  // Match the <html> attributes the root route renders during hydration with
+  // the embedded default root-loader state (locale/dir), so recovering from
+  // the fallback shell does not add an attribute mismatch on top of the
+  // structural one.
+  const htmlTag = rootRoute.hasLoader
+    ? '<html lang="en-US" dir="ltr" data-locale="en-US">'
+    : '<html lang="en">';
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/><link rel="manifest" href="/manifest.json"/><link rel="icon" type="image/svg+xml" href="/favicon.svg"/>${modulePreloads}${stylesheets}</head><body><div style="display:flex;align-items:center;justify-content:center;height:100vh;width:100%"><svg role="status" aria-label="Loading" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:an-spin 1s linear infinite;opacity:0.7"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg><style>@keyframes an-spin { to { transform: rotate(360deg) } } @media (prefers-color-scheme: dark) { html { background: #09090b; color: #fafafa } }</style></div><script>window.__reactRouterContext = ${JSON.stringify(context)};window.__reactRouterContext.stream = new ReadableStream({start(controller){window.__reactRouterContext.streamController = controller;}}).pipeThrough(new TextEncoderStream());</script><script type="module" async="">${routeModuleScript}</script><!--$--><script>window.__reactRouterContext.streamController.enqueue(${JSON.stringify(encodedInitialState)});</script><!--$--><script>window.__reactRouterContext.streamController.close();</script><!--/$--><!--/$--></body></html>`;
+  return `<!DOCTYPE html>${htmlTag}<head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/><link rel="manifest" href="/manifest.json"/><link rel="icon" type="image/svg+xml" href="/favicon.svg"/>${modulePreloads}${stylesheets}</head><body><div style="display:flex;align-items:center;justify-content:center;height:100vh;width:100%"><svg role="status" aria-label="Loading" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:an-spin 1s linear infinite;opacity:0.7"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg><style>@keyframes an-spin { to { transform: rotate(360deg) } } @media (prefers-color-scheme: dark) { html { background: #09090b; color: #fafafa } }</style></div><script>window.__reactRouterContext = ${JSON.stringify(context)};window.__reactRouterContext.stream = new ReadableStream({start(controller){window.__reactRouterContext.streamController = controller;}}).pipeThrough(new TextEncoderStream());</script><script type="module" async="">${routeModuleScript}</script><!--$--><script>window.__reactRouterContext.streamController.enqueue(${JSON.stringify(encodedInitialState)});</script><!--$--><script>window.__reactRouterContext.streamController.close();</script><!--/$--><!--/$--></body></html>`;
 }
 
 function writeCloudflarePagesStaticShell({
@@ -1784,32 +1791,118 @@ function writeCloudflarePagesStaticShell({
     renderScript,
     `
 import fs from "node:fs";
-import { createRequire } from "node:module";
+import Module, { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
 const cwd = ${JSON.stringify(cwd)};
 const serverEntry = ${JSON.stringify(serverEntry)};
 const outFile = ${JSON.stringify(outFile)};
 const basePath = ${JSON.stringify(basePath)};
+// The framework package's own module URL: bundled server chunks can import
+// packages (yjs, prosemirror-*) that are transitive framework dependencies
+// and not resolvable from the app directory under strict pnpm layouts. When
+// app-relative resolution fails, retry from the framework's own context.
+const frameworkParentUrl = ${JSON.stringify(import.meta.url)};
+
+if (typeof Module.registerHooks === "function") {
+  Module.registerHooks({
+    resolve(specifier, context, nextResolve) {
+      try {
+        return nextResolve(specifier, context);
+      } catch (error) {
+        if (context?.parentURL && context.parentURL !== frameworkParentUrl) {
+          try {
+            return nextResolve(specifier, { ...context, parentURL: frameworkParentUrl });
+          } catch {}
+        }
+        throw error;
+      }
+    },
+  });
+}
 
 const requireFromApp = createRequire(cwd + "/package.json");
 const reactRouterEntry = requireFromApp.resolve("react-router");
 const { createRequestHandler } = await import(pathToFileURL(reactRouterEntry).href);
 const serverBuild = await import(pathToFileURL(serverEntry).href);
 const handler = createRequestHandler(serverBuild, "production");
-const pathname = basePath ? basePath + "/" : "/";
-const response = await handler(
-  new Request(new URL(pathname, "https://agent-native.local"), {
-    headers: { "X-React-Router-SPA-Mode": "yes" },
-  }),
-);
-const html = await response.text();
 
-if (!html || !html.includes("__reactRouterContext") || !html.includes("entry.client")) {
-  throw new Error("React Router did not render a usable Cloudflare Pages static shell");
+const origin = "https://agent-native.local";
+const normalizedBase = basePath ? basePath.replace(/\\/+$/, "") : "";
+
+function isUsable(html) {
+  return Boolean(
+    html && html.includes("__reactRouterContext") && html.includes("entry.client"),
+  );
 }
 
-fs.writeFileSync(outFile, html);
+// Render a path, following same-origin redirects (index routes commonly
+// redirect "/" to the real landing page). Server builds compiled with an
+// unprefixed router basename ("/") emit redirect targets that still carry
+// the mount prefix — strip it before re-requesting.
+async function renderPath(startPath) {
+  let pathname = startPath;
+  let response;
+  for (let hop = 0; hop < 5; hop++) {
+    response = await handler(
+      new Request(new URL(pathname, origin), {
+        headers: { "X-React-Router-SPA-Mode": "yes" },
+      }),
+    );
+    if (response.status < 300 || response.status >= 400) break;
+    const location = response.headers.get("location");
+    if (!location) break;
+    const target = new URL(location, new URL(pathname, origin));
+    if (target.origin !== origin) break;
+    let nextPath = target.pathname;
+    if (
+      normalizedBase &&
+      (nextPath === normalizedBase || nextPath.startsWith(normalizedBase + "/")) &&
+      !(startPath === normalizedBase + "/" || startPath.startsWith(normalizedBase + "/"))
+    ) {
+      nextPath = nextPath.slice(normalizedBase.length) || "/";
+    }
+    if (nextPath === pathname) break;
+    pathname = nextPath;
+  }
+  const html = await response.text();
+  return { pathname, status: response.status, html };
+}
+
+// Route matching varies per template: some builds register routes under the
+// mount prefix, others compile with basename "/" and rely on the worker
+// entry stripping the prefix. Try both shapes and prefer a 2xx render;
+// otherwise keep the first usable render of any status (apps without an
+// index route ship their root-boundary render as the shell).
+const candidates = normalizedBase ? [normalizedBase + "/", "/"] : ["/"];
+let best = null;
+for (const candidate of candidates) {
+  let result;
+  try {
+    result = await renderPath(candidate);
+  } catch (error) {
+    console.warn("[deploy] Static shell render threw at " + candidate + ": " + (error && error.message ? error.message : error));
+    continue;
+  }
+  if (!isUsable(result.html)) continue;
+  if (result.status >= 200 && result.status < 300) {
+    best = result;
+    break;
+  }
+  if (!best) best = result;
+}
+
+if (!best) {
+  throw new Error(
+    "React Router did not render a usable Cloudflare Pages static shell for any of: " +
+      candidates.join(", "),
+  );
+}
+
+console.log(
+  "[deploy] Static shell rendered from " + best.pathname + " (status " + best.status + ").",
+);
+fs.writeFileSync(outFile, best.html);
 process.exit(0);
 `,
   );

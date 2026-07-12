@@ -1923,15 +1923,18 @@ function ssrStubPlugin(packages: string[]): Plugin | null {
     load(id) {
       if (id !== STUB_ID) return null;
       // Proxy that answers any property access with itself — lets dead
-      // import/re-export chains parse without blowing up, and still throws
-      // if code actually tries to call any of it on the server.
+      // import/re-export chains parse without blowing up. Callable and
+      // constructible (module-scope `new PluginKey(...)` in stubbed client
+      // code must not crash server-side shell renders); every call returns
+      // another stub.
       return (
         "const handler = { get(_, p) { " +
         "if (p === Symbol.toPrimitive) return () => ''; " +
         "if (p === 'then') return undefined; " +
-        "return new Proxy(() => {}, handler); " +
-        "} };" +
-        "const stub = new Proxy(() => {}, handler);" +
+        "return new Proxy(function () {}, handler); " +
+        "}, apply() { return new Proxy(function () {}, handler); }, " +
+        "construct() { return new Proxy(function () {}, handler); } };" +
+        "const stub = new Proxy(function () {}, handler);" +
         "export default stub;" +
         namedExports.map((name) => `export const ${name} = stub;`).join("")
       );

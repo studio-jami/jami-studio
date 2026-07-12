@@ -763,6 +763,7 @@ export default (event) =>
     expect(html).toContain('href="/assets/root.css"');
     expect(html).toContain("streamController.enqueue");
     expect(html).toContain("loaderData");
+    expect(html).toContain('<html lang="en">');
     expect(html).not.toContain("en-US");
   });
 
@@ -786,6 +787,11 @@ export default (event) =>
     expect(html).toContain("en-US");
     expect(html).toContain("system");
     expect(html).toContain("messages");
+    // Root loaders hydrate the default locale shape; the shell <html> tag
+    // must match so recovery doesn't add an attribute mismatch.
+    expect(html).toContain(
+      '<html lang="en-US" dir="ltr" data-locale="en-US">',
+    );
   });
 
   it("strips server loader/action flags from the client manifest (handler-less static-shell worker)", () => {
