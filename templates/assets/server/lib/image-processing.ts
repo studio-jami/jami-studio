@@ -7,41 +7,201 @@ import type {
 } from "../../shared/api.js";
 import { aspectRatioValue } from "./preset-skeleton.js";
 
+/**
+ * True when the error means the sharp native module cannot run in this
+ * runtime (e.g. the Cloudflare Pages worker build stubs `sharp` with a
+ * throwing proxy, and serverless Linux builds can fail to load the native
+ * binary). Used to degrade gracefully instead of failing the whole upload.
+ */
+function isSharpUnavailableError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /sharp unavailable|Could not load the "?sharp"? module/i.test(
+    message,
+  );
+}
+
+/**
+ * Pure-JS dimension sniffing for the upload formats the app accepts.
+ * Fallback path for runtimes where sharp is unavailable (workerd); parses
+ * container headers only — no decoding.
+ */
+export function sniffImageDimensions(data: Uint8Array): {
+  width: number | null;
+  height: number | null;
+  mimeType: string | null;
+} {
+  const none = { width: null, height: null, mimeType: null };
+  if (data.length < 16) return none;
+  // PNG: IHDR width/height are big-endian uint32 at offsets 16/20.
+  if (
+    data[0] === 0x89 &&
+    data[1] === 0x50 &&
+    data[2] === 0x4e &&
+    data[3] === 0x47
+  ) {
+    if (data.length < 24) return { ...none, mimeType: "image/png" };
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    return {
+      width: view.getUint32(16),
+      height: view.getUint32(20),
+      mimeType: "image/png",
+    };
+  }
+  // JPEG: walk segment markers to the first SOF frame header.
+  if (data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff) {
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    let offset = 2;
+    while (offset + 9 < data.length) {
+      if (data[offset] !== 0xff) {
+        offset += 1;
+        continue;
+      }
+      const marker = data[offset + 1];
+      // Standalone markers without length payloads.
+      if (marker === 0xd8 || (marker >= 0xd0 && marker <= 0xd7)) {
+        offset += 2;
+        continue;
+      }
+      const isSof =
+        marker >= 0xc0 &&
+        marker <= 0xcf &&
+        marker !== 0xc4 &&
+        marker !== 0xc8 &&
+        marker !== 0xcc;
+      if (isSof) {
+        return {
+          height: view.getUint16(offset + 5),
+          width: view.getUint16(offset + 7),
+          mimeType: "image/jpeg",
+        };
+      }
+      const length = view.getUint16(offset + 2);
+      if (length < 2) break;
+      offset += 2 + length;
+    }
+    return { ...none, mimeType: "image/jpeg" };
+  }
+  // WebP: RIFF container; VP8/VP8L/VP8X chunks carry dimensions.
+  if (
+    Buffer.from(data.subarray(0, 4)).toString("ascii") === "RIFF" &&
+    Buffer.from(data.subarray(8, 12)).toString("ascii") === "WEBP" &&
+    data.length >= 30
+  ) {
+    const chunk = Buffer.from(data.subarray(12, 16)).toString("ascii");
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    if (chunk === "VP8X") {
+      return {
+        width: 1 + (data[24] | (data[25] << 8) | (data[26] << 16)),
+        height: 1 + (data[27] | (data[28] << 8) | (data[29] << 16)),
+        mimeType: "image/webp",
+      };
+    }
+    if (chunk === "VP8L" && data[20] === 0x2f) {
+      const bits = view.getUint32(21, true);
+      return {
+        width: (bits & 0x3fff) + 1,
+        height: ((bits >> 14) & 0x3fff) + 1,
+        mimeType: "image/webp",
+      };
+    }
+    if (chunk === "VP8 ") {
+      // Lossy keyframe: 3-byte frame tag then 9d 01 2a start code.
+      if (data[23] === 0x9d && data[24] === 0x01 && data[25] === 0x2a) {
+        return {
+          width: view.getUint16(26, true) & 0x3fff,
+          height: view.getUint16(28, true) & 0x3fff,
+          mimeType: "image/webp",
+        };
+      }
+      return { ...none, mimeType: "image/webp" };
+    }
+    return { ...none, mimeType: "image/webp" };
+  }
+  // AVIF: scan for the `ispe` (image spatial extents) property box —
+  // version/flags(4) width(4) height(4) big-endian after the fourcc.
+  if (
+    Buffer.from(data.subarray(4, 12)).toString("ascii").includes("ftyp") &&
+    Buffer.from(data.subarray(8, 12)).toString("ascii") === "avif"
+  ) {
+    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const limit = Math.min(data.length - 16, 65536);
+    for (let i = 12; i < limit; i++) {
+      if (
+        data[i] === 0x69 && // i
+        data[i + 1] === 0x73 && // s
+        data[i + 2] === 0x70 && // p
+        data[i + 3] === 0x65 // e
+      ) {
+        return {
+          width: view.getUint32(i + 8),
+          height: view.getUint32(i + 12),
+          mimeType: "image/avif",
+        };
+      }
+    }
+    return { ...none, mimeType: "image/avif" };
+  }
+  return none;
+}
+
 export async function imageInfo(buffer: Buffer): Promise<{
   width: number | null;
   height: number | null;
   mimeType: string;
   sizeBytes: number;
 }> {
-  const img = sharp(buffer, { failOn: "none" });
-  const meta = await img.metadata();
-  const format = meta.format === "jpeg" ? "jpeg" : meta.format || "png";
-  return {
-    width: meta.width ?? null,
-    height: meta.height ?? null,
-    mimeType:
-      format === "jpg" || format === "jpeg" ? "image/jpeg" : `image/${format}`,
-    sizeBytes: buffer.byteLength,
-  };
+  try {
+    const img = sharp(buffer, { failOn: "none" });
+    const meta = await img.metadata();
+    const format = meta.format === "jpeg" ? "jpeg" : meta.format || "png";
+    return {
+      width: meta.width ?? null,
+      height: meta.height ?? null,
+      mimeType:
+        format === "jpg" || format === "jpeg"
+          ? "image/jpeg"
+          : `image/${format}`,
+      sizeBytes: buffer.byteLength,
+    };
+  } catch (error) {
+    if (!isSharpUnavailableError(error)) throw error;
+    // Passthrough-for-originals: header-parse dimensions so uploads keep
+    // working on runtimes without sharp. Callers fall back to the declared
+    // mime type when the sniffer returns null.
+    const sniffed = sniffImageDimensions(buffer);
+    return {
+      width: sniffed.width,
+      height: sniffed.height,
+      mimeType: sniffed.mimeType ?? "",
+      sizeBytes: buffer.byteLength,
+    };
+  }
 }
 
 export async function makeThumbnail(buffer: Buffer): Promise<{
   buffer: Buffer;
   mimeType: string;
-}> {
-  return {
-    buffer: await sharp(buffer, { failOn: "none" })
-      .rotate()
-      .resize({
-        width: 640,
-        height: 640,
-        fit: "inside",
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 82 })
-      .toBuffer(),
-    mimeType: "image/webp",
-  };
+} | null> {
+  try {
+    return {
+      buffer: await sharp(buffer, { failOn: "none" })
+        .rotate()
+        .resize({
+          width: 640,
+          height: 640,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 82 })
+        .toBuffer(),
+      mimeType: "image/webp",
+    };
+  } catch (error) {
+    if (!isSharpUnavailableError(error)) throw error;
+    // No thumbnail on runtimes without sharp — readers already fall back to
+    // the original asset when `thumbnailObjectKey` is null.
+    return null;
+  }
 }
 
 export async function extractDominantColors(buffer: Buffer): Promise<string[]> {

@@ -10,6 +10,7 @@ import {
   maskFromManualMaskAlpha,
   maskFromPlateAlpha,
   prepareGptImage2SkeletonInpaintImages,
+  sniffImageDimensions,
 } from "./image-processing.js";
 
 async function solidPng(
@@ -86,10 +87,54 @@ describe("image processing helpers", () => {
     });
 
     const thumb = await makeThumbnail(source);
-    expect(thumb.mimeType).toBe("image/webp");
-    const thumbMeta = await sharp(thumb.buffer).metadata();
+    expect(thumb).not.toBeNull();
+    expect(thumb!.mimeType).toBe("image/webp");
+    const thumbMeta = await sharp(thumb!.buffer).metadata();
     expect(thumbMeta.width).toBeLessThanOrEqual(640);
     expect(thumbMeta.height).toBeLessThanOrEqual(640);
+  });
+
+  it("sniffs dimensions from container headers without decoding", async () => {
+    const png = await solidPng(321, 123, { r: 1, g: 2, b: 3 });
+    expect(sniffImageDimensions(png)).toEqual({
+      width: 321,
+      height: 123,
+      mimeType: "image/png",
+    });
+
+    const jpeg = await sharp(png).jpeg().toBuffer();
+    expect(sniffImageDimensions(jpeg)).toEqual({
+      width: 321,
+      height: 123,
+      mimeType: "image/jpeg",
+    });
+
+    const webpLossy = await sharp(png).webp({ lossless: false }).toBuffer();
+    expect(sniffImageDimensions(webpLossy)).toMatchObject({
+      width: 321,
+      height: 123,
+      mimeType: "image/webp",
+    });
+
+    const webpLossless = await sharp(png).webp({ lossless: true }).toBuffer();
+    expect(sniffImageDimensions(webpLossless)).toMatchObject({
+      width: 321,
+      height: 123,
+      mimeType: "image/webp",
+    });
+
+    const avif = await sharp(png).avif().toBuffer();
+    expect(sniffImageDimensions(avif)).toMatchObject({
+      width: 321,
+      height: 123,
+      mimeType: "image/avif",
+    });
+
+    expect(sniffImageDimensions(Buffer.from("not an image"))).toEqual({
+      width: null,
+      height: null,
+      mimeType: null,
+    });
   });
 
   it("extracts a dominant palette and composites a canonical logo", async () => {
