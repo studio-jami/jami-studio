@@ -17,9 +17,16 @@
 import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import { AGENT_CHAT_PROCESS_RUN_PATH } from "../agent/durable-background.js";
 import { findWorkspaceRoot } from "../scripts/utils.js";
+import {
+  computeWorkspaceAppBuildHash,
+  isWorkspaceBuildCacheEnabled,
+  workspaceAppBuildCacheHit,
+  writeWorkspaceAppBuildStamp,
+} from "./workspace-build-cache.js";
 import {
   DEFAULT_WORKSPACE_APP_AUDIENCE,
   normalizeWorkspaceAppAudience,
@@ -63,6 +70,19 @@ const WORKSPACE_APPS_ENV_KEY = "AGENT_NATIVE_WORKSPACE_APPS_JSON";
 const WORKSPACE_APPS_MANIFEST_DIR = ".agent-native";
 const WORKSPACE_APPS_MANIFEST_FILE = "workspace-apps.json";
 const VERCEL_OUTPUT_DIR = ".vercel/output";
+
+// Version of this package — folds into the build-cache key so upgrading the
+// framework invalidates every cached app build.
+let BUILDER_VERSION = "unknown";
+try {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  // dist/deploy/workspace-deploy.js → ../../package.json
+  BUILDER_VERSION = (
+    JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf-8"),
+    ) as { version?: string }
+  ).version ?? "unknown";
+} catch {}
 
 interface WorkspaceAppManifestEntry {
   id: string;
@@ -152,9 +172,24 @@ export async function runWorkspaceDeploy(
     `[workspace-deploy] Building ${apps.length} app(s) for preset=${preset}`,
   );
 
+  const buildCacheEnabled = isWorkspaceBuildCacheEnabled(rawArgs);
+  if (!buildCacheEnabled) {
+    console.log(
+      `[workspace-deploy] Build cache disabled — rebuilding every app.`,
+    );
+  }
+  let cachedCount = 0;
   const execFile = opts.execFile ?? execFileSync;
   for (const app of apps) {
-    buildOneApp(workspaceRoot, app, preset, execFile, workspaceApps);
+    const skipped = buildOneApp(
+      workspaceRoot,
+      app,
+      preset,
+      execFile,
+      workspaceApps,
+      buildCacheEnabled,
+    );
+    if (skipped) cachedCount++;
     moveAppBuildIntoWorkspaceOutput(
       workspaceRoot,
       app,
@@ -162,6 +197,11 @@ export async function runWorkspaceDeploy(
       distDir,
       vercelOutputDir,
       workspaceApps,
+    );
+  }
+  if (buildCacheEnabled && cachedCount > 0) {
+    console.log(
+      `[workspace-deploy] Build cache: reused ${cachedCount}/${apps.length} unchanged app build(s), rebuilt ${apps.length - cachedCount}.`,
     );
   }
   writeWorkspaceAppManifests(
@@ -212,7 +252,8 @@ function buildOneApp(
   preset: WorkspaceDeployPreset,
   execFile: typeof execFileSync,
   workspaceApps: WorkspaceAppManifestEntry[],
-): void {
+  buildCacheEnabled: boolean,
+): boolean {
   const appDir = path.join(workspaceRoot, "apps", app);
   const workspaceAppAudience = workspaceAppAudienceForApp(workspaceApps, app);
   const workspaceAppRouteAccess = workspaceAppRouteAccessForApp(
@@ -277,6 +318,27 @@ function buildOneApp(
       env.DATABASE_URL;
   }
 
+  // Content-hash cache: when the app's sources, workspace deps, lockfile,
+  // and invocation env are byte-identical to the previous successful build
+  // (and its output still exists), reuse it instead of rebuilding.
+  const cacheOpts = {
+    workspaceRoot,
+    appDir,
+    app,
+    preset,
+    buildEnv: buildCacheEnvDelta(env),
+    builderVersion: BUILDER_VERSION,
+  };
+  const buildHash = buildCacheEnabled
+    ? computeWorkspaceAppBuildHash(cacheOpts)
+    : null;
+  if (buildCacheEnabled && workspaceAppBuildCacheHit(cacheOpts, buildHash)) {
+    console.log(
+      `[workspace-deploy] ${app} unchanged — reusing cached build (base=/${app}, preset=${preset})`,
+    );
+    return true;
+  }
+
   console.log(
     `[workspace-deploy] Building ${app} (base=/${app}, preset=${preset})`,
   );
@@ -298,7 +360,10 @@ function buildOneApp(
         env,
         stdio: "inherit",
       });
-      return;
+      if (buildCacheEnabled) {
+        writeWorkspaceAppBuildStamp(cacheOpts, buildHash);
+      }
+      return false;
     } catch (error) {
       const status = (error as { status?: number | null })?.status ?? null;
       const isNativeCrash =
@@ -1121,6 +1186,19 @@ function netlifyPublicRootAssetPaths(app: string, staticDir: string): string[] {
 
 function netlifyFunctionsDir(workspaceRoot: string): string {
   return path.join(workspaceRoot, ".netlify", "functions-internal");
+}
+
+/** The per-app build env is `{...process.env, ...computed}` — only the
+ * computed delta belongs in the cache key (ambient env is covered by the
+ * cache module's own prefix filter, machine noise like PATH stays out). */
+function buildCacheEnvDelta(
+  env: NodeJS.ProcessEnv,
+): Record<string, string | undefined> {
+  const delta: Record<string, string | undefined> = {};
+  for (const [key, value] of Object.entries(env)) {
+    if (process.env[key] !== value) delta[key] = value;
+  }
+  return delta;
 }
 
 function cleanAppBuildOutputs(appDir: string): void {
