@@ -26,6 +26,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 // ─── Metadata ─────────────────────────────────────────────────────
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.jami.studio'),
   title: 'Jami Studio: Just Another Machine Interface',
   description:
     'The provider-agnostic, agent-native framework for customizable workspaces where agents and interfaces share the same actions, state, and context.',
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Jami Studio: Just Another Machine Interface',
     description: 'The provider-agnostic, agent-native framework for customizable workspaces.',
-    url: 'https://jami.studio',
+    url: 'https://www.jami.studio',
     siteName: 'Jami Studio',
     images: [
       {
