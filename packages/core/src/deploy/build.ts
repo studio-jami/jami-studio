@@ -17,6 +17,7 @@
 import { execFileSync } from "child_process";
 import fs from "fs";
 import { createRequire } from "module";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -3322,6 +3323,86 @@ export function bundleSharedYjsLibForWorkerOutput(opts: {
   return rewritten;
 }
 
+/**
+ * Emit Yjs as a standalone `_libs/yjs.mjs` in the Node server output and
+ * rewrite every bare `yjs` import to it — the Node-tier sibling of
+ * `bundleSharedYjsLibForWorkerOutput` above.
+ *
+ * Why this is needed: Nitro's Rolldown build (node-middleware preset) can
+ * preserve Vite's `yjs` external in split server chunks even with
+ * `noExternals: ["yjs"]`, and its file tracer does NOT copy the `yjs`
+ * package (or its `lib0`/`isomorphic.js` transitive deps) into the traced
+ * `.output/server/node_modules` — so the unified workspace Node process
+ * dies at request time with `ERR_MODULE_NOT_FOUND: Cannot find package
+ * 'yjs'` (observed live: clips + plan 500s, 2026-07-13). Bundling one
+ * self-contained ESM copy per app keeps each app's module graph on exactly
+ * one Yjs (constructor checks hold within the graph; cross-app Yjs objects
+ * never cross the A2A HTTP boundary).
+ */
+export function bundleSharedYjsLibForNodeServerOutput(opts: {
+  serverDir: string | undefined;
+  projectCwd: string;
+}): string[] {
+  const { serverDir, projectCwd } = opts;
+  if (!serverDir || !fs.existsSync(serverDir)) return [];
+
+  const requireSites: string[] = [];
+  let hasBareImport = false;
+  walkServerJavaScriptFiles(serverDir, (filePath) => {
+    const source = fs.readFileSync(filePath, "utf-8");
+    if (/\brequire\(\s*["']yjs["']\s*\)/.test(source)) {
+      requireSites.push(filePath);
+    }
+    if (hasBareYjsRuntimeImport(source)) hasBareImport = true;
+  });
+  if (requireSites.length > 0) {
+    throw new Error(
+      `[deploy] Node server output left CJS require("yjs") sites the Yjs lib rewrite cannot fix: ${requireSites.join(", ")}`,
+    );
+  }
+  if (!hasBareImport) return [];
+
+  const yjsEntry = resolveYjsEsmEntry(projectCwd);
+  if (!yjsEntry) {
+    throw new Error(
+      "[deploy] Node server output imports yjs but the package could not be resolved for _libs bundling",
+    );
+  }
+
+  const libsDir = path.join(serverDir, "_libs");
+  fs.mkdirSync(libsDir, { recursive: true });
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "an-yjs-lib-"));
+  try {
+    const entryFile = path.join(tmpDir, "_yjs-lib-entry.js");
+    // Forward slashes: backslashes in an import specifier are escape sequences.
+    fs.writeFileSync(
+      entryFile,
+      `export * from "${yjsEntry.split(path.sep).join("/")}";\n`,
+    );
+    const command = esbuildSpawnCommand(findEsbuild(), [
+      entryFile,
+      "--bundle",
+      `--outfile=${path.join(libsDir, "yjs.mjs")}`,
+      "--format=esm",
+      "--platform=node",
+      "--target=es2022",
+      "--minify",
+    ]);
+    execFileSync(command.file, command.args, {
+      stdio: "inherit",
+      cwd: projectCwd,
+    });
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+
+  const rewritten = rewriteBareYjsImportsForServerlessOutput(serverDir);
+  console.log(
+    `[deploy] Bundled yjs into server _libs/yjs.mjs for the Node output (${rewritten.length} import site file(s) rewritten)`,
+  );
+  return rewritten;
+}
+
 export function assertSingleTemplateNetlifyBuildOutput(
   projectCwd: string,
 ): void {
@@ -4110,11 +4191,18 @@ export default bundle;
   // Unified workspace Node output: nitro's file tracer misses the
   // platform-specific native binary packages (libsql/resvg/ffmpeg) the same
   // way the serverless presets do — copy the installed ones into the traced
-  // server node_modules so the Node tier runs them natively.
+  // server node_modules so the Node tier runs them natively. It also leaves
+  // bare `yjs` imports in split chunks without tracing the package — bundle
+  // the one real copy into _libs/yjs.mjs and rewrite the import sites
+  // (mirrors the netlify/vercel rewrite + the cloudflare _libs emit).
   if (preset === "node-middleware") {
     copyInstalledLibsqlNativePackages(nitro.options.output.serverDir);
     copyInstalledResvgPackages(nitro.options.output.serverDir);
     copyInstalledFfmpegStaticPackage(nitro.options.output.serverDir);
+    bundleSharedYjsLibForNodeServerOutput({
+      serverDir: nitro.options.output.serverDir,
+      projectCwd: cwd,
+    });
   }
 
   // Durable background agent runs (default-OFF / opt-in; enable with a truthy

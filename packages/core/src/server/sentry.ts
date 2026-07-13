@@ -32,6 +32,45 @@ let _initStarted = false;
 let _initSucceeded = false;
 
 /**
+ * PROCESS-WIDE init guard, on top of the module-scope one above.
+ *
+ * On a unified workspace Node deployment (`agent-native deploy --preset
+ * node`) every app's server bundle carries its OWN copy of this module, so
+ * the module-scope `_initStarted` dedupes per app — not per process. But
+ * Sentry's Node SDK instruments PROCESS-WIDE resources: its `Http.Server`
+ * integration wraps the shared HTTP server's `emit`, and each SDK copy's
+ * "already wrapped?" WeakMap can't see sibling copies' wraps. 14 inits →
+ * every request re-wraps `emit` through 14 proxy layers, the chain grows on
+ * every request, and the process dies with `RangeError: Maximum call stack
+ * size exceeded` cycling through every app's bundle (observed live,
+ * 2026-07-13). Sentry events/tags/user data still work from every app — the
+ * SDK's own carrier (`globalThis.__SENTRY__`) is process-global already.
+ *
+ * `Symbol.for` keys the flag in the process-wide symbol registry so every
+ * bundle copy resolves the SAME slot. Deliberately NOT `getScopedGlobal`:
+ * registry scoping is per-app by design; Sentry must be per-process.
+ */
+const SERVER_SENTRY_PROCESS_FLAG = Symbol.for(
+  "agent-native.server-sentry-init",
+);
+
+interface ServerSentryProcessState {
+  started: boolean;
+  succeeded: boolean;
+}
+
+function serverSentryProcessState(): ServerSentryProcessState {
+  const g = globalThis as unknown as Record<
+    symbol,
+    ServerSentryProcessState | undefined
+  >;
+  return (g[SERVER_SENTRY_PROCESS_FLAG] ??= {
+    started: false,
+    succeeded: false,
+  });
+}
+
+/**
  * Resolve the agent-native version baked into core's package.json so Sentry
  * "release" reflects the running framework version. Mirrors how the CLI
  * computes `_version` — same dist layout, same fallback string. Guarded so
@@ -75,6 +114,15 @@ function parseTracesSampleRate(): number {
 export function initServerSentry(): boolean {
   if (_initStarted) return _initSucceeded;
   _initStarted = true;
+
+  const processState = serverSentryProcessState();
+  if (processState.started) {
+    // Another app bundle in this process already initialized (or attempted)
+    // the Node SDK — adopt its outcome instead of double-instrumenting.
+    _initSucceeded = processState.succeeded;
+    return _initSucceeded;
+  }
+  processState.started = true;
 
   const dsn = resolveServerSentryDsn();
   if (!dsn) {
@@ -271,6 +319,7 @@ export function initServerSentry(): boolean {
   });
 
   _initSucceeded = true;
+  processState.succeeded = true;
   return true;
 }
 

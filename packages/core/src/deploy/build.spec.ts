@@ -14,6 +14,7 @@ import {
   addImmutableAssetRouteRulesForClientBuild,
   assertSingleTemplateNetlifyBuildOutput,
   bundleSharedYjsLibForWorkerOutput,
+  bundleSharedYjsLibForNodeServerOutput,
   CLOUDFLARE_WORKER_ESBUILD_EXTERNALS,
   CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES,
   CLOUDFLARE_WORKER_STUB_MODULES,
@@ -2298,6 +2299,80 @@ describe("Cloudflare worker Yjs lib extraction", () => {
     const index = fs.readFileSync(indexFile, "utf-8");
     expect(index).toContain('from"./_libs/yjs.mjs"');
     expect(index).not.toMatch(/from\s*["']yjs["']/);
+  });
+});
+
+describe("bundleSharedYjsLibForNodeServerOutput (unified workspace Node yjs)", () => {
+  const tmpDirs: string[] = [];
+
+  afterEach(() => {
+    for (const dir of tmpDirs.splice(0)) {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  function setupServerDir(): string {
+    const base = fs.mkdtempSync(path.join(process.cwd(), ".tmp-node-yjs-"));
+    tmpDirs.push(base);
+    const serverDir = path.join(base, "server");
+    fs.mkdirSync(path.join(serverDir, "_chunks"), { recursive: true });
+    return serverDir;
+  }
+
+  it("is a no-op when the server output has no bare yjs imports", () => {
+    const serverDir = setupServerDir();
+    fs.writeFileSync(
+      path.join(serverDir, "index.mjs"),
+      'import x from "./_chunks/a.mjs";export default x;\n',
+    );
+
+    expect(
+      bundleSharedYjsLibForNodeServerOutput({
+        serverDir,
+        projectCwd: process.cwd(),
+      }),
+    ).toEqual([]);
+    expect(fs.existsSync(path.join(serverDir, "_libs", "yjs.mjs"))).toBe(
+      false,
+    );
+  });
+
+  it("bundles Yjs into _libs/yjs.mjs and rewrites bare imports in split chunks", () => {
+    const serverDir = setupServerDir();
+    const chunkFile = path.join(serverDir, "_chunks", "server-abc.mjs");
+    fs.writeFileSync(chunkFile, 'import*as Y from"yjs";console.log(Y.Doc);\n');
+
+    const rewritten = bundleSharedYjsLibForNodeServerOutput({
+      serverDir,
+      projectCwd: process.cwd(),
+    });
+
+    expect(rewritten).toEqual([chunkFile]);
+    const lib = fs.readFileSync(
+      path.join(serverDir, "_libs", "yjs.mjs"),
+      "utf-8",
+    );
+    // The real Yjs module (its double-import guard string proves it's the
+    // genuine package, not a stub).
+    expect(lib).toContain("Yjs was already imported");
+    const chunk = fs.readFileSync(chunkFile, "utf-8");
+    expect(chunk).toContain('from"../_libs/yjs.mjs"');
+    expect(chunk).not.toMatch(/from\s*["']yjs["']/);
+  });
+
+  it("fails loud on CJS require('yjs') sites the rewrite cannot fix", () => {
+    const serverDir = setupServerDir();
+    fs.writeFileSync(
+      path.join(serverDir, "index.mjs"),
+      'const Y = require("yjs");module.exports = Y;\n',
+    );
+
+    expect(() =>
+      bundleSharedYjsLibForNodeServerOutput({
+        serverDir,
+        projectCwd: process.cwd(),
+      }),
+    ).toThrow(/require\("yjs"\) sites/);
   });
 });
 

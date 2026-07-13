@@ -32,6 +32,10 @@ describe("server/sentry", () => {
 
   beforeEach(() => {
     originalEnv = { ...process.env };
+    // Clear the process-wide init flag (Symbol.for survives vi.resetModules).
+    delete (globalThis as Record<symbol, unknown>)[
+      Symbol.for("agent-native.server-sentry-init")
+    ];
     sentryMock.init.mockClear();
     sentryMock.captureException.mockClear();
     sentryMock.mockScope.setUser.mockClear();
@@ -124,6 +128,24 @@ describe("server/sentry", () => {
       initServerSentry();
       initServerSentry();
       expect(sentryMock.init).toHaveBeenCalledTimes(1);
+    });
+
+    it("is process-wide idempotent — a second module copy (unified workspace Node) adopts the first init instead of re-instrumenting", async () => {
+      process.env.SENTRY_SERVER_DSN = "https://test@example/123";
+      const first = await import("./sentry.js");
+      expect(first.initServerSentry()).toBe(true);
+
+      // Simulate a sibling app bundle's own copy of this module in the same
+      // process: reset the module registry (fresh module-scope state) but
+      // keep the process-wide Symbol.for flag.
+      vi.resetModules();
+      const second = await import("./sentry.js");
+      expect(second.initServerSentry()).toBe(true);
+      // Sentry.init ran exactly once for the whole process — a second init
+      // would stack another Http.Server emit wrapper per request (observed
+      // live as RangeError: Maximum call stack size exceeded).
+      expect(sentryMock.init).toHaveBeenCalledTimes(1);
+      expect(second.isServerSentryEnabled()).toBe(true);
     });
   });
 
