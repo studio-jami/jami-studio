@@ -34,11 +34,11 @@ import {
 } from "./build.js";
 import { IMMUTABLE_ASSET_CACHE_CONTROL } from "./immutable-assets.js";
 
-const DEFAULT_SSR_CACHE_CONTROL =
-  "public, max-age=5, stale-while-revalidate=604800, stale-if-error=3600";
-const DEFAULT_SSR_CDN_CACHE_CONTROL = DEFAULT_SSR_CACHE_CONTROL;
+const DEFAULT_SSR_CACHE_CONTROL = "public, max-age=0, must-revalidate";
+const DEFAULT_SSR_CDN_CACHE_CONTROL =
+  "public, s-maxage=600, stale-while-revalidate=604800, stale-if-error=3600";
 const DEFAULT_SSR_NETLIFY_CDN_CACHE_CONTROL =
-  "public, durable, max-age=5, stale-while-revalidate=604800, stale-if-error=3600";
+  "public, durable, s-maxage=600, stale-while-revalidate=604800, stale-if-error=3600";
 const tempDirs: string[] = [];
 
 describe("nitroNoExternalsForPreset", () => {
@@ -113,8 +113,16 @@ export function createRequestHandler() {
         headers: {
           "cache-control": "private, no-store",
           "content-type": "text/html; charset=utf-8",
+          "set-cookie": "viewer=private; Path=/",
+          "vary": "Cookie, Accept-Encoding, Authorization",
         },
       });
+    }
+    if (url.pathname === "/request-headers") {
+      return new Response(
+        '<html><body>' + (request.headers.get("cookie") || "no-cookie") + ':' + (request.headers.get("authorization") || "no-auth") + '</body></html>',
+        { headers: { "content-type": "text/html; charset=utf-8" } },
+      );
     }
     return new Response(
       '<html><head></head><body><a href="/next">next</a><form action="/api/search"></form><style>.hero{background:url("/hero.png")}</style>' +
@@ -132,11 +140,30 @@ export function createRequestHandler() {
     .default;
 }
 
-describe("generateWorkerEntry", () => {
+// These tests dynamically import generated workers. Under the full workspace
+// prep run, module startup shares CPU with many package suites and can exceed
+// Vitest's generic 5s default even though the worker responds correctly. Keep
+// a bounded suite-local allowance so local prep tests behavior, not scheduler
+// contention; focused runs normally complete well below this limit.
+describe("generateWorkerEntry", { timeout: 15_000 }, () => {
   afterEach(() => {
     for (const dir of tempDirs.splice(0)) {
       fs.rmSync(dir, { recursive: true, force: true });
     }
+  });
+
+  it("pins generated React Router SSR to an anonymous request context", () => {
+    const source = generateWorkerEntry([], []);
+
+    expect(source).toContain(
+      'import { runWithRequestContext } from "@agent-native/core/server/edge";',
+    );
+    expect(source).toContain(
+      "const anonymousContext = { userEmail: undefined, orgId: undefined };",
+    );
+    expect(source).toContain(
+      "runWithRequestContext(anonymousContext, () => rrHandler(request))",
+    );
   });
 
   it("pre-marks generated plugin slots before running async plugins", () => {
@@ -317,10 +344,9 @@ export default (event) =>
     expectDefaultWorkerSsrCacheHeaders(response);
   });
 
-  it("overwrites explicit no-store cache policies on anonymous Cloudflare worker SSR", async () => {
+  it("overwrites explicit no-store on anonymous Cloudflare worker SSR", async () => {
     const worker = await importGeneratedWorker(generateWorkerEntry([], []));
 
-    // Anonymous request: the public SWR default overrides route-level no-store.
     const response = await worker.fetch(
       new Request("https://app.test/private-html"),
       {},
@@ -328,15 +354,33 @@ export default (event) =>
     );
 
     expectDefaultWorkerSsrCacheHeaders(response);
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(response.headers.get("vary")).toBe("Accept-Encoding");
   });
 
-  it("overrides a route-provided private Cache-Control on authenticated Cloudflare worker SSR HTML responses", async () => {
+  it("strips credential headers before generated worker SSR", async () => {
     const worker = await importGeneratedWorker(generateWorkerEntry([], []));
 
-    // The mock react-router handler returns "private, no-store" for
-    // "/private-html". Routes can no longer opt SSR HTML out of the public
-    // hard-cache — the framework overrides it to the public SWR policy even
-    // when an auth cookie is present.
+    const response = await worker.fetch(
+      new Request("https://app.test/request-headers", {
+        headers: {
+          cookie: "an_session=active",
+          authorization: "Bearer private-token",
+        },
+      }),
+      {},
+      {},
+    );
+
+    expect(await response.text()).toContain("no-cookie:no-auth");
+    expectDefaultWorkerSsrCacheHeaders(response);
+  });
+
+  it("overwrites route-provided private Cache-Control on authenticated Cloudflare worker SSR HTML responses", async () => {
+    const worker = await importGeneratedWorker(generateWorkerEntry([], []));
+
+    // Route-level cache hints must not make the shared shell session-dependent
+    // or send authenticated page loads back to origin.
     const response = await worker.fetch(
       new Request("https://app.test/private-html", {
         headers: { cookie: "an_session=active" },
@@ -348,7 +392,7 @@ export default (event) =>
     expectDefaultWorkerSsrCacheHeaders(response);
   });
 
-  it("replaces React Router's default no-cache policy on Cloudflare worker data responses", async () => {
+  it("hard-caches React Router data responses with the default no-cache policy", async () => {
     const worker = await importGeneratedWorker(generateWorkerEntry([], []));
 
     const response = await worker.fetch(
@@ -360,11 +404,9 @@ export default (event) =>
     expectDefaultWorkerSsrCacheHeaders(response);
   });
 
-  it("hard-caches .data responses for authenticated Cloudflare worker requests just like anonymous ones", async () => {
+  it("hard-caches .data responses for authenticated Cloudflare worker requests", async () => {
     const worker = await importGeneratedWorker(generateWorkerEntry([], []));
 
-    // An auth cookie must make no difference for React Router .data responses
-    // either: they get the same public SWR headers as anonymous requests.
     const response = await worker.fetch(
       new Request("https://app.test/docs/inbox.data", {
         headers: { cookie: "an_session=active" },
@@ -376,13 +418,10 @@ export default (event) =>
     expectDefaultWorkerSsrCacheHeaders(response);
   });
 
-  it("overrides a route-provided private Cache-Control on authenticated Cloudflare worker data responses", async () => {
+  it("overwrites route-provided private Cache-Control on authenticated Cloudflare worker data responses", async () => {
     const worker = await importGeneratedWorker(generateWorkerEntry([], []));
 
-    // The mock react-router handler sets "private, no-store" for
-    // "/private.data". Routes can no longer opt .data responses out of the
-    // public hard-cache — the framework overrides it to the public SWR policy
-    // even when an auth cookie is present.
+    // React Router page data follows the same public-shell invariant as HTML.
     const response = await worker.fetch(
       new Request("https://app.test/private.data", {
         headers: { cookie: "an_session=active" },
@@ -1310,16 +1349,34 @@ describe("runNitroBuildPipeline", () => {
 describe("durable-background Netlify function emit (single-template, flag-gated)", () => {
   const dirs: string[] = [];
   let previousFlag: string | undefined;
+  let previousWorkspaceFlag: string | undefined;
+  let previousViteWorkspaceFlag: string | undefined;
+  let previousAppBasePath: string | undefined;
+  let previousViteAppBasePath: string | undefined;
 
   beforeEach(() => {
     previousFlag = process.env.AGENT_CHAT_DURABLE_BACKGROUND;
+    previousWorkspaceFlag = process.env.AGENT_NATIVE_WORKSPACE;
+    previousViteWorkspaceFlag = process.env.VITE_AGENT_NATIVE_WORKSPACE;
+    previousAppBasePath = process.env.APP_BASE_PATH;
+    previousViteAppBasePath = process.env.VITE_APP_BASE_PATH;
     delete process.env.AGENT_CHAT_DURABLE_BACKGROUND;
+    delete process.env.AGENT_NATIVE_WORKSPACE;
+    delete process.env.VITE_AGENT_NATIVE_WORKSPACE;
+    delete process.env.APP_BASE_PATH;
+    delete process.env.VITE_APP_BASE_PATH;
   });
 
   afterEach(() => {
-    if (previousFlag === undefined)
-      delete process.env.AGENT_CHAT_DURABLE_BACKGROUND;
-    else process.env.AGENT_CHAT_DURABLE_BACKGROUND = previousFlag;
+    const restoreEnv = (key: string, value: string | undefined) => {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    };
+    restoreEnv("AGENT_CHAT_DURABLE_BACKGROUND", previousFlag);
+    restoreEnv("AGENT_NATIVE_WORKSPACE", previousWorkspaceFlag);
+    restoreEnv("VITE_AGENT_NATIVE_WORKSPACE", previousViteWorkspaceFlag);
+    restoreEnv("APP_BASE_PATH", previousAppBasePath);
+    restoreEnv("VITE_APP_BASE_PATH", previousViteAppBasePath);
     for (const d of dirs.splice(0)) {
       fs.rmSync(d, { recursive: true, force: true });
     }
@@ -1459,7 +1516,21 @@ describe("durable-background Netlify function emit (single-template, flag-gated)
     expect(entry).toContain(
       `const PROCESS_RUN_PATH = ${JSON.stringify(AGENT_CHAT_PROCESS_RUN_PATH)}`,
     );
-    expect(entry).toContain("url.pathname = PROCESS_RUN_PATH");
+    expect(entry).toContain(
+      "url.pathname = processorPathFromBody(body) || PROCESS_RUN_PATH",
+    );
+    expect(entry).toContain(
+      'const A2A_PROCESS_TASK_PATH = "/_agent-native/a2a/_process-task"',
+    );
+    expect(entry).toContain(
+      'const BACKGROUND_PROCESSOR_FIELD = "__agentNativeProcessor"',
+    );
+    expect(entry).toContain('const BACKGROUND_PROCESSOR_ROUTE = "route"');
+    expect(entry).toContain(
+      'const BACKGROUND_PROCESSOR_ROUTE_FIELD = "__agentNativeProcessorRoute"',
+    );
+    expect(entry).toContain("function processorPathFromBody(body)");
+    expect(entry).toContain('route.includes("/api/_agent-native-background/")');
     // It preserves the body (read once) and ALL headers (the HMAC Authorization
     // Bearer MUST survive — the plugin verifies it).
     expect(entry).toContain("await request.text()");
@@ -1530,6 +1601,31 @@ describe("durable-background Netlify function emit (single-template, flag-gated)
     prepareSingleTemplateNetlifyOutput(cwd);
 
     expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+
+  it("passes workspace deploy output with client assets under the normalized app base path", () => {
+    process.env.AGENT_NATIVE_WORKSPACE = "1";
+    process.env.APP_BASE_PATH = " //dispatch// ";
+    const cwd = setupNetlifyOutput();
+    prepareSingleTemplateNetlifyOutput(cwd);
+    fs.mkdirSync(path.join(cwd, "dist", "dispatch"), { recursive: true });
+    fs.renameSync(
+      path.join(cwd, "dist", "assets"),
+      path.join(cwd, "dist", "dispatch", "assets"),
+    );
+
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).not.toThrow();
+  });
+
+  it("fails workspace deploy output without client assets under the app base path", () => {
+    process.env.AGENT_NATIVE_WORKSPACE = "1";
+    process.env.APP_BASE_PATH = "/dispatch";
+    const cwd = setupNetlifyOutput();
+    prepareSingleTemplateNetlifyOutput(cwd);
+
+    expect(() => assertSingleTemplateNetlifyBuildOutput(cwd)).toThrow(
+      /dist\/dispatch\/assets is missing hashed client assets/,
+    );
   });
 
   it("removes the incompatible default-function rewrite while keeping real redirects", () => {

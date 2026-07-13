@@ -87,7 +87,7 @@ const mocks = vi.hoisted(() => {
 
   const fileUpdateChain = { set: vi.fn(), where: vi.fn() };
   fileUpdateChain.set.mockReturnValue(fileUpdateChain);
-  fileUpdateChain.where.mockResolvedValue(undefined);
+  fileUpdateChain.where.mockResolvedValue({ rowsAffected: 1 });
 
   const designUpdateChain = { set: vi.fn(), where: vi.fn() };
   designUpdateChain.set.mockReturnValue(designUpdateChain);
@@ -148,7 +148,9 @@ const mocks = vi.hoisted(() => {
     getDesignData: () => designData,
     mutateDesignData: vi.fn(),
     assertAccess: vi.fn().mockResolvedValue(undefined),
+    and: vi.fn((...conditions) => ({ conditions })),
     eq: vi.fn((left, right) => ({ left, right })),
+    isNull: vi.fn((value) => ({ isNull: value })),
     readAppState: vi.fn().mockResolvedValue(null),
     writeAppState: vi.fn().mockResolvedValue(undefined),
   };
@@ -159,7 +161,9 @@ vi.mock("@agent-native/core/sharing", () => ({
 }));
 
 vi.mock("drizzle-orm", () => ({
+  and: mocks.and,
   eq: mocks.eq,
+  isNull: mocks.isNull,
   sql: vi.fn((strings, ...values) => ({ strings, values })),
 }));
 
@@ -303,6 +307,66 @@ describe("generate-design action tool schema", () => {
   });
 });
 
+describe("generate-design: canvasFrames duplicate-target rejection", () => {
+  // mergeCanvasFramePlacements folds two placements for the same target into
+  // one canvasFrames[fileId] value (last one wins), but the mutateDesignData
+  // isApplied check verifies EVERY placedFrames entry against that single
+  // folded value, so the earlier (now-overwritten) entry always mismatches.
+  // Since the mutate callback is deterministic, every retry recomputes the
+  // same mismatch, so the action would always fail with a "concurrent write
+  // conflicts" error after burning through every retry. Reject the malformed
+  // input up front instead.
+  it("rejects two canvasFrames entries targeting the same fileId", () => {
+    const parsed = (action as any).schema.safeParse({
+      designId: "design-1",
+      prompt: "Add a screen",
+      files: [
+        { filename: "index.html", fileType: "html", content: "<html></html>" },
+      ],
+      canvasFrames: JSON.stringify([
+        { fileId: "file-1", x: 0, y: 0, width: 100, height: 100 },
+        { fileId: "file-1", x: 50, y: 50, width: 100, height: 100 },
+      ]),
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects two canvasFrames entries targeting the same filename", () => {
+    const parsed = (action as any).schema.safeParse({
+      designId: "design-1",
+      prompt: "Add a screen",
+      files: [
+        { filename: "index.html", fileType: "html", content: "<html></html>" },
+      ],
+      canvasFrames: JSON.stringify([
+        { filename: "index.html", x: 0, y: 0, width: 100, height: 100 },
+        { filename: "index.html", x: 50, y: 50, width: 100, height: 100 },
+      ]),
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it("still accepts distinct canvasFrames targets", () => {
+    const parsed = (action as any).schema.safeParse({
+      designId: "design-1",
+      prompt: "Add screens",
+      files: [
+        { filename: "index.html", fileType: "html", content: "<html></html>" },
+        {
+          filename: "details.html",
+          fileType: "html",
+          content: "<html></html>",
+        },
+      ],
+      canvasFrames: JSON.stringify([
+        { filename: "index.html", x: 0, y: 0, width: 100, height: 100 },
+        { filename: "details.html", x: 200, y: 0, width: 100, height: 100 },
+      ]),
+    });
+    expect(parsed.success).toBe(true);
+  });
+});
+
 describe("generate-design: existing-file update path (hash-guarded write)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -310,7 +374,7 @@ describe("generate-design: existing-file update path (hash-guarded write)", () =
     mocks.setFileRows([]);
     mocks.setDesignRows([{ id: "design-1", data: null }]);
     mocks.assertAccess.mockResolvedValue(undefined);
-    mocks.fileUpdateChain.where.mockResolvedValue(undefined);
+    mocks.fileUpdateChain.where.mockResolvedValue({ rowsAffected: 1 });
     mocks.designUpdateChain.where.mockResolvedValue(undefined);
     resetDesignDataMutation();
   });
@@ -423,6 +487,112 @@ describe("generate-design: existing-file update path (hash-guarded write)", () =
   });
 });
 
+describe("generate-design: generation-session lock guards concurrent fan-out", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.seededCollabText.clear();
+    mocks.setFileRows([]);
+    mocks.setDesignRows([{ id: "design-1", data: null }]);
+    mocks.assertAccess.mockResolvedValue(undefined);
+    mocks.fileUpdateChain.where.mockResolvedValue({ rowsAffected: 1 });
+    mocks.designUpdateChain.where.mockResolvedValue(undefined);
+    resetDesignDataMutation();
+  });
+
+  // generate-screens' own tool description recommends fanning out parallel
+  // generate-design calls per returned frame. Both calls read-modify-write
+  // the same design-generation-session:<designId> application-state key with
+  // no CAS/versioning primitive available, so without in-process
+  // serialization, whichever write lands second silently discards the first
+  // call's frame-done update (classic lost-update race). Artificial delays on
+  // the mocked readAppState/writeAppState make the race deterministic: without
+  // the lock, both reads land on the same pre-update session before either
+  // write commits.
+  it("marks both fanned-out frames done instead of losing one to a last-write-wins race", async () => {
+    const sessionStore = new Map<string, Record<string, unknown>>();
+    const key = "design-generation-session:design-1";
+    sessionStore.set(key, {
+      designId: "design-1",
+      status: "generating",
+      prompt: "Build two screens",
+      contextRefs: [],
+      frames: [
+        {
+          frameId: "frame-1",
+          filename: "index.html",
+          agentId: "agent-1",
+          agentName: "Atlas",
+          agentColor: "red",
+          region: { x: 0, y: 0, width: 100, height: 100 },
+          role: "screen",
+          status: "queued",
+          progress: 0,
+        },
+        {
+          frameId: "frame-2",
+          filename: "details.html",
+          agentId: "agent-2",
+          agentName: "Nova",
+          agentColor: "blue",
+          region: { x: 0, y: 0, width: 100, height: 100 },
+          role: "screen",
+          status: "queued",
+          progress: 0,
+        },
+      ],
+      startedAt: "2026-07-09T00:00:00.000Z",
+    });
+
+    mocks.readAppState.mockImplementation(async (k: string) => {
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      return sessionStore.get(k) ?? null;
+    });
+    mocks.writeAppState.mockImplementation(
+      async (k: string, value: Record<string, unknown>) => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        sessionStore.set(k, value);
+      },
+    );
+
+    await Promise.all([
+      action.run({
+        designId: "design-1",
+        prompt: "Build two screens",
+        files: [
+          {
+            filename: "index.html",
+            fileType: "html",
+            content: "<html><body>index</body></html>",
+          },
+        ],
+      }),
+      action.run({
+        designId: "design-1",
+        prompt: "Build two screens",
+        files: [
+          {
+            filename: "details.html",
+            fileType: "html",
+            content: "<html><body>details</body></html>",
+          },
+        ],
+      }),
+    ]);
+
+    const finalSession = sessionStore.get(key) as {
+      status: string;
+      frames: Array<{ filename?: string; status: string }>;
+    };
+    expect(
+      finalSession.frames.find((f) => f.filename === "index.html")?.status,
+    ).toBe("done");
+    expect(
+      finalSession.frames.find((f) => f.filename === "details.html")?.status,
+    ).toBe("done");
+    expect(finalSession.status).toBe("done");
+  });
+});
+
 describe("generate-design: new-file creation path (unchanged)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -430,7 +600,7 @@ describe("generate-design: new-file creation path (unchanged)", () => {
     mocks.setFileRows([]);
     mocks.setDesignRows([{ id: "design-1", data: null }]);
     mocks.assertAccess.mockResolvedValue(undefined);
-    mocks.fileUpdateChain.where.mockResolvedValue(undefined);
+    mocks.fileUpdateChain.where.mockResolvedValue({ rowsAffected: 1 });
     mocks.designUpdateChain.where.mockResolvedValue(undefined);
     resetDesignDataMutation();
   });
@@ -467,5 +637,58 @@ describe("generate-design: new-file creation path (unchanged)", () => {
       lastPrompt: "New landing page",
       fileCount: 1,
     });
+  });
+
+  it("defaults a generated web screen to a desktop canvas and responsive breakpoints", async () => {
+    await action.run({
+      designId: "design-1",
+      prompt: "Create a task manager",
+      files: [
+        {
+          filename: "index.html",
+          fileType: "html",
+          content: "<!doctype html><html><body>Tasks</body></html>",
+        },
+      ],
+    });
+
+    const data = mocks.getDesignData();
+    const [frame] = Object.values(
+      data.canvasFrames as Record<string, Record<string, unknown>>,
+    );
+    expect(frame).toMatchObject({
+      x: 0,
+      y: 0,
+      width: 1440,
+      height: 1024,
+    });
+    expect(data.breakpointSet).toMatchObject({
+      breakpoints: [
+        expect.objectContaining({ label: "Mobile", widthPx: 390 }),
+        expect.objectContaining({ label: "Tablet", widthPx: 768 }),
+        expect.objectContaining({ label: "Desktop", widthPx: 1440 }),
+      ],
+    });
+  });
+
+  it("uses the requested mobile viewport when the agent supplies it", async () => {
+    await action.run({
+      designId: "design-1",
+      prompt: "Create a mobile task manager",
+      primaryViewport: "mobile",
+      files: [
+        {
+          filename: "index.html",
+          fileType: "html",
+          content: "<!doctype html><html><body>Tasks</body></html>",
+        },
+      ],
+    });
+
+    const data = mocks.getDesignData();
+    const [frame] = Object.values(
+      data.canvasFrames as Record<string, Record<string, unknown>>,
+    );
+    expect(frame).toMatchObject({ width: 390, height: 844 });
   });
 });

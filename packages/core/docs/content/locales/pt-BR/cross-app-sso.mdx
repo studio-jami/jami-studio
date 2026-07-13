@@ -9,7 +9,11 @@ Cada aplicativo hospedado no `*.jami.studio` executa sua própria implantação 
 
 Esta é a mesma primitiva de confiança que [A2A](/docs/a2a-protocol) e [External Agents](/docs/external-agents) já usam — um `A2A_SECRET` assinado por JWT verificado no limite da solicitação — aplicado ao caminho de login humano em vez de chamadas de agente para agente.
 
-> **Implantação unificada versus implantação por domínio.** Se você hospedar todos os aplicativos em uma origem (`your-agents.com/mail`, `your-agents.com/calendar`), você já terá login compartilhado por meio de um único domínio de cookie, sem necessidade de federação. Cross-App SSO só é necessário quando os aplicativos são executados em domínios separados. Consulte [Multi-App Workspaces — Unified deploy](/docs/multi-app-workspace#deployment).
+<Callout tone="info">
+
+**Implantação unificada versus implantação por domínio.** Se você hospedar todos os aplicativos em uma origem (`your-agents.com/mail`, `your-agents.com/calendar`), você já terá login compartilhado por meio de um único domínio de cookie, sem necessidade de federação. Cross-App SSO só é necessário quando os aplicativos são executados em domínios separados. Consulte [Multi-App Workspaces — Unified deploy](/docs/multi-app-workspace#deployment).
+
+</Callout>
 
 ## O quê e por quê {#what-why}
 
@@ -86,14 +90,16 @@ O fluxo é um redirecionamento padrão de autorização → token assinado → r
 
 </Diagram>
 
-1. **Aplicativo → Envio (autorizar).** O aplicativo envia o usuário para a autoridade de identidade:
+1. **Aplicativo → Dispatch (autorização).** A rota `GET /_agent-native/identity/login` do aplicativo (à qual o botão “Entrar com Agent-Native” aponta) cria o redirecionamento e envia o usuário à autoridade de identidade:
 
-   ```
+   ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
        ?app=<requesting-app>
        &redirect_uri=<app-callback-url>
        &estado=<csrf-state>
    ```
+
+   `redirect_uri` é a rota `GET /_agent-native/identity/callback` do próprio aplicativo — a rota que recebe o token assinado na etapa 3.
 
 <Endpoint id="cross-app-sso-identity-authorize-pt-br" title={"Endpoint de autorização de identidade"} method="GET" path="/_agent-native/identity/authorize" summary="Dispatch (autoridade de identidade) autentica o humano e redireciona de volta com um token de identidade assinado" auth={"Sessão de envio (login interativo se não houver)"} params={[
   {
@@ -143,7 +149,7 @@ O fluxo é um redirecionamento padrão de autorização → token assinado → r
    | `scope`       | Sempre `"identity"` — este token autoriza apenas o login   |
    | `exp`         | **≤ 2 minutos** a partir da edição                         |
 
-4. **O aplicativo verifica os links JIT por e-mail.** O aplicativo verifica a assinatura do token com seu próprio `A2A_SECRET`, verifica `scope: "identity"` e `exp` e, em seguida, executa **vinculação just-in-time estritamente por e-mail verificado**:
+4. **O aplicativo verifica e vincula JIT por e-mail.** A rota `GET /_agent-native/identity/callback` verifica a assinatura do token com `A2A_SECRET`, confere `scope: "identity"` e `exp` e realiza **vinculação just-in-time estritamente por e-mail verificado**:
    - Se existir um usuário local com esse e-mail → reutilize-o inalterado.
    - Caso contrário → crie um usuário local para esse e-mail.
 
@@ -290,9 +296,13 @@ Depois que um aplicativo for verificado, repita as etapas 2 a 3 para o próximo 
 **5. Rollback = desativa a variável env na implantação desse aplicativo.**
 Para reverter qualquer aplicativo, **remova `AGENT_NATIVE_IDENTITY_HUB_URL` do ambiente desse aplicativo e reimplante-o/reinicie-o.** O aplicativo retorna imediatamente ao seu comportamento de autenticação anterior. Não há **nenhuma alteração de dados para desfazer** — as linhas de identidade apenas foram adicionadas e a desativação da variável simplesmente torna o caminho da federação inativo novamente. A substituição e a reversão de cada app são independentes e reversíveis.
 
-> A implementação desconecta os usuários à medida que cada aplicativo é ativado (eles autenticam novamente via Dispatch), mas eles sempre fazem login novamente na **mesma conta correspondente por e-mail com os dados intactos**, porque as linhas de identidade nunca são destruídas ou renomeadas, apenas adicionadas.
+<Callout tone="info">
 
-## Relacionado {#related}
+A implementação desconecta os usuários à medida que cada aplicativo é ativado (eles autenticam novamente via Dispatch), mas eles sempre fazem login novamente na **mesma conta correspondente por e-mail com os dados intactos**, porque as linhas de identidade nunca são destruídas ou renomeadas, apenas adicionadas.
+
+</Callout>
+
+## Próximos passos {#whats-next}
 
 - [Authentication](/docs/authentication) — modos de autenticação local, sessões, organizações, a variável de ambiente `A2A_SECRET`.
 - [A2A Protocol](/docs/a2a-protocol) — o modelo de confiança JWT assinado e de verificação no limite que ele reutiliza.

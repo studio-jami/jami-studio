@@ -32,6 +32,8 @@ import {
   type DesignGenerationSession,
   updateGenerationSessionWithSavedFiles,
 } from "../shared/generation-session.js";
+import { assertLockedLayersPreserved } from "../shared/locked-layers.js";
+import { widthToPrefix } from "../shared/responsive-classes.js";
 import { annotateScreenHtmlForPersist } from "../shared/screen-annotation.js";
 
 /** Editor deep link so external agents can surface "Open design". */
@@ -53,27 +55,100 @@ function isRenderableDesignFile(file: {
   );
 }
 
+type GenerationViewport = "mobile" | "tablet" | "desktop";
+
+const DEFAULT_GENERATION_VIEWPORT: GenerationViewport = "desktop";
+const GENERATION_VIEWPORT_SIZES: Record<
+  GenerationViewport,
+  { width: number; height: number }
+> = {
+  mobile: { width: 390, height: 844 },
+  tablet: { width: 768, height: 1024 },
+  desktop: { width: 1440, height: 1024 },
+};
+const GENERATED_FRAME_GAP = 96;
+const DEFAULT_RESPONSIVE_BREAKPOINTS = [390, 768, 1440].map((widthPx) => ({
+  id: `generated-${widthPx}`,
+  label: widthPx === 390 ? "Mobile" : widthPx === 768 ? "Tablet" : "Desktop",
+  widthPx,
+  prefix: widthToPrefix(widthPx),
+}));
+
+function hasBreakpointSet(value: unknown): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+  const breakpoints = (value as { breakpoints?: unknown }).breakpoints;
+  return Array.isArray(breakpoints) && breakpoints.length > 0;
+}
+
+function nextGeneratedFrameX(
+  frames: ReturnType<typeof parseCanvasFrameGeometryById>,
+): number {
+  return Object.values(frames).reduce((furthestRight, frame) => {
+    const x = frame.x ?? 0;
+    const width = frame.width ?? 0;
+    return Math.max(furthestRight, x + width + GENERATED_FRAME_GAP);
+  }, 0);
+}
+
 function jsonValuesEqual(left: unknown, right: unknown): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+// Same-process mutex guarding the generation-session read-modify-write below.
+// generate-screens' own tool description explicitly recommends fanning out
+// parallel generate-design calls per returned frame ("fan out calls to
+// generate-design for each returned frame"). Without this lock, two
+// concurrent calls for the same designId both read the same pre-update
+// session, each only marks its own frame done, and whichever writeAppState
+// lands second silently discards the first call's frame-done update —
+// application state has no CAS/versioning primitive (unlike designs.data's
+// mutateDesignData), so a plain read-then-write here is a classic lost-update
+// race. This mirrors the same-process serialization
+// server/lib/design-data-mutation.ts uses (withDesignDataLock) for the
+// designs.data column. Cross-process races remain (no CAS primitive exists
+// for application state), but same-process fan-out from one agent turn is
+// the realistic, explicitly-encouraged case this closes.
+const generationSessionLocks = new Map<string, Promise<unknown>>();
+
+function withGenerationSessionLock<T>(
+  designId: string,
+  callback: () => Promise<T>,
+): Promise<T> {
+  const previous = generationSessionLocks.get(designId) ?? Promise.resolve();
+  const next = previous.then(callback, callback);
+  generationSessionLocks.set(designId, next);
+  const cleanup = () => {
+    if (generationSessionLocks.get(designId) === next) {
+      generationSessionLocks.delete(designId);
+    }
+  };
+  next.then(cleanup, cleanup);
+  return next;
 }
 
 async function updateGenerationSessionForSavedFiles(
   designId: string,
   savedFilenames: string[],
 ) {
-  const key = designGenerationSessionKey(designId);
-  const rawSession = await readAppState(key).catch(() => null);
-  if (!rawSession || typeof rawSession !== "object") return;
-  const session = rawSession as unknown as DesignGenerationSession;
-  if (session.designId !== designId || !Array.isArray(session.frames)) return;
+  await withGenerationSessionLock(designId, async () => {
+    const key = designGenerationSessionKey(designId);
+    const rawSession = await readAppState(key).catch(() => null);
+    if (!rawSession || typeof rawSession !== "object") return;
+    const session = rawSession as unknown as DesignGenerationSession;
+    if (session.designId !== designId || !Array.isArray(session.frames)) {
+      return;
+    }
 
-  const nextSession = updateGenerationSessionWithSavedFiles(
-    session,
-    savedFilenames,
-  );
-  if (nextSession === session) return;
+    const nextSession = updateGenerationSessionWithSavedFiles(
+      session,
+      savedFilenames,
+    );
+    if (nextSession === session) return;
 
-  await writeAppState(key, nextSession as unknown as Record<string, unknown>);
+    await writeAppState(key, nextSession as unknown as Record<string, unknown>);
+  });
 }
 
 const generateDesignAgentParameters = {
@@ -112,7 +187,15 @@ const generateDesignAgentParameters = {
     canvasFrames: {
       type: "string",
       description:
-        "Optional JSON array of overview-canvas placements keyed by filename or fileId.",
+        "Optional JSON array of overview-canvas placements keyed by filename or fileId. " +
+        "Pass explicit x/y/width/height for every generated screen; desktop is 1440x1024.",
+    },
+    primaryViewport: {
+      type: "string",
+      enum: ["mobile", "tablet", "desktop"],
+      description:
+        "The requested primary form factor. Defaults to desktop (1440x1024). " +
+        "Set this from the intake answer when no explicit canvasFrames placement is supplied.",
     },
   },
   required: ["designId", "prompt", "files"],
@@ -134,6 +217,9 @@ const generateDesignAction = defineAction({
     "When `designSystemId` is provided, first use `get-design-system` and apply " +
     "its `agentContext` tokens/docs before writing the file content; do not " +
     "treat the id alone as enough design-system context. " +
+    "Every web design must be responsive. Use a desktop 1440x1024 primary " +
+    "canvas by default, or set `primaryViewport` for an explicitly mobile- or " +
+    "tablet-primary design; this action adds responsive editor breakpoints. " +
     "Do not report a design as ready until this action succeeds. " +
     "When adding multiple screens or states, pass canvasFrames with filenames " +
     "and x/y/width/height so the new screens appear placed on the overview canvas.",
@@ -228,6 +314,37 @@ const generateDesignAction = defineAction({
                 message: "canvasFrames entries require fileId or filename",
               }),
           )
+          // Reject two placements for the same target in one call. Without
+          // this, mergeCanvasFramePlacements folds both entries into a single
+          // canvasFrames[fileId] value (last one wins), but the mutateDesignData
+          // isApplied check below verifies EVERY placedFrames entry against
+          // that single folded value — so the earlier, now-overwritten entry
+          // always fails the equality check. Since the mutate callback is
+          // deterministic, every retry recomputes the identical mismatch, so
+          // the whole action always fails with a "concurrent write conflicts"
+          // error after burning through all retries, even though nothing else
+          // was actually writing to the design.
+          .superRefine((frames, ctx) => {
+            const seen = new Map<string, number>();
+            frames.forEach((frame, index) => {
+              const key = frame.fileId
+                ? `id:${frame.fileId}`
+                : `name:${frame.filename}`;
+              const firstIndex = seen.get(key);
+              if (firstIndex !== undefined) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  path: [index],
+                  message:
+                    `canvasFrames entry ${index} duplicates the target already placed ` +
+                    `at index ${firstIndex} (${frame.fileId ? `fileId ${frame.fileId}` : `filename ${frame.filename}`}). ` +
+                    "Pass exactly one placement per screen.",
+                });
+                return;
+              }
+              seen.set(key, index);
+            });
+          })
           .optional(),
       )
       .optional()
@@ -235,6 +352,14 @@ const generateDesignAction = defineAction({
         "Optional overview-canvas placements for generated screens. " +
           "Reference each screen by filename or fileId and include x/y/width/height " +
           "from generate-screens regions or your planned canvas layout.",
+      ),
+    primaryViewport: z
+      .enum(["mobile", "tablet", "desktop"])
+      .optional()
+      .default(DEFAULT_GENERATION_VIEWPORT)
+      .describe(
+        "Primary generated viewport. Defaults to desktop (1440x1024); set " +
+          "mobile or tablet only when that is the requested form factor.",
       ),
   }),
   mcpApp: {
@@ -255,6 +380,7 @@ const generateDesignAction = defineAction({
     projectType,
     tweaks,
     canvasFrames,
+    primaryViewport,
   }) => {
     await assertAccess("design", designId, "editor");
     if (designSystemId) {
@@ -351,6 +477,8 @@ const generateDesignAction = defineAction({
           };
           const live = await readLiveSourceFile(workspaceFile);
 
+          assertLockedLayersPreserved(live.content, file.content);
+
           await writeInlineSourceFile({
             designId: existing.designId,
             file: workspaceFile,
@@ -445,7 +573,7 @@ const generateDesignAction = defineAction({
     }));
     await mutateDesignData({
       designId,
-      mutate: (prevData) => {
+      mutate: (prevData, { updatedAt }) => {
         const mergedData: Record<string, unknown> = {
           ...prevData,
           lastPrompt: prompt,
@@ -455,34 +583,74 @@ const generateDesignAction = defineAction({
         if (normalizedTweaks !== undefined) {
           mergedData.tweaks = normalizedTweaks;
         }
-        if (canvasFrames !== undefined) {
-          const savedByFileId = new Map(
-            savedFiles.map((file) => [file.id, file]),
-          );
-          const savedByFilename = new Map(
-            savedFiles.map((file) => [file.filename, file]),
-          );
-          const existingByFileId = new Map(
-            existingFiles.map((file) => [file.id, file]),
-          );
-          const merged = mergeCanvasFramePlacements({
-            existing: prevData.canvasFrames,
-            placements: canvasFrames,
-            resolveFileId: (placement) => {
-              if (placement.fileId) {
-                return savedByFileId.has(placement.fileId) ||
-                  existingByFileId.has(placement.fileId)
-                  ? placement.fileId
-                  : undefined;
-              }
-              return placement.filename
-                ? (savedByFilename.get(placement.filename)?.id ??
-                    existingByName.get(placement.filename)?.id)
+        const savedByFileId = new Map(
+          savedFiles.map((file) => [file.id, file]),
+        );
+        const savedByFilename = new Map(
+          savedFiles.map((file) => [file.filename, file]),
+        );
+        const existingByFileId = new Map(
+          existingFiles.map((file) => [file.id, file]),
+        );
+        const merged = mergeCanvasFramePlacements({
+          existing: prevData.canvasFrames,
+          placements: canvasFrames ?? [],
+          resolveFileId: (placement) => {
+            if (placement.fileId) {
+              return savedByFileId.has(placement.fileId) ||
+                existingByFileId.has(placement.fileId)
+                ? placement.fileId
                 : undefined;
-            },
+            }
+            return placement.filename
+              ? (savedByFilename.get(placement.filename)?.id ??
+                  existingByName.get(placement.filename)?.id)
+              : undefined;
+          },
+        });
+        const viewport = GENERATION_VIEWPORT_SIZES[primaryViewport];
+        let nextX = nextGeneratedFrameX(merged.canvasFrames);
+        const generationFrames = [...merged.placedFrames];
+        for (const file of savedFiles) {
+          const source = files.find(
+            (candidate) => candidate.filename === file.filename,
+          );
+          if (!source || !isRenderableDesignFile(source)) continue;
+          const current = merged.canvasFrames[file.id] ?? {};
+          if (
+            current.x !== undefined &&
+            current.y !== undefined &&
+            current.width !== undefined &&
+            current.height !== undefined
+          ) {
+            continue;
+          }
+          const frame = {
+            x: current.x ?? nextX,
+            y: current.y ?? 0,
+            width: current.width ?? viewport.width,
+            height: current.height ?? viewport.height,
+            z: current.z ?? generationFrames.length,
+            ...(current.rotation === undefined
+              ? {}
+              : { rotation: current.rotation }),
+          };
+          merged.canvasFrames[file.id] = frame;
+          generationFrames.push({
+            fileId: file.id,
+            filename: file.filename,
+            frame,
           });
-          mergedData.canvasFrames = merged.canvasFrames;
-          placedFrames = merged.placedFrames;
+          nextX = frame.x + frame.width + GENERATED_FRAME_GAP;
+        }
+        mergedData.canvasFrames = merged.canvasFrames;
+        placedFrames = generationFrames;
+        if (!hasBreakpointSet(mergedData.breakpointSet)) {
+          mergedData.breakpointSet = {
+            id: "generated-responsive",
+            breakpoints: DEFAULT_RESPONSIVE_BREAKPOINTS,
+          };
+          mergedData.breakpointSetUpdatedAt = updatedAt;
         }
         return mergedData;
       },
@@ -496,12 +664,10 @@ const generateDesignAction = defineAction({
         ) {
           return false;
         }
-        if (canvasFrames === undefined) return true;
-
         const currentFrames = parseCanvasFrameGeometryById(
           current.canvasFrames,
         );
-        return Boolean(
+        const framesApplied = Boolean(
           placedFrames?.every(({ fileId, frame }) => {
             const currentFrame = currentFrames[fileId];
             return (
@@ -513,6 +679,7 @@ const generateDesignAction = defineAction({
             );
           }),
         );
+        return framesApplied && hasBreakpointSet(current.breakpointSet);
       },
     });
 
