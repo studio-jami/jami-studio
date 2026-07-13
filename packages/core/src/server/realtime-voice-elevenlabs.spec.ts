@@ -205,9 +205,20 @@ describe("buildElevenLabsAgentPayload", () => {
       "eleven_v3_conversational",
     );
     expect(payload.conversation_config.turn.speculative_turn).toBe(true);
+    // prompt.tools is the COMPLETE list: client bridge tools + system tools.
     expect(
-      Object.keys(payload.conversation_config.agent.prompt.built_in_tools),
-    ).toEqual(["end_call", "skip_turn", "language_detection"]);
+      payload.conversation_config.agent.prompt.tools.map(
+        (t: any) => `${t.type}:${t.name}`,
+      ),
+    ).toEqual([
+      "client:navigate",
+      "system:end_call",
+      "system:skip_turn",
+      "system:language_detection",
+    ]);
+    expect(
+      payload.conversation_config.agent.prompt.built_in_tools,
+    ).toBeUndefined();
     expect(payload.platform_settings.auth.enable_auth).toBe(true);
     expect(payload.platform_settings.trust_context).toBe("high");
     expect(payload.platform_settings.privacy.retention_days).toBe(30);
@@ -276,7 +287,13 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
     const pushed = JSON.parse(String(patchCall?.[1]?.body));
     expect(
       pushed.conversation_config.agent.prompt.tools.map((t: any) => t.name),
-    ).toEqual(["navigate", "view-screen"]);
+    ).toEqual([
+      "navigate",
+      "view-screen",
+      "end_call",
+      "skip_turn",
+      "language_detection",
+    ]);
     // Second mint with unchanged config skips the PATCH (config-hash guard).
     fetchMock.mockClear();
     await handler(fakeEvent());

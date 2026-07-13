@@ -59,6 +59,21 @@ const CLIENT_EVENTS = [
   "vad_score",
 ];
 
+/**
+ * ElevenLabs treats `prompt.tools` as the COMPLETE tool list (client +
+ * system together); a separate `built_in_tools` map is ignored whenever
+ * `tools` is present (live-verified 2026-07-13). System tools therefore
+ * ride in the same array as the client-tool bridge.
+ */
+const SYSTEM_TOOLS = ["end_call", "skip_turn", "language_detection"].map(
+  (name) => ({
+    type: "system",
+    name,
+    description: "",
+    params: { system_tool_type: name },
+  }),
+);
+
 export interface MountElevenLabsRealtimeVoiceRoutesOptions extends Pick<
   MountRealtimeVoiceRoutesOptions,
   "instructions" | "getInstructions" | "resolveOrgId" | "executeTool"
@@ -188,21 +203,7 @@ export function buildElevenLabsAgentPayload(input: {
           prompt: input.instructions,
           llm: input.llm,
           temperature: 0.3,
-          tools: input.clientTools,
-          built_in_tools: {
-            end_call: {
-              name: "end_call",
-              params: { system_tool_type: "end_call" },
-            },
-            skip_turn: {
-              name: "skip_turn",
-              params: { system_tool_type: "skip_turn" },
-            },
-            language_detection: {
-              name: "language_detection",
-              params: { system_tool_type: "language_detection" },
-            },
-          },
+          tools: [...input.clientTools, ...SYSTEM_TOOLS],
         },
       },
       // Engine tuning matched to the proven prototype agent (2026-06-26

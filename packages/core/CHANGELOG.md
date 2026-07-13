@@ -1,5 +1,14 @@
 # @agent-native/core
 
+## 0.99.9
+
+### Patch Changes
+
+- ElevenLabs system tools (end_call, skip_turn, language_detection) now ride in
+  `prompt.tools` alongside the client-tool bridge — ElevenLabs treats that array
+  as the complete tool list and ignores a separate `built_in_tools` map when it
+  is present (live-verified).
+
 ## 0.99.8
 
 ### Patch Changes
