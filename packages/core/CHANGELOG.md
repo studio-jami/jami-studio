@@ -1,5 +1,22 @@
 # @agent-native/core
 
+## 0.99.0
+
+### Minor Changes
+
+- d372450: Add a `node` preset to the unified workspace deploy (`agent-native deploy --preset node`): every app builds with Nitro's `node-middleware` runtime behind a per-app scope-init entry, and a generated `dist/server.mjs` dispatcher serves the whole workspace from one bare Node process — same-origin routing, dispatcher-owned static assets with immutable cache headers, WebSocket upgrade routing, and sequential app loading behind a module-graph handshake so per-app registries and identity env never collide across sibling apps.
+
+### Patch Changes
+
+- 4a307bc: Source sync 78c9db6 (upstream 0.98.8 line) with fork dedupes: kept the
+  unconditional base-path-aware netlify build guard, grafted any-cause upload
+  backoff + circuit breaker onto the new session-replay failure machinery,
+  carried the jami.studio identity through the tracking-identity and
+  skills-content refactors, and fixed Windows path handling in the new guards
+  package (doctor suite green on Windows). Workspace MCP resource loading on
+  Postgres is fixed by the upstream CAST null-probe change arriving in this
+  sync (hummingbird issue 54).
+
 ## 0.98.8
 
 ### Patch Changes
@@ -290,6 +307,7 @@
 - d967304: Add a shared integration catalog with accurate built-in messaging metadata and reusable client helpers for integration setup routes.
 - d967304: Surface real remote liveness during cross-app agent calls (call-agent): while the A2A poll waits on another app, each successful poll that reports the remote still working now keeps progress moving, so a slow-but-healthy sub-agent no longer triggers a false "no progress" stuck warning whose Retry button aborts the healthy call and re-runs it from scratch. A hung or unresponsive remote still emits nothing, so the stuck warning correctly appears.
 - d967304: Keep in-memory run aborts successful when durable abort cleanup temporarily fails.
+
 ## 0.92.39
 
 ### Patch Changes
