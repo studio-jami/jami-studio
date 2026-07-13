@@ -166,6 +166,7 @@ import {
   FIRST_SESSION_PERSONALIZATION,
   getModelFamilyOverlay,
 } from "./prompts/index.js";
+import { mountElevenLabsRealtimeVoiceRoutes } from "./realtime-voice-elevenlabs.js";
 import { mountRealtimeVoiceRoutes } from "./realtime-voice.js";
 import {
   runWithRequestContext,
@@ -2150,7 +2151,7 @@ export function createAgentChatPlugin(
         ...(!canToggle ? prodCodingTools : {}),
       });
 
-      mountRealtimeVoiceRoutes(nitroApp, prodActions, {
+      const realtimeVoiceRouteOptions = {
         resolveOrgId: options?.resolveOrgId,
         getInstructions: async () => {
           const [navigation, currentUrl] = await Promise.all([
@@ -2174,7 +2175,14 @@ export function createAgentChatPlugin(
             .filter(Boolean)
             .join("\n\n");
         },
-        executeTool: async (request) =>
+        executeTool: async (request: {
+          name: string;
+          args: Record<string, unknown>;
+          callId: string;
+          userEmail: string;
+          orgId?: string;
+          sessionId?: string;
+        }) =>
           executeAgentToolCall({
             actions: prodActions,
             name: request.name,
@@ -2187,7 +2195,20 @@ export function createAgentChatPlugin(
               : `realtime:${request.callId}`,
             turnId: request.callId,
           }),
-      });
+      };
+      mountRealtimeVoiceRoutes(
+        nitroApp,
+        prodActions,
+        realtimeVoiceRouteOptions,
+      );
+      // Sibling engine adapter: ElevenLabs Agent Mode. Self-gates on the
+      // ELEVENLABS_API_KEY secret the same way the OpenAI route gates on its
+      // credentials, so mounting unconditionally is safe.
+      mountElevenLabsRealtimeVoiceRoutes(
+        nitroApp,
+        prodActions,
+        realtimeVoiceRouteOptions,
+      );
 
       // Wire the prod run-code bridge supplier so it sees the fully-assembled
       // prodActions registry (including MCP entries added at runtime).

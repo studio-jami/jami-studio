@@ -80,7 +80,7 @@ const REALTIME_VOICE_REASONING_EFFORT = {
  * context/navigation tools ahead of large template registries so voice can
  * always see and operate the same UI navigation surface as text chat.
  */
-const REALTIME_VOICE_PRIORITY_TOOLS = [
+export const REALTIME_VOICE_PRIORITY_TOOLS = [
   "navigate",
   "set-url-path",
   "set-search-params",
@@ -135,7 +135,7 @@ export interface MountRealtimeVoiceRoutesOptions {
     | Promise<RealtimeVoiceToolExecutionResult>;
 }
 
-interface RealtimeFunctionTool {
+export interface RealtimeFunctionTool {
   type: "function";
   name: string;
   description: string;
@@ -152,10 +152,12 @@ interface RealtimeToolCapability {
 }
 
 type RealtimeToolCapabilityStore = Map<string, RealtimeToolCapability>;
+export type { RealtimeToolCapabilityStore };
 
 interface AuthenticatedVoiceContext extends RealtimeVoiceRequestContext {
   timezone?: string;
 }
+export type { AuthenticatedVoiceContext };
 
 function readSafeHeader(event: H3Event, name: string): string | undefined {
   const value = getHeader(event, name);
@@ -327,6 +329,7 @@ function buildRealtimeTools(
     })
     .map(({ tool }) => tool);
 }
+export { buildRealtimeTools };
 
 function packRealtimeTools(
   session: Record<string, unknown>,
@@ -374,6 +377,7 @@ function cleanRealtimeToolCapabilities(
     capabilities.delete(oldestKey);
   }
 }
+export { packRealtimeTools };
 
 function registerRealtimeToolCapability(
   capabilities: RealtimeToolCapabilityStore,
@@ -393,6 +397,7 @@ function registerRealtimeToolCapability(
   cleanRealtimeToolCapabilities(capabilities);
   return token;
 }
+export { registerRealtimeToolCapability };
 
 function resolveRealtimeToolCapability(
   capabilities: RealtimeToolCapabilityStore,
@@ -514,6 +519,7 @@ async function authenticateVoiceRequest(
     ...(browserTabId ? { browserTabId } : {}),
   };
 }
+export { authenticateVoiceRequest };
 
 async function buildInstructions(
   context: RealtimeVoiceRequestContext,
@@ -529,6 +535,7 @@ async function buildInstructions(
     MAX_INSTRUCTIONS_CHARS,
   );
 }
+export { buildInstructions };
 
 /**
  * Hash the authenticated identity before sending it to OpenAI. The stable
@@ -937,6 +944,7 @@ function createToolHandler(
     );
   });
 }
+export { createToolHandler };
 
 /** Mount the authenticated OpenAI Realtime WebRTC and tool bridge routes. */
 export function mountRealtimeVoiceRoutes(

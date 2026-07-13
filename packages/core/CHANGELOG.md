@@ -1,5 +1,15 @@
 # @agent-native/core
 
+## 0.99.6
+
+### Patch Changes
+
+- Add the ElevenLabs Agent Mode realtime voice adapter (server half): sibling
+  `realtime-voice-elevenlabs` module with an authenticated session-mint route
+  (config-as-code agent push + WebRTC conversation token) and a tool bridge
+  route reusing the upstream capability/executor trust model with a bounded
+  navigation allow-list. Voice providers status now reports `elevenlabs`.
+
 ## 0.99.5
 
 ### Patch Changes

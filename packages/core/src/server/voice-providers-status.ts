@@ -33,6 +33,8 @@ export interface VoiceProvidersStatus {
   gemini: boolean;
   openai: boolean;
   groq: boolean;
+  /** ElevenLabs Agent Mode realtime voice engine (ELEVENLABS_API_KEY). */
+  elevenlabs: boolean;
   /**
    * Google Speech-to-Text realtime streaming is BYOK-only for v1. This reports
    * whether a service-account credential is configured; the actual stream runs
@@ -97,18 +99,21 @@ export function createVoiceProvidersStatusHandler() {
       builder = false;
     }
 
-    const [gemini, openai, groq, googleRealtime] = await Promise.all([
-      hasKey("GEMINI_API_KEY"),
-      hasKey("OPENAI_API_KEY"),
-      hasKey("GROQ_API_KEY"),
-      hasKey("GOOGLE_APPLICATION_CREDENTIALS"),
-    ]);
+    const [gemini, openai, groq, elevenlabs, googleRealtime] =
+      await Promise.all([
+        hasKey("GEMINI_API_KEY"),
+        hasKey("OPENAI_API_KEY"),
+        hasKey("GROQ_API_KEY"),
+        hasKey("ELEVENLABS_API_KEY"),
+        hasKey("GOOGLE_APPLICATION_CREDENTIALS"),
+      ]);
 
     const status: VoiceProvidersStatus = {
       builder,
       gemini,
       openai,
       groq,
+      elevenlabs,
       googleRealtime,
       browser: true,
       native: true,

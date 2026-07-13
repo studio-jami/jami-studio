@@ -88,6 +88,7 @@ describe("voice providers status route", () => {
       gemini: false,
       openai: true,
       groq: true,
+      elevenlabs: false,
       googleRealtime: true,
       browser: true,
       native: true,
