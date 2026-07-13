@@ -76,9 +76,11 @@ export function getScreenFrameOriginCanvas(args: {
  * `getInitialFrameGeometry(index, ...)` fallback `getSelectedScreenGeometryForInspector`
  * and `getScreenFrameOriginCanvas` above already use — as `FrameEntry[]` for
  * `@shared/canvas-math` bounds/fit helpers (`getFrameGroupBounds`,
- * `getCameraForBounds`). Optionally includes the board frame (real Figma has
- * no board-file equivalent, but a design with only board primitives and no
- * screens should still have something to fit to).
+ * `getCameraForBounds`). Optionally includes the bounds of actual board
+ * content. This must never receive the logical board hit-test surface: that
+ * surface is intentionally enormous and including it would make zoom-to-fit
+ * and adjacent-screen placement behave as though the design were 131,072px
+ * wide even when the board is empty.
  */
 export function getAllScreenFrameEntries(args: {
   overviewScreens: Array<{
@@ -87,7 +89,7 @@ export function getAllScreenFrameEntries(args: {
     height?: number;
   }>;
   canvasFrameGeometryById: CanvasFrameGeometryById;
-  boardFrameGeometry?: FrameGeometry;
+  boardContentBounds?: FrameGeometry | null;
   boardFileId?: string | null;
 }): FrameEntry[] {
   const entries: FrameEntry[] = args.overviewScreens.map((screen, index) => {
@@ -103,10 +105,10 @@ export function getAllScreenFrameEntries(args: {
   });
   if (
     args.boardFileId &&
-    args.boardFrameGeometry &&
+    args.boardContentBounds &&
     !entries.some((entry) => entry.id === args.boardFileId)
   ) {
-    entries.push({ id: args.boardFileId, geometry: args.boardFrameGeometry });
+    entries.push({ id: args.boardFileId, geometry: args.boardContentBounds });
   }
   return entries;
 }
@@ -284,6 +286,40 @@ export function shouldResetExplicitOverviewZoomOnBasisChange(args: {
 }
 
 /**
+ * Zoom-compounding fix: a persisted/URL/agent-command `zoom` for the overview
+ * view is always a DISPLAYED percentage, and restoring it requires converting
+ * back to the internal canvas zoom by dividing by `overviewZoomScale` (see
+ * `getOverviewCanvasZoom`). That scale is only meaningful once a real screen
+ * has loaded and can serve as the zoom basis — before then it sits on its
+ * double fallback (`OVERVIEW_FRAME_WIDTH` / 1280 = 0.25), which is very
+ * unlikely to match the real screen's frame/source width ratio.
+ *
+ * The one-shot "apply the initial command" mount effect used to commit the
+ * conversion immediately, against whatever scale happened to be live at that
+ * first tick (the fallback, since files/screens hadn't loaded yet). The
+ * resulting canvas zoom then got displayed through the REAL scale once it
+ * resolved, producing a plausible-but-wrong percentage that was re-persisted
+ * as the new "current" zoom — so the next load repeated the same
+ * wrong-fallback conversion against an already-inflated value, compounding
+ * every reload with zero user interaction.
+ *
+ * This defers applying a zoom-bearing overview command until real screens
+ * have loaded (`filesLoaded`) and a real scale is resolvable, matching the
+ * same "not yet applicable — retry once data loads" contract the target-file
+ * lookup above already uses. Single-screen zoom commands are unaffected:
+ * `screenZoom` is used directly with no scale conversion.
+ */
+export function shouldDeferOverviewZoomCommand(args: {
+  hasZoomCommand: boolean;
+  targetView: "single" | "overview" | undefined;
+  filesLoaded: boolean;
+}): boolean {
+  return (
+    args.hasZoomCommand && args.targetView === "overview" && !args.filesLoaded
+  );
+}
+
+/**
  * Final sanity clamp on the DISPLAYED overview zoom (the number the zoom
  * field shows and zoom-relative flows consume). Non-finite/non-positive
  * products (a corrupted basis flip) fall back to the default overview zoom;
@@ -435,4 +471,58 @@ export function shouldPopToOverviewOnZoomChange(args: {
 }): boolean {
   if (args.suppressExplicitZoom) return false;
   return shouldPopToOverviewOnZoomOut(args);
+}
+
+/**
+ * PASTE-HERE-IN-CONTENT: converts a viewport client point into a
+ * screen/iframe-local canvas point, given that iframe's own
+ * boundingClientRect and the zoom percent (0-100) currently scaling it.
+ *
+ * Shared by DesignEditor's getContextCanvasPoint (the background/board
+ * right-click path, reached through CanvasContextMenu's own
+ * onContextMenuCapture) and handleIframeContextMenu (a right-click that
+ * lands ON rendered screen content — an element, or empty in-screen space —
+ * which opens the menu imperatively via a ref and so bypasses
+ * onContextMenuCapture, and with it getCanvasPoint, entirely). Before this
+ * was wired into handleIframeContextMenu too, "Paste here" triggered from a
+ * right-click on actual screen content never got a canvasX/canvasY at all
+ * and silently fell back to the position-less cascade/offset paste instead
+ * of landing under the cursor — only a right-click on the empty canvas
+ * background (which still goes through onContextMenuCapture) worked.
+ *
+ * Returns null when there's no iframe rect to measure against or the zoom
+ * factor is non-positive (would divide by zero / invert the sign), matching
+ * "no reliable canvas point" — callers fall back to their own
+ * container-relative or position-less behavior in that case.
+ */
+export function computeIframeLocalCanvasPoint(args: {
+  clientX: number;
+  clientY: number;
+  iframeRect: { left: number; top: number } | null | undefined;
+  zoomPercent: number;
+}): { x: number; y: number } | null {
+  if (!args.iframeRect || !(args.zoomPercent > 0)) return null;
+  const factor = args.zoomPercent / 100;
+  return {
+    x: Math.max(0, (args.clientX - args.iframeRect.left) / factor),
+    y: Math.max(0, (args.clientY - args.iframeRect.top) / factor),
+  };
+}
+
+/**
+ * Reads MultiScreenCanvas's live imperative zoom from the exact inline
+ * transform written by `applyViewToDom` while a wheel/pinch gesture is still
+ * settling. React's `overviewCanvasZoom` intentionally lags those per-frame
+ * DOM writes until the gesture commit, so cursor-sensitive commands must use
+ * this value when it is available.
+ */
+export function readOverviewZoomPercentFromTransform(
+  transform: string | null | undefined,
+  fallbackZoomPercent: number,
+): number {
+  const match = transform?.match(/(?:^|\s)scale\(\s*([-+]?\d*\.?\d+)\s*\)/i);
+  const scale = match ? Number(match[1]) : Number.NaN;
+  return Number.isFinite(scale) && scale > 0
+    ? scale * 100
+    : fallbackZoomPercent;
 }

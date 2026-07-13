@@ -23,7 +23,7 @@ vi.mock("../server/auth.js", () => ({
   getConfiguredLoginHtml: (...a: any[]) => getConfiguredLoginHtmlMock(...a),
 }));
 
-const getOrgDomainMock = vi.fn(async () => "builder.io");
+const getOrgDomainMock = vi.fn(async () => "jami.studio");
 vi.mock("../org/context.js", () => ({
   getOrgDomain: (...args: any[]) => getOrgDomainMock(...args),
 }));
@@ -171,7 +171,7 @@ describe("MCP OAuth route", () => {
     await expect(protectedRes.json()).resolves.toMatchObject({
       resource: "https://mail.jami.studio/_agent-native/mcp",
       authorization_servers: ["https://mail.jami.studio"],
-      scopes_supported: ["mcp:read", "mcp:write", "mcp:apps"],
+      scopes_supported: ["mcp:read", "mcp:write", "mcp:apps", "offline_access"],
     });
 
     const authRes = handleMcpOAuthAuthorizationServerMetadata(event());
@@ -183,6 +183,7 @@ describe("MCP OAuth route", () => {
         "https://mail.jami.studio/_agent-native/mcp/oauth/token",
       registration_endpoint:
         "https://mail.jami.studio/_agent-native/mcp/oauth/register",
+      scopes_supported: expect.arrayContaining(["offline_access"]),
       code_challenge_methods_supported: ["S256"],
       token_endpoint_auth_methods_supported: ["none"],
     });
@@ -422,7 +423,7 @@ describe("MCP OAuth route", () => {
     ).resolves.toMatchObject({
       userEmail: "steve@example.com",
       orgId: "org_123",
-      orgDomain: "builder.io",
+      orgDomain: "jami.studio",
       scopes: ["mcp:read", "mcp:apps"],
       clientId: client.client_id,
     });
@@ -754,7 +755,7 @@ describe("MCP OAuth route", () => {
     ).resolves.toMatchObject({
       userEmail: "steve@example.com",
       orgId: "org_123",
-      orgDomain: "builder.io",
+      orgDomain: "jami.studio",
       clientId: client.client_id,
     });
     expect(refreshRows.get(first.refresh_token)?.revokedAt).toBeFalsy();
