@@ -1,5 +1,14 @@
 # @agent-native/core
 
+## 0.99.7
+
+### Patch Changes
+
+- Classify ELEVENLABS_API_KEY / ELEVENLABS_AGENT_ID / ELEVENLABS_VOICE_ID as
+  app-provided deploy credentials so the realtime voice adapter can resolve
+  them from deployment env for signed-in users, matching the LLM provider key
+  posture.
+
 ## 0.99.6
 
 ### Patch Changes

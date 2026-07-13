@@ -620,6 +620,14 @@ describe("resolveBuilderCredential", () => {
     expect(canUseDeployCredentialFallbackForRequest("ANTHROPIC_API_KEY")).toBe(
       true,
     );
+    // ElevenLabs realtime voice keys are app-provided deploy credentials
+    // (they configure and pay for the app's voice engine, not user identity).
+    expect(canUseDeployCredentialFallbackForRequest("ELEVENLABS_API_KEY")).toBe(
+      true,
+    );
+    expect(
+      canUseDeployCredentialFallbackForRequest("ELEVENLABS_AGENT_ID"),
+    ).toBe(true);
   });
 
   it("honors env Builder keys for a signed-in workspace user when the local dev escape hatch is set", async () => {

@@ -84,6 +84,12 @@ const APP_PROVIDED_DEPLOY_CREDENTIAL_KEYS = new Set([
   "GROQ_API_KEY",
   "MISTRAL_API_KEY",
   "COHERE_API_KEY",
+  // ElevenLabs realtime voice: the API key pays for the app's voice engine
+  // usage and the agent/voice ids are deployment configuration, not user
+  // identity. Same posture as the LLM provider keys above.
+  "ELEVENLABS_API_KEY",
+  "ELEVENLABS_AGENT_ID",
+  "ELEVENLABS_VOICE_ID",
 ]);
 
 function isAppProvidedDeployCredentialKey(key: string | undefined): boolean {
