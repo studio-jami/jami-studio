@@ -40,14 +40,40 @@ const ELEVENLABS_AGENT_ID_SHAPE = /^[A-Za-z0-9_-]{1,128}$/;
 /**
  * ElevenLabs sessions cannot expand their tool manifest mid-conversation the
  * way the OpenAI path can via session.update, so tool-search discovery is
- * excluded and the default bridge allow-list is the bounded navigation set.
+ * excluded and the default bridge allow-list is the bounded navigation set
+ * plus call-agent — the headless read/delegate channel that answers
+ * questions without touching the user's screen (seamless-UX north star).
  */
 export const ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST = [
   "navigate",
   "set-url-path",
   "set-search-params",
   "view-screen",
+  "call-agent",
 ] as const;
+
+/**
+ * call-agent delegates to a sibling app's full agent run — give it the
+ * ElevenLabs client-tool maximum instead of the 30s default.
+ */
+const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
+  "call-agent": 120,
+};
+
+/**
+ * Conversation policy appended to every ElevenLabs session's instructions.
+ * Owner-ratified seamless-UX north star: questions are answered headlessly;
+ * navigation happens only on explicit user intent.
+ */
+export const ELEVENLABS_BRIDGE_GUIDANCE =
+  "Answering questions must never disrupt the user's screen. To answer a " +
+  "question about data in another app (schedule, mail, forms, analytics, " +
+  "etc.), use the call-agent tool to ask that app's agent directly and " +
+  "speak a concise answer — do NOT navigate. Only use navigate, " +
+  "set-url-path, or set-search-params when the user explicitly asks to go " +
+  "somewhere, open something, or be shown something. Only use view-screen " +
+  "when the user asks about what is currently visible. While waiting on a " +
+  "delegated answer, keep the user informed briefly; never invent results.";
 
 const CLIENT_EVENTS = [
   "audio",
@@ -180,7 +206,7 @@ export function elevenLabsClientToolFromRealtimeTool(
     description: tool.description,
     parameters,
     expects_response: true,
-    response_timeout_secs: 30,
+    response_timeout_secs: VOICE_TOOL_TIMEOUT_SECS[tool.name] ?? 30,
   };
 }
 
@@ -384,7 +410,7 @@ function createElevenLabsSessionHandler(
           (await resolveSecret("ELEVENLABS_VOICE_ID"))?.trim();
         const payload = buildElevenLabsAgentPayload({
           name: options.agentName?.trim() || DEFAULT_AGENT_NAME,
-          instructions,
+          instructions: `${instructions}\n\n${ELEVENLABS_BRIDGE_GUIDANCE}`,
           llm: options.llm?.trim() || DEFAULT_LLM,
           language: options.language?.trim().toLowerCase() || "en",
           ...(configuredVoiceId ? { voiceId: configuredVoiceId } : {}),

@@ -1,5 +1,15 @@
 # @agent-native/core
 
+## 0.99.10
+
+### Patch Changes
+
+- ElevenLabs voice bridge is read-first: `call-agent` joins the default
+  allow-list as the headless answer/delegate channel (120s client-tool
+  timeout), and every session's instructions carry the seamless-UX bridge
+  guidance — questions answered headlessly, navigation only on explicit user
+  intent.
+
 ## 0.99.9
 
 ### Patch Changes

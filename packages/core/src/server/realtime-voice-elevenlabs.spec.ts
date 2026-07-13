@@ -106,6 +106,18 @@ const ENGINE_TOOLS = [
     inputSchema: { type: "object", properties: {} },
   },
   {
+    name: "call-agent",
+    description: "Ask a sibling app's agent",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agent: { type: "string", description: "Target app" },
+        message: { type: "string", description: "Question" },
+      },
+      required: ["agent", "message"],
+    },
+  },
+  {
     name: "delete-everything",
     description: "Not on the allow-list",
     inputSchema: { type: "object", properties: {} },
@@ -248,6 +260,8 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
     ]);
     expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).not.toContain("tool-search");
+    // Read-first bridge: call-agent is the headless answer/delegate channel.
+    expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain("call-agent");
   });
 
   it("mints a session: config push, token, capability header, tool names", async () => {
@@ -275,7 +289,7 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       token: "el-token",
       agentId: "agent_abc123",
     });
-    expect(body.toolNames).toEqual(["navigate", "view-screen"]);
+    expect(body.toolNames).toEqual(["navigate", "view-screen", "call-agent"]);
     expect(event.responseHeaders[REALTIME_VOICE_CAPABILITY_HEADER]).toMatch(
       /^[a-f0-9]{32}$/,
     );
@@ -290,10 +304,20 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
     ).toEqual([
       "navigate",
       "view-screen",
+      "call-agent",
       "end_call",
       "skip_turn",
       "language_detection",
     ]);
+    // call-agent delegates a full agent run: extended client-tool timeout.
+    const callAgentTool = pushed.conversation_config.agent.prompt.tools.find(
+      (t: any) => t.name === "call-agent",
+    );
+    expect(callAgentTool.response_timeout_secs).toBe(120);
+    // Seamless-UX north star rides in every pushed instruction set.
+    expect(pushed.conversation_config.agent.prompt.prompt).toContain(
+      "never disrupt the user's screen",
+    );
     // Second mint with unchanged config skips the PATCH (config-hash guard).
     fetchMock.mockClear();
     await handler(fakeEvent());
