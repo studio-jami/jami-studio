@@ -189,17 +189,52 @@ export function buildElevenLabsAgentPayload(input: {
           llm: input.llm,
           temperature: 0.3,
           tools: input.clientTools,
+          built_in_tools: {
+            end_call: {
+              name: "end_call",
+              params: { system_tool_type: "end_call" },
+            },
+            skip_turn: {
+              name: "skip_turn",
+              params: { system_tool_type: "skip_turn" },
+            },
+            language_detection: {
+              name: "language_detection",
+              params: { system_tool_type: "language_detection" },
+            },
+          },
         },
       },
-      ...(input.voiceId && ELEVENLABS_VOICE_ID_SHAPE.test(input.voiceId)
-        ? { tts: { voice_id: input.voiceId } }
-        : {}),
+      // Engine tuning matched to the proven prototype agent (2026-06-26
+      // capabilities probe): expressive v3 conversational voice, low-latency
+      // speculative turns, and a bounded silence hangup so abandoned
+      // sessions do not burn credits.
+      turn: {
+        speculative_turn: true,
+        silence_end_call_timeout: 60,
+      },
+      tts: {
+        model_id: "eleven_v3_conversational",
+        expressive_mode: true,
+        stability: 0.6,
+        speed: 1.05,
+        similarity_boost: 0.8,
+        ...(input.voiceId && ELEVENLABS_VOICE_ID_SHAPE.test(input.voiceId)
+          ? { voice_id: input.voiceId }
+          : {}),
+      },
       conversation: {
         client_events: CLIENT_EVENTS,
       },
     },
     platform_settings: {
       auth: { enable_auth: true },
+      // This agent serves the signed-in workspace owner through our
+      // authenticated session mint, never anonymous external callers.
+      trust_context: "high",
+      // Durable rule: no unbounded data stream. Voice transcripts/audio on
+      // the provider side expire like our own event retention windows.
+      privacy: { retention_days: 30 },
     },
   };
 }

@@ -1,5 +1,14 @@
 # @agent-native/core
 
+## 0.99.8
+
+### Patch Changes
+
+- Provision the ElevenLabs voice agent with the proven engine tuning at every
+  config-as-code push: eleven_v3_conversational expressive TTS, speculative
+  turns with a 60s silence hangup, built-in end_call/skip_turn/language_detection
+  tools, high trust context, and 30-day provider-side retention.
+
 ## 0.99.7
 
 ### Patch Changes

@@ -201,7 +201,16 @@ describe("buildElevenLabsAgentPayload", () => {
     expect(payload.conversation_config.tts.voice_id).toBe(
       "mWqiTfcp72MprLxlUR8h",
     );
+    expect(payload.conversation_config.tts.model_id).toBe(
+      "eleven_v3_conversational",
+    );
+    expect(payload.conversation_config.turn.speculative_turn).toBe(true);
+    expect(
+      Object.keys(payload.conversation_config.agent.prompt.built_in_tools),
+    ).toEqual(["end_call", "skip_turn", "language_detection"]);
     expect(payload.platform_settings.auth.enable_auth).toBe(true);
+    expect(payload.platform_settings.trust_context).toBe("high");
+    expect(payload.platform_settings.privacy.retention_days).toBe(30);
   });
 
   it("omits tts override for non-ElevenLabs-shaped voice ids", () => {
@@ -213,7 +222,10 @@ describe("buildElevenLabsAgentPayload", () => {
       voiceId: "a0337b67-0000-0000-0000-b3fb78cdda35",
       clientTools: [],
     }) as any;
-    expect(payload.conversation_config.tts).toBeUndefined();
+    expect(payload.conversation_config.tts.voice_id).toBeUndefined();
+    expect(payload.conversation_config.tts.model_id).toBe(
+      "eleven_v3_conversational",
+    );
   });
 });
 
