@@ -18,6 +18,11 @@ import {
   resolveSecret,
 } from "../../server/credential-provider.js";
 import { getSetting } from "../../settings/store.js";
+import { getModuleGraphEnvDefault } from "../../shared/global-scope.js";
+import {
+  BUNDLED_AI_SDK_MODULES_ENV_KEY,
+  OPTIONAL_AI_SDK_MODULES,
+} from "../../shared/optional-ai-sdk-modules.js";
 import { getAgentAppModelDefaultForCurrentRequest } from "../app-model-defaults.js";
 import {
   normalizeOpenAiBaseUrl,
@@ -50,6 +55,7 @@ export interface AgentEngineEntry {
 
 const _registry = new Map<string, AgentEngineEntry>();
 const _packageAvailabilityCache = new Map<string, boolean>();
+const OPTIONAL_AI_SDK_PACKAGE_NAMES = new Set(OPTIONAL_AI_SDK_MODULES);
 
 /**
  * Register a custom agent engine. Called at server startup (e.g., from a
@@ -100,11 +106,30 @@ function canResolvePackage(packageName: string): boolean {
   const cached = _packageAvailabilityCache.get(packageName);
   if (cached !== undefined) return cached;
   let available = false;
-  try {
-    require.resolve(packageName);
-    available = true;
-  } catch {
-    available = false;
+  // Bundled artifacts (unified workspace deploys) bake the list of optional
+  // AI SDK packages that were installed at build time — the bundler inlined
+  // their literal dynamic import() sites, so they import fine at runtime,
+  // but no node_modules entry exists for require.resolve to find. Trust the
+  // build-time marker when present; fall back to the filesystem probe in
+  // source runtimes (dev servers, unbundled Node) where it stays accurate.
+  const bundledMarker =
+    process.env[BUNDLED_AI_SDK_MODULES_ENV_KEY] ??
+    getModuleGraphEnvDefault(BUNDLED_AI_SDK_MODULES_ENV_KEY);
+  if (
+    bundledMarker !== undefined &&
+    OPTIONAL_AI_SDK_PACKAGE_NAMES.has(packageName)
+  ) {
+    available = bundledMarker
+      .split(",")
+      .map((name) => name.trim())
+      .includes(packageName);
+  } else {
+    try {
+      require.resolve(packageName);
+      available = true;
+    } catch {
+      available = false;
+    }
   }
   _packageAvailabilityCache.set(packageName, available);
   return available;

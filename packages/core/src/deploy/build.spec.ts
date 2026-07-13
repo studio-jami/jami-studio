@@ -15,6 +15,7 @@ import {
   assertSingleTemplateNetlifyBuildOutput,
   bundleSharedYjsLibForWorkerOutput,
   bundleSharedYjsLibForNodeServerOutput,
+  bundledAiSdkModulesEnvDefault,
   CLOUDFLARE_WORKER_ESBUILD_EXTERNALS,
   CLOUDFLARE_WORKER_NODE_BUILTIN_STUB_MODULES,
   CLOUDFLARE_WORKER_STUB_MODULES,
@@ -27,6 +28,9 @@ import {
   generateProvidedPluginsNitroPluginSource,
   generateWorkerEntry,
   generateScopeInitSource,
+  installedOptionalAiSdkModules,
+  OPTIONAL_AI_SDK_MODULES,
+  uninstalledOptionalAiSdkStubs,
   workspaceAppScopeIdFromBasePath,
   workspaceEnvDefaultsFromBuildEnv,
   workspaceAppModuleGraphEnvDefaultsFromBuildEnv,
@@ -130,6 +134,41 @@ describe("workspaceNodeMiddlewareEntry", () => {
       "utf-8",
     );
     expect(scopeInit).toContain('setGlobalScopeId("mail")');
+    // The bundled optional AI SDK marker must ride the module-graph env
+    // defaults (per-app value) so the engine registry's install check can
+    // trust the build-time decision inside the bundled artifact.
+    expect(scopeInit).toContain("AGENT_NATIVE_BUNDLED_AI_SDK_MODULES");
+    expect(scopeInit).toContain("setModuleGraphEnvDefaults");
+  });
+});
+
+// The marker's value must be exactly the optional AI SDK packages that
+// resolve from the app dir at build time (the complement of the stub set) —
+// the bundler inlines those literal dynamic import() sites, so inside the
+// artifact they are importable without any node_modules entry.
+describe("bundledAiSdkModulesEnvDefault", () => {
+  it("lists exactly the resolvable optional AI SDK packages", () => {
+    const installed = installedOptionalAiSdkModules(process.cwd());
+    // Core's own dev environment installs the full optional set — the
+    // helper must agree with a direct require.resolve probe.
+    const appRequire = createRequire(path.join(process.cwd(), "package.json"));
+    for (const mod of installed) {
+      expect(() => appRequire.resolve(mod)).not.toThrow();
+    }
+    const stubbed = Object.keys(uninstalledOptionalAiSdkStubs(process.cwd()));
+    expect(new Set([...installed, ...stubbed])).toEqual(
+      new Set(OPTIONAL_AI_SDK_MODULES),
+    );
+    expect(installed.filter((mod) => stubbed.includes(mod))).toEqual([]);
+
+    const marker = bundledAiSdkModulesEnvDefault(process.cwd());
+    if (installed.length === 0) {
+      expect(marker).toEqual({});
+    } else {
+      expect(marker).toEqual({
+        AGENT_NATIVE_BUNDLED_AI_SDK_MODULES: installed.join(","),
+      });
+    }
   });
 });
 
@@ -2332,9 +2371,7 @@ describe("bundleSharedYjsLibForNodeServerOutput (unified workspace Node yjs)", (
         projectCwd: process.cwd(),
       }),
     ).toEqual([]);
-    expect(fs.existsSync(path.join(serverDir, "_libs", "yjs.mjs"))).toBe(
-      false,
-    );
+    expect(fs.existsSync(path.join(serverDir, "_libs", "yjs.mjs"))).toBe(false);
   });
 
   it("bundles Yjs into _libs/yjs.mjs and rewrites bare imports in split chunks", () => {

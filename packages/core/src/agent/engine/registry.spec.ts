@@ -45,6 +45,7 @@ describe("AgentEngine registry", () => {
     delete process.env.GOOGLE_GENERATIVE_AI_API_KEY; // guard:allow-env-credential — test setup clears env to assert credential precedence
     delete process.env.BUILDER_PRIVATE_KEY; // guard:allow-env-credential — test setup clears env to assert credential precedence
     delete process.env.BUILDER_PUBLIC_KEY; // guard:allow-env-credential — test setup clears env to assert credential precedence
+    delete process.env.AGENT_NATIVE_BUNDLED_AI_SDK_MODULES;
   });
 
   it("registers and retrieves an engine", async () => {
@@ -190,6 +191,125 @@ describe("AgentEngine registry", () => {
       /requires optional packages/,
     );
     expect(create).not.toHaveBeenCalled();
+  });
+
+  // Bundled artifacts (unified workspace deploys) bake the list of optional
+  // AI SDK packages that were installed at build time — the bundler inlined
+  // their dynamic import() sites, so they import fine at runtime, but no
+  // node_modules entry exists for require.resolve to find. Observed live:
+  // AGENT_ENGINE=ai-sdk:google refused with "requires optional packages" on
+  // the unified Node lane while the provider chunk sat in the bundle.
+  describe("bundled optional AI SDK marker", () => {
+    it("trusts the marker over require.resolve for optional AI SDK packages", async () => {
+      // All optional AI SDK packages resolve from core's own node_modules,
+      // so a marker that EXCLUDES one proves the marker is authoritative.
+      process.env.AGENT_NATIVE_BUNDLED_AI_SDK_MODULES = "ai,@ai-sdk/google";
+      const { registerAgentEngine, resolveEngine } =
+        await import("./registry.js");
+      const create = vi.fn().mockReturnValue({
+        name: "ai-sdk:cohere",
+        stream: vi.fn(),
+      });
+
+      registerAgentEngine({
+        name: "ai-sdk:cohere",
+        label: "Cohere",
+        description: "",
+        installPackage: "ai @ai-sdk/cohere",
+        capabilities: {} as any,
+        defaultModel: "command-r-plus-08-2024",
+        supportedModels: [],
+        requiredEnvVars: [],
+        create,
+      });
+
+      await expect(
+        resolveEngine({ engineOption: "ai-sdk:cohere" }),
+      ).rejects.toThrow(/requires optional packages/);
+      expect(create).not.toHaveBeenCalled();
+    });
+
+    it("accepts engines whose packages the marker lists as bundled", async () => {
+      process.env.AGENT_NATIVE_BUNDLED_AI_SDK_MODULES = "ai,@ai-sdk/google";
+      const { registerAgentEngine, resolveEngine } =
+        await import("./registry.js");
+      const engine = { name: "ai-sdk:google", stream: vi.fn() } as any;
+      const create = vi.fn().mockReturnValue(engine);
+
+      registerAgentEngine({
+        name: "ai-sdk:google",
+        label: "Gemini",
+        description: "",
+        installPackage: "ai @ai-sdk/google",
+        capabilities: {} as any,
+        defaultModel: "gemini-3.5-flash",
+        supportedModels: [],
+        requiredEnvVars: [],
+        create,
+      });
+
+      const resolved = await resolveEngine({
+        engineOption: "ai-sdk:google",
+      });
+      expect(resolved).toBe(engine);
+      expect(create).toHaveBeenCalled();
+    });
+
+    it("reads the marker from module-graph env defaults when ambient env lacks it", async () => {
+      const { setModuleGraphEnvDefaults } =
+        await import("../../shared/global-scope.js");
+      setModuleGraphEnvDefaults({
+        AGENT_NATIVE_BUNDLED_AI_SDK_MODULES: "ai,@ai-sdk/google",
+      });
+      try {
+        const { registerAgentEngine, resolveEngine } =
+          await import("./registry.js");
+        const engine = { name: "ai-sdk:google", stream: vi.fn() } as any;
+        const create = vi.fn().mockReturnValue(engine);
+
+        registerAgentEngine({
+          name: "ai-sdk:google",
+          label: "Gemini",
+          description: "",
+          installPackage: "ai @ai-sdk/google",
+          capabilities: {} as any,
+          defaultModel: "gemini-3.5-flash",
+          supportedModels: [],
+          requiredEnvVars: [],
+          create,
+        });
+
+        const resolved = await resolveEngine({
+          engineOption: "ai-sdk:google",
+        });
+        expect(resolved).toBe(engine);
+      } finally {
+        setModuleGraphEnvDefaults(null);
+      }
+    });
+
+    it("keeps require.resolve behavior for non-AI-SDK packages when a marker is present", async () => {
+      process.env.AGENT_NATIVE_BUNDLED_AI_SDK_MODULES = "ai";
+      const { registerAgentEngine, resolveEngine } =
+        await import("./registry.js");
+      const create = vi.fn();
+
+      registerAgentEngine({
+        name: "custom-engine",
+        label: "Custom",
+        description: "",
+        installPackage: "@agent-native/definitely-missing-ai-provider",
+        capabilities: {} as any,
+        defaultModel: "m",
+        supportedModels: [],
+        requiredEnvVars: [],
+        create,
+      });
+
+      await expect(
+        resolveEngine({ engineOption: "custom-engine" }),
+      ).rejects.toThrow(/requires optional packages/);
+    });
   });
 
   it("resolveEngine falls back to default anthropic when nothing configured", async () => {

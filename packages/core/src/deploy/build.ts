@@ -38,6 +38,10 @@ import {
 } from "../shared/cache-control.js";
 import { mcpEmbedStaticAssetRouteRules } from "../shared/mcp-embed-headers.js";
 import {
+  BUNDLED_AI_SDK_MODULES_ENV_KEY,
+  OPTIONAL_AI_SDK_MODULES,
+} from "../shared/optional-ai-sdk-modules.js";
+import {
   AGENT_NATIVE_SOCIAL_IMAGE_ALT,
   AGENT_NATIVE_SOCIAL_IMAGE_CACHE_BUSTER,
   AGENT_NATIVE_SOCIAL_IMAGE_HEIGHT,
@@ -249,18 +253,12 @@ export const CLOUDFLARE_WORKER_STUB_MODULES: Record<string, string> = {
  * esbuild fails the worker bundle with "Could not resolve". Stub every
  * uninstalled one with a module that throws at import time, which makes the
  * dynamic import() reject exactly like the missing package does under Node.
+ *
+ * Canonical list lives in shared/optional-ai-sdk-modules (also consumed by
+ * the engine registry's bundled-marker check); re-exported here for
+ * existing importers of the deploy layer.
  */
-export const OPTIONAL_AI_SDK_MODULES = [
-  "ai",
-  "@ai-sdk/anthropic",
-  "@ai-sdk/openai",
-  "@ai-sdk/google",
-  "@ai-sdk/groq",
-  "@ai-sdk/mistral",
-  "@ai-sdk/cohere",
-  "@openrouter/ai-sdk-provider",
-  "ai-sdk-ollama",
-];
+export { OPTIONAL_AI_SDK_MODULES };
 
 export function uninstalledOptionalAiSdkStubs(
   appDir: string,
@@ -277,6 +275,46 @@ export function uninstalledOptionalAiSdkStubs(
     }
   }
   return stubs;
+}
+
+/**
+ * The optional AI SDK packages that DO resolve from the app dir at build
+ * time — the exact complement of `uninstalledOptionalAiSdkStubs`. Bundlers
+ * inline these (literal dynamic import() specifiers in ai-sdk-engine), so
+ * inside the built artifact they are importable even though no node_modules
+ * entry exists for a runtime `require.resolve` probe to find. The unified
+ * entries bake this list as the `AGENT_NATIVE_BUNDLED_AI_SDK_MODULES`
+ * module-graph env default so the engine registry's install check can trust
+ * the build-time decision instead of a filesystem probe that cannot see
+ * bundled modules (observed live: `AGENT_ENGINE=ai-sdk:google` refused with
+ * "requires optional packages" on the unified Node lane while the provider
+ * chunk sat in the bundle).
+ */
+export function installedOptionalAiSdkModules(appDir: string): string[] {
+  const appRequire = createRequire(path.join(appDir, "package.json"));
+  const installed: string[] = [];
+  for (const mod of OPTIONAL_AI_SDK_MODULES) {
+    try {
+      appRequire.resolve(mod);
+      installed.push(mod);
+    } catch {
+      // Not installed — stubbed / absent in the bundle.
+    }
+  }
+  return installed;
+}
+
+/**
+ * Module-graph env default entry advertising which optional AI SDK packages
+ * are bundled in this app's artifact (see BUNDLED_AI_SDK_MODULES_ENV_KEY).
+ * Spread into the scope-init defaults of every unified deploy entry.
+ */
+export function bundledAiSdkModulesEnvDefault(
+  appDir: string,
+): Record<string, string> {
+  const installed = installedOptionalAiSdkModules(appDir);
+  if (installed.length === 0) return {};
+  return { [BUNDLED_AI_SDK_MODULES_ENV_KEY]: installed.join(",") };
 }
 
 function cloudflareNodeBuiltinStubSource(
@@ -807,11 +845,10 @@ export function workspaceNodeMiddlewareEntry(
   fs.mkdirSync(tmpDir, { recursive: true });
   fs.writeFileSync(
     path.join(tmpDir, "_scope-init.mjs"),
-    generateScopeInitSource(
-      appScopeId,
-      workspaceEnvDefaultsFromBuildEnv(),
-      workspaceAppModuleGraphEnvDefaultsFromBuildEnv(),
-    ),
+    generateScopeInitSource(appScopeId, workspaceEnvDefaultsFromBuildEnv(), {
+      ...workspaceAppModuleGraphEnvDefaultsFromBuildEnv(),
+      ...bundledAiSdkModulesEnvDefault(cwd),
+    }),
   );
   const entryFile = path.join(tmpDir, "index.mjs");
   fs.writeFileSync(
@@ -2158,11 +2195,10 @@ async function buildCloudflarePages() {
   if (appScopeId) {
     fs.writeFileSync(
       path.join(tmpDir, "_scope-init.js"),
-      generateScopeInitSource(
-        appScopeId,
-        workspaceEnvDefaultsFromBuildEnv(),
-        workspaceAppModuleGraphEnvDefaultsFromBuildEnv(),
-      ),
+      generateScopeInitSource(appScopeId, workspaceEnvDefaultsFromBuildEnv(), {
+        ...workspaceAppModuleGraphEnvDefaultsFromBuildEnv(),
+        ...bundledAiSdkModulesEnvDefault(cwd),
+      }),
     );
   }
 
