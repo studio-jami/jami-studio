@@ -244,6 +244,44 @@ export function shouldReplacePreviewAfterVisualStyleCommit(args: {
   return !args.runtimeApplied && !args.runtimeStyleApplied;
 }
 
+export interface OptimisticTextDecorationLineEntry {
+  key: string;
+  value: string;
+}
+
+/**
+ * BUG-DOUBLE-TOGGLE-RACE — Cmd+U (toggle underline) / Cmd+Shift+X (toggle
+ * strikethrough) commit through the SHORTHAND "textDecoration" property, but
+ * commitVisualStyles' synchronous optimistic patch to
+ * selectedElement.computedStyles only merges the exact key(s) it committed —
+ * it never decomposes "textDecoration" into the LONGHAND
+ * "textDecorationLine" the toggle reads to decide its next value.
+ * `computedStyles.textDecorationLine` only catches up once the bridge's
+ * async getComputedStyle round trip lands. A second toggle press within that
+ * window would otherwise recompute nextTextDecorationLineValue from the
+ * STALE pre-toggle value, land on the exact value the first press already
+ * committed, and get deduped as a no-op — consecutive toggles silently stop
+ * alternating.
+ *
+ * Resolves which value a toggle handler should treat as "current": a
+ * still-fresh optimistic value this same toggle family already recorded for
+ * the SAME selected element (`tracked.key === elementKey`) wins over the
+ * (possibly stale) computedStyles reading, since the async measurement that
+ * would refresh computedStyles may not have landed yet. A different/new
+ * element key (or no tracked entry) falls back to computedStyles, so newly
+ * selecting a different element always starts from ITS OWN real state.
+ */
+export function resolveOptimisticTextDecorationLine(
+  tracked: OptimisticTextDecorationLineEntry | null | undefined,
+  elementKey: string | undefined,
+  computedTextDecorationLine: string | undefined,
+): string | undefined {
+  if (tracked && elementKey !== undefined && tracked.key === elementKey) {
+    return tracked.value;
+  }
+  return computedTextDecorationLine;
+}
+
 /**
  * PF12: decide whether a style change from EditPanel (ScrubInput scrub tick /
  * DesignColorPicker drag tick) should skip the expensive source commit
@@ -320,11 +358,28 @@ export type UndoRedoOrderKind =
   | "content"
   | "file-content"
   | "geometry"
-  | "file-created";
+  | "file-created"
+  | "file-deleted";
 
 export function getUndoRedoPriorityOrder(
   preferred: UndoRedoOrderKind | undefined,
 ): UndoRedoOrderKind[] {
+  if (preferred === "file-deleted")
+    return [
+      "file-deleted",
+      "file-created",
+      "content",
+      "file-content",
+      "geometry",
+    ];
+  if (preferred === "file-created")
+    return [
+      "file-created",
+      "file-deleted",
+      "content",
+      "file-content",
+      "geometry",
+    ];
   if (preferred === "geometry") return ["geometry", "content", "file-content"];
   if (preferred === "file-content")
     return ["file-content", "content", "geometry"];
@@ -348,6 +403,10 @@ export interface FileContentSaveRequest {
    */
   expectedVersionHash?: string;
 }
+
+type FileContentSaveRequestsById = Readonly<
+  Record<string, FileContentSaveRequest>
+>;
 
 /**
  * A completed save may retire the unload retry only when it still represents
@@ -378,12 +437,38 @@ export function shouldClearLatestUnloadSave(
  * the final edit.
  */
 export function flushPendingFileContentSavesOnCleanup(
-  pendingByFileId: Readonly<Record<string, FileContentSaveRequest>>,
+  pendingByFileId: FileContentSaveRequestsById,
   timerIds: readonly number[],
   save: (pending: FileContentSaveRequest) => void,
   clearTimer: (timerId: number) => void,
 ): void {
   for (const pending of Object.values(pendingByFileId)) save(pending);
+  for (const timerId of timerIds) clearTimer(timerId);
+}
+
+/**
+ * A desktop app switch keeps the guest page mounted, so neither pagehide nor
+ * React cleanup runs. Flush the newest known request per file through the
+ * ordinary serialized mutation path and cancel its debounce timer.
+ */
+export function flushFileContentSavesOnBackground(
+  pendingByFileId: FileContentSaveRequestsById,
+  latestUnacknowledgedByFileId: FileContentSaveRequestsById,
+  timerIds: readonly number[],
+  save: (pending: FileContentSaveRequest) => void,
+  clearTimer: (timerId: number) => void,
+): void {
+  const newestByFileId = new Map<string, FileContentSaveRequest>();
+  for (const pending of Object.values(latestUnacknowledgedByFileId)) {
+    newestByFileId.set(pending.id, pending);
+  }
+  for (const pending of Object.values(pendingByFileId)) {
+    const current = newestByFileId.get(pending.id);
+    if (!current || pending.operationRevision >= current.operationRevision) {
+      newestByFileId.set(pending.id, pending);
+    }
+  }
+  for (const pending of newestByFileId.values()) save(pending);
   for (const timerId of timerIds) clearTimer(timerId);
 }
 

@@ -1,13 +1,8 @@
 import { enabledFlag } from "./env-flags.js";
-import { requiresConfiguredVideoStorage } from "./video-storage.js";
 
-// Streaming resumable uploads are deployment opt-in while the provider/finalize
-// path hardens — EXCEPT when the deployment cannot buffer chunks in SQL at all
-// (production / remote database), where streaming to the provider is the only
-// viable upload path and gating it behind the opt-in flag guarantees every
-// upload dies with a 409. Set CLIPS_ENABLE_STREAMING_UPLOAD=1 to opt in on
-// SQL-scratch-capable deployments; CLIPS_DISABLE_STREAMING_UPLOAD=1 still
-// forces the buffered fallback everywhere.
+// Local/dev deployments can opt into resumable uploads while retaining their
+// SQL scratch fallback. Hosted deployments have no safe buffered fallback, so
+// requested video uploads use resumable storage unless explicitly disabled.
 export function isStreamingUploadDisabled(): boolean {
   return enabledFlag(process.env.CLIPS_DISABLE_STREAMING_UPLOAD);
 }
@@ -15,10 +10,15 @@ export function isStreamingUploadDisabled(): boolean {
 export function shouldEnableStreamingUpload(args: {
   client?: string | null;
   mimeType?: string | null;
+  bufferedFallbackAvailable?: boolean;
 }): boolean {
   if (isStreamingUploadDisabled()) return false;
-  const optedIn = enabledFlag(process.env.CLIPS_ENABLE_STREAMING_UPLOAD);
-  if (!optedIn && !requiresConfiguredVideoStorage()) return false;
+  if (
+    args.bufferedFallbackAvailable !== false &&
+    !enabledFlag(process.env.CLIPS_ENABLE_STREAMING_UPLOAD)
+  ) {
+    return false;
+  }
 
   const mimeType = (args.mimeType ?? "").split(";")[0]?.trim().toLowerCase();
   return !mimeType || mimeType.startsWith("video/");

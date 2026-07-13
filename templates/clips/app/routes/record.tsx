@@ -12,6 +12,7 @@ import {
   waitForReadyRecordingAfterFinalizeError,
 } from "@shared/finalize-recovery";
 import {
+  chunkUploadParallelism,
   chunkUploadUrl,
   pickMimeType,
   type UploadMode,
@@ -65,6 +66,10 @@ import {
   defaultRecordingTitle,
   inferWindowTitleFromDisplayStream,
 } from "@/lib/recording-title";
+import {
+  decideRecordingVisibilityAction,
+  isMobileRecorderRuntime,
+} from "@/lib/recording-visibility";
 import {
   captureVideoThumbnailBlob,
   uploadRecordingThumbnail,
@@ -837,6 +842,7 @@ export default function RecordRoute() {
   const [uiState, setUiState] = useState<UiState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const visibilityAutoPausedRef = useRef(false);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraSize, setCameraSize] = useState<CameraBubbleSize>(
@@ -1576,13 +1582,10 @@ export default function RecordRoute() {
               hasAudio: true,
               width: meta.width,
               height: meta.height,
-              visibility: reportContext ? "org" : undefined,
+              visibility: reportContext ? "org" : "public",
               spaceIds: spaceIdFromUrl ? [spaceIdFromUrl] : undefined,
               folderId: folderIdFromUrl ?? undefined,
               mimeType: uploadMimeType,
-              // Streaming lets deployments without SQL chunk scratch (remote
-              // DB + S3-compatible storage) relay chunks straight to the
-              // provider. The server decides; buffered stays the fallback.
               requestStreaming: true,
             }),
           },
@@ -1604,13 +1607,11 @@ export default function RecordRoute() {
             uploadChunkUrl: string;
             abortUrl?: string;
             uploadMode?: UploadMode;
-            uploadChunkBytes?: number;
           };
           id?: string;
           uploadChunkUrl?: string;
           abortUrl?: string;
           uploadMode?: UploadMode;
-          uploadChunkBytes?: number;
         };
         const info =
           created.result ??
@@ -1619,7 +1620,6 @@ export default function RecordRoute() {
             uploadChunkUrl: string;
             abortUrl?: string;
             uploadMode?: UploadMode;
-            uploadChunkBytes?: number;
           });
         if (!info?.id) {
           throw new Error("create-recording did not return an id");
@@ -1629,22 +1629,14 @@ export default function RecordRoute() {
         if (isStale()) throw makeAbortError("Upload cancelled");
         const uploadBase = `${appBasePath()}${info.uploadChunkUrl}`;
 
-        // Streaming mode relays each chunk to the provider as one part — the
-        // provider dictates the part size (S3 multipart: uniform >=5 MiB) and
-        // parts must arrive in order, so the parallel pool drops to 1.
-        const streamingUpload = info.uploadMode === "streaming";
-        const chunkBytes =
-          streamingUpload &&
-          typeof info.uploadChunkBytes === "number" &&
-          info.uploadChunkBytes > 0
-            ? info.uploadChunkBytes
-            : UPLOAD_CHUNK_BYTES;
-
-        const totalChunks = Math.max(1, Math.ceil(uploadBlob.size / chunkBytes));
+        const totalChunks = Math.max(
+          1,
+          Math.ceil(uploadBlob.size / UPLOAD_CHUNK_BYTES),
+        );
 
         const chunkDescs = Array.from({ length: totalChunks }, (_, i) => {
-          const start = i * chunkBytes;
-          const end = Math.min(start + chunkBytes, uploadBlob.size);
+          const start = i * UPLOAD_CHUNK_BYTES;
+          const end = Math.min(start + UPLOAD_CHUNK_BYTES, uploadBlob.size);
           const isFinal = i === totalChunks - 1;
           return {
             index: i,
@@ -1730,7 +1722,7 @@ export default function RecordRoute() {
           Array.from(
             {
               length: Math.min(
-                streamingUpload ? 1 : UPLOAD_PARALLELISM,
+                chunkUploadParallelism(info.uploadMode, UPLOAD_PARALLELISM),
                 parallelChunks.length,
               ),
             },
@@ -2304,6 +2296,10 @@ export default function RecordRoute() {
   const togglePause = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
+    // A direct user gesture owns the paused state from this point forward.
+    // In particular, returning to the foreground must not auto-resume a clip
+    // that the user deliberately left paused.
+    visibilityAutoPausedRef.current = false;
     if (engine.getState() === "paused") {
       engine.resume();
       liveTranscription.resume();
@@ -2314,6 +2310,59 @@ export default function RecordRoute() {
       setIsPaused(true);
     }
   }, [liveTranscription]);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    if (!isMobileRecorderRuntime(navigator)) return;
+    if (recordingMode !== "camera" || !cameraStream) {
+      visibilityAutoPausedRef.current = false;
+      return;
+    }
+
+    const videoTracks = cameraStream.getVideoTracks();
+    const syncCaptureSuspension = () => {
+      const engine = engineRef.current;
+      if (!engine) {
+        visibilityAutoPausedRef.current = false;
+        return;
+      }
+
+      const decision = decideRecordingVisibilityAction({
+        mode: recordingMode,
+        mobileRuntime: true,
+        documentHidden: document.hidden,
+        cameraTrackMuted: videoTracks.some((track) => track.muted),
+        recorderState: engine.getState(),
+        autoPaused: visibilityAutoPausedRef.current,
+      });
+      visibilityAutoPausedRef.current = decision.autoPaused;
+
+      if (decision.action === "pause") {
+        engine.pause();
+        liveTranscription.pause();
+        setIsPaused(true);
+      } else if (decision.action === "resume") {
+        engine.resume();
+        liveTranscription.resume();
+        setIsPaused(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", syncCaptureSuspension);
+    for (const track of videoTracks) {
+      track.addEventListener("mute", syncCaptureSuspension);
+      track.addEventListener("unmute", syncCaptureSuspension);
+    }
+    syncCaptureSuspension();
+
+    return () => {
+      document.removeEventListener("visibilitychange", syncCaptureSuspension);
+      for (const track of videoTracks) {
+        track.removeEventListener("mute", syncCaptureSuspension);
+        track.removeEventListener("unmute", syncCaptureSuspension);
+      }
+    };
+  }, [cameraStream, liveTranscription, recordingMode]);
 
   const restart = useCallback(async () => {
     await doCancel();

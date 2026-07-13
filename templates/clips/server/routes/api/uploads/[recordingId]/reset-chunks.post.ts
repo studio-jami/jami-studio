@@ -30,6 +30,7 @@ import {
 } from "@agent-native/core/application-state";
 import { getActiveFileUploadProviderForRequest } from "@agent-native/core/file-upload";
 import { runWithRequestContext } from "@agent-native/core/server";
+import type { UploadMode } from "@shared/recording-core.js";
 import { MAX_UPLOAD_BYTES as MAX_RECORDING_UPLOAD_BYTES } from "@shared/upload-limits.js";
 import { and, eq } from "drizzle-orm";
 import {
@@ -50,7 +51,7 @@ import {
   setResumableSession,
 } from "../../../../lib/resumable-session.js";
 import { shouldEnableStreamingUpload } from "../../../../lib/streaming-upload-mode.js";
-import { maxChunkUploadBytes } from "../../../../lib/upload-chunk-limits.js";
+import { allowsSqlRecordingChunkScratch } from "../../../../lib/video-storage.js";
 
 interface CompressionMeta {
   originalBytes?: number;
@@ -58,6 +59,16 @@ interface CompressionMeta {
   ratio?: number;
   elapsedMs?: number;
   outputMimeType?: string;
+}
+
+function normalizeVideoMimeType(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const mimeType = value.split(";")[0]?.trim().toLowerCase();
+  return mimeType === "video/mp4" ||
+    mimeType === "video/quicktime" ||
+    mimeType === "video/webm"
+    ? mimeType
+    : null;
 }
 
 function pickNumber(value: unknown): number | undefined {
@@ -83,6 +94,7 @@ export default defineEventHandler(async (event: H3Event) => {
   const { userEmail: ownerEmail, orgId } = await getEventOwnerContext(event);
   const body = (await readBody(event).catch(() => null)) as {
     compression?: CompressionMeta | null;
+    requestStreaming?: boolean;
     mimeType?: string;
   } | null;
 
@@ -124,42 +136,64 @@ export default defineEventHandler(async (event: H3Event) => {
     // accidentally route through handleResumableChunk with stale offsets.
     await deleteResumableSession(recordingId).catch(() => {});
 
-    // Re-initialize a fresh streaming session for the re-upload when the
-    // deployment streams to the provider (production / remote DB, where SQL
-    // chunk scratch is unavailable). Without this, the post-compression
-    // re-upload would fall into the buffered path and 409.
-    let uploadMode: "streaming" | "buffered" = "buffered";
-    let uploadChunkBytes: number | undefined;
-    const reuploadMimeType =
-      compression?.outputMimeType || body?.mimeType || "video/webm";
-    const uploadProvider = await getActiveFileUploadProviderForRequest();
-    const providerChunkBytes = uploadProvider?.resumable?.preferredChunkBytes;
-    if (
-      uploadProvider?.resumable &&
-      shouldEnableStreamingUpload({ mimeType: reuploadMimeType }) &&
-      (!providerChunkBytes || providerChunkBytes <= maxChunkUploadBytes())
-    ) {
-      try {
-        const ext = /mp4|quicktime/i.test(reuploadMimeType) ? "mp4" : "webm";
-        const session = await uploadProvider.resumable.startSession(
-          `${recordingId}.${ext}`,
-          reuploadMimeType.split(";")[0]?.trim() || "video/webm",
-          MAX_RECORDING_UPLOAD_BYTES,
-        );
-        await setResumableSession(recordingId, {
-          providerId: uploadProvider.id,
-          sessionId: session.sessionId,
-          meta: { ...session.meta, stableUrl: true, recordAsset: false },
-          bytesUploaded: 0,
-          lastCommittedIndex: -1,
-        });
-        uploadMode = "streaming";
-        uploadChunkBytes = providerChunkBytes;
-      } catch (err) {
-        console.warn(
-          `[reset-chunks] resumable session re-init failed, falling back to buffered:`,
-          err instanceof Error ? err.message : String(err),
-        );
+    let uploadMode: UploadMode = "buffered";
+    if (body?.requestStreaming === true) {
+      const mimeType = normalizeVideoMimeType(body.mimeType);
+      if (!mimeType) {
+        setResponseStatus(event, 400);
+        return { error: "A supported video mimeType is required for retry" };
+      }
+
+      const bufferedFallbackAvailable = allowsSqlRecordingChunkScratch();
+      const uploadProvider = await getActiveFileUploadProviderForRequest();
+      if (
+        shouldEnableStreamingUpload({
+          client: "desktop",
+          mimeType,
+          bufferedFallbackAvailable,
+        }) &&
+        uploadProvider?.resumable
+      ) {
+        try {
+          const extension = /mp4|quicktime/.test(mimeType) ? "mp4" : "webm";
+          const filename = `${recordingId}.${extension}`;
+          const session = await uploadProvider.resumable.startSession(
+            filename,
+            mimeType,
+            MAX_RECORDING_UPLOAD_BYTES,
+          );
+          await setResumableSession(recordingId, {
+            providerId: uploadProvider.id,
+            sessionId: session.sessionId,
+            meta: {
+              ...session.meta,
+              stableUrl: true,
+              recordAsset: false,
+            },
+            bytesUploaded: 0,
+            lastCommittedIndex: -1,
+          });
+          uploadMode = "streaming";
+        } catch (err) {
+          if (!bufferedFallbackAvailable) {
+            setResponseStatus(event, 502);
+            return {
+              error: `Could not restart recording upload: ${
+                err instanceof Error ? err.message : String(err)
+              }`,
+            };
+          }
+          console.warn(
+            `[reset-chunks-${recordingId}] resumable restart failed; using buffered retry:`,
+            err,
+          );
+        }
+      } else if (!bufferedFallbackAvailable) {
+        setResponseStatus(event, 409);
+        return {
+          error:
+            "Recording upload storage could not start a resumable retry session.",
+        };
       }
     }
 
@@ -205,7 +239,6 @@ export default defineEventHandler(async (event: H3Event) => {
       chunksCleared: cleared,
       compressionRecorded: !!compression,
       uploadMode,
-      ...(uploadChunkBytes ? { uploadChunkBytes } : {}),
     };
   });
 });

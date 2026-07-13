@@ -1,9 +1,23 @@
 # @agent-native/scheduling
 
+## 0.1.25
+
+### Patch Changes
+
+- 38ca6fa: Require host identity (or the booking's capability token) before mutating bookings, revoking private links, duplicating event types, and returning reschedule tokens, closing cross-tenant write/disclosure gaps.
+- Updated dependencies [38ca6fa]
+  - @agent-native/toolkit@0.4.7
+
 ## 0.1.24
 
 ### Patch Changes
 
+- f43d34c: Add a Microsoft Teams conferencing provider with delegated OAuth and Microsoft Graph meeting creation and cancellation.
+- f43d34c: Batch selected-calendar reads and bound external availability checks to reduce
+  slot lookup latency without overwhelming calendar providers.
+- f43d34c: Add a safe manifest-driven package lifecycle CLI with Scheduling as the first inspectable, installable, and ejectable package.
+- f43d34c: Re-validate availability before creating bookings and make booking writes transactional.
+- Updated dependencies [f43d34c]
 - d1d1a12: Update package metadata to point at the Jami Studio repository.
 - 3f45267: Fix Windows workspace install builds by avoiding shell-only copy/path behavior.
 - Updated dependencies [d1d1a12]

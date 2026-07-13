@@ -2,11 +2,13 @@ import { spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fsSync from "node:fs";
 import fs from "node:fs/promises";
+import type { FileHandle } from "node:fs/promises";
 import http, {
   type IncomingMessage,
   type Server,
   type ServerResponse,
 } from "node:http";
+import https from "node:https";
 import path from "node:path";
 
 const DEFAULT_BRIDGE_PORT = 7331;
@@ -123,6 +125,12 @@ export interface DesignConnectBridge {
    *  bridge-registration endpoints. Safe to hand to the Design browser, but
    *  never accepted by filesystem endpoints. */
   previewToken: string;
+  /** Random id minted fresh each time this bridge process boots. Also
+   *  returned by `/health`, `/live-edit-bridge`, and the "unknown bridge key"
+   *  409 from `/live-edit` — a client can compare it across those responses
+   *  to tell a restarted bridge process apart from a genuine registration
+   *  bug. See the `bridgeInstanceId` doc comment in startDesignConnectBridge. */
+  bridgeInstanceId: string;
 }
 
 export interface DesignConnectBridgeOptions {
@@ -135,6 +143,7 @@ export interface DesignConnectBridgeOptions {
 }
 
 const PREVIEW_TOKEN_DOMAIN = "agent-native-design-preview-v1\0";
+const PREVIEW_SESSION_COOKIE_NAME = "agent-native-preview-token";
 
 /**
  * Derive a read-only preview credential from the stronger filesystem token.
@@ -679,11 +688,11 @@ export async function prepareDesignConnectManifest(
       reason:
         operation === "resolveNodeToFile"
           ? // resolveNodeToFile maps a runtime DOM node id (from the editor's
-            // 'select' payload) to { file, line, component } provenance.  The
-            // bridge endpoint exists; per-element provenance data must be
-            // emitted by the connected app at build time — see the provenance
-            // note in the help text below.
-            "Requires the connected app to emit data-source-file / data-source-line / data-component-name attributes (e.g. via @vitejs/plugin-react jsxDEV or a Babel source plugin)."
+            // 'select' payload) to { file, line, component } provenance.
+            // React development builds expose jsxDEV call sites through the
+            // Fiber debug stack; other runtimes/builds can emit explicit DOM
+            // provenance attributes — see the help text below.
+            "React development builds resolve jsxDEV call sites automatically; other runtimes can emit data-source-file / data-source-line / data-component-name attributes."
           : undefined,
     })),
   };
@@ -742,9 +751,10 @@ function configureBridgeCors(
   (res as CorsAwareResponse)[BRIDGE_CORS_HEADERS] = approved
     ? {
         "access-control-allow-origin": origin,
-        "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+        "access-control-allow-methods":
+          "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS",
         "access-control-allow-headers":
-          "content-type, x-bridge-token, x-design-preview-token",
+          "authorization, content-type, x-bridge-token, x-design-preview-token, x-csrf-token, x-xsrf-token, x-requested-with",
         "access-control-allow-private-network": "true",
         vary: "Origin",
       }
@@ -773,9 +783,11 @@ function sendText(
   statusCode: number,
   body: string,
   contentType: string,
+  setCookieHeaders: string[] = [],
 ) {
   res.writeHead(statusCode, {
     "content-type": contentType,
+    ...(setCookieHeaders.length > 0 ? { "set-cookie": setCookieHeaders } : {}),
     ...bridgeCorsHeaders(res),
   });
   res.end(body);
@@ -786,9 +798,13 @@ function sendBytes(
   statusCode: number,
   body: Buffer,
   headers: Headers,
+  contentLength = body.length,
+  setCookieHeaders: string[] = [],
 ) {
-  const responseHeaders: Record<string, string> = {
+  const responseHeaders: Record<string, string | string[]> = {
     ...bridgeCorsHeaders(res),
+    "content-length": String(contentLength),
+    ...(setCookieHeaders.length > 0 ? { "set-cookie": setCookieHeaders } : {}),
   };
   for (const name of [
     "content-type",
@@ -833,6 +849,249 @@ function readHeader(req: IncomingMessage, name: string): string {
   return typeof value === "string" ? value : "";
 }
 
+function readRequestCookie(req: IncomingMessage, name: string): string {
+  for (const rawPair of readHeader(req, "cookie").split(";")) {
+    const pair = rawPair.trim();
+    const separator = pair.indexOf("=");
+    if (separator <= 0 || pair.slice(0, separator).trim() !== name) continue;
+    return pair.slice(separator + 1).trim();
+  }
+  return "";
+}
+
+function previewSessionSetCookie(previewToken: string): string {
+  // Partitioned SameSite=None keeps the read-only bridge credential available
+  // to nested Design frames without granting an unpartitioned third-party
+  // cookie. Loopback origins are potentially trustworthy in Chromium, which
+  // permits Secure cookies for local development.
+  return `${PREVIEW_SESSION_COOKIE_NAME}=${previewToken}; HttpOnly; Path=/; SameSite=None; Secure; Partitioned`;
+}
+
+/**
+ * Preserve only browser metadata a local dev server needs to classify module
+ * requests and parse ordinary same-origin app mutations. Browser cookies and
+ * Authorization are forwarded only when Sec-Fetch-Site says the request came
+ * from the proxied app itself; cross-site callers cannot relay them. Bridge
+ * control tokens and referrers are never forwarded, and mutation origins are
+ * replaced with the connected dev-server origin. Cookie-backed login also
+ * uses the isolated in-memory upstream jar below so iframe cookie restrictions
+ * cannot split the session across URL-backed screens.
+ */
+function previewProxyRequestHeaders(
+  req: IncomingMessage,
+  devServerUrl: string,
+  cookieHeader = "",
+): Record<string, string> {
+  const headers: Record<string, string> = {};
+  for (const name of [
+    "accept",
+    "accept-language",
+    "content-type",
+    "sec-fetch-dest",
+    "sec-fetch-mode",
+    "sec-fetch-site",
+    "x-csrf-token",
+    "x-xsrf-token",
+    "x-requested-with",
+  ] as const) {
+    const value = readHeader(req, name);
+    if (value) headers[name] = value;
+  }
+  const browserSameOrigin = readHeader(req, "sec-fetch-site") === "same-origin";
+  const browserCookie = browserSameOrigin ? readHeader(req, "cookie") : "";
+  const mergedCookie = mergePreviewCookieHeaders(cookieHeader, browserCookie);
+  if (mergedCookie) headers["cookie"] = mergedCookie;
+  // Same-origin app code may use localStorage-backed bearer auth. Forward it
+  // only from a browser request already classified as same-origin; cross-site
+  // callers still authenticate to the bridge with the separate preview token,
+  // which is never copied upstream.
+  if (browserSameOrigin) {
+    const authorization = readHeader(req, "authorization");
+    if (authorization && authorization.length <= 16 * 1024) {
+      headers["authorization"] = authorization;
+    }
+  }
+  if (req.method && !["GET", "HEAD"].includes(req.method)) {
+    headers["origin"] = new URL(devServerUrl).origin;
+  }
+  return headers;
+}
+
+function mergePreviewCookieHeaders(
+  jarCookieHeader: string,
+  browserCookieHeader: string,
+): string {
+  const values = new Map<string, string>();
+  const absorb = (header: string) => {
+    if (!header || Buffer.byteLength(header) > MAX_PREVIEW_COOKIE_BYTES) return;
+    for (const rawPair of header.split(";")) {
+      const pair = rawPair.trim();
+      const separator = pair.indexOf("=");
+      if (separator <= 0) continue;
+      const name = pair.slice(0, separator).trim();
+      const value = pair.slice(separator + 1).trim();
+      if (!/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(name)) continue;
+      if (/^(?:x-)?agent-native-(?:bridge|preview)(?:-|$)/i.test(name)) {
+        continue;
+      }
+      values.set(name, value);
+    }
+  };
+  absorb(jarCookieHeader);
+  // A client-readable same-origin cookie is allowed to update the jar's stale
+  // value for this request. HttpOnly cookies arrive with the same value and
+  // remain effectively jar-owned.
+  absorb(browserCookieHeader);
+  return [...values].map(([name, value]) => `${name}=${value}`).join("; ");
+}
+
+const MAX_PREVIEW_SESSION_COOKIES = 128;
+const MAX_PREVIEW_COOKIE_BYTES = 8 * 1024;
+
+type PreviewSessionCookie = {
+  name: string;
+  value: string;
+  path: string;
+  secure: boolean;
+  expiresAt?: number;
+};
+
+function responseSetCookieHeaders(headers: Headers): string[] {
+  const withGetSetCookie = headers as Headers & {
+    getSetCookie?: () => string[];
+  };
+  if (typeof withGetSetCookie.getSetCookie === "function") {
+    return withGetSetCookie.getSetCookie();
+  }
+  const single = headers.get("set-cookie");
+  return single ? [single] : [];
+}
+
+function defaultCookiePath(url: URL): string {
+  const pathname = url.pathname || "/";
+  const lastSlash = pathname.lastIndexOf("/");
+  return lastSlash <= 0 ? "/" : pathname.slice(0, lastSlash);
+}
+
+function sanitizedBridgeSetCookie(raw: string): string {
+  return raw
+    .split(";")
+    .filter((part) => !/^\s*domain\s*=/i.test(part))
+    .join(";");
+}
+
+/**
+ * Ephemeral cookie session for one connected dev-server origin. Cookies never
+ * enter SQL, disk, logs, or another target origin, and disappear when the
+ * local bridge exits. This keeps authenticated URL screens in one bridge
+ * process on the same upstream session even when browser third-party-cookie
+ * rules would otherwise isolate or reject the nested iframe cookies.
+ */
+class PreviewSessionCookieJar {
+  private readonly origin: string;
+  private readonly cookies = new Map<string, PreviewSessionCookie>();
+
+  constructor(devServerUrl: string) {
+    this.origin = new URL(devServerUrl).origin;
+  }
+
+  store(headers: Headers, responseUrl: string): string[] {
+    const parsedUrl = new URL(responseUrl);
+    if (parsedUrl.origin !== this.origin) return [];
+    const browserCookies: string[] = [];
+    for (const raw of responseSetCookieHeaders(headers)) {
+      if (!raw || Buffer.byteLength(raw) > MAX_PREVIEW_COOKIE_BYTES) continue;
+      const parts = raw.split(";");
+      const first = parts.shift()?.trim() ?? "";
+      const separator = first.indexOf("=");
+      if (separator <= 0) continue;
+      const name = first.slice(0, separator).trim();
+      const value = first.slice(separator + 1).trim();
+      if (!/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(name)) continue;
+      let cookiePath = defaultCookiePath(parsedUrl);
+      let secure = false;
+      let expiresAt: number | undefined;
+      let deleteCookie = false;
+      for (const attribute of parts) {
+        const trimmed = attribute.trim();
+        const equals = trimmed.indexOf("=");
+        const key = (equals < 0 ? trimmed : trimmed.slice(0, equals))
+          .trim()
+          .toLowerCase();
+        const attributeValue =
+          equals < 0 ? "" : trimmed.slice(equals + 1).trim();
+        if (key === "path" && attributeValue.startsWith("/")) {
+          cookiePath = attributeValue;
+        } else if (key === "secure") {
+          secure = true;
+        } else if (key === "max-age") {
+          const seconds = Number(attributeValue);
+          if (Number.isFinite(seconds)) {
+            deleteCookie = seconds <= 0;
+            expiresAt = Date.now() + seconds * 1000;
+          }
+        } else if (key === "expires" && expiresAt === undefined) {
+          const parsed = Date.parse(attributeValue);
+          if (Number.isFinite(parsed)) expiresAt = parsed;
+        }
+      }
+      const mapKey = `${cookiePath}\u0000${name}`;
+      if (
+        deleteCookie ||
+        (expiresAt !== undefined && expiresAt <= Date.now())
+      ) {
+        this.cookies.delete(mapKey);
+      } else {
+        this.cookies.delete(mapKey);
+        this.cookies.set(mapKey, {
+          name,
+          value,
+          path: cookiePath,
+          secure,
+          ...(expiresAt !== undefined ? { expiresAt } : {}),
+        });
+        while (this.cookies.size > MAX_PREVIEW_SESSION_COOKIES) {
+          const oldest = this.cookies.keys().next().value;
+          if (typeof oldest !== "string") break;
+          this.cookies.delete(oldest);
+        }
+      }
+      browserCookies.push(sanitizedBridgeSetCookie(raw));
+    }
+    return browserCookies;
+  }
+
+  headerFor(targetUrl: string): string {
+    const parsed = new URL(targetUrl);
+    if (parsed.origin !== this.origin) return "";
+    const now = Date.now();
+    const matches: PreviewSessionCookie[] = [];
+    for (const [key, cookie] of this.cookies) {
+      if (cookie.expiresAt !== undefined && cookie.expiresAt <= now) {
+        this.cookies.delete(key);
+        continue;
+      }
+      if (
+        cookie.secure &&
+        parsed.protocol !== "https:" &&
+        !isLoopbackOrigin(parsed)
+      ) {
+        continue;
+      }
+      const pathMatches =
+        cookie.path === "/" ||
+        parsed.pathname === cookie.path ||
+        (cookie.path.endsWith("/")
+          ? parsed.pathname.startsWith(cookie.path)
+          : parsed.pathname.startsWith(`${cookie.path}/`));
+      if (!pathMatches) continue;
+      matches.push(cookie);
+    }
+    matches.sort((a, b) => b.path.length - a.path.length);
+    return matches.map((cookie) => `${cookie.name}=${cookie.value}`).join("; ");
+  }
+}
+
 function resolvePreviewSnapshotUrl(
   devServerUrl: string,
   rawUrl: string | null,
@@ -869,12 +1128,14 @@ function resolvePreviewProxyUrl(
 async function fetchPreviewSnapshot(
   devServerUrl: string,
   targetUrl: string,
+  cookieJar?: PreviewSessionCookieJar,
   redirects = 0,
 ): Promise<{
   url: string;
   status: number;
   contentType: string;
   html: string;
+  setCookieHeaders: string[];
 }> {
   if (redirects > 5) {
     throw new Error("Too many redirects while fetching preview snapshot.");
@@ -888,8 +1149,13 @@ async function fetchPreviewSnapshot(
       signal: controller.signal,
       headers: {
         accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
+        ...(cookieJar?.headerFor(targetUrl)
+          ? { cookie: cookieJar.headerFor(targetUrl) }
+          : {}),
       },
     });
+    const setCookieHeaders =
+      cookieJar?.store(response.headers, targetUrl) ?? [];
     const location = response.headers.get("location");
     if (location && response.status >= 300 && response.status < 400) {
       const redirected = new URL(location, targetUrl);
@@ -900,6 +1166,7 @@ async function fetchPreviewSnapshot(
       return fetchPreviewSnapshot(
         devServerUrl,
         redirected.toString(),
+        cookieJar,
         redirects + 1,
       );
     }
@@ -908,6 +1175,7 @@ async function fetchPreviewSnapshot(
       status: response.status,
       contentType: response.headers.get("content-type") ?? "",
       html: await response.text(),
+      setCookieHeaders,
     };
   } finally {
     clearTimeout(timeout);
@@ -917,12 +1185,19 @@ async function fetchPreviewSnapshot(
 async function fetchPreviewProxyResource(
   devServerUrl: string,
   targetUrl: string,
+  request: {
+    method: string;
+    headers?: Record<string, string>;
+    body?: Buffer;
+  },
+  cookieJar?: PreviewSessionCookieJar,
   redirects = 0,
 ): Promise<{
   url: string;
   status: number;
   headers: Headers;
   body: Buffer;
+  setCookieHeaders: string[];
 }> {
   if (redirects > 5) {
     throw new Error("Too many redirects while proxying preview resource.");
@@ -931,10 +1206,17 @@ async function fetchPreviewProxyResource(
   const timeout = setTimeout(() => controller.abort(), 10_000);
   try {
     const response = await fetch(targetUrl, {
-      method: "GET",
+      method: request.method,
       redirect: "manual",
       signal: controller.signal,
+      headers: request.headers,
+      body:
+        request.method === "GET" || request.method === "HEAD"
+          ? undefined
+          : request.body,
     });
+    const setCookieHeaders =
+      cookieJar?.store(response.headers, targetUrl) ?? [];
     const location = response.headers.get("location");
     if (location && response.status >= 300 && response.status < 400) {
       const redirected = new URL(location, targetUrl);
@@ -942,17 +1224,40 @@ async function fetchPreviewProxyResource(
       if (!sameOrigin(redirected.toString(), devServerUrl)) {
         throw new Error("Proxy redirect left the connected dev server.");
       }
-      return fetchPreviewProxyResource(
+      const switchToGet =
+        response.status === 303 ||
+        ((response.status === 301 || response.status === 302) &&
+          request.method === "POST");
+      const redirectedResponse = await fetchPreviewProxyResource(
         devServerUrl,
         redirected.toString(),
+        {
+          method: switchToGet ? "GET" : request.method,
+          headers: {
+            ...(request.headers ?? {}),
+            ...(cookieJar?.headerFor(redirected.toString())
+              ? { cookie: cookieJar.headerFor(redirected.toString()) }
+              : {}),
+          },
+          body: switchToGet ? undefined : request.body,
+        },
+        cookieJar,
         redirects + 1,
       );
+      return {
+        ...redirectedResponse,
+        setCookieHeaders: [
+          ...setCookieHeaders,
+          ...redirectedResponse.setCookieHeaders,
+        ],
+      };
     }
     return {
       url: response.url || targetUrl,
       status: response.status,
       headers: response.headers,
       body: Buffer.from(await response.arrayBuffer()),
+      setCookieHeaders,
     };
   } finally {
     clearTimeout(timeout);
@@ -1031,6 +1336,50 @@ async function readRequestBody(req: IncomingMessage): Promise<string> {
   });
 }
 
+const MAX_PREVIEW_PROXY_REQUEST_BYTES = 8 * 1024 * 1024;
+
+class PreviewProxyRequestTooLargeError extends Error {}
+
+async function readPreviewProxyRequestBody(
+  req: IncomingMessage,
+): Promise<Buffer> {
+  const declaredLength = Number(readHeader(req, "content-length"));
+  if (
+    Number.isFinite(declaredLength) &&
+    declaredLength > MAX_PREVIEW_PROXY_REQUEST_BYTES
+  ) {
+    throw new PreviewProxyRequestTooLargeError(
+      "Preview request body exceeds the 8 MB limit.",
+    );
+  }
+  return new Promise<Buffer>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    let tooLarge = false;
+    req.on("data", (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > MAX_PREVIEW_PROXY_REQUEST_BYTES) {
+        tooLarge = true;
+        chunks.length = 0;
+        return;
+      }
+      if (!tooLarge) chunks.push(chunk);
+    });
+    req.on("end", () => {
+      if (tooLarge) {
+        reject(
+          new PreviewProxyRequestTooLargeError(
+            "Preview request body exceeds the 8 MB limit.",
+          ),
+        );
+        return;
+      }
+      resolve(Buffer.concat(chunks));
+    });
+    req.on("error", reject);
+  });
+}
+
 /**
  * Resolve `targetDir` under `rootPath` with realpath so that symlinks and
  * traversal sequences (../../etc) cannot escape the root.  Throws if the
@@ -1101,8 +1450,243 @@ async function assertPathInside(
   }
 }
 
-/** Allowed file extensions for write/apply-edit operations. */
-const ALLOWED_WRITE_EXTENSIONS = new Set([
+interface SafeBridgeFileTarget {
+  absolutePath: string;
+  canonicalPath: string;
+}
+
+/**
+ * Resolve a bridge file to a stable lock key without following a leaf
+ * symlink. Missing parent directories are represented beneath their nearest
+ * existing real ancestor, so aliases through in-root directory symlinks share
+ * one mutex while first-time file creation remains supported.
+ */
+async function resolveSafeBridgeFileTarget(
+  rootPath: string,
+  targetPath: string,
+): Promise<SafeBridgeFileTarget> {
+  await assertPathInside(rootPath, targetPath);
+  const resolvedRoot = await fs.realpath(rootPath);
+  const absolutePath = path.resolve(rootPath, targetPath);
+  let existingAncestor = path.dirname(absolutePath);
+  let resolvedAncestor: string | null = null;
+  for (let depth = 0; depth < 32; depth += 1) {
+    try {
+      resolvedAncestor = await fs.realpath(existingAncestor);
+      break;
+    } catch {
+      const parent = path.dirname(existingAncestor);
+      if (parent === existingAncestor) break;
+      existingAncestor = parent;
+    }
+  }
+  if (!resolvedAncestor) {
+    throw new Error(`Cannot resolve parent directory: ${absolutePath}`);
+  }
+  // Existing regular files get their own realpath as the lock key. Besides
+  // resolving in-root directory aliases, this canonicalizes case on the
+  // default macOS filesystem so `Button.tsx` and `button.tsx` cannot acquire
+  // separate mutexes for the same inode. assertPathInside already rejected a
+  // symlink leaf before this point.
+  const canonicalPath =
+    (await fs.realpath(absolutePath).catch(() => null)) ??
+    path.resolve(
+      resolvedAncestor,
+      path.relative(existingAncestor, absolutePath),
+    );
+  if (
+    canonicalPath !== resolvedRoot &&
+    !canonicalPath.startsWith(resolvedRoot + path.sep)
+  ) {
+    throw new Error("Path traversal detected: resolved target is outside root");
+  }
+  return { absolutePath, canonicalPath };
+}
+
+const bridgeWriteLocks = new Map<string, Promise<void>>();
+
+/** Serialize read-check-write sequences for one canonical local file. */
+async function withBridgeWriteLock<T>(
+  canonicalPath: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const previous = bridgeWriteLocks.get(canonicalPath) ?? Promise.resolve();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const queued = previous.catch(() => undefined).then(() => gate);
+  bridgeWriteLocks.set(canonicalPath, queued);
+  await previous.catch(() => undefined);
+  try {
+    return await work();
+  } finally {
+    release();
+    if (bridgeWriteLocks.get(canonicalPath) === queued) {
+      bridgeWriteLocks.delete(canonicalPath);
+    }
+  }
+}
+
+interface BridgeFileSnapshot {
+  content: string;
+  versionHash: string;
+  mode: number;
+}
+
+function contentVersionHash(content: string | Buffer): string {
+  return crypto.createHash("sha256").update(content).digest("hex");
+}
+
+/** Read an existing regular file without ever following a leaf symlink. */
+async function readBridgeFileSnapshot(
+  absolutePath: string,
+): Promise<BridgeFileSnapshot | null> {
+  const noFollow = fsSync.constants.O_NOFOLLOW ?? 0;
+  let handle: FileHandle | null = null;
+  try {
+    handle = await fs.open(absolutePath, fsSync.constants.O_RDONLY | noFollow);
+    const stat = await handle.stat();
+    if (!stat.isFile()) {
+      throw new Error(`Bridge target is not a regular file: ${absolutePath}`);
+    }
+    const bytes = await handle.readFile();
+    return {
+      content: bytes.toString("utf8"),
+      versionHash: contentVersionHash(bytes),
+      mode: stat.mode & 0o777,
+    };
+  } catch (error: unknown) {
+    const code =
+      error instanceof Error && "code" in error
+        ? (error as NodeJS.ErrnoException).code
+        : undefined;
+    if (code === "ENOENT") return null;
+    throw error;
+  } finally {
+    await handle?.close().catch(() => undefined);
+  }
+}
+
+class BridgeVersionConflictError extends Error {
+  constructor(readonly currentVersionHash?: string) {
+    super("version conflict");
+  }
+}
+
+class BridgePreconditionRequiredError extends Error {
+  constructor() {
+    super("expectedVersionHash is required");
+  }
+}
+
+function assertExpectedBridgeVersion(
+  expectedVersionHash: string | undefined,
+  currentVersionHash: string | undefined,
+  requireExpectedVersionHash = false,
+): void {
+  // Preserve compatibility: callers that omit a hash retain the existing
+  // last-write-wins behavior, including creation. Compiled-source callers opt
+  // into exact compare-and-swap by sending the hash returned by read-file.
+  if (requireExpectedVersionHash && expectedVersionHash === undefined) {
+    throw new BridgePreconditionRequiredError();
+  }
+  if (
+    expectedVersionHash !== undefined &&
+    (currentVersionHash !== undefined
+      ? currentVersionHash !== expectedVersionHash
+      : requireExpectedVersionHash)
+  ) {
+    throw new BridgeVersionConflictError(currentVersionHash);
+  }
+}
+
+/**
+ * Replace a file durably without exposing a partial write: create an
+ * O_EXCL/O_NOFOLLOW temp sibling, fsync it, revalidate confinement and the
+ * expected content hash, rename atomically, then fsync the parent directory.
+ */
+async function atomicWriteBridgeFile(args: {
+  rootPath: string;
+  relPath: string;
+  lockedCanonicalPath: string;
+  content: string;
+  expectedVersionHash?: string;
+  requireExpectedVersionHash?: boolean;
+  originalMode?: number;
+}): Promise<string> {
+  const parent = path.dirname(path.resolve(args.rootPath, args.relPath));
+  await fs.mkdir(parent, { recursive: true });
+  const revalidated = await resolveSafeBridgeFileTarget(
+    args.rootPath,
+    args.relPath,
+  );
+  if (revalidated.canonicalPath !== args.lockedCanonicalPath) {
+    throw new Error("Bridge target changed while waiting for the write lock");
+  }
+
+  const basename = path.basename(revalidated.absolutePath);
+  const tempPath = path.join(
+    parent,
+    `.${basename}.agent-native-${process.pid}-${crypto.randomBytes(8).toString("hex")}.tmp`,
+  );
+  const noFollow = fsSync.constants.O_NOFOLLOW ?? 0;
+  let tempHandle: FileHandle | null = null;
+  try {
+    tempHandle = await fs.open(
+      tempPath,
+      fsSync.constants.O_CREAT |
+        fsSync.constants.O_EXCL |
+        fsSync.constants.O_WRONLY |
+        noFollow,
+      args.originalMode ?? 0o666,
+    );
+    await tempHandle.writeFile(args.content, "utf8");
+    await tempHandle.sync();
+    await tempHandle.close();
+    tempHandle = null;
+
+    // Re-check after the potentially slow temp write/fsync. This catches a
+    // parent/leaf symlink swap and an external content edit before rename.
+    const beforeRenameTarget = await resolveSafeBridgeFileTarget(
+      args.rootPath,
+      args.relPath,
+    );
+    if (beforeRenameTarget.canonicalPath !== args.lockedCanonicalPath) {
+      throw new Error("Bridge target changed during atomic write");
+    }
+    const current = await readBridgeFileSnapshot(
+      beforeRenameTarget.absolutePath,
+    );
+    assertExpectedBridgeVersion(
+      args.expectedVersionHash,
+      current?.versionHash,
+      args.requireExpectedVersionHash,
+    );
+
+    await fs.rename(tempPath, beforeRenameTarget.absolutePath);
+    const directoryHandle = await fs.open(parent, "r").catch(() => null);
+    if (directoryHandle) {
+      try {
+        await directoryHandle.sync();
+      } finally {
+        await directoryHandle.close();
+      }
+    }
+    return contentVersionHash(args.content);
+  } finally {
+    await tempHandle?.close().catch(() => undefined);
+    await fs.rm(tempPath, { force: true }).catch(() => undefined);
+  }
+}
+
+/**
+ * Extensions that are safe for creating a brand-new text/code file through
+ * the bridge. Existing files are classified by their bytes instead, so the
+ * Code workbench can edit languages and extensionless config files without a
+ * permanently incomplete allowlist.
+ */
+const ALLOWED_NEW_TEXT_FILE_EXTENSIONS = new Set([
   ".html",
   ".htm",
   ".css",
@@ -1124,13 +1708,103 @@ const ALLOWED_WRITE_EXTENSIONS = new Set([
   ".yml",
   ".yaml",
   ".svg",
+  ".py",
+  ".rb",
+  ".php",
+  ".java",
+  ".kt",
+  ".kts",
+  ".go",
+  ".rs",
+  ".c",
+  ".h",
+  ".cc",
+  ".cpp",
+  ".hpp",
+  ".cs",
+  ".swift",
+  ".sh",
+  ".bash",
+  ".zsh",
+  ".fish",
+  ".sql",
+  ".toml",
+  ".xml",
+  ".graphql",
+  ".gql",
+  ".prisma",
+  ".properties",
+  ".ini",
+  ".conf",
+  ".env.example",
 ]);
 
-function assertAllowedExtension(relPath: string): void {
+const ALLOWED_NEW_EXTENSIONLESS_TEXT_FILES = new Set([
+  "dockerfile",
+  "makefile",
+  "procfile",
+  "gemfile",
+  "rakefile",
+  "license",
+  "readme",
+]);
+
+const BLOCKED_BINARY_WRITE_EXTENSIONS = new Set([
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".webp",
+  ".ico",
+  ".woff",
+  ".woff2",
+  ".ttf",
+  ".otf",
+  ".eot",
+  ".mp3",
+  ".mp4",
+  ".mov",
+  ".webm",
+  ".zip",
+  ".gz",
+  ".tar",
+  ".pdf",
+  ".wasm",
+  ".fig",
+  ".sketch",
+  ".exe",
+  ".dll",
+  ".dylib",
+  ".so",
+  ".class",
+  ".jar",
+]);
+
+function assertEditableTextFile(
+  relPath: string,
+  existing: BridgeFileSnapshot | null,
+): void {
   const ext = path.extname(relPath).toLowerCase();
-  if (!ALLOWED_WRITE_EXTENSIONS.has(ext)) {
+  if (BLOCKED_BINARY_WRITE_EXTENSIONS.has(ext)) {
     throw new Error(
-      `Write rejected: extension "${ext || "(no extension)"}" is not in the allowed text-file list for bridge writes.`,
+      `Write rejected: extension "${ext}" is a binary file type.`,
+    );
+  }
+  if (existing) {
+    if (existing.content.includes("\0")) {
+      throw new Error(
+        "Write rejected: the existing file contains binary data.",
+      );
+    }
+    return;
+  }
+  const basename = path.basename(relPath).toLowerCase();
+  if (
+    !ALLOWED_NEW_TEXT_FILE_EXTENSIONS.has(ext) &&
+    !ALLOWED_NEW_EXTENSIONLESS_TEXT_FILES.has(basename)
+  ) {
+    throw new Error(
+      `Write rejected: extension "${ext || "(no extension)"}" is not recognized for a new text/code file.`,
     );
   }
 }
@@ -1164,21 +1838,6 @@ function assertNotBlockedSecretPath(relPath: string): void {
       `Access rejected: "${relPath}" matches a blocked secret-file pattern.`,
     );
   }
-}
-
-/**
- * Compute a cheap, stable version identifier for a file from its stat: mtime
- * plus size. Not a content hash — it is only meant to detect "did this file
- * change on disk since the caller last read it", the same tradeoff the inline
- * (SQL-backed) workspace provider's versionHash already makes. Returns
- * undefined when the file does not exist (new-file case).
- */
-async function computeVersionHash(
-  absolutePath: string,
-): Promise<string | undefined> {
-  const stat = await fs.stat(absolutePath).catch(() => null);
-  if (!stat) return undefined;
-  return `${stat.mtimeMs}-${stat.size}`;
 }
 
 function countOccurrences(haystack: string, needle: string): number {
@@ -1516,6 +2175,21 @@ export async function startDesignConnectBridge(
   // other and boot a frame with another frame's identity. Keep keyed scripts
   // for modern clients while retaining the unkeyed slot for older clients.
   const liveEditBridgeScripts = new Map<string, string>();
+  // Identifies THIS bridge process's in-memory registry, minted fresh every
+  // time the bridge boots. `liveEditBridgeScripts` above only lives in
+  // process memory, so a bridge restart (crash, machine sleep/wake, manual
+  // restart) silently empties it: any screen that registered a bridgeKey
+  // before the restart now gets a 409 "unknown bridge key" from `/live-edit`
+  // even though nothing about that screen actually changed. Echoing this id
+  // on both the registration response and the 409 lets a client tell the two
+  // cases apart — "this exact process never saw my key" (stale/typo, id
+  // matches what it already has cached) vs. "the process restarted since I
+  // registered" (id changed, safe to transparently re-POST `/live-edit-bridge`
+  // and retry) — instead of guessing from the error text or retrying forever.
+  const bridgeInstanceId = crypto.randomBytes(16).toString("hex");
+  const previewSessionCookies = new PreviewSessionCookieJar(
+    manifest.devServerUrl,
+  );
 
   const server = http.createServer(
     (req: IncomingMessage, res: ServerResponse) => {
@@ -1536,6 +2210,7 @@ export async function startDesignConnectBridge(
       const providedPreviewToken =
         readHeader(req, "x-design-preview-token") ||
         requestUrl.searchParams.get("previewToken") ||
+        readRequestCookie(req, PREVIEW_SESSION_COOKIE_NAME) ||
         "";
       const previewTokenValid = constantTimeTokenMatches(
         providedPreviewToken,
@@ -1574,6 +2249,7 @@ export async function startDesignConnectBridge(
           ok: true,
           source: manifest.source,
           appFingerprint: designConnectAppFingerprint(manifest),
+          bridgeInstanceId,
         });
         return;
       }
@@ -1628,6 +2304,7 @@ export async function startDesignConnectBridge(
             }
             sendJson(res, 200, {
               ok: true,
+              bridgeInstanceId,
               ...(bridgeKey ? { bridgeKey } : {}),
             });
           } catch (err: unknown) {
@@ -1655,6 +2332,7 @@ export async function startDesignConnectBridge(
             const snapshot = await fetchPreviewSnapshot(
               manifest.devServerUrl,
               targetUrl,
+              previewSessionCookies,
             );
             const includeEditorBridge =
               requestUrl.searchParams.get("bridge") !== "0";
@@ -1668,8 +2346,17 @@ export async function startDesignConnectBridge(
               requestedBridgeKey &&
               !editorBridgeScript
             ) {
+              // Machine-readable `code` + echoed `bridgeKey`/`bridgeInstanceId`
+              // let a client distinguish "this bridge process restarted since
+              // I last registered — safe to silently re-POST
+              // /live-edit-bridge and retry" from a genuine caller bug,
+              // instead of string-matching `error` (see bridgeInstanceId's
+              // doc comment above for the full rationale).
               sendJson(res, 409, {
                 ok: false,
+                code: "unknown-bridge-key",
+                bridgeKey: requestedBridgeKey,
+                bridgeInstanceId,
                 error:
                   "The requested live-edit bridge script is not registered. Reload the Design frame to register it again.",
               });
@@ -1694,6 +2381,10 @@ export async function startDesignConnectBridge(
               snapshot.contentType.includes("html")
                 ? snapshot.contentType
                 : "text/html; charset=utf-8",
+              [
+                ...snapshot.setCookieHeaders,
+                previewSessionSetCookie(previewToken),
+              ],
             );
           } catch (err: unknown) {
             sendJson(res, 400, {
@@ -1720,6 +2411,7 @@ export async function startDesignConnectBridge(
             const snapshot = await fetchPreviewSnapshot(
               manifest.devServerUrl,
               targetUrl,
+              previewSessionCookies,
             );
             sendJson(res, snapshot.status >= 400 ? snapshot.status : 200, {
               ok: snapshot.status < 400,
@@ -1794,174 +2486,183 @@ export async function startDesignConnectBridge(
               return;
             }
 
-            await assertPathInside(manifest.rootPath, relPath);
             assertNotBlockedSecretPath(relPath);
-            const absolutePath = path.resolve(manifest.rootPath, relPath);
+            const initialTarget = await resolveSafeBridgeFileTarget(
+              manifest.rootPath,
+              relPath,
+            );
 
             if (pathname === "/read-file") {
               // Read-file: no extension restriction (agents need to read any
               // non-secret file), but the secret-path blocklist above still
               // applies to .env*, *.pem, *.key, id_rsa*, and anything under .git/.
-              let content: string;
-              try {
-                content = await fs.readFile(absolutePath, "utf8");
-              } catch (err: unknown) {
-                const code =
-                  err instanceof Error &&
-                  "code" in err &&
-                  (err as NodeJS.ErrnoException).code;
-                if (code === "ENOENT") {
-                  sendJson(res, 404, { ok: false, error: "file not found" });
-                } else {
-                  sendJson(res, 500, {
-                    ok: false,
-                    error: `read failed: ${err instanceof Error ? err.message : String(err)}`,
-                  });
-                }
+              const snapshot = await readBridgeFileSnapshot(
+                initialTarget.absolutePath,
+              );
+              if (!snapshot) {
+                sendJson(res, 404, { ok: false, error: "file not found" });
                 return;
               }
-              const versionHash = await computeVersionHash(absolutePath);
-              sendJson(res, 200, { ok: true, content, versionHash });
+              sendJson(res, 200, {
+                ok: true,
+                content: snapshot.content,
+                versionHash: snapshot.versionHash,
+              });
               return;
             }
 
-            // write-file and apply-edit only allow known text/code extensions.
-            assertAllowedExtension(relPath);
-
-            // Optional optimistic-concurrency check: when the caller supplies
-            // expectedVersionHash, compare it against the file's CURRENT hash
-            // before writing. A missing file is treated as no-conflict (new
-            // file case) so first-time writes always succeed.
             const expectedVersionHash =
               typeof body["expectedVersionHash"] === "string"
                 ? body["expectedVersionHash"]
                 : undefined;
-            if (expectedVersionHash !== undefined) {
-              const currentVersionHash = await computeVersionHash(absolutePath);
-              if (
-                currentVersionHash !== undefined &&
-                currentVersionHash !== expectedVersionHash
-              ) {
-                sendJson(res, 409, {
-                  ok: false,
-                  error: "version conflict",
-                  currentVersionHash,
+            const requireExpectedVersionHash =
+              body["requireExpectedVersionHash"] === true;
+            await withBridgeWriteLock(initialTarget.canonicalPath, async () => {
+              const lockedTarget = await resolveSafeBridgeFileTarget(
+                manifest.rootPath,
+                relPath,
+              );
+              if (lockedTarget.canonicalPath !== initialTarget.canonicalPath) {
+                throw new Error(
+                  "Bridge target changed while waiting for the write lock",
+                );
+              }
+              const existing = await readBridgeFileSnapshot(
+                lockedTarget.absolutePath,
+              );
+              assertEditableTextFile(relPath, existing);
+              assertExpectedBridgeVersion(
+                expectedVersionHash,
+                existing?.versionHash,
+                requireExpectedVersionHash,
+              );
+
+              if (pathname === "/write-file") {
+                const content =
+                  typeof body["content"] === "string"
+                    ? body["content"]
+                    : undefined;
+                if (content === undefined) {
+                  sendJson(res, 400, {
+                    ok: false,
+                    error: "content is required for write-file",
+                  });
+                  return;
+                }
+                const versionHash = await atomicWriteBridgeFile({
+                  rootPath: manifest.rootPath,
+                  relPath,
+                  lockedCanonicalPath: initialTarget.canonicalPath,
+                  content,
+                  expectedVersionHash,
+                  requireExpectedVersionHash,
+                  originalMode: existing?.mode,
+                });
+                sendJson(res, 200, { ok: true, relPath, versionHash });
+                return;
+              }
+
+              // /apply-edit supports either full replace ({content}) or one
+              // exact search-and-replace. Both stay within this file's lock.
+              if (typeof body["content"] === "string") {
+                const versionHash = await atomicWriteBridgeFile({
+                  rootPath: manifest.rootPath,
+                  relPath,
+                  lockedCanonicalPath: initialTarget.canonicalPath,
+                  content: body["content"],
+                  expectedVersionHash,
+                  requireExpectedVersionHash,
+                  originalMode: existing?.mode,
+                });
+                sendJson(res, 200, {
+                  ok: true,
+                  relPath,
+                  method: "replace",
+                  versionHash,
                 });
                 return;
               }
-            }
 
-            if (pathname === "/write-file") {
-              const content =
-                typeof body["content"] === "string"
-                  ? body["content"]
+              const search =
+                typeof body["search"] === "string" ? body["search"] : undefined;
+              const replace =
+                typeof body["replace"] === "string"
+                  ? body["replace"]
                   : undefined;
-              if (content === undefined) {
+              if (search === undefined || replace === undefined) {
                 sendJson(res, 400, {
                   ok: false,
-                  error: "content is required for write-file",
+                  error:
+                    "apply-edit requires either {content} for a full replace, or {search, replace} for a patch",
                 });
                 return;
               }
-              await fs.mkdir(path.dirname(absolutePath), { recursive: true });
-              await fs.writeFile(absolutePath, content, "utf8");
-              const versionHash = await computeVersionHash(absolutePath);
-              sendJson(res, 200, { ok: true, relPath, versionHash });
-              return;
-            }
-
-            // /apply-edit: supports either full replace ({content}) or
-            // search-and-replace ({search, replace}).
-            if (typeof body["content"] === "string") {
-              // Full-file replace via apply-edit — same as write-file but keeps
-              // the endpoint semantically separate for callers that want to
-              // distinguish intent.
-              await fs.mkdir(path.dirname(absolutePath), { recursive: true });
-              await fs.writeFile(
-                absolutePath,
-                body["content"] as string,
-                "utf8",
-              );
-              const versionHash = await computeVersionHash(absolutePath);
-              sendJson(res, 200, {
-                ok: true,
-                relPath,
-                method: "replace",
-                versionHash,
-              });
-              return;
-            }
-
-            const search =
-              typeof body["search"] === "string" ? body["search"] : undefined;
-            const replace =
-              typeof body["replace"] === "string" ? body["replace"] : undefined;
-            if (search === undefined || replace === undefined) {
-              sendJson(res, 400, {
-                ok: false,
-                error:
-                  "apply-edit requires either {content} for a full replace, or {search, replace} for a patch",
-              });
-              return;
-            }
-
-            let existing: string;
-            try {
-              existing = await fs.readFile(absolutePath, "utf8");
-            } catch (err: unknown) {
-              const code =
-                err instanceof Error &&
-                "code" in err &&
-                (err as NodeJS.ErrnoException).code;
-              if (code === "ENOENT") {
+              if (!existing) {
                 sendJson(res, 404, {
                   ok: false,
                   error: "file not found — use write-file to create new files",
                 });
-              } else {
-                sendJson(res, 500, {
-                  ok: false,
-                  error: `read failed: ${err instanceof Error ? err.message : String(err)}`,
-                });
+                return;
               }
-              return;
-            }
-
-            if (search.length === 0) {
-              sendJson(res, 400, {
-                ok: false,
-                error: "search string must not be empty",
+              if (search.length === 0) {
+                sendJson(res, 400, {
+                  ok: false,
+                  error: "search string must not be empty",
+                });
+                return;
+              }
+              const occurrenceCount = countOccurrences(
+                existing.content,
+                search,
+              );
+              if (occurrenceCount === 0) {
+                sendJson(res, 422, {
+                  ok: false,
+                  error: "search string not found in file",
+                });
+                return;
+              }
+              if (occurrenceCount > 1) {
+                sendJson(res, 422, {
+                  ok: false,
+                  error:
+                    "search string is ambiguous; it appears more than once in the file",
+                });
+                return;
+              }
+              const updated = existing.content.replace(search, replace);
+              const versionHash = await atomicWriteBridgeFile({
+                rootPath: manifest.rootPath,
+                relPath,
+                lockedCanonicalPath: initialTarget.canonicalPath,
+                content: updated,
+                expectedVersionHash,
+                requireExpectedVersionHash,
+                originalMode: existing.mode,
               });
-              return;
-            }
-
-            const occurrenceCount = countOccurrences(existing, search);
-            if (occurrenceCount === 0) {
-              sendJson(res, 422, {
-                ok: false,
-                error: "search string not found in file",
+              sendJson(res, 200, {
+                ok: true,
+                relPath,
+                method: "patch",
+                versionHash,
               });
-              return;
-            }
-            if (occurrenceCount > 1) {
-              sendJson(res, 422, {
-                ok: false,
-                error:
-                  "search string is ambiguous; it appears more than once in the file",
-              });
-              return;
-            }
-
-            const updated = existing.replace(search, replace);
-            await fs.writeFile(absolutePath, updated, "utf8");
-            const versionHash = await computeVersionHash(absolutePath);
-            sendJson(res, 200, {
-              ok: true,
-              relPath,
-              method: "patch",
-              versionHash,
             });
           } catch (err: unknown) {
+            if (err instanceof BridgePreconditionRequiredError) {
+              sendJson(res, 428, {
+                ok: false,
+                error: "expectedVersionHash is required",
+              });
+              return;
+            }
+            if (err instanceof BridgeVersionConflictError) {
+              sendJson(res, 409, {
+                ok: false,
+                error: "version conflict",
+                currentVersionHash: err.currentVersionHash,
+              });
+              return;
+            }
             sendJson(res, 500, {
               ok: false,
               error: err instanceof Error ? err.message : String(err),
@@ -1971,10 +2672,11 @@ export async function startDesignConnectBridge(
         return;
       }
 
-      if (req.method === "GET" || req.method === "HEAD") {
-        const sameOriginPreviewSubresource =
-          readHeader(req, "sec-fetch-site") === "same-origin";
-        if (!previewTokenValid && !sameOriginPreviewSubresource) {
+      if (
+        req.method &&
+        ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"].includes(req.method)
+      ) {
+        if (!previewTokenValid) {
           sendJson(res, 401, {
             ok: false,
             error: "invalid or missing preview token",
@@ -1983,25 +2685,66 @@ export async function startDesignConnectBridge(
         }
         void (async () => {
           try {
+            const proxyRequestUrl = new URL(req.url ?? "/", manifest.bridgeUrl);
+            proxyRequestUrl.searchParams.delete("previewToken");
             const targetUrl = resolvePreviewProxyUrl(
               manifest.devServerUrl,
-              req.url,
+              `${proxyRequestUrl.pathname}${proxyRequestUrl.search}`,
             );
+            const method = req.method ?? "GET";
+            const requestBody =
+              method === "GET" || method === "HEAD"
+                ? undefined
+                : await readPreviewProxyRequestBody(req);
+            const cookieHeader = previewSessionCookies.headerFor(targetUrl);
             const proxied = await fetchPreviewProxyResource(
               manifest.devServerUrl,
               targetUrl,
+              {
+                method,
+                headers: previewProxyRequestHeaders(
+                  req,
+                  manifest.devServerUrl,
+                  cookieHeader,
+                ),
+                body: requestBody,
+              },
+              previewSessionCookies,
             );
+            const contentType = proxied.headers.get("content-type") ?? "";
+            const documentNavigation =
+              readHeader(req, "sec-fetch-dest") === "document";
+            const responseBody =
+              documentNavigation && contentType.includes("html")
+                ? Buffer.from(
+                    injectLiveEditBridge(
+                      proxied.body.toString("utf8"),
+                      new URL("/", manifest.bridgeUrl).toString(),
+                      liveEditBridgeScript,
+                      (() => {
+                        const parsed = new URL(proxied.url);
+                        return `${parsed.pathname}${parsed.search}` || "/";
+                      })(),
+                    ),
+                  )
+                : proxied.body;
             sendBytes(
               res,
-              proxied.status >= 400 ? proxied.status : 200,
-              req.method === "HEAD" ? Buffer.alloc(0) : proxied.body,
+              proxied.status,
+              method === "HEAD" ? Buffer.alloc(0) : responseBody,
               proxied.headers,
+              responseBody.length,
+              proxied.setCookieHeaders,
             );
           } catch (err: unknown) {
-            sendJson(res, 400, {
-              ok: false,
-              error: err instanceof Error ? err.message : String(err),
-            });
+            sendJson(
+              res,
+              err instanceof PreviewProxyRequestTooLargeError ? 413 : 400,
+              {
+                ok: false,
+                error: err instanceof Error ? err.message : String(err),
+              },
+            );
           }
         })();
         return;
@@ -2011,6 +2754,105 @@ export async function startDesignConnectBridge(
     },
   );
 
+  // Vite's proxied /@vite/client derives its HMR socket from the document's
+  // bridge origin. Tunnel WebSocket upgrades to the one connected dev-server
+  // origin so Fast Refresh remains live inside URL-backed screens. The target
+  // is never caller-controlled, bridge credentials are stripped, and only a
+  // same-origin iframe (or an explicit preview-token caller) can open it.
+  server.on("upgrade", (req, clientSocket, clientHead) => {
+    const requestUrl = new URL(req.url ?? "/", manifest.bridgeUrl);
+    const providedPreviewToken =
+      readHeader(req, "x-design-preview-token") ||
+      requestUrl.searchParams.get("previewToken") ||
+      readRequestCookie(req, PREVIEW_SESSION_COOKIE_NAME) ||
+      "";
+    const browserOrigin = readHeader(req, "origin");
+    const sameBridgeOrigin =
+      browserOrigin === new URL(manifest.bridgeUrl).origin;
+    if (!constantTimeTokenMatches(providedPreviewToken, previewToken)) {
+      clientSocket.end(
+        "HTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
+      );
+      return;
+    }
+    requestUrl.searchParams.delete("previewToken");
+    let targetUrl: URL;
+    try {
+      targetUrl = new URL(
+        resolvePreviewProxyUrl(
+          manifest.devServerUrl,
+          `${requestUrl.pathname}${requestUrl.search}`,
+        ),
+      );
+    } catch {
+      clientSocket.end(
+        "HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
+      );
+      return;
+    }
+
+    const upstreamHeaders = { ...req.headers };
+    delete upstreamHeaders["x-bridge-token"];
+    delete upstreamHeaders["x-design-preview-token"];
+    delete upstreamHeaders["authorization"];
+    delete upstreamHeaders["cookie"];
+    upstreamHeaders.host = targetUrl.host;
+    upstreamHeaders.origin = new URL(manifest.devServerUrl).origin;
+    const cookie = mergePreviewCookieHeaders(
+      previewSessionCookies.headerFor(targetUrl.toString()),
+      sameBridgeOrigin ? readHeader(req, "cookie") : "",
+    );
+    if (cookie) upstreamHeaders.cookie = cookie;
+
+    const requestImpl = targetUrl.protocol === "https:" ? https : http;
+    const upstreamRequest = requestImpl.request({
+      protocol: targetUrl.protocol,
+      hostname: targetUrl.hostname,
+      port: targetUrl.port,
+      path: `${targetUrl.pathname}${targetUrl.search}`,
+      method: "GET",
+      headers: upstreamHeaders,
+    });
+    upstreamRequest.on(
+      "upgrade",
+      (upstreamResponse, upstreamSocket, upstreamHead) => {
+        const statusLine = `HTTP/1.1 ${upstreamResponse.statusCode ?? 101} ${upstreamResponse.statusMessage || "Switching Protocols"}\r\n`;
+        const headerLines: string[] = [];
+        for (
+          let index = 0;
+          index < upstreamResponse.rawHeaders.length;
+          index += 2
+        ) {
+          const name = upstreamResponse.rawHeaders[index];
+          const value = upstreamResponse.rawHeaders[index + 1];
+          if (name && value !== undefined)
+            headerLines.push(`${name}: ${value}`);
+        }
+        clientSocket.write(`${statusLine}${headerLines.join("\r\n")}\r\n\r\n`);
+        if (clientHead.length > 0) upstreamSocket.write(clientHead);
+        if (upstreamHead.length > 0) clientSocket.write(upstreamHead);
+        clientSocket.once("close", () => upstreamSocket.destroy());
+        upstreamSocket.once("close", () => clientSocket.destroy());
+        upstreamSocket.pipe(clientSocket);
+        clientSocket.pipe(upstreamSocket);
+      },
+    );
+    upstreamRequest.on("response", (upstreamResponse) => {
+      clientSocket.end(
+        `HTTP/1.1 ${upstreamResponse.statusCode ?? 502} ${upstreamResponse.statusMessage || "WebSocket upgrade failed"}\r\nConnection: close\r\nContent-Length: 0\r\n\r\n`,
+      );
+      upstreamResponse.resume();
+    });
+    upstreamRequest.on("error", () => {
+      if (!clientSocket.destroyed) {
+        clientSocket.end(
+          "HTTP/1.1 502 Bad Gateway\r\nConnection: close\r\nContent-Length: 0\r\n\r\n",
+        );
+      }
+    });
+    upstreamRequest.end();
+  });
+
   await new Promise<void>((resolve, reject) => {
     server.once("error", reject);
     server.listen(new URL(manifest.bridgeUrl).port, "127.0.0.1", () => {
@@ -2019,7 +2861,7 @@ export async function startDesignConnectBridge(
     });
   });
 
-  return { server, manifest, bridgeToken, previewToken };
+  return { server, manifest, bridgeToken, previewToken, bridgeInstanceId };
 }
 
 /**
@@ -2163,12 +3005,11 @@ Options:
 
 Element provenance (resolveNodeToFile):
   The design editor can map a selected DOM element back to its source file,
-  line, and React component name when the connected app emits provenance
-  attributes at build time.  Add one of the following to your app's build:
+  line, and component name using one of these provenance sources:
 
-  • @vitejs/plugin-react with jsxDEV enabled (development mode default):
-      Sets data-source-file and data-source-line on each JSX element
-      automatically when using the Babel transform.
+  • React development builds with jsxDEV enabled (the default):
+      Design reads the selected element's development-only Fiber debug stack.
+      React does not emit data-source-* DOM attributes automatically.
 
   • A Babel source plugin (e.g. babel-plugin-react-source or a custom plugin):
       Emits data-source-file="src/Button.tsx" data-source-line="12"
@@ -2177,7 +3018,8 @@ Element provenance (resolveNodeToFile):
   • data-loc="src/Button.tsx:12:4" shorthand attribute (Babel source convention):
       The bridge parses this as { sourceFile, line, column } automatically.
 
-  Without these attributes the editor still works; provenance is simply absent.
+  In production React builds and other runtimes without explicit attributes,
+  the editor still works but exact element provenance may be absent.
   Cross-origin localhost iframes cannot be read regardless of attributes (CSP).`);
 }
 

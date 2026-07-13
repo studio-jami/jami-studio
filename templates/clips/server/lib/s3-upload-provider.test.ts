@@ -114,184 +114,240 @@ describe("s3FileUploadProvider", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  describe("resumable multipart uploads", () => {
+  it("coalesces Netlify-safe chunks into valid S3 multipart parts", async () => {
     const values: Record<string, string> = {
       S3_BUCKET: "clips-bucket",
       S3_ACCESS_KEY_ID: "access",
       S3_SECRET_ACCESS_KEY: "secret",
       S3_ENDPOINT: "https://s3.example.com",
-      S3_REGION: "auto",
+      S3_REGION: "us-east-1",
       S3_PUBLIC_BASE_URL: "https://cdn.example.com/media",
     };
-
-    beforeEach(() => {
-      mockResolveSecret.mockImplementation(async (key: string) => {
-        return values[key] ?? null;
-      });
+    mockResolveSecret.mockImplementation(async (key: string) => {
+      return values[key] ?? null;
     });
 
-    it("advertises the 5 MiB S3 multipart part size", () => {
-      expect(s3FileUploadProvider.resumable?.preferredChunkBytes).toBe(
-        5 * 1024 * 1024,
-      );
+    const firstChunk = new Uint8Array(3 * 1024 * 1024).fill(1);
+    const secondChunk = new Uint8Array(3 * 1024 * 1024).fill(2);
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("?uploads=")) {
+        return new Response(
+          "<InitiateMultipartUploadResult><UploadId>upload-example</UploadId></InitiateMultipartUploadResult>",
+        );
+      }
+      if (init?.method === "GET") return new Response(firstChunk);
+      if (url.includes("partNumber=1&uploadId=upload-example")) {
+        return new Response(null, {
+          status: 200,
+          headers: { ETag: '"part-1-example"' },
+        });
+      }
+      if (url.endsWith("?uploadId=upload-example")) {
+        return new Response("<CompleteMultipartUploadResult />");
+      }
+      return new Response(null, { status: 204 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const resumable = s3FileUploadProvider.resumable!;
+    let session = await resumable.startSession(
+      "recording-example.webm",
+      "video/webm",
+      20 * 1024 * 1024,
+    );
+    const first = await resumable.relayChunk(
+      session,
+      `bytes 0-${firstChunk.byteLength - 1}/*`,
+      firstChunk,
+    );
+    expect(first.updatedMeta).toEqual({ pendingBytes: firstChunk.byteLength });
+    session = { ...session, meta: { ...session.meta, ...first.updatedMeta } };
+
+    const second = await resumable.relayChunk(
+      session,
+      `bytes ${firstChunk.byteLength}-${firstChunk.byteLength + secondChunk.byteLength - 1}/*`,
+      secondChunk,
+    );
+    expect(second.updatedMeta).toEqual({
+      pendingBytes: 0,
+      parts: [
+        {
+          partNumber: 1,
+          etag: '"part-1-example"',
+          sizeBytes: firstChunk.byteLength + secondChunk.byteLength,
+        },
+      ],
+    });
+    session = { ...session, meta: { ...session.meta, ...second.updatedMeta } };
+
+    await expect(
+      resumable.completeSession(session, "recording-example.webm"),
+    ).resolves.toBe(
+      "https://cdn.example.com/media/clips/recording-example.webm",
+    );
+
+    const partCall = fetchMock.mock.calls.find(([url]) =>
+      String(url).includes("partNumber=1&uploadId=upload-example"),
+    );
+    expect(partCall?.[1]).toEqual(
+      expect.objectContaining({
+        method: "PUT",
+        headers: expect.objectContaining({
+          "Content-Length": String(
+            firstChunk.byteLength + secondChunk.byteLength,
+          ),
+        }),
+      }),
+    );
+    const completeCall = fetchMock.mock.calls.find(([url]) =>
+      String(url).endsWith("?uploadId=upload-example"),
+    );
+    expect(
+      new TextDecoder().decode(completeCall?.[1]?.body as ArrayBuffer),
+    ).toContain("<ETag>&quot;part-1-example&quot;</ETag>");
+  });
+
+  it("commits a staged final part and aborts incomplete multipart uploads", async () => {
+    const values: Record<string, string> = {
+      S3_BUCKET: "clips-bucket",
+      S3_ACCESS_KEY_ID: "access",
+      S3_SECRET_ACCESS_KEY: "secret",
+      S3_ENDPOINT: "https://s3.example.com",
+    };
+    mockResolveSecret.mockImplementation(async (key: string) => {
+      return values[key] ?? null;
+    });
+    const chunk = new Uint8Array([1, 2, 3]);
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("?uploads=")) {
+        return new Response(
+          "<InitiateMultipartUploadResult><UploadId>upload-example</UploadId></InitiateMultipartUploadResult>",
+        );
+      }
+      if (init?.method === "GET") return new Response(chunk);
+      if (url.includes("partNumber=1&uploadId=upload-example")) {
+        return new Response(null, { headers: { ETag: '"final-example"' } });
+      }
+      return new Response(null, { status: 204 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const resumable = s3FileUploadProvider.resumable!;
+    let session = await resumable.startSession(
+      "recording-example.webm",
+      "video/webm",
+      1024,
+    );
+    const staged = await resumable.relayChunk(session, "bytes 0-2/*", chunk);
+    session = { ...session, meta: { ...session.meta, ...staged.updatedMeta } };
+    const closed = await resumable.relayChunk(
+      session,
+      "bytes */3",
+      new Uint8Array(0),
+    );
+    expect(closed.updatedMeta).toEqual({
+      pendingBytes: 0,
+      parts: [
+        { partNumber: 1, etag: '"final-example"', sizeBytes: chunk.byteLength },
+      ],
     });
 
-    it("startSession creates a multipart upload and returns the UploadId", async () => {
-      const fetchMock = vi.fn(
+    await expect(resumable.abortSession!(session)).resolves.toBeUndefined();
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("?uploadId=upload-example"),
+      expect.objectContaining({ method: "DELETE" }),
+    );
+  });
+
+  it("recovers a completed multipart upload when a retry receives NoSuchUpload", async () => {
+    const values: Record<string, string> = {
+      S3_BUCKET: "clips-bucket",
+      S3_ACCESS_KEY_ID: "access",
+      S3_SECRET_ACCESS_KEY: "secret",
+      S3_ENDPOINT: "https://s3.example.com",
+      S3_PUBLIC_BASE_URL: "https://cdn.example.com/media",
+    };
+    mockResolveSecret.mockImplementation(async (key: string) => {
+      return values[key] ?? null;
+    });
+    let completeAttempts = 0;
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === "POST" && url.includes("uploadId=upload-example")) {
+        completeAttempts += 1;
+        if (completeAttempts === 1) {
+          return new Response("<CompleteMultipartUploadResult />");
+        }
+        return new Response(
+          "<Error><Code>NoSuchUpload</Code><Message>The upload does not exist</Message></Error>",
+          { status: 404 },
+        );
+      }
+      if (init?.method === "HEAD" && url.endsWith("/clips/recording.webm")) {
+        return new Response(null, {
+          status: 200,
+          headers: { "content-length": "3" },
+        });
+      }
+      return new Response(null, { status: 204 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const session = {
+      sessionId: "upload-example",
+      meta: {
+        objectKey: "clips/recording.webm",
+        stagingKey: "clips/.multipart/recording.webm.pending",
+        mimeType: "video/webm",
+        maxBytes: 1024,
+        pendingBytes: 0,
+        parts: [{ partNumber: 1, etag: '"part-example"', sizeBytes: 3 }],
+      },
+    };
+    const resumable = s3FileUploadProvider.resumable!;
+
+    await expect(
+      resumable.completeSession(session, "recording.webm"),
+    ).resolves.toBe("https://cdn.example.com/media/clips/recording.webm");
+    // Simulate finalize failing after S3 completion but before it could delete
+    // the persisted resumable session, then retrying with the same upload id.
+    await expect(
+      resumable.completeSession(session, "recording.webm"),
+    ).resolves.toBe("https://cdn.example.com/media/clips/recording.webm");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://s3.example.com/clips-bucket/clips/recording.webm",
+      expect.objectContaining({ method: "HEAD" }),
+    );
+  });
+
+  it("rejects resumable chunks beyond the session byte limit", async () => {
+    const values: Record<string, string> = {
+      S3_BUCKET: "clips-bucket",
+      S3_ACCESS_KEY_ID: "access",
+      S3_SECRET_ACCESS_KEY: "secret",
+      S3_ENDPOINT: "https://s3.example.com",
+    };
+    mockResolveSecret.mockImplementation(async (key: string) => {
+      return values[key] ?? null;
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
         async () =>
           new Response(
-            `<InitiateMultipartUploadResult><UploadId>upload-123</UploadId></InitiateMultipartUploadResult>`,
-            { status: 200 },
+            "<InitiateMultipartUploadResult><UploadId>upload-example</UploadId></InitiateMultipartUploadResult>",
           ),
-      );
-      vi.stubGlobal("fetch", fetchMock);
+      ),
+    );
 
-      const session = await s3FileUploadProvider.resumable!.startSession(
-        "rec-1.webm",
-        "video/webm",
-        100,
-      );
-
-      expect(session.sessionId).toBe("upload-123");
-      expect(session.meta.uploadId).toBe("upload-123");
-      expect(String(session.meta.key)).toMatch(/^clips\/\d+-\w+\.webm$/);
-      expect(session.meta.parts).toEqual([]);
-      const [url, init] = fetchMock.mock.calls[0] as unknown as [
-        string,
-        RequestInit,
-      ];
-      expect(url).toContain("?uploads=");
-      expect(init.method).toBe("POST");
-    });
-
-    it("relayChunk uploads one part per chunk and accumulates ETags in meta", async () => {
-      const fetchMock = vi.fn(
-        async () =>
-          new Response(null, {
-            status: 200,
-            headers: { etag: '"etag-1"' },
-          }),
-      );
-      vi.stubGlobal("fetch", fetchMock);
-
-      const result = await s3FileUploadProvider.resumable!.relayChunk(
-        {
-          sessionId: "upload-123",
-          meta: { key: "clips/1-a.webm", uploadId: "upload-123", parts: [] },
-        },
-        "bytes 0-4/*",
-        new Uint8Array([1, 2, 3, 4, 5]),
-      );
-
-      expect(result.ok).toBe(true);
-      expect(result.updatedMeta?.parts).toEqual([
-        { partNumber: 1, etag: '"etag-1"' },
-      ]);
-      const [url, init] = fetchMock.mock.calls[0] as unknown as [
-        string,
-        RequestInit,
-      ];
-      expect(url).toContain("partNumber=1");
-      expect(url).toContain("uploadId=upload-123");
-      expect(init.method).toBe("PUT");
-    });
-
-    it("relayChunk treats the close sentinel as a no-op", async () => {
-      const fetchMock = vi.fn();
-      vi.stubGlobal("fetch", fetchMock);
-
-      const result = await s3FileUploadProvider.resumable!.relayChunk(
-        {
-          sessionId: "upload-123",
-          meta: { key: "clips/1-a.webm", uploadId: "upload-123", parts: [] },
-        },
-        "bytes */10",
-        new Uint8Array(0),
-      );
-
-      expect(result.ok).toBe(true);
-      expect(fetchMock).not.toHaveBeenCalled();
-    });
-
-    it("completeSession completes the multipart upload and returns the public URL", async () => {
-      const fetchMock = vi.fn(
-        async () =>
-          new Response(
-            `<CompleteMultipartUploadResult><Location>x</Location></CompleteMultipartUploadResult>`,
-            { status: 200 },
-          ),
-      );
-      vi.stubGlobal("fetch", fetchMock);
-
-      const url = await s3FileUploadProvider.resumable!.completeSession(
-        {
-          sessionId: "upload-123",
-          meta: {
-            key: "clips/1-a.webm",
-            uploadId: "upload-123",
-            parts: [
-              { partNumber: 1, etag: '"etag-1"' },
-              { partNumber: 2, etag: '"etag-2"' },
-            ],
-          },
-        },
-        "rec-1.webm",
-      );
-
-      expect(url).toBe("https://cdn.example.com/media/clips/1-a.webm");
-      const [reqUrl, init] = fetchMock.mock.calls[0] as unknown as [
-        string,
-        RequestInit,
-      ];
-      expect(reqUrl).toContain("uploadId=upload-123");
-      expect(init.method).toBe("POST");
-      const body = new TextDecoder().decode(init.body as ArrayBuffer);
-      expect(body).toContain("<PartNumber>1</PartNumber>");
-      expect(body).toContain("<ETag>&quot;etag-1&quot;</ETag>".replace(/&quot;/g, '"'));
-      expect(body).toContain("<PartNumber>2</PartNumber>");
-    });
-
-    it("completeSession rejects a 200 response that carries an S3 <Error> body", async () => {
-      const fetchMock = vi.fn(
-        async () =>
-          new Response(`<Error><Code>InternalError</Code></Error>`, {
-            status: 200,
-          }),
-      );
-      vi.stubGlobal("fetch", fetchMock);
-
-      await expect(
-        s3FileUploadProvider.resumable!.completeSession(
-          {
-            sessionId: "upload-123",
-            meta: {
-              key: "clips/1-a.webm",
-              uploadId: "upload-123",
-              parts: [{ partNumber: 1, etag: '"etag-1"' }],
-            },
-          },
-          "rec-1.webm",
-        ),
-      ).rejects.toThrow(/CompleteMultipartUpload failed/);
-    });
-
-    it("relayChunk surfaces provider failures as non-ok results", async () => {
-      const fetchMock = vi.fn(
-        async () => new Response("denied", { status: 403 }),
-      );
-      vi.stubGlobal("fetch", fetchMock);
-
-      const result = await s3FileUploadProvider.resumable!.relayChunk(
-        {
-          sessionId: "upload-123",
-          meta: { key: "clips/1-a.webm", uploadId: "upload-123", parts: [] },
-        },
-        "bytes 0-4/*",
-        new Uint8Array([1, 2, 3, 4, 5]),
-      );
-
-      expect(result.ok).toBe(false);
-      expect(result.status).toBe(403);
-    });
+    const resumable = s3FileUploadProvider.resumable!;
+    const session = await resumable.startSession(
+      "recording-example.webm",
+      "video/webm",
+      3,
+    );
+    await expect(
+      resumable.relayChunk(session, "bytes 0-3/*", new Uint8Array(4)),
+    ).rejects.toThrow("exceeds its 3 byte limit");
   });
 });
