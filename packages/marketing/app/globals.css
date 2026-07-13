@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Jami Studio — Design Tokens ─────────────────────────────── */
+@theme inline {
+  --color-background:           var(--background);
+  --color-foreground:           var(--foreground);
+  --color-card:                 var(--card);
+  --color-card-foreground:      var(--card-foreground);
+  --color-popover:              var(--popover);
+  --color-popover-foreground:   var(--popover-foreground);
+  --color-primary:              var(--primary);
+  --color-primary-foreground:   var(--primary-foreground);
+  --color-secondary:            var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+  --color-accent:               var(--accent);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-destructive:          var(--destructive);
+  --color-border:               var(--border);
+  --color-input:                var(--input);
+  --color-ring:                 var(--ring);
+
+  /* Brand */
+  --color-rose:    var(--rose);
+  --color-teal:    var(--teal);
+  --color-violet:  var(--violet);
+  --color-amber:   var(--amber);
+  --color-cream:   var(--cream);
+  --color-ink:     var(--ink);
+
+  /* Relief panels — warm-tinted light sections punching against dark base */
+  --color-panel-rose:   var(--panel-rose);
+  --color-panel-teal:   var(--panel-teal);
+  --color-panel-violet: var(--panel-violet);
+  --color-panel-amber:  var(--panel-amber);
+
+  /* Typography — editorial personality */
+  --font-sans:  'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Radius — zero. Corners are earned. */
+  --radius: 0rem;
+  --radius-sm:   0rem;
+  --radius-md:   0rem;
+  --radius-lg:   0rem;
+  --radius-xl:   0rem;
+  --radius-2xl:  0rem;
+  --radius-3xl:  0rem;
+  --radius-full: 9999px;
+}
+
+/* ─── Base + Tokens ─────────────────────────────────────────────── */
+/* Declared inside @layer base so they beat shadcn's preset injections */
+/* which also live in @layer base. Source order wins within a layer.   */
+@layer base {
+  :root {
+    /* Dark warm ink base */
+    --background:           oklch(0.13 0.018 47);
+    --foreground:           oklch(0.94 0.012 65);
+
+    --card:                 oklch(0.17 0.018 47);
+    --card-foreground:      oklch(0.94 0.012 65);
+
+    --popover:              oklch(0.17 0.018 47);
+    --popover-foreground:   oklch(0.94 0.012 65);
+
+    --primary:              oklch(0.73 0.17 14);
+    --primary-foreground:   oklch(0.10 0.010 47);
+
+    --secondary:            oklch(0.21 0.018 47);
+    --secondary-foreground: oklch(0.88 0.012 65);
+
+    --muted:                oklch(0.19 0.016 47);
+    --muted-foreground:     oklch(0.55 0.020 55);
+
+    --accent:               oklch(0.71 0.13 188);
+    --accent-foreground:    oklch(0.10 0.010 185);
+
+    --destructive:          oklch(0.63 0.22 27);
+
+    --border:               oklch(0.25 0.018 47);
+    --input:                oklch(0.25 0.018 47);
+    --ring:                 oklch(0.73 0.17 14);
+
+    /* Brand palette */
+    --rose:   oklch(0.73 0.17 14);
+    --teal:   oklch(0.71 0.13 188);
+    --violet: oklch(0.69 0.14 298);
+    --amber:  oklch(0.81 0.16 72);
+    --cream:  oklch(0.95 0.014 72);
+    --ink:    oklch(0.11 0.018 47);
+
+    /* Relief panels */
+    --panel-rose:   oklch(0.89 0.065 14);
+    --panel-teal:   oklch(0.89 0.060 188);
+    --panel-violet: oklch(0.89 0.060 298);
+    --panel-amber:  oklch(0.91 0.070 72);
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  ::selection {
+    background-color: oklch(0.73 0.17 14 / 0.4);
+    color: oklch(0.95 0.012 65);
+  }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────── */
+@layer utilities {
+  .eyebrow {
+    @apply font-mono text-[0.65rem] uppercase tracking-[0.24em] text-muted-foreground;
+  }
+
+  /* Rule with center label */
+  .h-rule {
+    @apply border-t border-border;
+  }
+
+  /* Accent underlines */
+  .u-rose {
+    text-decoration: underline;
+    text-decoration-color: var(--rose);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 7px;
+  }
+  .u-teal {
+    text-decoration: underline;
+    text-decoration-color: var(--teal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 7px;
+  }
+  .u-amber {
+    text-decoration: underline;
+    text-decoration-color: var(--amber);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 7px;
+  }
+
+  /* Relief panels — warm light on dark */
+  .panel-rose   { background-color: var(--panel-rose);   color: var(--ink); }
+  .panel-teal   { background-color: var(--panel-teal);   color: var(--ink); }
+  .panel-violet { background-color: var(--panel-violet); color: var(--ink); }
+  .panel-amber  { background-color: var(--panel-amber);  color: var(--ink); }
+
+  .balance { text-wrap: balance; }
+}
