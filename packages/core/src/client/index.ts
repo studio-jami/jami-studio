@@ -58,6 +58,8 @@ export {
   appApiPath,
   appBasePath,
   appPath,
+  appRouterPath,
+  isWithinAppBasePath,
 } from "./api-path.js";
 export {
   deleteClientAppState,

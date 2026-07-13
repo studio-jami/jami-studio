@@ -19,6 +19,43 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+/**
+ * Windows-safe pnpm exec. On Windows, pnpm typically exists only as
+ * `.cmd`/`.ps1` shims (corepack, standalone installer, npm -g) — there is no
+ * `pnpm.exe`, so `execFileSync("pnpm", ...)` fails ENOENT (libuv resolves
+ * only `.exe`/`.com` without a shell). Same constraint already documented on
+ * `windowsSafePnpmSpawn` in cli/workspace-dev.ts. Resolution order:
+ *   1. `npm_execpath` pointing at a JS entry → run through this Node binary
+ *      (exact interpreter, no shell).
+ *   2. Fall back to `shell: true` so cmd.exe resolves the `.cmd` shim. The
+ *      command line is joined here (avoids DEP0190); tokens are workspace
+ *      app ids (directory names, reserved-id-checked) and fixed flags —
+ *      never user input — so no shell escaping is required.
+ * POSIX spawns pnpm directly, unchanged. Exported for tests.
+ */
+export function createWindowsSafePnpmExecFileSync(
+  base: typeof execFileSync,
+  platform: NodeJS.Platform = process.platform,
+  npmExecPath: () => string | undefined = () => process.env.npm_execpath,
+): typeof execFileSync {
+  return ((command: string, args?: readonly string[], options?: object) => {
+    if (platform === "win32" && command === "pnpm" && Array.isArray(args)) {
+      const execPath = npmExecPath();
+      if (execPath && /\.[cm]?js$/i.test(execPath)) {
+        return base(process.execPath, [execPath, ...args], options);
+      }
+      return base([command, ...args].join(" "), {
+        ...(options ?? {}),
+        shell: true,
+      });
+    }
+    return base(command, args as string[] | undefined, options);
+  }) as typeof execFileSync;
+}
+
+const windowsSafePnpmExecFileSync =
+  createWindowsSafePnpmExecFileSync(execFileSync);
+
 import {
   AGENT_BACKGROUND_PROCESSOR_A2A,
   AGENT_BACKGROUND_PROCESSOR_FIELD,
@@ -190,7 +227,7 @@ export async function runWorkspaceDeploy(
     );
   }
   let cachedCount = 0;
-  const execFile = opts.execFile ?? execFileSync;
+  const execFile = opts.execFile ?? windowsSafePnpmExecFileSync;
   for (const app of apps) {
     const skipped = buildOneApp(
       workspaceRoot,

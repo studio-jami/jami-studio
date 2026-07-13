@@ -76,6 +76,30 @@ function RecentOnlyProbe() {
   );
 }
 
+/**
+ * Simulates the forms app mounted at `/forms` in a multi-app workspace:
+ * the chat route is `/ask`, in-app anchors carry the `/forms` prefix
+ * (React Router basename), and cross-app anchors point at sibling mounts.
+ */
+function MountedProbe() {
+  useAgentChatHomeHandoffLinks({ storageKey: "forms", chatPath: "/ask" });
+  const location = useLocation();
+  return (
+    <div>
+      <a href="/forms/forms" data-testid="base-collision-link">
+        All forms
+      </a>
+      <a href="/forms/settings" data-testid="mounted-settings-link">
+        Settings
+      </a>
+      <a href="/mail" data-testid="cross-app-link">
+        Mail
+      </a>
+      <output data-testid="pathname">{location.pathname}</output>
+    </div>
+  );
+}
+
 function renderProbe(element: React.ReactElement = <Probe />) {
   const container = document.createElement("div");
   document.body.appendChild(container);
@@ -85,6 +109,22 @@ function renderProbe(element: React.ReactElement = <Probe />) {
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route path="*" element={element} />
+        </Routes>
+      </MemoryRouter>,
+    );
+  });
+  return { container, root };
+}
+
+function renderMountedProbe() {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  act(() => {
+    root.render(
+      <MemoryRouter initialEntries={["/ask"]}>
+        <Routes>
+          <Route path="*" element={<MountedProbe />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -196,5 +236,46 @@ describe("useAgentChatHomeHandoffLinks", () => {
     expect(event.defaultPrevented).toBe(false);
     expect(pathname(container)).toBe("/");
     expect(consumeAgentChatHomeHandoff("chat", { ttlMs: 5_000 })).toBe(false);
+  });
+
+  describe("mounted at a workspace base path", () => {
+    beforeEach(() => {
+      vi.stubEnv("VITE_APP_BASE_PATH", "/forms");
+    });
+
+    it("strips the base exactly once when a route segment equals the base", () => {
+      ({ container, root } = renderMountedProbe());
+
+      const event = clickLink(container, "base-collision-link");
+
+      // `/forms/forms` = base `/forms` + router-local `/forms` (the list
+      // route). A double strip would corrupt it to `/` and bounce the user
+      // back to the chat home.
+      expect(event.defaultPrevented).toBe(true);
+      expect(pathname(container)).toBe("/forms");
+      expect(consumeAgentChatHomeHandoff("forms")).toBe(true);
+    });
+
+    it("leaves cross-app links to sibling mounts to the browser", () => {
+      ({ container, root } = renderMountedProbe());
+
+      const event = clickLink(container, "cross-app-link");
+
+      // `/mail` is another workspace app. Re-dispatching it through the
+      // basename-scoped router would trap it under `/forms/mail`.
+      expect(event.defaultPrevented).toBe(false);
+      expect(pathname(container)).toBe("/ask");
+      expect(consumeAgentChatHomeHandoff("forms")).toBe(false);
+    });
+
+    it("still excludes settings under the mounted base", () => {
+      ({ container, root } = renderMountedProbe());
+
+      const event = clickLink(container, "mounted-settings-link");
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(pathname(container)).toBe("/ask");
+      expect(consumeAgentChatHomeHandoff("forms")).toBe(false);
+    });
   });
 });

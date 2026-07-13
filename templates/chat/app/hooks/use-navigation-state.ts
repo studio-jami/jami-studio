@@ -1,5 +1,5 @@
 import {
-  appBasePath,
+  appRouterPath,
   appPath,
   markAgentChatHomeHandoff,
   useAgentRouteState,
@@ -28,7 +28,7 @@ export function useNavigationState() {
       };
     },
     getCommandPath: (command) =>
-      routerPath(command.path || pathForCommand(command)),
+      appRouterPath(command.path || pathForCommand(command)),
     onNavigate: (_command, path) => {
       if (
         isChatPath(location.pathname) &&
@@ -91,16 +91,6 @@ function pathForCommand(command: any): string {
   const threadId =
     typeof command?.threadId === "string" ? command.threadId.trim() : "";
   return threadId ? `/chat/${encodeURIComponent(threadId)}` : "/";
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  if (path === basePath) return "/";
-  if (path.startsWith(`${basePath}/`)) {
-    return path.slice(basePath.length) || "/";
-  }
-  return path;
 }
 
 function isChatPath(pathname: string): boolean {

@@ -1,7 +1,7 @@
 import {
   agentNativePath,
-  appBasePath,
   appPath,
+  appRouterPath,
   markAgentChatHomeHandoff,
 } from "@agent-native/core/client";
 import { extensionIdFromPathname } from "@agent-native/core/client/extensions";
@@ -32,7 +32,7 @@ export function useNavigationState(extensions?: DispatchExtensionConfig) {
 
   // Sync current route to application state
   useEffect(() => {
-    const localPathname = routerPath(location.pathname);
+    const localPathname = appRouterPath(location.pathname);
     const state = buildDispatchNavigationState(
       localPathname,
       location.search,
@@ -81,9 +81,9 @@ export function useNavigationState(extensions?: DispatchExtensionConfig) {
       cmd.view === "dreams" && cmd.dreamId && !resolvedPath.includes("?")
         ? `${resolvedPath}?dreamId=${encodeURIComponent(cmd.dreamId)}`
         : resolvedPath;
-    const nextPath = routerPath(path);
+    const nextPath = appRouterPath(path);
     if (
-      isChatPath(routerPath(location.pathname)) &&
+      isChatPath(appRouterPath(location.pathname)) &&
       !isChatPath(pathnameFromPath(nextPath))
     ) {
       markAgentChatHomeHandoff("dispatch");
@@ -145,22 +145,6 @@ export function buildDispatchNavigationState(
   }
 
   return state;
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  // Iteratively strip basename. A path that arrives doubly-prefixed
-  // (e.g. "/dispatch/dispatch/overview", possibly from a stale link or a
-  // prior bug) would otherwise get partially stripped here and then
-  // re-prefixed by react-router's basename, restoring the bad URL.
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (!result.startsWith(`${basePath}/`)) break;
-    result = result.slice(basePath.length) || "/";
-  }
-  return result;
 }
 
 function extensionItemMatchesPath(

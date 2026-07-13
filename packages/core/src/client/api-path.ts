@@ -110,6 +110,41 @@ export function appPath(path: string): string {
   return `${basePath}${path}`;
 }
 
+/**
+ * True when a document pathname belongs to this app's mount. Same-origin
+ * paths outside the mount are sibling workspace apps (or other server
+ * surfaces) and must keep native browser navigation — a basename-scoped
+ * router cannot represent them (`/mail` re-dispatched through the forms
+ * router becomes `/forms/mail`).
+ */
+export function isWithinAppBasePath(pathname: string): boolean {
+  const basePath = appBasePath();
+  if (!basePath) return true;
+  return pathname === basePath || pathname.startsWith(`${basePath}/`);
+}
+
+/**
+ * Converts a mounted document path to a router-local path by stripping the
+ * app base exactly once. A mounted URL contains the base a single time, so
+ * repeated stripping corrupts in-app paths whose first router-local segment
+ * equals the base (e.g. `/forms/forms` — the base plus the forms list route —
+ * must become `/forms`, never `/`). Paths outside the base are returned
+ * unchanged; callers deciding whether to navigate at all should check
+ * `isWithinAppBasePath` first.
+ */
+export function appRouterPath(path: string): string {
+  const basePath = appBasePath();
+  if (!basePath) return path;
+  if (path === basePath) return "/";
+  if (path.startsWith(`${basePath}/`)) {
+    return path.slice(basePath.length) || "/";
+  }
+  if (path.startsWith(`${basePath}?`) || path.startsWith(`${basePath}#`)) {
+    return `/${path.slice(basePath.length)}`;
+  }
+  return path;
+}
+
 export function appApiPath(path: string): string {
   const normalized =
     path === "/api" || path.startsWith("/api/")

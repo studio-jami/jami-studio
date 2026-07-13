@@ -1,5 +1,5 @@
 import {
-  appBasePath,
+  appRouterPath,
   appPath,
   markAgentChatHomeHandoff,
   useAgentRouteState,
@@ -39,7 +39,7 @@ export function useNavigationState() {
     browserTabId: TAB_ID,
     requestSource: TAB_ID,
     getNavigationState: ({ pathname, search }) => {
-      const localPathname = routerPath(pathname);
+      const localPathname = appRouterPath(pathname);
       const params = new URLSearchParams(search);
       return {
         view: viewFromPath(localPathname),
@@ -95,7 +95,7 @@ export function useNavigationState() {
         params.set("section", navCommand.settingsSection);
       }
 
-      const path = routerPath(
+      const path = appRouterPath(
         navCommand.path ||
           pathFromNavView(
             navCommand.view,
@@ -138,18 +138,6 @@ function parseLimit(value: string | null): number | undefined {
   if (!value) return undefined;
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) ? parsed : undefined;
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (!result.startsWith(`${basePath}/`)) break;
-    result = result.slice(basePath.length) || "/";
-  }
-  return result;
 }
 
 function extensionIdFromPath(pathname: string): string | undefined {

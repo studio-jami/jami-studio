@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-import { appBasePath } from "./api-path.js";
+import { appRouterPath, isWithinAppBasePath } from "./api-path.js";
 import {
   consumeAgentChatHomeHandoff,
   isAgentChatHomeHandoffActive,
@@ -39,28 +39,6 @@ export interface UseAgentChatHomeHandoffLinksOptions {
   requireActiveHandoff?: boolean;
 }
 
-function stripBasePath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (result.startsWith(`${basePath}/`)) {
-      result = result.slice(basePath.length) || "/";
-      continue;
-    }
-    if (
-      result.startsWith(`${basePath}?`) ||
-      result.startsWith(`${basePath}#`)
-    ) {
-      result = `/${result.slice(basePath.length)}`;
-      continue;
-    }
-    break;
-  }
-  return result;
-}
-
 function pathnameFromLocalPath(path: string): string {
   return path.split(/[?#]/, 1)[0] || "/";
 }
@@ -88,7 +66,11 @@ function localPathFromAnchor(anchor: HTMLAnchorElement): string | null {
   try {
     const url = new URL(anchor.href);
     if (url.origin !== window.location.origin) return null;
-    return stripBasePath(`${url.pathname}${url.search}${url.hash}`);
+    // Same-origin but outside this app's mount = a sibling workspace app (or
+    // another server surface). Leave it to native browser navigation — the
+    // basename-scoped router cannot represent it.
+    if (!isWithinAppBasePath(url.pathname)) return null;
+    return appRouterPath(`${url.pathname}${url.search}${url.hash}`);
   } catch {
     return null;
   }
@@ -159,7 +141,7 @@ export function useAgentChatHomeHandoffLinks({
   useEffect(() => {
     const matchesChatPath = (pathname: string) =>
       matchesChatPathRef.current(pathname);
-    if (!enabled || !matchesChatPath(stripBasePath(location.pathname))) return;
+    if (!enabled || !matchesChatPath(appRouterPath(location.pathname))) return;
     if (typeof document === "undefined") return;
 
     function handleClick(event: MouseEvent) {

@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IMMUTABLE_ASSET_CACHE_CONTROL } from "./immutable-assets.js";
 import {
+  createWindowsSafePnpmExecFileSync,
   dedupeCloudflareWorkspaceYjs,
   runWorkspaceDeploy,
 } from "./workspace-deploy.js";
@@ -1675,3 +1676,61 @@ function restoreEnv(key: string, value: string | undefined): void {
     process.env[key] = value;
   }
 }
+
+describe("createWindowsSafePnpmExecFileSync", () => {
+  const OPTS = { cwd: "C:/ws", stdio: "inherit" as const };
+
+  it("passes pnpm through unchanged on POSIX", () => {
+    const base = vi.fn();
+    const exec = createWindowsSafePnpmExecFileSync(
+      base as unknown as typeof execFileSync,
+      "linux",
+    );
+    exec("pnpm", ["--filter", "mail", "build"], OPTS);
+    expect(base).toHaveBeenCalledWith(
+      "pnpm",
+      ["--filter", "mail", "build"],
+      OPTS,
+    );
+  });
+
+  it("runs pnpm's JS entry through this Node binary when npm_execpath is set (win32)", () => {
+    const base = vi.fn();
+    const exec = createWindowsSafePnpmExecFileSync(
+      base as unknown as typeof execFileSync,
+      "win32",
+      () => "C:/pnpm/bin/pnpm.cjs",
+    );
+    exec("pnpm", ["--filter", "mail", "build"], OPTS);
+    expect(base).toHaveBeenCalledWith(
+      process.execPath,
+      ["C:/pnpm/bin/pnpm.cjs", "--filter", "mail", "build"],
+      OPTS,
+    );
+  });
+
+  it("falls back to a shell so cmd.exe resolves the .cmd shim (win32, no npm_execpath)", () => {
+    const base = vi.fn();
+    const exec = createWindowsSafePnpmExecFileSync(
+      base as unknown as typeof execFileSync,
+      "win32",
+      () => undefined,
+    );
+    exec("pnpm", ["--filter", "mail", "build"], OPTS);
+    expect(base).toHaveBeenCalledWith("pnpm --filter mail build", {
+      ...OPTS,
+      shell: true,
+    });
+  });
+
+  it("leaves non-pnpm commands untouched on win32", () => {
+    const base = vi.fn();
+    const exec = createWindowsSafePnpmExecFileSync(
+      base as unknown as typeof execFileSync,
+      "win32",
+      () => undefined,
+    );
+    exec("wrangler", ["pages", "deploy"], OPTS);
+    expect(base).toHaveBeenCalledWith("wrangler", ["pages", "deploy"], OPTS);
+  });
+});

@@ -1,5 +1,11 @@
 # @agent-native/dispatch
 
+## 0.14.8
+
+### Patch Changes
+
+- Fix workspace base-path handling in client navigation: `useAgentChatHomeHandoffLinks` no longer strips the app base repeatedly (a mounted URL contains the base exactly once, so `/forms/forms` — base + forms-list route — was corrupted to `/` and bounced users back to the chat home) and no longer intercepts same-origin anchors outside the app mount (cross-app links like `/mail` were re-dispatched through the basename-scoped router and trapped as `/forms/mail`). New canonical client helpers `appRouterPath` (single-strip mounted-path → router-local) and `isWithinAppBasePath` exported from `@agent-native/core/client`; the dispatch package and the brain/chat/dispatch/forms/plan templates now use them instead of per-file strip loops.
+
 ## 0.14.7
 
 ### Patch Changes
@@ -68,6 +74,7 @@
 - d967304: Redact provider request audit targets and harden managed integration persistence against concurrent callbacks and SQLite migration failures.
 - d967304: Harden integration tenant isolation, service-principal identity, shared job routing, audit visibility, and usage-budget settlement.
 - d967304: Add a shared integration catalog with accurate built-in messaging metadata and reusable client helpers for integration setup routes.
+
 ## 0.13.14
 
 ### Patch Changes

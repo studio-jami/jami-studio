@@ -1,5 +1,17 @@
 # @agent-native/core
 
+## 0.99.3
+
+### Patch Changes
+
+- Fix `agent-native deploy` failing with `spawnSync pnpm ENOENT` on Windows: workspace app builds now spawn pnpm through a windows-safe wrapper (`npm_execpath` JS entry via the current Node binary, else `shell: true` so cmd.exe resolves the `.cmd` shim) — the same constraint already handled by `windowsSafePnpmSpawn` in workspace-dev. Windows machines commonly have pnpm only as `.cmd`/`.ps1` shims (corepack, standalone installer), which bare `execFileSync` cannot resolve.
+
+## 0.99.2
+
+### Patch Changes
+
+- Fix workspace base-path handling in client navigation: `useAgentChatHomeHandoffLinks` no longer strips the app base repeatedly (a mounted URL contains the base exactly once, so `/forms/forms` — base + forms-list route — was corrupted to `/` and bounced users back to the chat home) and no longer intercepts same-origin anchors outside the app mount (cross-app links like `/mail` were re-dispatched through the basename-scoped router and trapped as `/forms/mail`). New canonical client helpers `appRouterPath` (single-strip mounted-path → router-local) and `isWithinAppBasePath` exported from `@agent-native/core/client`; the dispatch package and the brain/chat/dispatch/forms/plan templates now use them instead of per-file strip loops.
+
 ## 0.99.1
 
 ### Patch Changes

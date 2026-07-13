@@ -1,5 +1,5 @@
 import {
-  appBasePath,
+  appRouterPath,
   markAgentChatHomeHandoff,
   useAgentRouteState,
 } from "@agent-native/core/client";
@@ -48,31 +48,10 @@ export function formsNavigateCommandPath(cmd: NavigateCommand): string | null {
     localPathFromCommandUrl(cmd.path) ??
     localPathFromCommandUrl(cmd.url) ??
     formsRoutePath(cmd);
-  return path ? routerPath(path) : null;
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  // React Router is already scoped to the app basename. Strip mounted URLs so
-  // navigate() receives router-local paths and does not duplicate the prefix.
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (result.startsWith(`${basePath}/`)) {
-      result = result.slice(basePath.length) || "/";
-      continue;
-    }
-    if (
-      result.startsWith(`${basePath}?`) ||
-      result.startsWith(`${basePath}#`)
-    ) {
-      result = `/${result.slice(basePath.length)}`;
-      continue;
-    }
-    break;
-  }
-  return result;
+  // React Router is already scoped to the app basename — hand navigate()
+  // router-local paths. Strips the base exactly once (core appRouterPath):
+  // `/forms/forms` is the mounted forms-list URL, not a double prefix.
+  return path ? appRouterPath(path) : null;
 }
 
 export function useNavigationState() {

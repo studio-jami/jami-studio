@@ -1,5 +1,5 @@
 import {
-  appBasePath,
+  appRouterPath,
   appPath,
   markAgentChatHomeHandoff,
   useAgentRouteState,
@@ -31,7 +31,7 @@ export function useNavigationState(extensions?: DispatchExtensionConfig) {
 
   useAgentRouteState<NavigationState>({
     getNavigationState: ({ pathname, search }) => {
-      const localPathname = routerPath(pathname);
+      const localPathname = appRouterPath(pathname);
       return buildDispatchNavigationState(
         localPathname,
         search,
@@ -47,11 +47,11 @@ export function useNavigationState(extensions?: DispatchExtensionConfig) {
         cmd.view === "dreams" && cmd.dreamId && !resolvedPath.includes("?")
           ? `${resolvedPath}?dreamId=${encodeURIComponent(cmd.dreamId)}`
           : resolvedPath;
-      return routerPath(path);
+      return appRouterPath(path);
     },
     onNavigate: (_command, path) => {
       if (
-        routerPath(location.pathname) === "/chat" &&
+        appRouterPath(location.pathname) === "/chat" &&
         pathnameFromPath(path) !== "/chat"
       ) {
         markAgentChatHomeHandoff("dispatch");
@@ -100,22 +100,6 @@ export function buildDispatchNavigationState(
   }
 
   return state;
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  // Iteratively strip basename. A path that arrives doubly-prefixed
-  // (e.g. "/dispatch/dispatch/overview", possibly from a stale link or a
-  // prior bug) would otherwise get partially stripped here and then
-  // re-prefixed by react-router's basename, restoring the bad URL.
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (!result.startsWith(`${basePath}/`)) break;
-    result = result.slice(basePath.length) || "/";
-  }
-  return result;
 }
 
 function extensionItemMatchesPath(

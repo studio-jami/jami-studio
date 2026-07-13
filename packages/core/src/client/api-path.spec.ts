@@ -5,6 +5,8 @@ import {
   appApiPath,
   appBasePath,
   appPath,
+  appRouterPath,
+  isWithinAppBasePath,
 } from "./api-path.js";
 import { oauthRedirectUri } from "./frame.js";
 
@@ -87,6 +89,62 @@ describe("agentNativePath", () => {
     expect(agentNativePath("/_agent-native/notifications/count")).toBe(
       "/dispatch/_agent-native/notifications/count",
     );
+  });
+});
+
+describe("appRouterPath", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("returns paths unchanged when no base is mounted", () => {
+    vi.stubGlobal("window", { location: { pathname: "/forms" } });
+
+    expect(appRouterPath("/forms/abc")).toBe("/forms/abc");
+  });
+
+  it("strips the mounted base exactly once", () => {
+    vi.stubEnv("VITE_APP_BASE_PATH", "/forms");
+    vi.stubGlobal("window", { location: { pathname: "/forms/ask" } });
+
+    expect(appRouterPath("/forms")).toBe("/");
+    expect(appRouterPath("/forms/ask")).toBe("/ask");
+    // Base + a router-local segment equal to the base: one strip only.
+    expect(appRouterPath("/forms/forms")).toBe("/forms");
+    expect(appRouterPath("/forms/forms/abc")).toBe("/forms/abc");
+    expect(appRouterPath("/forms?tab=all")).toBe("/?tab=all");
+  });
+
+  it("leaves paths outside the base unchanged", () => {
+    vi.stubEnv("VITE_APP_BASE_PATH", "/forms");
+    vi.stubGlobal("window", { location: { pathname: "/forms/ask" } });
+
+    expect(appRouterPath("/mail")).toBe("/mail");
+    expect(appRouterPath("/formsandmore")).toBe("/formsandmore");
+  });
+});
+
+describe("isWithinAppBasePath", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("treats everything as in-app when no base is mounted", () => {
+    vi.stubGlobal("window", { location: { pathname: "/" } });
+
+    expect(isWithinAppBasePath("/anything")).toBe(true);
+  });
+
+  it("separates this mount from sibling workspace apps", () => {
+    vi.stubEnv("VITE_APP_BASE_PATH", "/forms");
+    vi.stubGlobal("window", { location: { pathname: "/forms/ask" } });
+
+    expect(isWithinAppBasePath("/forms")).toBe(true);
+    expect(isWithinAppBasePath("/forms/forms")).toBe(true);
+    expect(isWithinAppBasePath("/mail")).toBe(false);
+    expect(isWithinAppBasePath("/formsandmore")).toBe(false);
   });
 });
 

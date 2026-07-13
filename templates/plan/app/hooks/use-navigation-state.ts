@@ -1,6 +1,6 @@
 import {
   agentNativePath,
-  appBasePath,
+  appRouterPath,
   markAgentChatHomeHandoff,
 } from "@agent-native/core/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -149,7 +149,7 @@ function viewForPath(pathname: string): string {
 }
 
 export function planNavigateCommandPath(command: NavigationState): string {
-  return routerPath(pathForCommand(command));
+  return appRouterPath(pathForCommand(command));
 }
 
 function pathForCommand(command: NavigationState): string {
@@ -202,28 +202,4 @@ function pathForView(view?: string): string {
     default:
       return "/";
   }
-}
-
-function routerPath(path: string): string {
-  const basePath = appBasePath();
-  if (!basePath) return path;
-  let result = path;
-  // React Router is already scoped to the app basename. Strip mounted URLs so
-  // navigate() receives router-local paths and does not duplicate the prefix.
-  for (let i = 0; i < 4; i += 1) {
-    if (result === basePath) return "/";
-    if (result.startsWith(`${basePath}/`)) {
-      result = result.slice(basePath.length) || "/";
-      continue;
-    }
-    if (
-      result.startsWith(`${basePath}?`) ||
-      result.startsWith(`${basePath}#`)
-    ) {
-      result = `/${result.slice(basePath.length)}`;
-      continue;
-    }
-    break;
-  }
-  return result;
 }
