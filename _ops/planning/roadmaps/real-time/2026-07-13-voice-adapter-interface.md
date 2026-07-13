@@ -71,6 +71,28 @@ Apps can extend via `toolAllowList` option; everything still passes the
 32-tool/64KB packing bounds and the capability grant only contains pushed
 names.
 
+### Target bridge shape (owner-ratified 2026-07-13 — seamless-UX north star)
+
+The slice-1 allow-list is navigation-only and therefore LOPSIDED: the only
+way the agent can "know" something is to change what the user is looking
+at. That violates the north star (a question must never cost the user
+their screen). The client-half slice implements the read-first target:
+
+1. **Headless reads answer questions.** Same-app: curated GET-marked read
+   actions join the allow-list (redaction/16K caps/journaling already
+   apply). Cross-app: `call-agent` (A2A) joins the allow-list — one tool
+   buys headless Q&A against every sibling app ("what's on my schedule"
+   answered by the calendar app's agent while Design stays on screen). It
+   doubles as the delegate tool for mutations (approval flow intact).
+2. **Navigation is intent-gated by prompt**: `navigate`/`view-screen` fire
+   only on explicit user intent ("open…", "show/pull up…", "what am I
+   looking at"). Never as a data-access workaround.
+3. **Answers render as transient dock cards** (generative-ui surface) —
+   glanceable, zero workspace disruption. Gemini-Live-style: headless read
+   + spoken answer + optional card + deep-link only on request.
+4. Budget note: `call-agent` is why the 32-tool/64KB bound stays
+   comfortable — one tool replaces N apps × M read actions.
+
 ## Slice 1 scope (server half)
 
 New sibling file `packages/core/src/server/realtime-voice-elevenlabs.ts`:
