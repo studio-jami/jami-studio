@@ -164,39 +164,20 @@ export default function Header() {
           <Link
             data-an-prefetch="render"
             to={localizedPath("/")}
-            aria-label="Agent-Native"
+            aria-label="Jami Studio"
             className="flex min-w-0 shrink-0 items-center gap-2 text-[var(--fg)] no-underline"
           >
             <img
-              src="/agent-native-icon-light.svg"
+              src="/favicon.svg"
               alt=""
-              className="block h-6 w-6 min-[380px]:hidden dark:hidden"
+              className="block h-6 w-6"
               aria-hidden="true"
               loading="lazy"
               decoding="async"
             />
-            <img
-              src="/agent-native-icon-dark.svg"
-              alt=""
-              className="hidden h-6 w-6 dark:block min-[380px]:dark:hidden"
-              aria-hidden="true"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/agent-native-logo-light.svg"
-              alt="Agent-Native"
-              className="hidden h-[1.155rem] w-auto min-[380px]:block dark:hidden"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/agent-native-logo-dark.svg"
-              alt="Agent-Native"
-              className="hidden h-[1.155rem] w-auto min-[380px]:dark:block"
-              loading="lazy"
-              decoding="async"
-            />
+            <span className="hidden min-[380px]:block whitespace-nowrap font-semibold tracking-tight">
+              Jami Studio
+            </span>
           </Link>
 
           {/* Desktop nav links */}
@@ -220,7 +201,7 @@ export default function Header() {
               {t("header.templates")}
             </NavLink>
             <a
-              href="https://github.com/BuilderIO/agent-native"
+              href="https://github.com/studio-jami/jami-studio"
               target="_blank"
               rel="noreferrer"
               className="header-link"
@@ -316,7 +297,7 @@ export default function Header() {
               {t("header.templates")}
             </NavLink>
             <a
-              href="https://github.com/BuilderIO/agent-native"
+              href="https://github.com/studio-jami/jami-studio"
               target="_blank"
               rel="noreferrer"
               className="header-link"

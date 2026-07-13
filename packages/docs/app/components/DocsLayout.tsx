@@ -21,7 +21,7 @@ interface TocItem {
 }
 
 const GITHUB_EDIT_BASE_URL =
-  "https://github.com/BuilderIO/agent-native/edit/main/packages/core/docs/content";
+  "https://github.com/studio-jami/jami-studio/edit/main/packages/core/docs/content";
 
 /**
  * Resolves the GitHub "edit this page" URL from the current route pathname

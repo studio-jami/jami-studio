@@ -1239,7 +1239,7 @@ const ptBR = {
   },
   brandPage: {
     eyebrow: "Recursos da marca",
-    title: "Logotipos do Agent-Native",
+    title: "Logotipos do Jami Studio",
     body: "Baixe os logotipos e símbolos oficiais para artigos, apresentações e projetos da comunidade. Os arquivos SVG permanecem nítidos em qualquer tamanho e aceitam fundos transparentes.",
     horizontal: {
       title: "Logotipo horizontal",

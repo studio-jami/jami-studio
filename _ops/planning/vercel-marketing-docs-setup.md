@@ -44,16 +44,33 @@ renamed to `@agent-native/marketing`, dropped the override, ran root
 - All read the local Vercel CLI token (`com.vercel.cli/Data/auth.json`)
   and never print it. CLI `--scope` is broken for this team; use the REST API.
 
-## Known follow-ups (deferred by owner decision)
+## Content/rebrand pass (completed 2026-07-13, same day)
 
-- Content pass: natural docs link from the landing page; what marketing shows
-  vs the docs app's own `_index` landing (unreachable from jami.studio by
-  design).
-- `www.jami.studio/sitemap.xml`, `/robots.txt`, `/llms.txt` are owned by the
-  marketing root and not yet wired; docs' committed robots.txt references
-  the sitemap at the canonical host. Decide during the content/rebrand pass
-  whether these rewrite to the docs origin or marketing grows its own.
-- jami.studio rebrand of legacy builder.io assets (root-level
-  `agent-native-*.svg` etc.) — replaces, not rescued.
+- Landing page links Docs (`/docs`) in nav and footer.
+- Marketing rewrites switched to a **fallback** proxy: marketing serves its
+  own pages/assets; every unmatched path (docs, apps, templates, skills,
+  download, brand, privacy, terms, locale variants, `/assets`,
+  `sitemap.xml`, `robots.txt`, `llms.txt`, `/_agent-native/*` incl.
+  generated og images) falls through to the docs deployment.
+- Docs app rebranded: header icon + "Jami Studio" wordmark (legacy
+  agent-native-*.svg deleted), brand page serves the Jami mark, default og
+  image now `https://www.jami.studio/og-image.png`, JSON-LD / sitemap
+  organization / codeRepository / GitHub links point at
+  `https://github.com/studio-jami/jami-studio`, brandPage titles updated in
+  all 11 locales, stale test expectations aligned.
+
+## Remaining legacy (intentional, functional)
+
+- `download.tsx` releases URL stays on `BuilderIO/agent-native` — the fork
+  has 0 GitHub releases; desktop binaries only exist upstream. Switch when
+  releases are published under studio-jami.
+- `cdn.builder.io` media (template screenshots, demo video, markdown image
+  maps) — working hosted media with no Jami replacements yet; re-host when
+  new assets exist.
+- Builder.io waitlist popover + its i18n copy — functional feature tied to
+  the framework branch-waitlist route; replace with the Jami equivalent
+  when that product path is decided.
 - Vercel project display names (`jami.studio-marketing`, `jami-studio-docs`)
   — cosmetic.
+- Dependabot: 17 vulnerabilities flagged on the default branch — separate
+  triage unit.

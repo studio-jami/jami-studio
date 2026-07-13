@@ -14,11 +14,16 @@ const nextConfig = {
     unoptimized: true,
   },
   async rewrites() {
-    return [
-      { source: "/docs", destination: `${DOCS_ORIGIN}/docs` },
-      { source: "/docs/:path*", destination: `${DOCS_ORIGIN}/docs/:path*` },
-      { source: "/assets/:path*", destination: `${DOCS_ORIGIN}/assets/:path*` },
-    ]
+    // Unified host: marketing owns its own pages; every other path
+    // (docs, apps, templates, skills, download, brand, privacy, terms,
+    // locale variants, /assets, sitemap.xml, robots.txt, llms.txt,
+    // /_agent-native/* incl. generated og images) falls through to the
+    // docs deployment.
+    return {
+      fallback: [
+        { source: "/:path*", destination: `${DOCS_ORIGIN}/:path*` },
+      ],
+    }
   },
 }
 

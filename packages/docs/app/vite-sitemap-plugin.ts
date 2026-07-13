@@ -60,8 +60,8 @@ export function sitemapPlugin(): Plugin {
     outputDirs: ["build/client", "dist", "dist/client", "dist/server/public"],
     organization: {
       name: "Jami Studio",
-      url: "https://builder.io",
-      sameAs: ["https://github.com/BuilderIO/agent-native"],
+      url: "https://www.jami.studio",
+      sameAs: ["https://github.com/studio-jami/jami-studio"],
     },
   }) as unknown as Plugin;
 }

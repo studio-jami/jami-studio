@@ -256,7 +256,7 @@ export const meta = () =>
       },
       { name: "robots", content: "noindex,nofollow" },
     ],
-    agentNativeSocialImageUrl("Agentic applications", "Agent-Native"),
+    agentNativeSocialImageUrl("Agentic applications", "Jami Studio"),
   );
 
 function ArrowLink({

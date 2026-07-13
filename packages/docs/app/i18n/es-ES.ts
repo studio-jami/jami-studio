@@ -1241,7 +1241,7 @@ const esES = {
   },
   brandPage: {
     eyebrow: "Recursos de marca",
-    title: "Logotipos de Agent-Native",
+    title: "Logotipos de Jami Studio",
     body: "Descarga los logotipos y símbolos oficiales para artículos, presentaciones y proyectos de la comunidad. Los archivos SVG se mantienen nítidos a cualquier tamaño y admiten fondos transparentes.",
     horizontal: {
       title: "Logotipo horizontal",

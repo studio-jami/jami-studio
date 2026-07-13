@@ -1226,7 +1226,7 @@ const zhCN = {
   },
   brandPage: {
     eyebrow: "品牌资源",
-    title: "Agent-Native 标志",
+    title: "Jami Studio 标志",
     body: "下载用于文章、演示文稿和社区项目的官方标志与图形。SVG 文件在任何尺寸下都保持清晰，并支持透明背景。",
     horizontal: {
       title: "横版标志",

@@ -1243,7 +1243,7 @@ const deDE = {
   },
   brandPage: {
     eyebrow: "Markenmaterial",
-    title: "Agent-Native-Logos",
+    title: "Jami-Studio-Logos",
     body: "Lade die offiziellen Logos und Bildmarken für Artikel, Präsentationen und Community-Projekte herunter. SVG-Dateien bleiben in jeder Größe scharf und unterstützen transparente Hintergründe.",
     horizontal: {
       title: "Horizontales Logo",

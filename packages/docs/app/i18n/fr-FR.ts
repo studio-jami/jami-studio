@@ -1242,7 +1242,7 @@ const frFR = {
   },
   brandPage: {
     eyebrow: "Ressources de marque",
-    title: "Logos Agent-Native",
+    title: "Logos Jami Studio",
     body: "Téléchargez les logos et symboles officiels pour vos articles, présentations et projets communautaires. Les fichiers SVG restent nets à toutes les tailles et prennent en charge les fonds transparents.",
     horizontal: {
       title: "Logo horizontal",

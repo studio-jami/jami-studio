@@ -24,6 +24,7 @@ const COLUMNS: FooterColumn[] = [
   {
     heading: 'Open Source',
     links: [
+      { label: 'Docs',     href: '/docs' },
       { label: 'GitHub',   href: 'https://github.com/studio-jami', external: true },
       { label: 'Intercal', href: 'https://intercal.jami.studio/',  external: true },
     ],

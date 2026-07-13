@@ -18,44 +18,32 @@ type BrandAsset = {
 
 const BRAND_ASSETS: BrandAsset[] = [
   {
-    nameKey: "brandPage.horizontal.title",
-    descriptionKey: "brandPage.horizontal.body",
-    light: {
-      previewClassName: "w-full max-w-[720px]",
-      src: "/agent-native-logo-light.svg",
-    },
-    dark: {
-      previewClassName: "w-full max-w-[720px]",
-      src: "/agent-native-logo-dark.svg",
-    },
-  },
-  {
     nameKey: "brandPage.symbol.title",
     descriptionKey: "brandPage.symbol.body",
     light: {
       previewClassName: "h-24 w-auto sm:h-28",
-      src: "/agent-native-icon-light.svg",
+      src: "/favicon.svg",
     },
     dark: {
       previewClassName: "h-24 w-auto sm:h-28",
-      src: "/agent-native-icon-dark.svg",
+      src: "/favicon.svg",
     },
   },
 ];
 
 export const meta = () =>
   withDefaultSocialImage([
-    { title: "Agent-Native brand assets" },
+    { title: "Jami Studio brand assets" },
     {
       name: "description",
       content:
-        "Download official Agent-Native logos and symbols for articles, presentations, and community projects.",
+        "Download official Jami Studio logos and symbols for articles, presentations, and community projects.",
     },
-    { property: "og:title", content: "Agent-Native brand assets" },
+    { property: "og:title", content: "Jami Studio brand assets" },
     {
       property: "og:description",
       content:
-        "Official Agent-Native horizontal logos and symbols, ready to download as SVG files.",
+        "Official Jami Studio marks, ready to download as SVG files.",
     },
   ]);
 

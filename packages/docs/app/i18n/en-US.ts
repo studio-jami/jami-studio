@@ -1236,7 +1236,7 @@ const enUS = {
   },
   brandPage: {
     eyebrow: "Brand assets",
-    title: "Agent-Native logos",
+    title: "Jami Studio logos",
     body: "Download official logos and marks for articles, presentations, and community projects. SVG files stay sharp at any size and support transparent backgrounds.",
     horizontal: {
       title: "Horizontal logo",

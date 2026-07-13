@@ -1239,7 +1239,7 @@ const jaJP = {
   },
   brandPage: {
     eyebrow: "ブランド素材",
-    title: "Agent-Native ロゴ",
+    title: "Jami Studio ロゴ",
     body: "記事、プレゼンテーション、コミュニティプロジェクト向けの公式ロゴとマークをダウンロードできます。SVG ファイルはどのサイズでも鮮明で、透明な背景に対応しています。",
     horizontal: {
       title: "横長ロゴ",

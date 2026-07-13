@@ -37,7 +37,7 @@ function ogImageUrl(meta: Array<Record<string, unknown>>): URL {
     (item) => item.property === "og:image" && typeof item.content === "string",
   );
   expect(image?.content).toMatch(
-    /^https:\/\/www\.agent-native\.com\/_agent-native\/og-image\.png\?/,
+    /^https:\/\/www\.jami\.studio\/_agent-native\/og-image\.png\?/,
   );
   const url = new URL(image!.content as string);
   expect(url.searchParams.get("v")).toBe(
@@ -86,35 +86,35 @@ describe("template routes", () => {
   });
 
   it("uses product-specific OG image titles for template pages", () => {
-    expect(ogImageTitle(slidesTemplateMeta())).toBe("Agent-Native Slides");
-    expect(ogImageTitle(designTemplateMeta())).toBe("Agent-Native Design");
+    expect(ogImageTitle(slidesTemplateMeta())).toBe("Jami Studio Slides");
+    expect(ogImageTitle(designTemplateMeta())).toBe("Jami Studio Design");
     expect(
       ogImageTitle(genericTemplateMeta({ params: { slug: "assets" } })),
-    ).toBe("Agent-Native Assets");
+    ).toBe("Jami Studio Assets");
   });
 
   it("uses doc-specific OG image titles and a docs accent line", async () => {
     const docsIndex = docsIndexMeta();
     expect(ogImageTitle(docsIndex)).toBe("Getting Started");
-    expect(ogImageAccentText(docsIndex)).toBe("Agent-Native Docs");
+    expect(ogImageAccentText(docsIndex)).toBe("Jami Studio Docs");
 
     const localizedIndexDoc = await loadDoc("getting-started", "zh-CN");
     expect(localizedIndexDoc?.title).toBe("开始使用");
     const localizedIndex = docsIndexMeta({ data: localizedIndexDoc });
     expect(ogImageTitle(localizedIndex)).toBe("开始使用");
-    expect(ogImageAccentText(localizedIndex)).toBe("Agent-Native Docs");
+    expect(ogImageAccentText(localizedIndex)).toBe("Jami Studio Docs");
 
     const arabicIndexDoc = await loadDoc("getting-started", "ar-SA");
     expect(arabicIndexDoc?.title).toBe("الخطوات الأولى");
     const arabicIndex = docsIndexMeta({ data: arabicIndexDoc });
     expect(ogImageTitle(arabicIndex)).toBe("الخطوات الأولى");
-    expect(ogImageAccentText(arabicIndex)).toBe("Agent-Native Docs");
+    expect(ogImageAccentText(arabicIndex)).toBe("Jami Studio Docs");
 
     const docsPage = docsSlugMeta({
       params: { slug: "workspace-connections" },
     });
     expect(ogImageTitle(docsPage)).toBe("Workspace Connections");
-    expect(ogImageAccentText(docsPage)).toBe("Agent-Native Docs");
+    expect(ogImageAccentText(docsPage)).toBe("Jami Studio Docs");
 
     const localizedDoc = await loadDoc("internationalization", "zh-CN");
     expect(localizedDoc?.title).toBe("国际化");
@@ -123,7 +123,7 @@ describe("template routes", () => {
       params: { locale: "zh-CN", slug: "internationalization" },
     });
     expect(ogImageTitle(localizedPage)).toBe("国际化");
-    expect(ogImageAccentText(localizedPage)).toBe("Agent-Native Docs");
+    expect(ogImageAccentText(localizedPage)).toBe("Jami Studio Docs");
   });
 
   it("emits docs canonical paths and hreflang alternates for localized docs", () => {

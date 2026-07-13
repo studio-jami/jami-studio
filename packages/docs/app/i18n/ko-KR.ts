@@ -1239,7 +1239,7 @@ const koKR = {
   },
   brandPage: {
     eyebrow: "브랜드 자료",
-    title: "Agent-Native 로고",
+    title: "Jami Studio 로고",
     body: "기사, 프레젠테이션, 커뮤니티 프로젝트에 사용할 공식 로고와 심볼을 다운로드하세요. SVG 파일은 어떤 크기에서도 선명하며 투명 배경을 지원합니다.",
     horizontal: {
       title: "가로형 로고",

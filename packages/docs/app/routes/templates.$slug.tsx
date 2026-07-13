@@ -198,7 +198,7 @@ export default function GenericTemplatePage() {
                 location="generic_template_page"
               />
               <a
-                href={`https://github.com/BuilderIO/agent-native/tree/main/templates/${sourceSlug}`}
+                href={`https://github.com/studio-jami/jami-studio/tree/main/templates/${sourceSlug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--docs-border)] px-6 py-3 text-sm font-medium text-[var(--fg)] no-underline transition hover:border-[var(--fg-secondary)] hover:no-underline"

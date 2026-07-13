@@ -1,5 +1,4 @@
 import {
-  AGENT_NATIVE_DEFAULT_SOCIAL_IMAGE,
   AGENT_NATIVE_SOCIAL_IMAGE_PATH,
   defaultSocialImageMeta as coreDefaultSocialImageMeta,
   withAgentNativeSocialImageCacheBuster,
@@ -10,7 +9,7 @@ import type { MetaDescriptor } from "react-router";
 const SITE_URL = "https://www.jami.studio";
 const DOCS_SOCIAL_IMAGE_ACCENT = "Jami Studio Docs";
 
-export const DEFAULT_SOCIAL_IMAGE = AGENT_NATIVE_DEFAULT_SOCIAL_IMAGE;
+export const DEFAULT_SOCIAL_IMAGE = `${SITE_URL}/og-image.png`;
 
 export function agentNativeSocialImageUrl(
   title: string,
@@ -28,7 +27,7 @@ export function agentNativeSocialImageUrl(
 }
 
 export function defaultSocialImageMeta(): MetaDescriptor[] {
-  return coreDefaultSocialImageMeta() as MetaDescriptor[];
+  return coreDefaultSocialImageMeta(DEFAULT_SOCIAL_IMAGE) as MetaDescriptor[];
 }
 
 export function withDefaultSocialImage(

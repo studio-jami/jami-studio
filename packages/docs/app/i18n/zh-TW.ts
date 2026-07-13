@@ -1224,7 +1224,7 @@ const messages = {
   },
   brandPage: {
     eyebrow: "品牌資源",
-    title: "Agent-Native 標誌",
+    title: "Jami Studio 標誌",
     body: "下載適用於文章、簡報和社群專案的官方標誌與圖形。SVG 檔案在任何尺寸下都能保持清晰，並支援透明背景。",
     horizontal: {
       title: "橫式標誌",

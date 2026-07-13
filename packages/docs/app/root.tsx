@@ -62,19 +62,19 @@ const JSON_LD = JSON.stringify({
     {
       "@type": "Organization",
       name: "Jami Studio",
-      url: "https://jami.studio",
-      sameAs: ["https://github.com/BuilderIO/agent-native"],
+      url: SITE_URL,
+      sameAs: ["https://github.com/studio-jami/jami-studio"],
     },
     {
       "@type": "WebSite",
-      name: "Agent-Native",
+      name: "Jami Studio",
       url: SITE_URL,
       description:
         "Open source framework for building agentic applications where AI agents and UI share the same database and state.",
     },
     {
       "@type": "SoftwareApplication",
-      name: "Agent-Native",
+      name: "Jami Studio",
       applicationCategory: "DeveloperApplication",
       operatingSystem: "Cross-platform",
       description:
@@ -85,9 +85,9 @@ const JSON_LD = JSON.stringify({
       sourceOrganization: {
         "@type": "Organization",
         name: "Jami Studio",
-        url: "https://builder.io",
+        url: SITE_URL,
       },
-      codeRepository: "https://github.com/BuilderIO/agent-native",
+      codeRepository: "https://github.com/studio-jami/jami-studio",
     },
   ],
 });

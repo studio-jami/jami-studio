@@ -45,7 +45,7 @@ export default function Footer() {
             {t("footer.terms")}
           </Link>
           <a
-            href="https://github.com/BuilderIO/agent-native"
+            href="https://github.com/studio-jami/jami-studio"
             target="_blank"
             rel="noreferrer"
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
