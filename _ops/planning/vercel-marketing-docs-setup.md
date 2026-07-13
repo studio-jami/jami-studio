@@ -61,6 +61,15 @@ renamed to `@agent-native/marketing`, dropped the override, ran root
 
 ## Remaining legacy (intentional, functional)
 
+- **Generated og images 404** (pre-existing, found during verification):
+  `/_agent-native/og-image.png` 404s on the docs origin itself — Vercel's
+  `react-router` framework preset serves only the RR SSR bundle and ignores
+  the Nitro `.output` server, so no runtime `/_agent-native/*` routes exist
+  on this lane (they worked on the Netlify/nitro lane). Docs/template pages
+  using per-page generated og images point at a 404; pages using the static
+  default (`https://www.jami.studio/og-image.png`) are fine. Fix = deploy
+  docs via Nitro's Vercel preset (Build Output API) instead of the RR
+  framework preset — its own work unit against the live deploy.
 - `download.tsx` releases URL stays on `BuilderIO/agent-native` — the fork
   has 0 GitHub releases; desktop binaries only exist upstream. Switch when
   releases are published under studio-jami.
