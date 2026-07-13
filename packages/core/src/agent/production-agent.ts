@@ -503,14 +503,35 @@ export function engineToProvider(engineName: string): string {
  * Callers that layer another deployment-key fallback after this should keep the
  * same precedence: scoped key first, host-provided env key second.
  */
+/**
+ * Resolve the active engine NAME with the same precedence resolveEngine uses
+ * for its env/settings tiers: the AGENT_ENGINE env override beats the stored
+ * settings row; default "anthropic". Credential resolution must agree with
+ * engine resolution — deriving the provider from settings alone resolved the
+ * WRONG provider's key when the engine was env-selected (observed live
+ * 2026-07-13: AGENT_ENGINE=ai-sdk:google with no settings row resolved the
+ * Anthropic deploy key and handed it to the Google engine — "API key not
+ * valid" on every run).
+ */
+async function resolveActiveEngineName(): Promise<string> {
+  const envEngine = process.env.AGENT_ENGINE?.trim();
+  if (envEngine) return envEngine;
+  try {
+    const { getSetting } = await import("../settings/store.js");
+    const engineSetting = await getSetting("agent-engine");
+    const stored = engineSetting?.engine as string | undefined;
+    if (stored) return stored;
+  } catch {
+    // Settings unavailable — fall through to the default.
+  }
+  return "anthropic";
+}
+
 export async function getOwnerActiveApiKey(
   ownerEmail: string | null | undefined,
 ): Promise<string | undefined> {
   try {
-    const { getSetting } = await import("../settings/store.js");
-    const engineSetting = await getSetting("agent-engine");
-    const activeEngine =
-      (engineSetting?.engine as string | undefined) ?? "anthropic";
+    const activeEngine = await resolveActiveEngineName();
     const provider = engineToProvider(activeEngine);
     const userKey = await getOwnerApiKey(provider, ownerEmail);
     if (userKey) return userKey;
@@ -6188,12 +6209,18 @@ export function createProductionAgentHandler(
 
     // `options.apiKey` is the value the template constructed the plugin with
     // (often wired from a deployment env var). Honor it as host-provided
-    // read-only configuration after scoped keys when deploy fallback is safe.
-    const hostApiKey = canUseDeployCredentialFallbackForRequest(
-      "ANTHROPIC_API_KEY",
-    )
-      ? (options.apiKey ?? readDeployCredentialEnv("ANTHROPIC_API_KEY"))
-      : undefined;
+    // read-only configuration after scoped keys when deploy fallback is safe
+    // — but ONLY when the run's engine is Anthropic-family. This fallback is
+    // an Anthropic key by contract; handing it to another provider's engine
+    // fails every run with that provider's "invalid key" error.
+    const activeRunProvider = engineToProvider(
+      requestEngine ?? (await resolveActiveEngineName()),
+    );
+    const hostApiKey =
+      activeRunProvider === "anthropic" &&
+      canUseDeployCredentialFallbackForRequest("ANTHROPIC_API_KEY")
+        ? (options.apiKey ?? readDeployCredentialEnv("ANTHROPIC_API_KEY"))
+        : undefined;
     const effectiveApiKey = userApiKey ?? hostApiKey;
 
     // Resolve engine — per-request engine override takes priority

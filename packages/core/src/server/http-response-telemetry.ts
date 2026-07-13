@@ -3,6 +3,7 @@ import type { EventHandler, H3Event } from "h3";
 
 import { getDatabaseRuntimeFingerprint } from "../db/runtime-diagnostics.js";
 import { track } from "../tracking/index.js";
+import { stripAppBasePath } from "./app-base-path.js";
 import { getAppName } from "./app-name.js";
 
 const TELEMETRY_EVENT_NAME = "http.response";
@@ -74,11 +75,14 @@ function statusClass(statusCode: number): string {
 }
 
 function routeKind(pathname: string): string {
-  if (pathname === "/_agent-native" || pathname.startsWith("/_agent-native/")) {
+  // Classify on the app-relative path so workspace-mounted apps report
+  // framework/api kinds instead of everything collapsing to "app".
+  const appPath = stripAppBasePath(pathname);
+  if (appPath === "/_agent-native" || appPath.startsWith("/_agent-native/")) {
     return "framework";
   }
-  if (pathname === "/api" || pathname.startsWith("/api/")) return "api";
-  if (pathname.startsWith("/.well-known/")) return "well-known";
+  if (appPath === "/api" || appPath.startsWith("/api/")) return "api";
+  if (appPath.startsWith("/.well-known/")) return "well-known";
   return "app";
 }
 
@@ -96,16 +100,25 @@ function organizationForHost(host: string | undefined): string | undefined {
     envValue("AGENT_NATIVE_ORG_NAME");
   if (configured) return configured;
   const normalized = host?.split(":")[0]?.toLowerCase();
-  return normalized?.endsWith(".jami.studio") ||
-    normalized === "jami.studio"
+  return normalized?.endsWith(".jami.studio") || normalized === "jami.studio"
     ? "Builder.io"
     : undefined;
 }
 
-function shouldTrack(pathname: string, statusCode: number): boolean {
+export function shouldTrackHttpResponse(
+  pathname: string,
+  statusCode: number,
+): boolean {
   if (shouldDisableTelemetry()) return false;
-  if (TRACKING_INGEST_PATHS.has(pathname)) return false;
-  if (pathname.startsWith("/api/analytics/replay")) return false;
+  // Evaluate exclusions against the app-relative path: on unified workspace
+  // deployments the app sees its MOUNTED path (/analytics/api/analytics/track),
+  // and a mounted-path miss here is self-sustaining — every ingest POST emits
+  // another http.response event, which POSTs again, forever (observed live
+  // 2026-07-13: ~6 events/sec with zero users filled 557k rows in a day and
+  // blew the database's storage limit).
+  const appPath = stripAppBasePath(pathname);
+  if (TRACKING_INGEST_PATHS.has(appPath)) return false;
+  if (appPath.startsWith("/api/analytics/replay")) return false;
   if (statusCode >= 500) return true;
   const rate = sampleRate();
   if (rate <= 0) return false;
@@ -126,7 +139,7 @@ function responseStatusCode(event: H3Event): number {
 function emitTelemetry(event: H3Event, startedAt: number): void {
   const statusCode = responseStatusCode(event);
   const pathname = requestPath(event);
-  if (!shouldTrack(pathname, statusCode)) return;
+  if (!shouldTrackHttpResponse(pathname, statusCode)) return;
 
   try {
     const host = hostForEvent(event);
