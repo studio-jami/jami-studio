@@ -105,3 +105,41 @@ export function setModuleGraphEnvDefaults(
 export function getModuleGraphEnvDefault(key: string): string | undefined {
   return moduleGraphEnvDefaults?.[key];
 }
+
+/**
+ * Unified workspace Node handshake.
+ *
+ * On the unified Node deployment (`agent-native deploy --preset node`) the
+ * generated dist/server.mjs dispatcher imports every app's Nitro bundle into
+ * ONE process. Each bundle also carries a scope-init module, but Rolldown
+ * chunk splitting can evaluate shared chunks (which register built-ins at
+ * module scope) BEFORE the entry body where the inlined scope-init call
+ * lands — so import order alone cannot guarantee the scope is set first.
+ *
+ * This module, however, is a dependency of every registry module, so it is
+ * ALWAYS evaluated before any of them. The dispatcher sets these globals
+ * immediately before dynamically importing an app bundle, and this module
+ * consumes them at its own evaluation — guaranteeing the scope id and
+ * per-app env defaults are live before the first registry initializes.
+ * The bundle's own scope-init still runs later with identical values
+ * (idempotent), covering direct imports without the dispatcher.
+ */
+const HANDSHAKE_SCOPE_KEY = "__AGENT_NATIVE_MODULE_GRAPH_SCOPE__";
+const HANDSHAKE_ENV_KEY = "__AGENT_NATIVE_MODULE_GRAPH_ENV__";
+{
+  const g = globalThis as unknown as Record<string, unknown>;
+  const pendingScope = g[HANDSHAKE_SCOPE_KEY];
+  if (typeof pendingScope === "string" && pendingScope.trim()) {
+    moduleGraphScopeId = pendingScope.trim();
+  }
+  const pendingEnv = g[HANDSHAKE_ENV_KEY];
+  if (pendingEnv && typeof pendingEnv === "object") {
+    const defaults: Record<string, string> = {};
+    for (const [key, value] of Object.entries(
+      pendingEnv as Record<string, unknown>,
+    )) {
+      if (typeof value === "string" && value !== "") defaults[key] = value;
+    }
+    if (Object.keys(defaults).length > 0) moduleGraphEnvDefaults = defaults;
+  }
+}

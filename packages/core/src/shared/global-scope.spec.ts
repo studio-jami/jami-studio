@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   registerFileUploadProvider,
@@ -123,5 +123,44 @@ describe("global-scope", () => {
     expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBeUndefined();
     setModuleGraphEnvDefaults({});
     expect(getModuleGraphEnvDefault("APP_BASE_PATH")).toBeUndefined();
+  });
+
+  it("consumes the unified-Node dispatcher handshake at module evaluation", async () => {
+    // The dist/server.mjs dispatcher sets these globals immediately before
+    // dynamically importing an app bundle; the bundle's copy of this module
+    // consumes them at its own evaluation — before any registry module runs.
+    const g = globalThis as unknown as Record<string, unknown>;
+    g.__AGENT_NATIVE_MODULE_GRAPH_SCOPE__ = "mail";
+    g.__AGENT_NATIVE_MODULE_GRAPH_ENV__ = {
+      APP_BASE_PATH: "/mail",
+      AGENT_NATIVE_WORKSPACE_APP_ID: "mail",
+      EMPTY_VALUE_IGNORED: "",
+      NON_STRING_IGNORED: 42,
+    };
+    try {
+      // A fresh module instance simulates an app bundle's own copy of
+      // global-scope evaluating under the handshake.
+      vi.resetModules();
+      const fresh = await import("./global-scope.js");
+      expect(fresh.getGlobalScopeId()).toBe("mail");
+      expect(fresh.getModuleGraphEnvDefault("APP_BASE_PATH")).toBe("/mail");
+      expect(
+        fresh.getModuleGraphEnvDefault("AGENT_NATIVE_WORKSPACE_APP_ID"),
+      ).toBe("mail");
+      expect(
+        fresh.getModuleGraphEnvDefault("EMPTY_VALUE_IGNORED"),
+      ).toBeUndefined();
+      expect(
+        fresh.getModuleGraphEnvDefault("NON_STRING_IGNORED"),
+      ).toBeUndefined();
+    } finally {
+      delete g.__AGENT_NATIVE_MODULE_GRAPH_SCOPE__;
+      delete g.__AGENT_NATIVE_MODULE_GRAPH_ENV__;
+      vi.resetModules();
+    }
+
+    // This test file's own module instance stays unaffected (it evaluated
+    // before the handshake globals were set).
+    expect(getGlobalScopeId()).toBeNull();
   });
 });

@@ -47,6 +47,8 @@ beforeEach(() => {
         ?.NITRO_PRESET;
       if (preset === "vercel") {
         writeVercelAppBuildOutput(tmpDir, String(args[1]));
+      } else if (preset === "node-middleware") {
+        writeNodeAppBuildOutput(tmpDir, String(args[1]));
       } else {
         writeAppBuildOutput(tmpDir, String(args[1]));
       }
@@ -1188,6 +1190,113 @@ describe("workspace deploy", () => {
     expect(worker).not.toContain('pathname === "/.well-known"');
     expect(worker).not.toContain('pathname === "/favicon.ico"');
   });
+
+  it("assembles a unified Node artifact with a dispatcher for a workspace", async () => {
+    makeWorkspaceApp(tmpDir, "dispatch");
+    makeWorkspaceApp(tmpDir, "starter");
+
+    await runWorkspaceDeploy({
+      workspaceRoot: tmpDir,
+      args: ["--preset=node", "--build-only"],
+      execFile: execFile as typeof execFileSync,
+    });
+
+    // Apps are built with Nitro's node-middleware runtime (handler export,
+    // no listen call) so the dispatcher can mount them in ONE process.
+    const dispatchCall = buildCallForApp("dispatch");
+    expect(dispatchCall?.env).toMatchObject({
+      NITRO_PRESET: "node-middleware",
+      AGENT_NATIVE_WORKSPACE: "1",
+      AGENT_NATIVE_WORKSPACE_APP_ID: "dispatch",
+      APP_BASE_PATH: "/dispatch",
+      VITE_APP_BASE_PATH: "/dispatch",
+    });
+
+    // Per-app Nitro output is copied into dist/<app>/.
+    expect(
+      fs.existsSync(
+        path.join(tmpDir, "dist", "dispatch", "server", "index.mjs"),
+      ),
+    ).toBe(true);
+    expect(
+      fs.existsSync(
+        path.join(tmpDir, "dist", "starter", "server", "index.mjs"),
+      ),
+    ).toBe(true);
+    expect(
+      fs.existsSync(
+        path.join(
+          tmpDir,
+          "dist",
+          "starter",
+          ".agent-native",
+          "workspace-apps.json",
+        ),
+      ),
+    ).toBe(true);
+
+    const server = fs.readFileSync(
+      path.join(tmpDir, "dist", "server.mjs"),
+      "utf-8",
+    );
+    // Apps load via SEQUENTIAL dynamic imports behind the module-graph
+    // handshake (never static imports): registry chunks can evaluate before
+    // the entry body's scope-init, so the scope must be live pre-import.
+    expect(server).not.toContain("import { middleware");
+    expect(server).toContain(
+      'const HANDSHAKE_SCOPE_KEY = "__AGENT_NATIVE_MODULE_GRAPH_SCOPE__";',
+    );
+    expect(server).toContain(
+      'const HANDSHAKE_ENV_KEY = "__AGENT_NATIVE_MODULE_GRAPH_ENV__";',
+    );
+    expect(server).toContain("const mod = await import(app.entry);");
+    expect(server).toContain('entry: "./dispatch/server/index.mjs"');
+    expect(server).toContain('entry: "./starter/server/index.mjs"');
+    expect(server).toContain('"APP_BASE_PATH":"/starter"');
+    expect(server).toContain('"AGENT_NATIVE_WORKSPACE_APP_ID":"starter"');
+    expect(server).toContain(
+      'if (pathname === "/_agent-native" || pathname.startsWith("/_agent-native/") || pathname === "/.well-known" || pathname.startsWith("/.well-known/")) return dispatchApp.middleware(req, res);',
+    );
+    expect(server).toContain(
+      'if (pathname === "/favicon.ico") return redirect(res, "/dispatch/favicon.ico");',
+    );
+    expect(server).toContain(
+      'if (pathname === "/apps/new-app") return redirect(res, "/dispatch/new-app" + search);',
+    );
+    expect(server).toContain(
+      'if (pathname.startsWith("/apps/")) return redirect(res, "/dispatch" + pathname + search);',
+    );
+    expect(server).toContain(
+      'if (pathname === "/dispatch" || pathname === "/dispatch/") return redirect(res, "/dispatch/overview" + search);',
+    );
+    // Root redirect and mounted-app root normalization mirror the Cloudflare
+    // dispatcher semantics.
+    expect(server).toContain('redirect(res, "/dispatch/overview" + search)');
+    expect(server).toContain('req.url = app.basePath + "//" + search;');
+    // The dispatcher owns static serving: Nitro's serveStatic resolves via
+    // globalThis.__nitro_main__, which sibling bundles overwrite.
+    expect(server).toContain("function staticFileFor(app, pathname)");
+    expect(server).toContain('server.on("upgrade"');
+    expect(server).toContain("server.listen(port, host");
+  });
+
+  it("routes the Node dispatcher root to the first app without Dispatch", async () => {
+    makeWorkspaceApp(tmpDir, "starter");
+
+    await runWorkspaceDeploy({
+      workspaceRoot: tmpDir,
+      args: ["--preset=node", "--build-only"],
+      execFile: execFile as typeof execFileSync,
+    });
+
+    const server = fs.readFileSync(
+      path.join(tmpDir, "dist", "server.mjs"),
+      "utf-8",
+    );
+    expect(server).not.toContain('pathname === "/_agent-native"');
+    expect(server).not.toContain('pathname === "/favicon.ico"');
+    expect(server).toContain('redirect(res, "/starter/" + search)');
+  });
 });
 
 // wrangler re-bundles every app worker into ONE final bundle behind the
@@ -1492,6 +1601,29 @@ function writeAppBuildOutput(workspaceRoot: string, app: string): void {
       "",
     ].join("\n"),
   );
+}
+
+function writeNodeAppBuildOutput(workspaceRoot: string, app: string): void {
+  const appDir = path.join(workspaceRoot, "apps", app);
+  const outputDir = path.join(appDir, ".output");
+  fs.mkdirSync(path.join(outputDir, "server"), { recursive: true });
+  fs.mkdirSync(path.join(outputDir, "public", app, "assets"), {
+    recursive: true,
+  });
+  fs.writeFileSync(
+    path.join(outputDir, "server", "index.mjs"),
+    [
+      "export const middleware = (req, res) => { res.end('ok'); };",
+      "export const handleUpgrade = undefined;",
+      "",
+    ].join("\n"),
+  );
+  fs.writeFileSync(
+    path.join(outputDir, "public", app, "assets", "app-aB12_cdE.js"),
+    "export {};",
+  );
+  fs.writeFileSync(path.join(outputDir, "public", app, "favicon.ico"), "");
+  fs.writeFileSync(path.join(outputDir, "public", "favicon.ico"), "");
 }
 
 function writeVercelAppBuildOutput(workspaceRoot: string, app: string): void {

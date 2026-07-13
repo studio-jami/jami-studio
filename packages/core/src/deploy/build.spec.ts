@@ -29,6 +29,7 @@ import {
   workspaceAppScopeIdFromBasePath,
   workspaceEnvDefaultsFromBuildEnv,
   workspaceAppModuleGraphEnvDefaultsFromBuildEnv,
+  workspaceNodeMiddlewareEntry,
   stripServerDataFlagsFromClientManifest,
   getNodeBuiltinNames,
   isDurableBackgroundDeployEnabled,
@@ -56,11 +57,78 @@ describe("nitroNoExternalsForPreset", () => {
     expect(nitroNoExternalsForPreset("vercel")).toEqual(["yjs"]);
     expect(nitroNoExternalsForPreset("aws-lambda")).toEqual(["yjs"]);
     expect(nitroNoExternalsForPreset("node-server")).toEqual(["yjs"]);
+    expect(nitroNoExternalsForPreset("node-middleware")).toEqual(["yjs"]);
   });
 
   it("bundles every dependency for edge output", () => {
     expect(nitroNoExternalsForPreset("cloudflare-pages")).toBe(true);
     expect(nitroNoExternalsForPreset("deno-deploy")).toBe(true);
+  });
+});
+
+// Unified workspace Node builds wrap Nitro's node-middleware entry so each
+// app's bundle sets its per-app registry scope + module-graph env defaults
+// BEFORE any registry module evaluates — the dispatcher imports every app
+// into one process, so unscoped graphs would collide exactly like the
+// unified Cloudflare worker case.
+describe("workspaceNodeMiddlewareEntry", () => {
+  const tmpOut = path.join(process.cwd(), ".deploy-tmp", "workspace-node");
+  let previousWorkspace: string | undefined;
+  let previousAppId: string | undefined;
+
+  beforeEach(() => {
+    previousWorkspace = process.env.AGENT_NATIVE_WORKSPACE;
+    previousAppId = process.env.AGENT_NATIVE_WORKSPACE_APP_ID;
+  });
+
+  afterEach(() => {
+    if (previousWorkspace === undefined) {
+      delete process.env.AGENT_NATIVE_WORKSPACE;
+    } else {
+      process.env.AGENT_NATIVE_WORKSPACE = previousWorkspace;
+    }
+    if (previousAppId === undefined) {
+      delete process.env.AGENT_NATIVE_WORKSPACE_APP_ID;
+    } else {
+      process.env.AGENT_NATIVE_WORKSPACE_APP_ID = previousAppId;
+    }
+    fs.rmSync(path.join(process.cwd(), ".deploy-tmp"), {
+      recursive: true,
+      force: true,
+    });
+  });
+
+  it("returns null outside unified workspace node builds", () => {
+    delete process.env.AGENT_NATIVE_WORKSPACE;
+    expect(workspaceNodeMiddlewareEntry("node-middleware", "/mail")).toBeNull();
+
+    process.env.AGENT_NATIVE_WORKSPACE = "1";
+    expect(workspaceNodeMiddlewareEntry("node-server", "/mail")).toBeNull();
+    expect(workspaceNodeMiddlewareEntry("netlify", "/mail")).toBeNull();
+    expect(workspaceNodeMiddlewareEntry("node-middleware", "")).toBeNull();
+  });
+
+  it("writes a scope-init-first entry re-exporting Nitro's node-middleware runtime", () => {
+    process.env.AGENT_NATIVE_WORKSPACE = "1";
+    process.env.AGENT_NATIVE_WORKSPACE_APP_ID = "mail";
+
+    const entry = workspaceNodeMiddlewareEntry("node-middleware", "/mail");
+    expect(entry).toBe(path.join(tmpOut, "index.mjs"));
+
+    const entrySource = fs.readFileSync(entry!, "utf-8");
+    const [firstImport, secondStatement] = entrySource
+      .split("\n")
+      .filter((line) => line.startsWith("import") || line.startsWith("export"));
+    expect(firstImport).toBe('import "./_scope-init.mjs";');
+    expect(secondStatement).toContain("export * from");
+    expect(secondStatement).toContain("node-middleware.mjs");
+    expect(secondStatement).not.toContain("\\\\");
+
+    const scopeInit = fs.readFileSync(
+      path.join(tmpOut, "_scope-init.mjs"),
+      "utf-8",
+    );
+    expect(scopeInit).toContain('setGlobalScopeId("mail")');
   });
 });
 
@@ -268,7 +336,9 @@ describe("generateWorkerEntry", { timeout: 15_000 }, () => {
     expect(source).toContain('["GET", new RegExp("^/status/[^/]+$")]');
     // …while /api routes rely on the existing isApiPath strip.
     expect(source).not.toContain("api/analytics/track$");
-    expect(source).toContain("matchesMountedCustomRoute(request.method, strippedPathname)");
+    expect(source).toContain(
+      "matchesMountedCustomRoute(request.method, strippedPathname)",
+    );
   });
 
   it("generateScopeInitSource calls setGlobalScopeId with the app id via the lean subpath", () => {
@@ -285,7 +355,8 @@ describe("generateWorkerEntry", { timeout: 15_000 }, () => {
     const source = generateScopeInitSource(
       "calendar",
       {
-        AGENT_NATIVE_WORKSPACE_APPS_JSON: '[{"id":"calendar","path":"/calendar"}]',
+        AGENT_NATIVE_WORKSPACE_APPS_JSON:
+          '[{"id":"calendar","path":"/calendar"}]',
         EMPTY_IGNORED: "",
       },
       {
@@ -828,9 +899,7 @@ export default (event) =>
     expect(html).toContain("messages");
     // Root loaders hydrate the default locale shape; the shell <html> tag
     // must match so recovery doesn't add an attribute mismatch.
-    expect(html).toContain(
-      '<html lang="en-US" dir="ltr" data-locale="en-US">',
-    );
+    expect(html).toContain('<html lang="en-US" dir="ltr" data-locale="en-US">');
   });
 
   it("strips server loader/action flags from the client manifest (handler-less static-shell worker)", () => {

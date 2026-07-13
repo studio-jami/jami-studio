@@ -28,12 +28,6 @@ import {
 } from "../agent/durable-background.js";
 import { findWorkspaceRoot } from "../scripts/utils.js";
 import {
-  computeWorkspaceAppBuildHash,
-  isWorkspaceBuildCacheEnabled,
-  workspaceAppBuildCacheHit,
-  writeWorkspaceAppBuildStamp,
-} from "./workspace-build-cache.js";
-import {
   DEFAULT_WORKSPACE_APP_AUDIENCE,
   normalizeWorkspaceAppAudience,
   normalizeWorkspaceAppPathList,
@@ -47,8 +41,18 @@ import {
   collectImmutableAssetPaths,
   IMMUTABLE_ASSET_CACHE_HEADERS,
 } from "./immutable-assets.js";
+import {
+  computeWorkspaceAppBuildHash,
+  isWorkspaceBuildCacheEnabled,
+  workspaceAppBuildCacheHit,
+  writeWorkspaceAppBuildStamp,
+} from "./workspace-build-cache.js";
 
-export type WorkspaceDeployPreset = "cloudflare_pages" | "netlify" | "vercel";
+export type WorkspaceDeployPreset =
+  | "cloudflare_pages"
+  | "netlify"
+  | "vercel"
+  | "node";
 
 const NETLIFY_WORKSPACE_STATIC_DIR = "_workspace_static";
 const NETLIFY_PUBLIC_ASSET_EXTENSIONS = new Set([
@@ -83,11 +87,12 @@ let BUILDER_VERSION = "unknown";
 try {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   // dist/deploy/workspace-deploy.js → ../../package.json
-  BUILDER_VERSION = (
-    JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf-8"),
-    ) as { version?: string }
-  ).version ?? "unknown";
+  BUILDER_VERSION =
+    (
+      JSON.parse(
+        fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf-8"),
+      ) as { version?: string }
+    ).version ?? "unknown";
 } catch {}
 
 interface WorkspaceAppManifestEntry {
@@ -223,6 +228,8 @@ export async function runWorkspaceDeploy(
     writeNetlifyHeaders(distDir, apps);
   } else if (preset === "vercel") {
     writeVercelBuildConfig(vercelOutputDir, apps);
+  } else if (preset === "node") {
+    writeNodeServerEntry(distDir, apps, workspaceApps);
   } else {
     dedupeCloudflareWorkspaceYjs(distDir, apps);
     writeCloudflareRoutingManifest(distDir, apps);
@@ -244,6 +251,8 @@ export async function runWorkspaceDeploy(
     );
   } else if (preset === "vercel") {
     console.log(`  vercel deploy --prebuilt\n`);
+  } else if (preset === "node") {
+    console.log(`  node --env-file=.env dist/server.mjs\n`);
   } else {
     console.log(`  wrangler pages deploy dist\n`);
   }
@@ -271,7 +280,12 @@ function buildOneApp(
   const workspaceOAuthUrl = workspaceOAuthOrigin(workspaceGatewayUrl);
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    NITRO_PRESET: preset,
+    // The workspace `node` preset builds each app with Nitro's
+    // `node-middleware` runtime: the entry exports a Node request handler
+    // (no listen call), so the generated dist/server.mjs dispatcher can
+    // mount all apps in ONE process. `node`/`node-server` would self-listen
+    // at import time — one listener per app.
+    NITRO_PRESET: preset === "node" ? "node-middleware" : preset,
     // Windows: rolldown's rayon thread pool has a native race that
     // intermittently (and for some apps deterministically) kills the build
     // with an access violation (0xC0000005). Capping the pool avoids the
@@ -636,6 +650,277 @@ function cloudflareRootRedirectPath(apps: string[]): string {
   return apps.includes("dispatch") ? "/dispatch/overview" : `/${apps[0]}/`;
 }
 
+/**
+ * Write the unified Node dispatcher `dist/server.mjs` so one bare Node
+ * process serves every app at /<app>/*.
+ *
+ * Each app is built with Nitro's `node-middleware` runtime (wrapped by
+ * core's scope-init entry — see `workspaceNodeMiddlewareEntry` in
+ * deploy/build.ts), so `./<app>/server/index.mjs` exports a request handler
+ * without listening. The dispatcher owns the single listener and mirrors the
+ * Cloudflare `_worker.js` routing semantics: root framework routes to
+ * dispatch, root/alias redirects, mounted-app root normalization, and
+ * per-app path routing.
+ *
+ * App bundles are loaded with SEQUENTIAL dynamic imports behind the
+ * module-graph handshake globals (`__AGENT_NATIVE_MODULE_GRAPH_SCOPE__` /
+ * `__AGENT_NATIVE_MODULE_GRAPH_ENV__`, consumed by core's global-scope
+ * module at its own evaluation): Rolldown chunk splitting can evaluate
+ * registry chunks before the entry body's inlined scope-init call, so static
+ * imports could register one app's built-ins into an unscoped (or sibling's)
+ * registry. The handshake guarantees the scope id and per-app env defaults
+ * are live before ANY module of that app's graph evaluates.
+ *
+ * Static assets are served by the dispatcher from `./<app>/public` (checking
+ * the baseURL-nested copy first, then the root copy). Nitro's own
+ * `serveStatic` is intentionally NOT used: its fs reader resolves against
+ * `globalThis.__nitro_main__`, which every app's bundle overwrites at import
+ * time — the last app loaded would capture every sibling's asset reads.
+ */
+export function writeNodeServerEntry(
+  distDir: string,
+  apps: string[],
+  workspaceApps: WorkspaceAppManifestEntry[] = [],
+): void {
+  const dispatchFaviconAsset = apps.includes("dispatch")
+    ? dispatchRootFaviconAsset(distDir)
+    : null;
+
+  const appEntries = apps
+    .map((a) => {
+      const audience = workspaceAppAudienceForApp(workspaceApps, a);
+      const routeAccess = workspaceAppRouteAccessForApp(workspaceApps, a);
+      const env: Record<string, string> = {
+        AGENT_NATIVE_WORKSPACE_APP_ID: a,
+        APP_BASE_PATH: `/${a}`,
+        AGENT_NATIVE_WORKSPACE_APP_AUDIENCE: audience,
+        AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS: JSON.stringify(
+          routeAccess.publicPaths,
+        ),
+        AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS: JSON.stringify(
+          routeAccess.protectedPaths,
+        ),
+        VITE_AGENT_NATIVE_WORKSPACE_APP_ID: a,
+        VITE_APP_BASE_PATH: `/${a}`,
+        VITE_AGENT_NATIVE_WORKSPACE_APP_AUDIENCE: audience,
+        VITE_AGENT_NATIVE_WORKSPACE_APP_PUBLIC_PATHS: JSON.stringify(
+          routeAccess.publicPaths,
+        ),
+        VITE_AGENT_NATIVE_WORKSPACE_APP_PROTECTED_PATHS: JSON.stringify(
+          routeAccess.protectedPaths,
+        ),
+      };
+      return `  {
+    id: ${JSON.stringify(a)},
+    basePath: ${JSON.stringify(`/${a}`)},
+    entry: ${JSON.stringify(`./${a}/server/index.mjs`)},
+    publicDir: path.join(distDir, ${JSON.stringify(a)}, "public"),
+    env: ${JSON.stringify(env)},
+    middleware: null,
+    handleUpgrade: null,
+  },`;
+    })
+    .join("\n");
+
+  const dispatchRootFrameworkRoutes = apps.includes("dispatch")
+    ? `  if (pathname === "/_agent-native" || pathname.startsWith("/_agent-native/") || pathname === "/.well-known" || pathname.startsWith("/.well-known/")) return dispatchApp.middleware(req, res);
+`
+    : "";
+  const dispatchRootFaviconRoute = dispatchFaviconAsset
+    ? `  if (pathname === "/favicon.ico") return redirect(res, "/dispatch/${dispatchFaviconAsset}");
+`
+    : "";
+  const dispatchRootAliasRoutes = apps.includes("dispatch")
+    ? DISPATCH_WORKSPACE_ROOT_REDIRECTS.map(
+        ([from, to]) =>
+          `  if (pathname === "/${from}") return redirect(res, "/dispatch/${to}" + search);`,
+      ).join("\n") + "\n"
+    : "";
+  const dispatchRootDynamicAliasRoutes = apps.includes("dispatch")
+    ? `  if (pathname.startsWith("/apps/")) return redirect(res, "/dispatch" + pathname + search);
+`
+    : "";
+  const dispatchMountedRootRedirect = apps.includes("dispatch")
+    ? `  if (pathname === "/dispatch" || pathname === "/dispatch/") return redirect(res, "/dispatch/overview" + search);
+`
+    : "";
+  const dispatchAppLookup = apps.includes("dispatch")
+    ? `const dispatchApp = apps.find((app) => app.id === "dispatch");
+`
+    : "";
+
+  const server = `// AUTO-GENERATED by agent-native deploy --preset node
+// One Node process serving every workspace app at /<app>/*.
+// Run with: node --env-file=.env server.mjs   (PORT/NITRO_PORT, HOST/NITRO_HOST)
+import fs from "node:fs";
+import http from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const distDir = path.dirname(fileURLToPath(import.meta.url));
+
+const apps = [
+${appEntries}
+];
+${dispatchAppLookup}
+// Module-graph handshake: core's global-scope module (a dependency of every
+// registry module in an app bundle) consumes these globals at its own
+// evaluation, so the per-app registry scope and identity env are live before
+// ANY module of the app's graph runs — including registry chunks Rolldown
+// evaluates ahead of the entry body's inlined scope-init call. Apps are
+// imported SEQUENTIALLY so the handshake can never leak across siblings.
+const HANDSHAKE_SCOPE_KEY = "__AGENT_NATIVE_MODULE_GRAPH_SCOPE__";
+const HANDSHAKE_ENV_KEY = "__AGENT_NATIVE_MODULE_GRAPH_ENV__";
+for (const app of apps) {
+  globalThis[HANDSHAKE_SCOPE_KEY] = app.id;
+  globalThis[HANDSHAKE_ENV_KEY] = app.env;
+  try {
+    const mod = await import(app.entry);
+    app.middleware = mod.middleware;
+    app.handleUpgrade = mod.handleUpgrade;
+  } finally {
+    delete globalThis[HANDSHAKE_SCOPE_KEY];
+    delete globalThis[HANDSHAKE_ENV_KEY];
+  }
+  if (typeof app.middleware !== "function") {
+    throw new Error(
+      \`[workspace] \${app.entry} did not export a middleware function. \` +
+        \`Rebuild the workspace with agent-native deploy --preset node.\`,
+    );
+  }
+}
+
+const MIME_TYPES = {
+  avif: "image/avif",
+  css: "text/css; charset=utf-8",
+  gif: "image/gif",
+  htm: "text/html; charset=utf-8",
+  html: "text/html; charset=utf-8",
+  ico: "image/x-icon",
+  jpeg: "image/jpeg",
+  jpg: "image/jpeg",
+  js: "text/javascript; charset=utf-8",
+  json: "application/json; charset=utf-8",
+  map: "application/json; charset=utf-8",
+  mjs: "text/javascript; charset=utf-8",
+  mp3: "audio/mpeg",
+  mp4: "video/mp4",
+  pdf: "application/pdf",
+  png: "image/png",
+  svg: "image/svg+xml",
+  ttf: "font/ttf",
+  txt: "text/plain; charset=utf-8",
+  wasm: "application/wasm",
+  webm: "video/webm",
+  webmanifest: "application/manifest+json",
+  webp: "image/webp",
+  woff: "font/woff",
+  woff2: "font/woff2",
+  xml: "application/xml; charset=utf-8",
+};
+const IMMUTABLE_HEADERS = ${JSON.stringify(IMMUTABLE_ASSET_CACHE_HEADERS)};
+
+function appForPathname(pathname) {
+  for (const app of apps) {
+    if (pathname === app.basePath || pathname.startsWith(app.basePath + "/")) {
+      return app;
+    }
+  }
+  return null;
+}
+
+function staticFileFor(app, pathname) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+  // Nitro output keeps a baseURL-nested asset copy (public/<app>/...) and a
+  // root copy (public/...); check nested first to mirror the platform CDNs.
+  const candidates = [decoded, decoded.slice(app.basePath.length) || "/"];
+  const publicRoot = path.resolve(app.publicDir);
+  for (const rel of candidates) {
+    const resolved = path.resolve(path.join(app.publicDir, rel));
+    if (resolved !== publicRoot && !resolved.startsWith(publicRoot + path.sep)) {
+      continue;
+    }
+    try {
+      if (fs.statSync(resolved).isFile()) return resolved;
+    } catch {}
+  }
+  return null;
+}
+
+function serveStatic(app, pathname, req, res) {
+  if (req.method !== "GET" && req.method !== "HEAD") return false;
+  const file = staticFileFor(app, pathname);
+  if (!file) return false;
+  const ext = path.extname(file).slice(1).toLowerCase();
+  const headers = {
+    "Content-Type": MIME_TYPES[ext] || "application/octet-stream",
+  };
+  if (pathname.includes("/assets/")) Object.assign(headers, IMMUTABLE_HEADERS);
+  res.writeHead(200, headers);
+  if (req.method === "HEAD") {
+    res.end();
+    return true;
+  }
+  fs.createReadStream(file).pipe(res);
+  return true;
+}
+
+function redirect(res, location) {
+  res.writeHead(302, { Location: location });
+  res.end();
+}
+
+const server = http.createServer((req, res) => {
+  const { pathname, search } = new URL(req.url || "/", "http://workspace.internal");
+${dispatchRootFrameworkRoutes}${dispatchRootFaviconRoute}${dispatchRootAliasRoutes}${dispatchRootDynamicAliasRoutes}${dispatchMountedRootRedirect}  const app = appForPathname(pathname);
+  if (app) {
+    if (serveStatic(app, pathname, req, res)) return;
+    if (pathname === app.basePath || pathname === app.basePath + "/") {
+      // Mounted-app root normalization (matches the Cloudflare dispatcher's
+      // requestForMountedApp and the Netlify entry's normalizeBasePathArgs).
+      req.url = app.basePath + "//" + search;
+    }
+    return app.middleware(req, res);
+  }
+  if (pathname === "/") {
+    return redirect(res, ${JSON.stringify(cloudflareRootRedirectPath(apps))} + search);
+  }
+  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("Not found");
+});
+
+server.on("upgrade", (req, socket, head) => {
+  const { pathname } = new URL(req.url || "/", "http://workspace.internal");
+  const app = appForPathname(pathname);
+  if (app && typeof app.handleUpgrade === "function") {
+    return app.handleUpgrade(req, socket, head);
+  }
+  socket.destroy();
+});
+
+const parsedPort = Number.parseInt(
+  process.env.NITRO_PORT ?? process.env.PORT ?? "",
+  10,
+);
+const port = Number.isNaN(parsedPort) ? 3000 : parsedPort;
+const host = process.env.NITRO_HOST || process.env.HOST || undefined;
+server.listen(port, host, () => {
+  console.log(
+    \`[workspace] Serving \${apps.length} app(s) at http://\${host || "localhost"}:\${port} (\${apps.map((a) => a.basePath).join(", ")})\`,
+  );
+});
+`;
+  fs.writeFileSync(path.join(distDir, "server.mjs"), server);
+  console.log(
+    `[workspace-deploy] Wrote Node dispatcher dist/server.mjs for ${apps.length} app(s).`,
+  );
+}
+
 function writeNetlifyRedirects(distDir: string, apps: string[]): void {
   const lines: string[] = [
     "# Generated by agent-native deploy --preset netlify",
@@ -800,6 +1085,10 @@ function workspaceAppAssetExists(
     path.join(distDir, NETLIFY_WORKSPACE_STATIC_DIR, app, asset),
     path.join(distDir, app, app, asset),
     path.join(distDir, app, asset),
+    // Node preset: assets live under the app's Nitro public output
+    // (baseURL-nested copy first, then the root copy).
+    path.join(distDir, app, "public", app, asset),
+    path.join(distDir, app, "public", asset),
   ].some((candidate) => fs.existsSync(candidate));
 }
 
@@ -1614,8 +1903,9 @@ function normalizePreset(
   }
   if (value === "netlify") return "netlify";
   if (value === "vercel") return "vercel";
+  if (value === "node") return "node";
   throw new Error(
-    `Unsupported workspace deploy preset "${value}". Supported presets: cloudflare_pages, netlify, vercel.`,
+    `Unsupported workspace deploy preset "${value}". Supported presets: cloudflare_pages, netlify, vercel, node.`,
   );
 }
 
