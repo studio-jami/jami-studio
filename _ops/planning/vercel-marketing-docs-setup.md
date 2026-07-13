@@ -1,5 +1,38 @@
 # Vercel setup — marketing + docs (jami.studio)
 
+> **Return-to TODO (web presence — separate from hummingbird dev work)**
+>
+> 1. [ ] **og-image deploy lane**: move the docs project off Vercel's
+>        `react-router` framework preset to Nitro's Vercel preset (Build
+>        Output API) so runtime `/_agent-native/*` routes exist — restores
+>        per-page generated og images (currently 404; static default og
+>        works). Details under "Remaining legacy" below.
+> 2. [ ] **Releases URL**: publish desktop releases under
+>        `studio-jami/jami-studio`, then flip `download.tsx` off
+>        `BuilderIO/agent-native` (fork has 0 releases today).
+> 3. [ ] **Media re-host**: replace `cdn.builder.io` media (template
+>        screenshots, demo video, markdown image maps) with Jami-hosted
+>        assets when new artwork exists.
+> 4. [ ] **Waitlist popover**: replace the Builder.io branch-waitlist
+>        feature + its i18n copy (11 locales) with the Jami equivalent once
+>        that product path is decided.
+> 5. [ ] **Brand asset set**: produce real Jami wordmark SVGs (light/dark,
+>        horizontal + symbol); restore the brand page's horizontal-logo
+>        entry and swap the header/favicon family off the embedded-PNG SVG.
+> 6. [ ] **Marketing content pass**: replace v0 placeholder copy/images
+>        (og-image.png, twitter-image.png are scaffold art).
+> 7. [ ] **Dependabot triage**: 17 vulnerabilities (1 critical) on the
+>        default branch — separate work unit.
+> 8. [ ] Cosmetic: rename Vercel project display names.
+>
+> **Done (2026-07-13)**: jami.studio live — apex 308 → www canonical;
+> marketing landing (Next.js, proper workspace member); docs at /docs plus
+> ALL docs surfaces via fallback rewrite (sitemap/robots/llms.txt/apps/
+> download/brand/legal/locales); Docs linked from landing nav+footer; docs
+> rebranded (Jami mark+wordmark, legacy agent-native SVGs deleted, GitHub/
+> JSON-LD/sitemap URLs → studio-jami, og default → jami.studio, 11-locale
+> brand titles); metadataBase fixed; APP_URL set; all live-verified.
+
 Date: 2026-07-13. Owner-ratified decisions: marketing is the landing page,
 docs live under the same host at `/docs` (path over subdomain for SEO/AI-SEO
 consolidation), builder.io-branded surfaces are legacy pending the jami.studio
