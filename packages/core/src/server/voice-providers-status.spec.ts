@@ -89,6 +89,7 @@ describe("voice providers status route", () => {
       openai: true,
       groq: true,
       elevenlabs: false,
+      defaultEngine: "openai-realtime",
       googleRealtime: true,
       browser: true,
       native: true,

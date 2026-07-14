@@ -114,6 +114,40 @@ Explicitly deferred (bake rule, decision #9): the client hook
 clientTools})`), dock UI dispatch seam, engine-selection setting, Anam
 companion. Upstream's 2,100-line hook is untouched.
 
+## Client-half architecture (surveyed 2026-07-13 — implement next session)
+
+The upstream client seam is exact and small:
+
+- `useRealtimeVoiceMode.tsx` keeps a module-private
+  `RealtimeVoiceModeContext` + `RealtimeVoiceModeProvider` that (a) runs the
+  OpenAI controller hook and (b) portals `RealtimeVoiceModeDock` into
+  `document.body` when active. `RealtimeVoiceModeBoundary` /
+  `useRealtimeVoiceModeOptional` are how AgentPanel (line ~3192) and
+  TiptapComposer (line ~2610) consume it.
+- **Plan**: additively export the context (or a `createEngineProvider`
+  factory); new sibling `useElevenLabsRealtimeVoiceMode.tsx` implements the
+  SAME `RealtimeVoiceModeApi` shape (state machine, audioLevels store via
+  `createRealtimeVoiceAudioLevelStore`, preferences no-ops where EL owns the
+  setting) on `@elevenlabs/client` `Conversation.startSession({
+  conversationToken, connectionType: "webrtc", clientTools })`; token from
+  `POST /_agent-native/realtime-voice/elevenlabs/session` (capability header
+  retained for the tool relay).
+- `clientTools` handlers relay to
+  `/_agent-native/realtime-voice/elevenlabs/tool` with the capability header
+  and return `output` strings to EL (`expects_response: true` blocks the
+  model until the relay answers — matches upstream approval semantics).
+- Transcript events: `onMessage`/mode callbacks map to the same dock states
+  (`listening|speaking|working`); EL owns VAD/turns so the state machine is
+  ~10% the size of the OpenAI one.
+- Engine dispatch (ONE seam): a thin `RealtimeVoiceEngineProvider` reads
+  `defaultEngine` from `/_agent-native/voice-providers/status` (shipped in
+  core 0.99.11: `REALTIME_VOICE_ENGINE=elevenlabs-agent` env selector) and
+  mounts the matching provider; both AgentPanel and TiptapComposer swap to
+  it (2-line changes each).
+- Deps: `@elevenlabs/client` ^1.15.0 in core (client-side only).
+- Verification: browser-level via Playwright (dock mounts, mint fires,
+  engine gating) + owner mic-in-hand dogfood for the audio path.
+
 ## Verification plan
 
 - Vitest specs for schema conversion, payload building, allow-list bounds,

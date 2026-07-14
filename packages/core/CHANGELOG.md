@@ -1,5 +1,13 @@
 # @agent-native/core
 
+## 0.99.11
+
+### Patch Changes
+
+- Add the deployment-owned realtime voice engine selector: `REALTIME_VOICE_ENGINE`
+  (`elevenlabs-agent` | default `openai-realtime`) surfaced as `defaultEngine`
+  in the voice-providers status route, ready for the client engine dispatcher.
+
 ## 0.99.10
 
 ### Patch Changes

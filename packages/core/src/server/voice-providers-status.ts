@@ -28,6 +28,16 @@ import {
 import { resolveGoogleRealtimeCredentials } from "./google-realtime-session.js";
 import { runWithRequestContext } from "./request-context.js";
 
+/** Deployment-owned realtime voice engine selector (REALTIME_VOICE_ENGINE). */
+export function resolveRealtimeVoiceEngine():
+  | "openai-realtime"
+  | "elevenlabs-agent" {
+  return process.env.REALTIME_VOICE_ENGINE?.trim().toLowerCase() ===
+    "elevenlabs-agent"
+    ? "elevenlabs-agent"
+    : "openai-realtime";
+}
+
 export interface VoiceProvidersStatus {
   builder: boolean;
   gemini: boolean;
@@ -35,6 +45,11 @@ export interface VoiceProvidersStatus {
   groq: boolean;
   /** ElevenLabs Agent Mode realtime voice engine (ELEVENLABS_API_KEY). */
   elevenlabs: boolean;
+  /**
+   * Which realtime voice engine the client should mount. Deployment-owned
+   * (REALTIME_VOICE_ENGINE env); defaults to the upstream OpenAI path.
+   */
+  defaultEngine: "openai-realtime" | "elevenlabs-agent";
   /**
    * Google Speech-to-Text realtime streaming is BYOK-only for v1. This reports
    * whether a service-account credential is configured; the actual stream runs
@@ -114,6 +129,7 @@ export function createVoiceProvidersStatusHandler() {
       openai,
       groq,
       elevenlabs,
+      defaultEngine: resolveRealtimeVoiceEngine(),
       googleRealtime,
       browser: true,
       native: true,
