@@ -13,6 +13,7 @@ import path from "node:path";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { bearer } from "better-auth/plugins/bearer";
 import { jwt } from "better-auth/plugins/jwt";
+import { relations } from "drizzle-orm";
 import {
   pgTable,
   text as pgText,
@@ -43,12 +44,12 @@ import { ensureTableExists } from "../db/ddl-guard.js";
 import { saveOAuthTokens } from "../oauth-tokens/store.js";
 import { acceptPendingInvitationsForEmail } from "../org/accept-pending.js";
 import { autoJoinDomainMatchingOrgs } from "../org/auto-join-domain.js";
+import { isCloudflareRuntime } from "../shared/runtime.js";
 import { flushTracking, identify, track } from "../tracking/index.js";
 import { getAppProductionUrl } from "./app-url.js";
 import { signupAttributionFromCookieHeader } from "./attribution.js";
 import { resolveAuthCookieNamespace } from "./cookie-namespace.js";
 import { getWorkspaceA2ADerivedSecret } from "./derived-secret.js";
-import { isCloudflareRuntime } from "../shared/runtime.js";
 import {
   renderResetPasswordEmail,
   renderVerifySignupEmail,
@@ -256,9 +257,7 @@ function appSlugFromUrl(value: string | undefined): string | undefined {
       : `https://${value}`;
     const hostname = new URL(raw).hostname.toLowerCase();
     if (hostname.endsWith(".jami.studio")) {
-      return normalizeTrackingSlug(
-        hostname.slice(0, -".jami.studio".length),
-      );
+      return normalizeTrackingSlug(hostname.slice(0, -".jami.studio".length));
     }
     return normalizeTrackingSlug(hostname.split(".")[0]);
   } catch {
@@ -398,7 +397,7 @@ let _initPromise: Promise<BetterAuthInstance> | undefined;
 // hot-reload or process restart exhausts Neon's connection slot budget.
 let _neonAuthPool: any;
 
-const pgAuthSchema = {
+const pgAuthTables = {
   user: pgTable("user", {
     id: pgText("id").primaryKey(),
     name: pgText("name").notNull(),
@@ -483,7 +482,61 @@ const pgAuthSchema = {
   }),
 };
 
-const sqliteAuthSchema = {
+// Drizzle relations for Better Auth's experimental joins support
+// (`experimental.joins`). Relation keys must match what the Better Auth CLI
+// generates — singular model name for the "one" side (`user`,
+// `organization`) and pluralized model name for the "many" side (`sessions`,
+// `accounts`, `members`, `invitations`) — because the drizzle adapter
+// resolves joins through drizzle's relational query API using those keys.
+// No `relationName` disambiguation is needed: no table here has two foreign
+// keys pointing at the same target table.
+const pgAuthSchema = {
+  ...pgAuthTables,
+  userRelations: relations(pgAuthTables.user, ({ many }) => ({
+    sessions: many(pgAuthTables.session),
+    accounts: many(pgAuthTables.account),
+    members: many(pgAuthTables.member),
+    invitations: many(pgAuthTables.invitation),
+  })),
+  sessionRelations: relations(pgAuthTables.session, ({ one }) => ({
+    user: one(pgAuthTables.user, {
+      fields: [pgAuthTables.session.userId],
+      references: [pgAuthTables.user.id],
+    }),
+  })),
+  accountRelations: relations(pgAuthTables.account, ({ one }) => ({
+    user: one(pgAuthTables.user, {
+      fields: [pgAuthTables.account.userId],
+      references: [pgAuthTables.user.id],
+    }),
+  })),
+  organizationRelations: relations(pgAuthTables.organization, ({ many }) => ({
+    members: many(pgAuthTables.member),
+    invitations: many(pgAuthTables.invitation),
+  })),
+  memberRelations: relations(pgAuthTables.member, ({ one }) => ({
+    organization: one(pgAuthTables.organization, {
+      fields: [pgAuthTables.member.organizationId],
+      references: [pgAuthTables.organization.id],
+    }),
+    user: one(pgAuthTables.user, {
+      fields: [pgAuthTables.member.userId],
+      references: [pgAuthTables.user.id],
+    }),
+  })),
+  invitationRelations: relations(pgAuthTables.invitation, ({ one }) => ({
+    organization: one(pgAuthTables.organization, {
+      fields: [pgAuthTables.invitation.organizationId],
+      references: [pgAuthTables.organization.id],
+    }),
+    user: one(pgAuthTables.user, {
+      fields: [pgAuthTables.invitation.inviterId],
+      references: [pgAuthTables.user.id],
+    }),
+  })),
+};
+
+const sqliteAuthTables = {
   user: sqliteTable("user", {
     id: sqliteText("id").primaryKey(),
     name: sqliteText("name").notNull(),
@@ -568,6 +621,56 @@ const sqliteAuthSchema = {
     createdAt: sqliteInteger("created_at", { mode: "timestamp_ms" }).notNull(),
     expiresAt: sqliteInteger("expires_at", { mode: "timestamp_ms" }),
   }),
+};
+
+// Mirrors the pg relations above; see that comment for the key-naming rules.
+const sqliteAuthSchema = {
+  ...sqliteAuthTables,
+  userRelations: relations(sqliteAuthTables.user, ({ many }) => ({
+    sessions: many(sqliteAuthTables.session),
+    accounts: many(sqliteAuthTables.account),
+    members: many(sqliteAuthTables.member),
+    invitations: many(sqliteAuthTables.invitation),
+  })),
+  sessionRelations: relations(sqliteAuthTables.session, ({ one }) => ({
+    user: one(sqliteAuthTables.user, {
+      fields: [sqliteAuthTables.session.userId],
+      references: [sqliteAuthTables.user.id],
+    }),
+  })),
+  accountRelations: relations(sqliteAuthTables.account, ({ one }) => ({
+    user: one(sqliteAuthTables.user, {
+      fields: [sqliteAuthTables.account.userId],
+      references: [sqliteAuthTables.user.id],
+    }),
+  })),
+  organizationRelations: relations(
+    sqliteAuthTables.organization,
+    ({ many }) => ({
+      members: many(sqliteAuthTables.member),
+      invitations: many(sqliteAuthTables.invitation),
+    }),
+  ),
+  memberRelations: relations(sqliteAuthTables.member, ({ one }) => ({
+    organization: one(sqliteAuthTables.organization, {
+      fields: [sqliteAuthTables.member.organizationId],
+      references: [sqliteAuthTables.organization.id],
+    }),
+    user: one(sqliteAuthTables.user, {
+      fields: [sqliteAuthTables.member.userId],
+      references: [sqliteAuthTables.user.id],
+    }),
+  })),
+  invitationRelations: relations(sqliteAuthTables.invitation, ({ one }) => ({
+    organization: one(sqliteAuthTables.organization, {
+      fields: [sqliteAuthTables.invitation.organizationId],
+      references: [sqliteAuthTables.organization.id],
+    }),
+    user: one(sqliteAuthTables.user, {
+      fields: [sqliteAuthTables.invitation.inviterId],
+      references: [sqliteAuthTables.user.id],
+    }),
+  })),
 };
 
 /**
@@ -875,11 +978,23 @@ async function createBetterAuthInstance(
   const shouldMirrorGoogleAccountTokens =
     (config?.googleScopes?.length ?? 0) > 0;
 
+  // Human-readable app identity for Better Auth (surfaced in the dash and
+  // used by some plugins). Falls back to the resolved app slug.
+  const appName =
+    process.env.APP_NAME ||
+    resolveSignupTrackingIdentity().app ||
+    "Agent Native";
+
   const auth = betterAuth({
+    appName,
     basePath,
     baseURL: appUrl,
     database,
     secret,
+    // Fetch related rows (e.g. session + user) in a single query instead of
+    // one query per model. Requires the drizzle relations defined on
+    // pgAuthSchema / sqliteAuthSchema above.
+    experimental: { joins: true },
     emailAndPassword: {
       enabled: true,
       minPasswordLength: 8,
@@ -1054,10 +1169,21 @@ async function createBetterAuthInstance(
       cookieCache: {
         enabled: true,
         maxAge: 5 * 60, // 5 min cache
+        // Encrypt the cached session cookie (JWE) instead of the legacy
+        // signed-JSON payload so session data isn't readable client-side.
+        strategy: "jwe",
       },
     },
     advanced: {
       cookiePrefix: cookieNamespace.betterAuthCookiePrefix,
+      // Resolve the client IP for rate limiting / session metadata from
+      // proxy headers. Cloudflare is the first-class deploy target, so
+      // trust cf-connecting-ip first, then the generic x-forwarded-for set
+      // by other proxies. Local Node serves without these headers fall back
+      // to the socket address.
+      ipAddress: {
+        ipAddressHeaders: ["cf-connecting-ip", "x-forwarded-for"],
+      },
       // Emit `SameSite=None; Secure` when the app is served over HTTPS so
       // session cookies are delivered inside third-party iframes (e.g. the
       // Builder.io editor). Plain-HTTP dev keeps the default (Lax) because

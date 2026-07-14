@@ -1,5 +1,15 @@
 # @agent-native/core
 
+## 0.99.14
+
+### Patch Changes
+
+- Better Auth hardening: bump better-auth to 1.6.23, set `appName`, enable
+  `experimental.joins` with drizzle relations on the auth schema (single-query
+  session/org reads), resolve client IPs from `cf-connecting-ip` /
+  `x-forwarded-for`, and switch the session cookie cache to the encrypted
+  `jwe` strategy.
+
 ## 0.99.13
 
 ### Patch Changes

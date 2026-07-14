@@ -1,6 +1,6 @@
 {
   "name": "@agent-native/core",
-  "version": "0.99.13",
+  "version": "0.99.14",
   "description": "Framework for agent-native application development — where AI agents and UI share SQL state, actions, and context",
   "homepage": "https://github.com/studio-jami/jami-studio#readme",
   "bugs": {
@@ -305,7 +305,7 @@
     "@tiptap/y-tiptap": "^3.0.5",
     "@uiw/react-codemirror": "^4.25.10",
     "ajv": "^8.20.0",
-    "better-auth": "1.6.16",
+    "better-auth": "1.6.23",
     "better-sqlite3": "^12.8.0",
     "botframework-connector": "^4.23.3",
     "clsx": "^2.1.1",
