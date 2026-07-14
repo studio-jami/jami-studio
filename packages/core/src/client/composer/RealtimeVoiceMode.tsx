@@ -309,9 +309,14 @@ export interface RealtimeVoiceModeInlineSettings {
   appliesNextConversationNote?: string;
   microphoneError?: string;
   microphone: RealtimeVoiceModeSelectSetting;
-  language: RealtimeVoiceModeSelectSetting;
-  intelligence: RealtimeVoiceModeSelectSetting;
-  voiceStyle: RealtimeVoiceModeSelectSetting;
+  /**
+   * Engine-owned preferences are omitted by engines that pin them
+   * server-side (ElevenLabs Agent Mode); the dock then renders a
+   * microphone-only settings surface.
+   */
+  language?: RealtimeVoiceModeSelectSetting;
+  intelligence?: RealtimeVoiceModeSelectSetting;
+  voiceStyle?: RealtimeVoiceModeSelectSetting;
 }
 
 const SILENT_AUDIO_LEVELS = createRealtimeVoiceAudioLevelStore();
@@ -545,23 +550,27 @@ function VoiceInlineSettings({
   disabled: boolean;
   onSelectOpenChange: (open: boolean) => void;
 }) {
-  const selectedVoice = settings.voiceStyle.options.find(
-    (option) => option.value === settings.voiceStyle.value,
+  const selectedVoice = settings.voiceStyle?.options.find(
+    (option) => option.value === settings.voiceStyle?.value,
   );
 
   return (
     <div data-realtime-voice-settings="true">
       <h2 className="sr-only">{settings.dialogLabel}</h2>
-      <div className="grid gap-0.5 px-4 pb-3 pt-4 text-center">
-        <div className="truncate text-base font-semibold text-foreground">
-          {selectedVoice?.label ?? settings.voiceStyle.value}
-        </div>
-        {selectedVoice?.description ? (
-          <div className="truncate text-xs text-muted-foreground">
-            {selectedVoice.description}
+      {settings.voiceStyle ? (
+        <div className="grid gap-0.5 px-4 pb-3 pt-4 text-center">
+          <div className="truncate text-base font-semibold text-foreground">
+            {selectedVoice?.label ?? settings.voiceStyle.value}
           </div>
-        ) : null}
-      </div>
+          {selectedVoice?.description ? (
+            <div className="truncate text-xs text-muted-foreground">
+              {selectedVoice.description}
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div className="pt-2" />
+      )}
       <div className="mx-2 mb-2 overflow-hidden rounded-xl border border-border/70 bg-background/70">
         <VoiceSettingRow
           icon={IconMicrophone}
@@ -571,33 +580,45 @@ function VoiceInlineSettings({
           }}
           onSelectOpenChange={onSelectOpenChange}
         />
-        <div className="mx-3 h-px bg-border/70" />
-        <VoiceSettingRow
-          icon={IconLanguage}
-          setting={{
-            ...settings.language,
-            disabled: disabled || settings.language.disabled,
-          }}
-          onSelectOpenChange={onSelectOpenChange}
-        />
-        <div className="mx-3 h-px bg-border/70" />
-        <VoiceSettingRow
-          icon={IconBrain}
-          setting={{
-            ...settings.intelligence,
-            disabled: disabled || settings.intelligence.disabled,
-          }}
-          onSelectOpenChange={onSelectOpenChange}
-        />
-        <div className="mx-3 h-px bg-border/70" />
-        <VoiceSettingRow
-          icon={IconVolume}
-          setting={{
-            ...settings.voiceStyle,
-            disabled: disabled || settings.voiceStyle.disabled,
-          }}
-          onSelectOpenChange={onSelectOpenChange}
-        />
+        {settings.language ? (
+          <>
+            <div className="mx-3 h-px bg-border/70" />
+            <VoiceSettingRow
+              icon={IconLanguage}
+              setting={{
+                ...settings.language,
+                disabled: disabled || settings.language.disabled,
+              }}
+              onSelectOpenChange={onSelectOpenChange}
+            />
+          </>
+        ) : null}
+        {settings.intelligence ? (
+          <>
+            <div className="mx-3 h-px bg-border/70" />
+            <VoiceSettingRow
+              icon={IconBrain}
+              setting={{
+                ...settings.intelligence,
+                disabled: disabled || settings.intelligence.disabled,
+              }}
+              onSelectOpenChange={onSelectOpenChange}
+            />
+          </>
+        ) : null}
+        {settings.voiceStyle ? (
+          <>
+            <div className="mx-3 h-px bg-border/70" />
+            <VoiceSettingRow
+              icon={IconVolume}
+              setting={{
+                ...settings.voiceStyle,
+                disabled: disabled || settings.voiceStyle.disabled,
+              }}
+              onSelectOpenChange={onSelectOpenChange}
+            />
+          </>
+        ) : null}
       </div>
       {settings.microphoneError ? (
         <p className="px-4 pb-3 text-center text-xs text-destructive">

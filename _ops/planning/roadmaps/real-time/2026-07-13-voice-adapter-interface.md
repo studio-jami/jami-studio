@@ -114,9 +114,59 @@ Explicitly deferred (bake rule, decision #9): the client hook
 clientTools})`), dock UI dispatch seam, engine-selection setting, Anam
 companion. Upstream's 2,100-line hook is untouched.
 
-## Client-half architecture (surveyed 2026-07-13 — implement next session)
+## Client-half architecture (surveyed 2026-07-13 — IMPLEMENTED, core 0.99.12)
 
-The upstream client seam is exact and small:
+Shipped 2026-07-13 (late session) exactly on the surveyed seams; deltas from
+the survey are noted inline:
+
+- `useRealtimeVoiceMode.tsx` additively exports `RealtimeVoiceModeContext`,
+  `useRealtimeVoiceModeController`, `useRealtimeVoiceInlineSettings`
+  (extracted from the provider), `RealtimeVoiceModeComposerSurface`, and the
+  shared state/header/mic-storage constants. No behavior changes.
+- New sibling `useElevenLabsRealtimeVoiceMode.tsx` implements the SAME
+  `RealtimeVoiceModeApi` on `@elevenlabs/client@1.15.0`
+  `Conversation.startSession({ conversationToken, connectionType: "webrtc",
+  clientTools })`: mint via `POST .../elevenlabs/session` (capability header
+  kept), clientTools relay to `POST .../elevenlabs/tool`, transcripts from
+  `onMessage` into `realtimeVoiceTranscriptRegistry`, dock states from
+  `onModeChange`/tool hooks (`working` while a relay is in flight),
+  agent-initiated hangup (`onDisconnect reason:"agent"` — end_call/silence)
+  winds down like a user end, audio levels polled from
+  `getInputVolume`/`getOutputVolume`, mic switching via `changeInputDevice`,
+  the same 409 setup gate, and app-state sync under the shared
+  `realtime-voice-session` key (`model: "elevenlabs-agent"`).
+  Client-tool relay failures throw so the SDK reports `is_error` to the
+  model without ending the session (onError ignores `clientToolName`
+  contexts). Failed tool results throw; approval_required returns a JSON
+  envelope with the approvalKey.
+- Preferences (language/intelligence/voice) are display-inert no-ops — the
+  config-as-code push at mint owns them. The dock renders a
+  MICROPHONE-ONLY settings surface: `RealtimeVoiceModeInlineSettings`
+  made `language`/`intelligence`/`voiceStyle` optional (additive dock
+  change — the one deviation from "dock unchanged", chosen over shipping
+  OpenAI voice/language pickers that would lie in an ElevenLabs session).
+- Engine dispatch (ONE seam): `RealtimeVoiceEngineProvider` +
+  `RealtimeVoiceEngineBoundary` (`RealtimeVoiceEngineProvider.tsx`) mount
+  BOTH controllers and swap only the context VALUE + dock on
+  `defaultEngine` from `/_agent-native/voice-providers/status` — children
+  never remount while the async status settles (seamless-UX rule), and a
+  live session pins its engine (`pickActiveRealtimeVoiceEngine`).
+  AgentPanel (~3192) and TiptapComposer (~2610) swapped to the engine
+  components (2 lines each).
+- `VoiceButton` setup gating is engine-aware: `elevenlabs-agent`
+  deployments gate on the ElevenLabs key only; the Builder/OpenAI connect
+  flow remains the OpenAI engine's setup surface. Client
+  `VoiceProviderStatus` gained `elevenlabs` + `defaultEngine`.
+- Deps: `@elevenlabs/client` 1.15.0 in core dependencies (client-side only).
+- Specs: `useElevenLabsRealtimeVoiceMode.spec.tsx` (mint parsing, tool
+  relay/format/normalize, working-state hooks, engine dispatch) +
+  engine-aware `VoiceButton.spec.ts`; 66 voice-area client specs green.
+- Verification: Playwright browser-level (dock mounts, mint fires, engine
+  gating) + owner mic-in-hand dogfood for the audio path.
+
+### Original survey (for context)
+
+The upstream client seam was exact and small:
 
 - `useRealtimeVoiceMode.tsx` keeps a module-private
   `RealtimeVoiceModeContext` + `RealtimeVoiceModeProvider` that (a) runs the

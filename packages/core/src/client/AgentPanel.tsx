@@ -100,7 +100,7 @@ import {
   AGENT_CHAT_VIEW_TRANSITION_CLASS,
   getAgentChatViewTransitionStyle,
 } from "./chat-view-transition.js";
-import { RealtimeVoiceModeProvider } from "./composer/useRealtimeVoiceMode.js";
+import { RealtimeVoiceEngineProvider } from "./composer/RealtimeVoiceEngineProvider.js";
 import {
   getFramePostMessageTargetOrigin,
   isTrustedFrameMessage,
@@ -3189,7 +3189,7 @@ export function AgentSidebar({
   ) : null;
 
   return (
-    <RealtimeVoiceModeProvider browserTabId={browserTabId}>
+    <RealtimeVoiceEngineProvider browserTabId={browserTabId}>
       <div
         className="agent-sidebar-shell flex min-w-0 flex-1 h-screen overflow-hidden"
         data-agent-sidebar-position={position}
@@ -3233,7 +3233,7 @@ export function AgentSidebar({
         </div>
         {!isLeft && !presentationMode ? sidebar : null}
       </div>
-    </RealtimeVoiceModeProvider>
+    </RealtimeVoiceEngineProvider>
   );
 }
 

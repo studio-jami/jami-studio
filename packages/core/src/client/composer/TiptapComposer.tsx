@@ -69,6 +69,7 @@ import {
   readClipboardPaste,
   shouldConvertClipboardToAttachment,
 } from "./pasted-text.js";
+import { RealtimeVoiceEngineBoundary } from "./RealtimeVoiceEngineProvider.js";
 import type {
   MentionItem,
   SkillResult,
@@ -79,7 +80,6 @@ import type {
 } from "./types.js";
 import { useMentionSearch } from "./use-mention-search.js";
 import { useSkills } from "./use-skills.js";
-import { RealtimeVoiceModeBoundary } from "./useRealtimeVoiceMode.js";
 import { useVoiceDictation } from "./useVoiceDictation.js";
 import { VoiceButton, VoiceRecordingOverlay } from "./VoiceButton.js";
 export interface TiptapComposerHandle {
@@ -2607,7 +2607,7 @@ export function TiptapComposer({
   }, [editor, disabled]);
 
   return (
-    <RealtimeVoiceModeBoundary>
+    <RealtimeVoiceEngineBoundary>
       <style>{`
         .aui-composer .ProseMirror p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
@@ -2793,6 +2793,6 @@ export function TiptapComposer({
         onSelectCommand={handleSelectCommand}
         onClose={closePopover}
       />
-    </RealtimeVoiceModeBoundary>
+    </RealtimeVoiceEngineBoundary>
   );
 }

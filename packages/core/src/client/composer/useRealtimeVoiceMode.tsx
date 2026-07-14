@@ -29,15 +29,19 @@ import { realtimeVoiceTranscriptRegistry } from "./realtime-voice-transcript.js"
 import {
   RealtimeVoiceModeDock,
   type RealtimeVoiceModeCopy,
+  type RealtimeVoiceModeInlineSettings,
   type RealtimeVoiceModeState,
 } from "./RealtimeVoiceMode.js";
 
-const REALTIME_VOICE_STATE_KEY = "realtime-voice-session";
+// Shared with sibling engine implementations (useElevenLabsRealtimeVoiceMode)
+// so every engine reports through the same app-state key and trust headers.
+export const REALTIME_VOICE_STATE_KEY = "realtime-voice-session";
 const REALTIME_VOICE_PREFERENCES_KEY = "realtime-voice-prefs";
-const REALTIME_VOICE_REQUEST_SOURCE = "realtime-voice";
+export const REALTIME_VOICE_REQUEST_SOURCE = "realtime-voice";
 const REALTIME_VOICE_SESSION_PATH = "/_agent-native/realtime-voice/session";
 const REALTIME_VOICE_TOOL_PATH = "/_agent-native/realtime-voice/tool";
-const REALTIME_VOICE_CAPABILITY_HEADER = "X-Agent-Native-Realtime-Capability";
+export const REALTIME_VOICE_CAPABILITY_HEADER =
+  "X-Agent-Native-Realtime-Capability";
 const REALTIME_VOICE_CONNECTION_TIMEOUT_MS = 15_000;
 const REALTIME_VOICE_MAX_TOOLS = 32;
 const REALTIME_VOICE_MAX_TOOL_SCHEMA_BYTES = 32_000;
@@ -204,7 +208,7 @@ export async function replaceRealtimeVoiceMicrophone(options: {
   }
 }
 
-function readRealtimeVoiceMicrophoneId(): string {
+export function readRealtimeVoiceMicrophoneId(): string {
   if (typeof window === "undefined") return "default";
   try {
     return (
@@ -216,7 +220,7 @@ function readRealtimeVoiceMicrophoneId(): string {
   }
 }
 
-function writeRealtimeVoiceMicrophoneId(deviceId: string): void {
+export function writeRealtimeVoiceMicrophoneId(deviceId: string): void {
   try {
     window.localStorage.setItem(
       REALTIME_VOICE_MICROPHONE_STORAGE_KEY,
@@ -1097,7 +1101,7 @@ export function useRealtimeVoiceModeCopy(): RealtimeVoiceModeCopy {
   return useMemo(() => voiceCopy(t), [t]);
 }
 
-function useRealtimeVoiceModeController(
+export function useRealtimeVoiceModeController(
   browserTabId?: string,
   copy?: RealtimeVoiceModeCopy,
 ): RealtimeVoiceModeApi {
@@ -1927,21 +1931,25 @@ function useRealtimeVoiceModeController(
   };
 }
 
-const RealtimeVoiceModeContext = createContext<RealtimeVoiceModeApi | null>(
-  null,
-);
+/**
+ * Exported so sibling engine providers (ElevenLabs Agent Mode, future
+ * gemini-live) can feed the SAME consumer surface — AgentPanel,
+ * TiptapComposer, and VoiceButton read this context regardless of which
+ * engine owns the live conversation.
+ */
+export const RealtimeVoiceModeContext =
+  createContext<RealtimeVoiceModeApi | null>(null);
 
-export function RealtimeVoiceModeProvider({
-  children,
-  browserTabId,
-}: RealtimeVoiceModeProviderProps) {
-  const resolvedBrowserTabId = useMemo(
-    () => browserTabId ?? getBrowserTabId(),
-    [browserTabId],
-  );
-  const copy = useRealtimeVoiceModeCopy();
-  const voice = useRealtimeVoiceModeController(resolvedBrowserTabId, copy);
-  const inlineSettings = useMemo(
+/**
+ * OpenAI-engine dock settings: microphone plus the OpenAI-owned language,
+ * intelligence, and voice-style preferences. Extracted so engine dispatchers
+ * can build the same settings without mounting RealtimeVoiceModeProvider.
+ */
+export function useRealtimeVoiceInlineSettings(
+  voice: RealtimeVoiceModeApi,
+  copy: RealtimeVoiceModeCopy,
+): RealtimeVoiceModeInlineSettings {
+  return useMemo(
     () => ({
       dialogLabel: copy.voiceSettings,
       ...(voice.voiceChangePending
@@ -2012,6 +2020,19 @@ export function RealtimeVoiceModeProvider({
     }),
     [copy, voice],
   );
+}
+
+export function RealtimeVoiceModeProvider({
+  children,
+  browserTabId,
+}: RealtimeVoiceModeProviderProps) {
+  const resolvedBrowserTabId = useMemo(
+    () => browserTabId ?? getBrowserTabId(),
+    [browserTabId],
+  );
+  const copy = useRealtimeVoiceModeCopy();
+  const voice = useRealtimeVoiceModeController(resolvedBrowserTabId, copy);
+  const inlineSettings = useRealtimeVoiceInlineSettings(voice, copy);
 
   return (
     <RealtimeVoiceModeContext.Provider value={voice}>
@@ -2061,7 +2082,7 @@ export function RealtimeVoiceModeBoundary({
 }
 
 /** Hide a composer while voice owns input; the dock can reveal it on demand. */
-function RealtimeVoiceModeComposerSurface({
+export function RealtimeVoiceModeComposerSurface({
   children,
 }: Pick<RealtimeVoiceModeProviderProps, "children">) {
   const voice = useRealtimeVoiceModeOptional();

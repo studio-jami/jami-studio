@@ -52,12 +52,11 @@ export function isRealtimeVoiceSetupRequired(
   status: VoiceProviderStatus | null,
   builderConfigured: boolean | null,
 ): boolean {
-  return (
-    status !== null &&
-    !status.builder &&
-    !status.openai &&
-    builderConfigured !== true
-  );
+  if (status === null) return false;
+  // ElevenLabs Agent Mode deployments gate on the ElevenLabs key only; the
+  // Builder/OpenAI connect flow is the OpenAI engine's setup surface.
+  if (status.defaultEngine === "elevenlabs-agent") return !status.elevenlabs;
+  return !status.builder && !status.openai && builderConfigured !== true;
 }
 
 export function VoiceButton({ voice, isMac, disabled }: VoiceButtonProps) {

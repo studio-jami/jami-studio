@@ -1,5 +1,31 @@
 # @agent-native/core
 
+## 0.99.13
+
+### Patch Changes
+
+- Fix ElevenLabs voice mode freezing at "connecting": the audio-meter helper
+  returned a new object every render, re-keying the transport cleanup effect so
+  the idle→connecting re-render aborted the in-flight session mint. The meter
+  handle is now referentially stable; regression spec renders the controller
+  and asserts the mint's AbortSignal survives the transition.
+
+## 0.99.12
+
+### Patch Changes
+
+- ElevenLabs Agent Mode client engine (voice slice, client half): new sibling
+  hook `useElevenLabsRealtimeVoiceMode` implements the shared
+  `RealtimeVoiceModeApi` on `@elevenlabs/client` WebRTC conversations (session
+  mint + capability-header client-tool relay to the ElevenLabs tool route,
+  transcripts into the chat thread, mic-only dock settings), a
+  `RealtimeVoiceEngineProvider`/`RealtimeVoiceEngineBoundary` dispatcher that
+  reads `defaultEngine` from `/_agent-native/voice-providers/status` and serves
+  the shared `RealtimeVoiceModeContext` without remounting the app shell, and
+  engine-aware voice-entry setup gating (`elevenlabs` key for
+  `elevenlabs-agent` deployments). Dock inline settings now accept a
+  microphone-only surface for engines that pin voice/language server-side.
+
 ## 0.99.11
 
 ### Patch Changes

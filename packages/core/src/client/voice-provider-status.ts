@@ -5,6 +5,10 @@ import { agentNativePath } from "./api-path.js";
 export interface VoiceProviderStatus {
   builder: boolean;
   openai: boolean;
+  /** ElevenLabs Agent Mode realtime voice engine (ELEVENLABS_API_KEY). */
+  elevenlabs: boolean;
+  /** Deployment-owned realtime voice engine selector (REALTIME_VOICE_ENGINE). */
+  defaultEngine: "openai-realtime" | "elevenlabs-agent";
 }
 
 export async function getVoiceProviderStatus(): Promise<VoiceProviderStatus> {
@@ -16,7 +20,15 @@ export async function getVoiceProviderStatus(): Promise<VoiceProviderStatus> {
     throw new Error(`Voice provider status unavailable (${response.status})`);
   }
   const status = (await response.json()) as Partial<VoiceProviderStatus>;
-  return { builder: status.builder === true, openai: status.openai === true };
+  return {
+    builder: status.builder === true,
+    openai: status.openai === true,
+    elevenlabs: status.elevenlabs === true,
+    defaultEngine:
+      status.defaultEngine === "elevenlabs-agent"
+        ? "elevenlabs-agent"
+        : "openai-realtime",
+  };
 }
 
 export function useVoiceProviderStatus() {

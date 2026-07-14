@@ -51,6 +51,20 @@ export {
   type RealtimeVoiceToolResult,
 } from "./useRealtimeVoiceMode.js";
 export {
+  createElevenLabsRealtimeVoiceSession,
+  ElevenLabsRealtimeVoiceModeProvider,
+  executeElevenLabsRealtimeVoiceTool,
+  useElevenLabsRealtimeVoiceModeController,
+  type ElevenLabsRealtimeVoiceSession,
+  type ElevenLabsRealtimeVoiceToolResult,
+} from "./useElevenLabsRealtimeVoiceMode.js";
+export {
+  RealtimeVoiceEngineBoundary,
+  RealtimeVoiceEngineProvider,
+  resolveRealtimeVoiceEngineName,
+  type RealtimeVoiceEngineName,
+} from "./RealtimeVoiceEngineProvider.js";
+export {
   AGENT_PROMPT_MAX_INLINE_IMAGE_BYTES,
   AGENT_PROMPT_MAX_INLINE_TEXT_CHARS,
   escapePromptAttachmentAttribute,
