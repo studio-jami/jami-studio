@@ -1,5 +1,47 @@
 # Vercel setup — marketing + docs (jami.studio)
 
+> **ACTIVE CUTOVER (2026-07-14) — kill the legacy docs .vercel.app domain**
+>
+> Owner decision: the docs project must not be reachable at
+> `https://jami-studio-docs.vercel.app` — no redirect, delete outright. The
+> public canonical stays `https://www.jami.studio/docs`; the marketing
+> fallback rewrite needs an origin host, which becomes
+> `docs-origin.jami.studio` (proxy plumbing only; docs pages already emit
+> `www.jami.studio` canonicals).
+>
+> Staged so far (this session):
+>
+> - `docs-origin.jami.studio` ADDED + verified on Vercel project
+>   `jami-studio-docs` (`_ops/scripts/vercel-docs-origin-cutover.mjs`).
+> - Cloudflare CNAME creation scripted
+>   (`_ops/scripts/cf-docs-origin-dns.mjs`) but BLOCKED: the
+>   `CLOUDFLARE_API_TOKEN` in agent-env.json has NO DNS read/write on the
+>   `jami.studio` zone (403; zone id `8a87b2fcc38441f903c076e5891ee8ef`).
+>
+> Finish runbook (in order — do not reorder, live /docs depends on it):
+>
+> 1. **Owner (one manual step)**: EITHER grant the existing
+>    `CLOUDFLARE_API_TOKEN` `Zone → DNS → Edit` on `jami.studio` and run
+>    `node _ops/scripts/cf-docs-origin-dns.mjs`, OR add the record in the
+>    CF dashboard: CNAME `docs-origin` → `cname.vercel-dns.com`,
+>    proxy OFF (DNS-only/grey cloud).
+> 2. Verify `https://docs-origin.jami.studio/docs` returns 200 (Vercel
+>    issues the cert automatically once DNS resolves; give it a minute).
+> 3. Flip `DOCS_ORIGIN` in `packages/marketing/next.config.mjs` to
+>    `https://docs-origin.jami.studio`, commit + push (auto-deploys
+>    marketing), verify `https://www.jami.studio/docs` 200 and a deep docs
+>    page renders.
+> 4. Delete the legacy domain — no redirect:
+>    `node _ops/scripts/vercel-docs-origin-cutover.mjs --delete-legacy`,
+>    then verify `https://jami-studio-docs.vercel.app` no longer serves
+>    (DEPLOYMENT_NOT_FOUND / cert error is the expected end state).
+> 5. Optional hardening (ONLY after step 4): enable Standard Protection on
+>    the docs project so per-deployment `jami-studio-docs-*.vercel.app`
+>    URLs are auth-gated too. Custom domains are unaffected — but never
+>    enable this while the marketing proxy still targets a `.vercel.app`
+>    host, or live `/docs` breaks.
+> 6. Update the Topology section below to match (drop this banner).
+>
 > **Return-to TODO (web presence — separate from hummingbird dev work)**
 >
 > 1. [ ] **og-image deploy lane**: move the docs project off Vercel's
