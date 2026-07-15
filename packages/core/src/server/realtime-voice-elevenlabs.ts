@@ -13,7 +13,6 @@ import { resolveSecret } from "./credential-provider.js";
 import { getH3App } from "./framework-request-handler.js";
 import {
   authenticateVoiceRequest,
-  buildInstructions,
   buildRealtimeTools,
   createToolHandler,
   packRealtimeTools,
@@ -39,10 +38,6 @@ export const ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME = "run-active-agent-turn";
 export const ELEVENLABS_VOICE_THREAD_HEADER = "X-Agent-Native-Voice-Thread";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io";
-const DEFAULT_AGENT_NAME = "Jami Voice";
-const DEFAULT_LLM = "gemini-2.5-flash";
-/** ElevenLabs voice ids are short base62 tokens, not UUIDs. */
-const ELEVENLABS_VOICE_ID_SHAPE = /^[A-Za-z0-9]{16,32}$/;
 const ELEVENLABS_AGENT_ID_SHAPE = /^[A-Za-z0-9_-]{1,128}$/;
 const VOICE_THREAD_ID_SHAPE = /^[A-Za-z0-9_.:-]{1,256}$/;
 
@@ -76,29 +71,6 @@ const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
  * Owner-ratified seamless-UX north star: questions are answered headlessly;
  * navigation happens only on explicit user intent.
  */
-export const ELEVENLABS_BRIDGE_GUIDANCE =
-  "Answering questions must never disrupt the user's screen. To answer a " +
-  "request to do work in this app, use run-active-agent-turn and pass the " +
-  "user's request exactly enough for the app agent to complete it. That agent " +
-  "has the app's normal tools and must confirm the result before you speak it. " +
-  "To answer a question about data in another app (schedule, mail, forms, " +
-  "analytics, etc.), use the call-agent tool to ask that other app's agent " +
-  "directly and speak a concise answer — do NOT navigate. Only use navigate, " +
-  "set-url-path, or set-search-params when the user explicitly asks to go " +
-  "somewhere, open something, or be shown something. Only use view-screen " +
-  "when the user asks about what is currently visible. While waiting on a " +
-  "delegated answer, keep the user informed briefly; never invent results.";
-
-const CLIENT_EVENTS = [
-  "audio",
-  "interruption",
-  "user_transcript",
-  "agent_response",
-  "agent_response_correction",
-  "client_tool_call",
-  "vad_score",
-];
-
 /**
  * ElevenLabs treats `prompt.tools` as the COMPLETE tool list (client +
  * system together); a separate `built_in_tools` map is ignored whenever
@@ -118,16 +90,13 @@ export interface MountElevenLabsRealtimeVoiceRoutesOptions extends Pick<
   MountRealtimeVoiceRoutesOptions,
   "instructions" | "getInstructions" | "resolveOrgId" | "executeTool"
 > {
-  /** Display name pushed to the ElevenLabs agent. */
+  /** @deprecated Configure the agent name in ElevenLabs. */
   agentName?: string;
-  /** Conversational LLM slot (decision #7: Gemini Flash default). */
+  /** @deprecated Configure the conversational LLM in ElevenLabs. */
   llm?: string;
-  /** ISO 639-1 language for ASR/TTS. Defaults to en. */
+  /** @deprecated Configure language in ElevenLabs. */
   language?: string;
-  /**
-   * ElevenLabs voice id override. Applied only when it matches the
-   * ElevenLabs id shape; otherwise the agent's existing voice is preserved.
-   */
+  /** @deprecated Configure the voice in ElevenLabs. */
   voiceId?: string;
   /** Bridge allow-list of action names exposed as client tools. */
   toolAllowList?: readonly string[];
@@ -224,58 +193,21 @@ export function elevenLabsClientToolFromRealtimeTool(
   };
 }
 
-export function buildElevenLabsAgentPayload(input: {
-  name: string;
-  instructions: string;
-  llm: string;
-  language: string;
-  voiceId?: string;
+/**
+ * The workspace owns only the client-tool contract. Personality, prompt,
+ * voice, LLM, language, turn-taking, privacy, and all other agent settings
+ * remain editable in ElevenLabs and are never overwritten at session mint.
+ */
+export function buildElevenLabsClientToolsPayload(input: {
   clientTools: Record<string, unknown>[];
 }): Record<string, unknown> {
   return {
-    name: input.name,
-    tags: ["agent-native"],
     conversation_config: {
       agent: {
-        first_message: "",
-        language: input.language,
         prompt: {
-          prompt: input.instructions,
-          llm: input.llm,
-          temperature: 0.3,
           tools: [...input.clientTools, ...SYSTEM_TOOLS],
         },
       },
-      // Engine tuning matched to the proven prototype agent (2026-06-26
-      // capabilities probe): expressive v3 conversational voice, low-latency
-      // speculative turns, and a bounded silence hangup so abandoned
-      // sessions do not burn credits.
-      turn: {
-        speculative_turn: true,
-        silence_end_call_timeout: 60,
-      },
-      tts: {
-        model_id: "eleven_v3_conversational",
-        expressive_mode: true,
-        stability: 0.6,
-        speed: 1.05,
-        similarity_boost: 0.8,
-        ...(input.voiceId && ELEVENLABS_VOICE_ID_SHAPE.test(input.voiceId)
-          ? { voice_id: input.voiceId }
-          : {}),
-      },
-      conversation: {
-        client_events: CLIENT_EVENTS,
-      },
-    },
-    platform_settings: {
-      auth: { enable_auth: true },
-      // This agent serves the signed-in workspace owner through our
-      // authenticated session mint, never anonymous external callers.
-      trust_context: "high",
-      // Durable rule: no unbounded data stream. Voice transcripts/audio on
-      // the provider side expire like our own event retention windows.
-      privacy: { retention_days: 30 },
     },
   };
 }
@@ -291,7 +223,6 @@ async function safeElevenLabsErrorDetail(
 }
 
 interface ElevenLabsSessionState {
-  agentId?: string;
   lastPushedConfigHash?: string;
 }
 
@@ -310,7 +241,7 @@ async function pushAgentConfig(input: {
 }): Promise<{ agentId: string } | { error: string; status: number }> {
   const serialized = JSON.stringify(input.payload);
   const configHash = `${input.configuredAgentId ?? ""}:${serialized.length}:${serialized}`;
-  const agentId = input.configuredAgentId ?? input.state.agentId;
+  const agentId = input.configuredAgentId;
 
   if (agentId && input.state.lastPushedConfigHash === configHash) {
     return { agentId };
@@ -333,41 +264,15 @@ async function pushAgentConfig(input: {
         status: 502,
       };
     }
-    input.state.agentId = agentId;
     input.state.lastPushedConfigHash = configHash;
     return { agentId };
   }
 
-  const response = await fetch(
-    `${ELEVENLABS_API_BASE}/v1/convai/agents/create`,
-    { method: "POST", headers, body: serialized },
-  );
-  if (!response.ok) {
-    const detail = await safeElevenLabsErrorDetail(response, input.apiKey);
-    return {
-      error: `ElevenLabs rejected agent creation (${response.status})${detail ? `: ${detail}` : ""}`,
-      status: 502,
-    };
-  }
-  const created = (await response.json().catch(() => null)) as {
-    agent_id?: unknown;
-  } | null;
-  const createdAgentId =
-    typeof created?.agent_id === "string" ? created.agent_id : null;
-  if (!createdAgentId) {
-    return {
-      error: "ElevenLabs returned no agent id for the created voice agent",
-      status: 502,
-    };
-  }
-  console.warn(
-    `[realtime-voice-elevenlabs] Created ElevenLabs agent ${createdAgentId}. ` +
-      "Pin it with the ELEVENLABS_AGENT_ID secret to keep config-as-code " +
-      "pushes targeting one durable agent.",
-  );
-  input.state.agentId = createdAgentId;
-  input.state.lastPushedConfigHash = configHash;
-  return { agentId: createdAgentId };
+  return {
+    error:
+      "Configure ELEVENLABS_AGENT_ID with the agent you manage in ElevenLabs before starting voice mode.",
+    status: 409,
+  };
 }
 
 function invalidMethod(event: H3Event): { error: string } {
@@ -425,18 +330,7 @@ function createElevenLabsSessionHandler(
             ? configuredAgentIdRaw
             : undefined;
 
-        const instructions = await buildInstructions(auth, options);
-        const configuredVoiceId =
-          options.voiceId?.trim() ||
-          (await resolveSecret("ELEVENLABS_VOICE_ID"))?.trim();
-        const payload = buildElevenLabsAgentPayload({
-          name: options.agentName?.trim() || DEFAULT_AGENT_NAME,
-          instructions: `${instructions}\n\n${ELEVENLABS_BRIDGE_GUIDANCE}`,
-          llm: options.llm?.trim() || DEFAULT_LLM,
-          language: options.language?.trim().toLowerCase() || "en",
-          ...(configuredVoiceId ? { voiceId: configuredVoiceId } : {}),
-          clientTools,
-        });
+        const payload = buildElevenLabsClientToolsPayload({ clientTools });
 
         let pushed: Awaited<ReturnType<typeof pushAgentConfig>>;
         try {

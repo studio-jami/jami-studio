@@ -8,9 +8,10 @@
  * the client-tool relay back to our authenticated tool route (capability
  * header trust model), transcripts, app-state sync, and dock state.
  *
- * Engine-owned settings (voice, language, LLM tier) are pinned server-side
- * by the config-as-code push at session mint, so the preference setters here
- * are deliberate no-ops and the dock gets a microphone-only settings surface.
+ * ElevenLabs owns voice, language, LLM tier, personality, and conversation
+ * settings. The workspace updates only the client-tool contract at mint, so
+ * the preference setters here are deliberate no-ops and the dock gets a
+ * microphone-only settings surface.
  *
  * Design note: jami-studio
  * `_ops/planning/roadmaps/real-time/2026-07-13-voice-adapter-interface.md`.
@@ -749,8 +750,8 @@ export function useElevenLabsRealtimeVoiceModeController(
     errorMessage: error,
     chatVisible,
     audioLevels,
-    // ElevenLabs pins language, LLM tier, and voice server-side via the
-    // config-as-code push at mint; these preferences are display-inert here.
+    // Configure language, LLM tier, voice, and personality in ElevenLabs;
+    // these workspace settings are deliberately display-inert.
     preferences: DEFAULT_REALTIME_VOICE_PREFERENCES,
     microphones,
     microphoneDeviceId,
@@ -768,8 +769,8 @@ export function useElevenLabsRealtimeVoiceModeController(
 }
 
 /**
- * Microphone-only dock settings: every other knob is engine-owned and pinned
- * at session mint by the server module.
+ * Microphone-only dock settings: configure every other voice setting in
+ * ElevenLabs, where it remains under the operator's direct control.
  */
 export function useElevenLabsRealtimeVoiceInlineSettings(
   voice: RealtimeVoiceModeApi,

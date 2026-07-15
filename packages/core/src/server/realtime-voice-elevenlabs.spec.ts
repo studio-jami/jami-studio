@@ -54,7 +54,7 @@ vi.mock("../agent/production-agent.js", () => ({
 
 import type { ActionEntry } from "../agent/production-agent.js";
 import {
-  buildElevenLabsAgentPayload,
+  buildElevenLabsClientToolsPayload,
   ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
   ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST,
   ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
@@ -208,27 +208,11 @@ describe("elevenLabsClientToolFromRealtimeTool", () => {
   });
 });
 
-describe("buildElevenLabsAgentPayload", () => {
-  it("builds config-as-code payload with prompt, llm, and client tools", () => {
-    const payload = buildElevenLabsAgentPayload({
-      name: "Jami Voice",
-      instructions: "Speak briefly.",
-      llm: "gemini-2.5-flash",
-      language: "en",
-      voiceId: "mWqiTfcp72MprLxlUR8h",
+describe("buildElevenLabsClientToolsPayload", () => {
+  it("updates only the code-owned client and system tool contract", () => {
+    const payload = buildElevenLabsClientToolsPayload({
       clientTools: [{ type: "client", name: "navigate" }],
     }) as any;
-    expect(payload.name).toBe("Jami Voice");
-    expect(payload.conversation_config.agent.prompt.llm).toBe(
-      "gemini-2.5-flash",
-    );
-    expect(payload.conversation_config.tts.voice_id).toBe(
-      "mWqiTfcp72MprLxlUR8h",
-    );
-    expect(payload.conversation_config.tts.model_id).toBe(
-      "eleven_v3_conversational",
-    );
-    expect(payload.conversation_config.turn.speculative_turn).toBe(true);
     // prompt.tools is the COMPLETE list: client bridge tools + system tools.
     expect(
       payload.conversation_config.agent.prompt.tools.map(
@@ -243,24 +227,13 @@ describe("buildElevenLabsAgentPayload", () => {
     expect(
       payload.conversation_config.agent.prompt.built_in_tools,
     ).toBeUndefined();
-    expect(payload.platform_settings.auth.enable_auth).toBe(true);
-    expect(payload.platform_settings.trust_context).toBe("high");
-    expect(payload.platform_settings.privacy.retention_days).toBe(30);
-  });
-
-  it("omits tts override for non-ElevenLabs-shaped voice ids", () => {
-    const payload = buildElevenLabsAgentPayload({
-      name: "Jami Voice",
-      instructions: "x",
-      llm: "gemini-2.5-flash",
-      language: "en",
-      voiceId: "a0337b67-0000-0000-0000-b3fb78cdda35",
-      clientTools: [],
-    }) as any;
-    expect(payload.conversation_config.tts.voice_id).toBeUndefined();
-    expect(payload.conversation_config.tts.model_id).toBe(
-      "eleven_v3_conversational",
-    );
+    expect(payload.name).toBeUndefined();
+    expect(payload.conversation_config.agent.language).toBeUndefined();
+    expect(payload.conversation_config.agent.prompt.llm).toBeUndefined();
+    expect(payload.conversation_config.agent.prompt.prompt).toBeUndefined();
+    expect(payload.conversation_config.tts).toBeUndefined();
+    expect(payload.conversation_config.turn).toBeUndefined();
+    expect(payload.platform_settings).toBeUndefined();
   });
 });
 
@@ -279,7 +252,7 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
     expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain("call-agent");
   });
 
-  it("mints a session: config push, token, capability header, tool names", async () => {
+  it("mints a session: updates client tools without overwriting dashboard settings", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")
       .mockImplementation(async (input: any) => {
@@ -340,10 +313,13 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
         (t: any) => t.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
       );
     expect(activeAgentTurnTool.response_timeout_secs).toBe(120);
-    // Seamless-UX north star rides in every pushed instruction set.
-    expect(pushed.conversation_config.agent.prompt.prompt).toContain(
-      "never disrupt the user's screen",
-    );
+    expect(pushed.name).toBeUndefined();
+    expect(pushed.conversation_config.agent.language).toBeUndefined();
+    expect(pushed.conversation_config.agent.prompt.llm).toBeUndefined();
+    expect(pushed.conversation_config.agent.prompt.prompt).toBeUndefined();
+    expect(pushed.conversation_config.tts).toBeUndefined();
+    expect(pushed.conversation_config.turn).toBeUndefined();
+    expect(pushed.platform_settings).toBeUndefined();
     // Second mint with unchanged config skips the PATCH (config-hash guard).
     fetchMock.mockClear();
     await handler(fakeEvent());

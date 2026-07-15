@@ -1,5 +1,11 @@
 # @agent-native/core
 
+## 0.99.16
+
+### Patch Changes
+
+- Leave ElevenLabs personality, voice, LLM, language, and conversation configuration under dashboard control while updating only the authenticated client-tool contract.
+
 ## 0.99.15
 
 ### Patch Changes
