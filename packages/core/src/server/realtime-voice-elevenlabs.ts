@@ -1,5 +1,6 @@
 import {
   defineEventHandler,
+  getHeader,
   getMethod,
   setResponseHeader,
   setResponseStatus,
@@ -29,6 +30,13 @@ export const ELEVENLABS_REALTIME_VOICE_SESSION_PATH =
   "/_agent-native/realtime-voice/elevenlabs/session";
 export const ELEVENLABS_REALTIME_VOICE_TOOL_PATH =
   "/_agent-native/realtime-voice/elevenlabs/tool";
+/**
+ * Sends a bounded spoken request through the current app's regular agent-chat
+ * handler. It is intentionally distinct from call-agent, which is external
+ * A2A only and must never recurse into the current app.
+ */
+export const ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME = "run-active-agent-turn";
+export const ELEVENLABS_VOICE_THREAD_HEADER = "X-Agent-Native-Voice-Thread";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io";
 const DEFAULT_AGENT_NAME = "Jami Voice";
@@ -36,27 +44,30 @@ const DEFAULT_LLM = "gemini-2.5-flash";
 /** ElevenLabs voice ids are short base62 tokens, not UUIDs. */
 const ELEVENLABS_VOICE_ID_SHAPE = /^[A-Za-z0-9]{16,32}$/;
 const ELEVENLABS_AGENT_ID_SHAPE = /^[A-Za-z0-9_-]{1,128}$/;
+const VOICE_THREAD_ID_SHAPE = /^[A-Za-z0-9_.:-]{1,256}$/;
 
 /**
  * ElevenLabs sessions cannot expand their tool manifest mid-conversation the
  * way the OpenAI path can via session.update, so tool-search discovery is
  * excluded and the default bridge allow-list is the bounded navigation set
- * plus call-agent — the headless read/delegate channel that answers
- * questions without touching the user's screen (seamless-UX north star).
+ * plus a bounded handoff to the current app's ordinary agent. call-agent is
+ * retained only for external A2A delegation; it can never run the current app.
  */
 export const ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST = [
   "navigate",
   "set-url-path",
   "set-search-params",
   "view-screen",
+  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
   "call-agent",
 ] as const;
 
 /**
- * call-agent delegates to a sibling app's full agent run — give it the
- * ElevenLabs client-tool maximum instead of the 30s default.
+ * A current-app agent turn and external call-agent delegation can both run
+ * longer than ElevenLabs' default client-tool timeout.
  */
 const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
+  [ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME]: 120,
   "call-agent": 120,
 };
 
@@ -67,9 +78,12 @@ const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
  */
 export const ELEVENLABS_BRIDGE_GUIDANCE =
   "Answering questions must never disrupt the user's screen. To answer a " +
-  "question about data in another app (schedule, mail, forms, analytics, " +
-  "etc.), use the call-agent tool to ask that app's agent directly and " +
-  "speak a concise answer — do NOT navigate. Only use navigate, " +
+  "request to do work in this app, use run-active-agent-turn and pass the " +
+  "user's request exactly enough for the app agent to complete it. That agent " +
+  "has the app's normal tools and must confirm the result before you speak it. " +
+  "To answer a question about data in another app (schedule, mail, forms, " +
+  "analytics, etc.), use the call-agent tool to ask that other app's agent " +
+  "directly and speak a concise answer — do NOT navigate. Only use navigate, " +
   "set-url-path, or set-search-params when the user explicitly asks to go " +
   "somewhere, open something, or be shown something. Only use view-screen " +
   "when the user asks about what is currently visible. While waiting on a " +
@@ -281,6 +295,13 @@ interface ElevenLabsSessionState {
   lastPushedConfigHash?: string;
 }
 
+function readVoiceThreadId(event: H3Event): string | undefined {
+  const value = getHeader(event, ELEVENLABS_VOICE_THREAD_HEADER);
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return VOICE_THREAD_ID_SHAPE.test(trimmed) ? trimmed : undefined;
+}
+
 async function pushAgentConfig(input: {
   apiKey: string;
   state: ElevenLabsSessionState;
@@ -474,6 +495,7 @@ function createElevenLabsSessionHandler(
             capabilities,
             auth,
             tools.map((tool) => tool.name),
+            { threadId: readVoiceThreadId(event) },
           ),
         );
         return {

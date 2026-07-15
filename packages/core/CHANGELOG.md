@@ -1,5 +1,11 @@
 # @agent-native/core
 
+## 0.99.15
+
+### Patch Changes
+
+- Route ElevenLabs voice requests through the active app's normal agent turn so voice can safely complete app actions such as calendar event creation.
+
 ## 0.99.14
 
 ### Patch Changes

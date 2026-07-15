@@ -100,6 +100,11 @@ export interface RealtimeVoiceToolExecutionRequest extends RealtimeVoiceRequestC
   args: Record<string, unknown>;
   callId: string;
   sessionId?: string;
+  /**
+   * The chat thread captured when the voice session began. This is minted into
+   * the capability at session creation, never accepted from a later tool call.
+   */
+  threadId?: string;
 }
 
 export interface RealtimeVoiceToolExecutionResult {
@@ -146,6 +151,7 @@ interface RealtimeToolCapability {
   userEmail: string;
   orgId?: string;
   browserTabId?: string;
+  threadId?: string;
   expiresAt: number;
   initialNames: Set<string>;
   names: Set<string>;
@@ -383,6 +389,7 @@ function registerRealtimeToolCapability(
   capabilities: RealtimeToolCapabilityStore,
   auth: AuthenticatedVoiceContext,
   initialNames: Iterable<string>,
+  options: { threadId?: string } = {},
 ): string {
   cleanRealtimeToolCapabilities(capabilities);
   const token = mintRealtimeToolCapability();
@@ -390,6 +397,7 @@ function registerRealtimeToolCapability(
     userEmail: auth.userEmail.trim().toLowerCase(),
     ...(auth.orgId ? { orgId: auth.orgId } : {}),
     ...(auth.browserTabId ? { browserTabId: auth.browserTabId } : {}),
+    ...(options.threadId ? { threadId: options.threadId } : {}),
     expiresAt: Date.now() + REALTIME_VOICE_TOOL_GRANT_TTL_MS,
     initialNames: new Set(initialNames),
     names: new Set(),
@@ -914,6 +922,7 @@ function createToolHandler(
               userEmail: auth.userEmail,
               orgId: auth.orgId,
               ...request,
+              ...(capability.threadId ? { threadId: capability.threadId } : {}),
               ...(browserTabId ? { browserTabId } : {}),
             }),
           );

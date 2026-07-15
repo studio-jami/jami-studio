@@ -55,6 +55,7 @@ vi.mock("../agent/production-agent.js", () => ({
 import type { ActionEntry } from "../agent/production-agent.js";
 import {
   buildElevenLabsAgentPayload,
+  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
   ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST,
   ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
   ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
@@ -104,6 +105,17 @@ const ENGINE_TOOLS = [
     name: "view-screen",
     description: "Describe the visible screen",
     inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+    description: "Send the spoken request to the current app agent",
+    inputSchema: {
+      type: "object",
+      properties: {
+        request: { type: "string", description: "Spoken request" },
+      },
+      required: ["request"],
+    },
   },
   {
     name: "call-agent",
@@ -260,6 +272,9 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
     ]);
     expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).not.toContain("tool-search");
+    expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain(
+      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+    );
     // Read-first bridge: call-agent is the headless answer/delegate channel.
     expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain("call-agent");
   });
@@ -289,7 +304,12 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       token: "el-token",
       agentId: "agent_abc123",
     });
-    expect(body.toolNames).toEqual(["navigate", "view-screen", "call-agent"]);
+    expect(body.toolNames).toEqual([
+      "navigate",
+      "view-screen",
+      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+      "call-agent",
+    ]);
     expect(event.responseHeaders[REALTIME_VOICE_CAPABILITY_HEADER]).toMatch(
       /^[a-f0-9]{32}$/,
     );
@@ -304,6 +324,7 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
     ).toEqual([
       "navigate",
       "view-screen",
+      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
       "call-agent",
       "end_call",
       "skip_turn",
@@ -314,6 +335,11 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       (t: any) => t.name === "call-agent",
     );
     expect(callAgentTool.response_timeout_secs).toBe(120);
+    const activeAgentTurnTool =
+      pushed.conversation_config.agent.prompt.tools.find(
+        (t: any) => t.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+      );
+    expect(activeAgentTurnTool.response_timeout_secs).toBe(120);
     // Seamless-UX north star rides in every pushed instruction set.
     expect(pushed.conversation_config.agent.prompt.prompt).toContain(
       "never disrupt the user's screen",
@@ -326,6 +352,54 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
         String(input).includes("/v1/convai/agents/agent_abc123"),
       ),
     ).toHaveLength(0);
+  });
+
+  it("binds the active chat thread at session mint instead of trusting a later tool call", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input: any) => {
+      const url = String(input);
+      if (url.includes("/v1/convai/agents/agent_abc123")) {
+        return new Response("{}", { status: 200 });
+      }
+      if (url.includes("/v1/convai/conversation/token")) {
+        return new Response(JSON.stringify({ token: "el-token" }), {
+          status: 200,
+        });
+      }
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    const { routes, executeTool } = mountWithDefaults();
+    executeTool.mockResolvedValue({ status: "completed", output: "done" });
+    const session = fakeEvent({
+      headers: {
+        "content-type": "application/json",
+        "x-agent-native-voice-thread": "thread-123",
+      },
+    });
+    await routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!(session);
+    const tool = fakeEvent({
+      headers: {
+        "content-type": "application/json",
+        [REALTIME_VOICE_CAPABILITY_HEADER]:
+          session.responseHeaders[REALTIME_VOICE_CAPABILITY_HEADER],
+      },
+      rawBody: new TextEncoder().encode(
+        JSON.stringify({
+          name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+          args: { request: "Create the event" },
+          callId: "call-123",
+          threadId: "thread-not-accepted",
+        }),
+      ),
+    });
+    const result = await routes.get(ELEVENLABS_REALTIME_VOICE_TOOL_PATH)!(tool);
+
+    expect(result).toMatchObject({ status: "completed", output: "done" });
+    expect(executeTool).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+        threadId: "thread-123",
+      }),
+    );
   });
 
   it("409s with setup guidance when no ElevenLabs key is configured", async () => {

@@ -8,6 +8,7 @@ import {
   getMethod,
   getQuery,
   getHeader,
+  getRequestURL,
   getRequestIP,
   type H3Event,
 } from "h3";
@@ -166,7 +167,10 @@ import {
   FIRST_SESSION_PERSONALIZATION,
   getModelFamilyOverlay,
 } from "./prompts/index.js";
-import { mountElevenLabsRealtimeVoiceRoutes } from "./realtime-voice-elevenlabs.js";
+import {
+  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
+  mountElevenLabsRealtimeVoiceRoutes,
+} from "./realtime-voice-elevenlabs.js";
 import { mountRealtimeVoiceRoutes } from "./realtime-voice.js";
 import {
   runWithRequestContext,
@@ -178,6 +182,133 @@ import {
 
 export { handleSharedThreadRequest };
 export type { SharedThreadRouteDependencies };
+
+const VOICE_AGENT_TURN_MAX_REQUEST_CHARS = 6_000;
+const VOICE_AGENT_TURN_MAX_RESPONSE_CHARS = 12_000;
+
+/**
+ * Preserve the app prefix when the workspace dispatches a voice tool from a
+ * mounted app such as /calendar. The target is the app's existing chat route,
+ * not a second action or A2A surface.
+ */
+function resolveVoiceAgentChatUrl(event: H3Event, routePath: string): URL {
+  const requestUrl = getRequestURL(event);
+  const marker = "/_agent-native/";
+  const markerIndex = requestUrl.pathname.lastIndexOf(marker);
+  const appPrefix =
+    markerIndex >= 0 ? requestUrl.pathname.slice(0, markerIndex) : "";
+  return new URL(`${appPrefix}${routePath}`, requestUrl.origin);
+}
+
+function trimVoiceAgentResponse(value: string): string {
+  const trimmed = value.trim();
+  return trimmed.length > VOICE_AGENT_TURN_MAX_RESPONSE_CHARS
+    ? `${trimmed.slice(0, VOICE_AGENT_TURN_MAX_RESPONSE_CHARS)}\n\n...[truncated]`
+    : trimmed;
+}
+
+async function readVoiceAgentChatStream(response: Response): Promise<string> {
+  if (!response.body) return "";
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      try {
+        const event = JSON.parse(line.slice(6)) as AgentChatEvent;
+        text = applyAgentTextEventToBuffer(text, event);
+      } catch {
+        // A malformed progress event must not discard a completed agent turn.
+      }
+    }
+  }
+  return trimVoiceAgentResponse(text);
+}
+
+async function executeVoiceAgentTurn(input: {
+  event: H3Event;
+  routePath: string;
+  request: Record<string, unknown>;
+  threadId?: string;
+  sessionId?: string;
+  browserTabId?: string;
+}): Promise<{
+  status: "completed" | "failed";
+  output: string;
+}> {
+  const rawRequest = input.request.request;
+  const message = typeof rawRequest === "string" ? rawRequest.trim() : "";
+  if (!message) {
+    return {
+      status: "failed",
+      output: "A spoken request is required before the app agent can act.",
+    };
+  }
+  if (message.length > VOICE_AGENT_TURN_MAX_REQUEST_CHARS) {
+    return {
+      status: "failed",
+      output: "That spoken request is too long to send to the app agent.",
+    };
+  }
+
+  const headers = new Headers({
+    Accept: "text/event-stream",
+    "Content-Type": "application/json",
+    // The regular chat handler applies app-rendered surface safeguards.
+    "X-Agent-Native-Surface": "voice",
+  });
+  for (const name of ["cookie", "authorization", "x-user-timezone"]) {
+    const value = getHeader(input.event, name);
+    if (typeof value === "string" && value.trim()) headers.set(name, value);
+  }
+  const target = resolveVoiceAgentChatUrl(input.event, input.routePath);
+  headers.set("origin", target.origin);
+
+  let response: Response;
+  try {
+    response = await fetch(target, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        message,
+        displayMessage: message,
+        threadId:
+          input.threadId ??
+          (input.sessionId ? `realtime:${input.sessionId}` : undefined),
+        ...(input.browserTabId ? { browserTabId: input.browserTabId } : {}),
+        trackInRunsTray: false,
+      }),
+    });
+  } catch {
+    return {
+      status: "failed",
+      output:
+        "The app agent could not be reached. Please try that request again.",
+    };
+  }
+  if (!response.ok) {
+    return {
+      status: "failed",
+      output: `The app agent could not start the request (HTTP ${response.status}).`,
+    };
+  }
+
+  const output = await readVoiceAgentChatStream(response).catch(() => "");
+  return output
+    ? { status: "completed", output }
+    : {
+        status: "failed",
+        output: "The app agent finished without a response. Please try again.",
+      };
+}
 
 // Lazy fs — loaded via dynamic import() on first use.
 // This avoids require() which bundlers convert to createRequire(import.meta.url)
@@ -2151,6 +2282,41 @@ export function createAgentChatPlugin(
         ...(!canToggle ? prodCodingTools : {}),
       });
 
+      // ElevenLabs cannot expand its tool manifest after a conversation starts.
+      // Expose one bounded handoff instead of every app action: the handoff
+      // re-enters this app's normal agent-chat route, where the usual prompt,
+      // tool discovery, validation, approvals, audit trail, and UI refresh
+      // behavior already live.
+      const elevenLabsVoiceActions: Record<string, ActionEntry> = {
+        ...prodActions,
+        [ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME]: {
+          tool: {
+            description:
+              "Send a spoken request to the current app's normal agent. Use this for work in the current app, such as creating or changing an event. Do not use it for another app; use call-agent for external apps.",
+            parameters: {
+              type: "object",
+              properties: {
+                request: {
+                  type: "string",
+                  description:
+                    "The user's complete spoken request for the current app agent.",
+                },
+              },
+              required: ["request"],
+            },
+          },
+          // The realtime bridge intercepts this entry before the generic action
+          // executor and forwards it to agent-chat. Keep a loud guard here so a
+          // future non-voice caller cannot silently bypass that path.
+          run: async () => {
+            throw new Error(
+              "run-active-agent-turn is available only through realtime voice.",
+            );
+          },
+          http: false,
+        },
+      };
+
       const realtimeVoiceRouteOptions = {
         resolveOrgId: options?.resolveOrgId,
         getInstructions: async () => {
@@ -2176,25 +2342,39 @@ export function createAgentChatPlugin(
             .join("\n\n");
         },
         executeTool: async (request: {
+          event: H3Event;
           name: string;
           args: Record<string, unknown>;
           callId: string;
           userEmail: string;
           orgId?: string;
           sessionId?: string;
+          threadId?: string;
+          browserTabId?: string;
         }) =>
-          executeAgentToolCall({
-            actions: prodActions,
-            name: request.name,
-            input: request.args,
-            callId: request.callId,
-            ownerEmail: request.userEmail,
-            orgId: request.orgId,
-            threadId: request.sessionId
-              ? `realtime:${request.sessionId}`
-              : `realtime:${request.callId}`,
-            turnId: request.callId,
-          }),
+          request.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME
+            ? executeVoiceAgentTurn({
+                event: request.event,
+                routePath,
+                request: request.args,
+                threadId: request.threadId,
+                sessionId: request.sessionId,
+                browserTabId: request.browserTabId,
+              })
+            : executeAgentToolCall({
+                actions: prodActions,
+                name: request.name,
+                input: request.args,
+                callId: request.callId,
+                ownerEmail: request.userEmail,
+                orgId: request.orgId,
+                threadId:
+                  request.threadId ??
+                  (request.sessionId
+                    ? `realtime:${request.sessionId}`
+                    : `realtime:${request.callId}`),
+                turnId: request.callId,
+              }),
       };
       mountRealtimeVoiceRoutes(
         nitroApp,
@@ -2206,7 +2386,7 @@ export function createAgentChatPlugin(
       // credentials, so mounting unconditionally is safe.
       mountElevenLabsRealtimeVoiceRoutes(
         nitroApp,
-        prodActions,
+        elevenLabsVoiceActions,
         realtimeVoiceRouteOptions,
       );
 

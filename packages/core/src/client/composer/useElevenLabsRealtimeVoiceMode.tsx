@@ -131,6 +131,7 @@ export function parseElevenLabsRealtimeVoiceSession(
 export async function createElevenLabsRealtimeVoiceSession(
   options: {
     browserTabId?: string;
+    threadId?: string;
     signal?: AbortSignal;
   } = {},
 ): Promise<ElevenLabsRealtimeVoiceSession> {
@@ -142,6 +143,9 @@ export async function createElevenLabsRealtimeVoiceSession(
       headers: {
         ...(options.browserTabId
           ? { "X-Agent-Native-Browser-Tab": options.browserTabId }
+          : {}),
+        ...(options.threadId
+          ? { "X-Agent-Native-Voice-Thread": options.threadId }
           : {}),
       },
       signal: options.signal,
@@ -548,6 +552,7 @@ export function useElevenLabsRealtimeVoiceModeController(
     try {
       const session = await createElevenLabsRealtimeVoiceSession({
         browserTabId,
+        threadId: transcriptThreadIdRef.current,
         signal: abortController.signal,
       });
       if (!isCurrent()) return;
