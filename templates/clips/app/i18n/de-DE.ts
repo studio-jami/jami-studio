@@ -13,6 +13,7 @@ const messages = {
   root: {
     commandActions: "Aktionen",
     commandSearch: "Suchen",
+    openAgent: "Agent öffnen",
     commandAppearance: "Darstellung",
     toggleTheme: "Design wechseln",
     extensionSignedInTitle: "Angemeldet",
@@ -54,6 +55,7 @@ const messages = {
     dictate: "Diktieren",
     archive: "Archiv",
     trash: "Papierkorb",
+    agent: "Agent",
     settings: "Einstellungen",
     notifications: "Benachrichtigungen",
     insights: "Einblicke",
@@ -172,7 +174,7 @@ const messages = {
       "Der Desktop-Recorder hat den Vorgang abgeschlossen und eine lokale Kopie gespeichert, aber Clips konnte sie nicht hochladen. Sie können es über das Clips-Menü erneut versuchen, ohne erneut aufzunehmen.",
     retryLibrary: "Sie können es in der Bibliothek erneut versuchen.",
     processingStuck:
-      "Die Verarbeitung ist nach 30 Sekunden noch nicht abgeschlossen (Status={{status}}). Der Clip wurde möglicherweise noch nicht vollständig hochgeladen. Überprüfen Sie die Serverprotokolle auf Chunk-/Finalisierungsmeldungen.",
+      "Das Speichern dauert länger als erwartet (Status={{status}}). Wenn du mit der Desktop-App aufgenommen hast, öffne Clips über die Menüleiste, um den Upload erneut zu versuchen oder eine gespeicherte lokale Kopie herunterzuladen. Prüfe danach erneut.",
     uploadingAssembling:
       "Das Hochladen und Zusammenstellen Ihres Videos dauert normalerweise nur wenige Sekunden.",
     connectStorageImportLoom:
@@ -223,6 +225,9 @@ const messages = {
     autoChapters: "Automatische Kapitel",
     removeFillerWords: "Entfernen Sie Füllwörter",
     removeSilences: "Stille entfernen (>1,2 s)",
+    silenceWorking: "Stille wird entfernt…",
+    silenceCompleted: "Entfernen der Stille abgeschlossen",
+    silenceFailed: "Entfernen der Stille fehlgeschlagen",
     generatePrSummary: "Erstellen Sie eine PR-Zusammenfassung",
     generateSop: "Generieren Sie SOP",
     generateSopTooltip:
@@ -455,6 +460,7 @@ const messages = {
     invite: "Einladen",
     embed: "Einbetten",
     shareLink: "Teillink",
+    shareWithHumans: "Mit Menschen teilen",
     shareWithAgents: "Mit Agenten teilen",
     copyAgentPrompt: "Agent-Prompt kopieren",
     agentPrompt:
@@ -465,6 +471,8 @@ const messages = {
     retryAgentLink: "Erneut versuchen",
     gifPreview: "GIF-Vorschau",
     openPlayer: "Spieler öffnen",
+    chooseFile: "Datei auswählen",
+    remove: "Entfernen",
     downloadMp4: "Laden Sie MP4 herunter",
     embedsNeedPublic: "Für Einbettungen ist ein öffentlicher Clip erforderlich",
     embedPublicDescription:
@@ -550,6 +558,9 @@ const messages = {
     brandingUpdated: "Branding aktualisiert",
     saveFailed: "Speichern fehlgeschlagen",
     organizationName: "Name der Organisation",
+    defaultVisibility: "Standard-Sichtbarkeit neuer Aufnahmen",
+    defaultVisibilityDescription:
+      "Wird auf neue Aufnahmen angewendet, sofern du keine andere Sichtbarkeit auswählst.",
     brandColor: "Markenfarbe",
     brandColorPicker: "Markenfarbauswahl",
     useColor: "Verwenden Sie {{color}}",
@@ -909,15 +920,6 @@ Alle sichtbaren Änderungen für Clips-Nutzer werden hier dokumentiert. Du kanns
       "{{email}} verliert den Zugriff auf diese Organisation. Du kannst die Person jederzeit erneut einladen.",
     remove: "Entfernen",
   },
-  slackShareHint: {
-    playsInline: "Wird inline in Slack abgespielt",
-    connectedDescription:
-      "Füge diesen Link in einem verbundenen Workspace ein, um ihn inline abzuspielen.",
-    makeInline: "Inline-Wiedergabe in Slack aktivieren",
-    connectDescription:
-      "Verbinde einen Workspace, damit dieser Link als Video angezeigt wird.",
-    connect: "Verbinden",
-  },
   commentsPanel: {
     disabled: "Kommentare sind für diese Aufzeichnung deaktiviert.",
     beFirst: "Schreibe den ersten Kommentar",
@@ -1257,9 +1259,11 @@ Alle sichtbaren Änderungen für Clips-Nutzer werden hier dokumentiert. Du kanns
     visibilityOrg: "Organization (Lokalisiert)",
     visibilityPublic: "Public (Lokalisiert)",
     passwordProtection: "Password protection (Lokalisiert)",
-    passwordSetPlaceholder:
-      "Password is set — type to replace, leave empty + Save to clear (Lokalisiert)",
+    passwordSetPlaceholder: "Password is set — type to replace (Lokalisiert)",
     noPasswordPlaceholder: "No password (Lokalisiert)",
+    passwordWhitespaceOnly:
+      "Spaces alone aren't a valid password. (Lokalisiert)",
+    removePassword: "Remove (Lokalisiert)",
     expiry: "Expiry (Lokalisiert)",
     viewerOptions: "Viewer options (Lokalisiert)",
     comments: "Comments (Lokalisiert)",

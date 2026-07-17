@@ -50,7 +50,7 @@ npx @agent-native/core@latest connect https://dispatch.jami.studio --client clau
 OAuth-capable hosts can add this remote MCP URL directly:
 
 ```text
-https://assets.jami.studio/_agent-native/mcp
+https://assets.jami.studio/mcp
 ```
 
 ## Use The Picker

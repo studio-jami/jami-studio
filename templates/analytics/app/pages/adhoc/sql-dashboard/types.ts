@@ -63,7 +63,21 @@ export interface PivotConfig {
   valueKey: string;
 }
 
+/**
+ * Declares how a query's time coverage relates to the dashboard filter.
+ * `dashboard` is the default for ordinary event metrics; the other values are
+ * explicit exceptions that make intentional history scans visible to agents
+ * and reviewers.
+ */
+export type DashboardTimeScope =
+  | "dashboard"
+  | "fixed-window"
+  | "cohort-history"
+  | "all-time";
+
 export interface SqlPanelConfig {
+  /** Time coverage contract for first-party SQL panels. */
+  timeScope?: DashboardTimeScope;
   xKey?: string;
   yKey?: string;
   yKeys?: string[];
@@ -74,6 +88,7 @@ export interface SqlPanelConfig {
   pivot?: PivotConfig;
   /** Stack bar/area series on top of each other instead of side-by-side / overlapping. */
   stacked?: boolean;
+  /** Fixed bar width in pixels for bar charts. Values are clamped by the renderer. */
   /** Show the chart legend. Defaults to true for chart renderers. */
   legend?: boolean;
   /** Optional display labels for exact metric values, e.g. {"0":"normal"}. */

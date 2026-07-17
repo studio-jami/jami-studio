@@ -1220,6 +1220,28 @@ body[data-clips-route="recording-pill"] #root {
   flex-direction: column;
   gap: 6px;
   margin-bottom: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+}
+
+.popover-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.popover-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popover-list::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+.popover-list::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-subtle);
 }
 
 .popover-list-item {
@@ -1471,7 +1493,7 @@ body[data-clips-route="recording-pill"] #root {
    content isn't flush with the panel edge. Must follow `.setup` so it wins
    over the shorthand padding above. */
 .setup.popover-view {
-  padding-bottom: 26px;
+  padding-bottom: 16px;
 }
 
 .setup h2 {
@@ -3109,25 +3131,27 @@ body[data-clips-route="recording-pill"] #root {
 
 /*
  * The Tauri bubble window is sized (in Rust) to exactly the circle diameter
- * PLUS a `--bubble-controls-budget` strip at the bottom, so the hover pill
+ * PLUS a `--bubble-controls-budget` strip at the top, so the hover pill
  * has real window real-estate to render into. Everything outside window
  * bounds is invisible no matter the CSS `overflow` — you can't paint where
  * the OS hasn't given you pixels — so we build in the budget up front.
  *
  *   ┌──────────────┐
+ *   │  ·  ●        │  ← .bubble-controls pill (hover-faded)
+ *   └──────────────┘
+ *   ┌──────────────┐
  *   │ .bubble-root │  ← circle (drag region, data-tauri-drag-region)
  *   │     ◯        │    Canvas lives here with pointer-events: none so
  *   │              │    drags reach the drag-region parent.
- *   └──────────────┘
- *   ┌──────────────┐
- *   │  ·  ●        │  ← .bubble-controls pill (hover-faded)
  *   └──────────────┘
  */
 .bubble-wrapper {
   position: fixed;
   inset: var(--overlay-shadow-gutter);
   display: flex;
-  flex-direction: column;
+  /* Reverse the stack so the circle stays at the bottom of the window and
+     the hover pill occupies the reserved space above it. */
+  flex-direction: column-reverse;
   align-items: center;
   /* Transparent background — the Tauri window is `transparent: true`,
      so the circular camera surface below paints through. */
@@ -3137,9 +3161,9 @@ body[data-clips-route="recording-pill"] #root {
 }
 
 .bubble-root {
-  /* Circle fills the top of the wrapper. We use `flex: 0 0 auto` + a
+  /* Circle fills the bottom of the wrapper. We use `flex: 0 0 auto` + a
      1:1 aspect-ratio so the circle is always square regardless of the
-     actual window height (which includes the controls budget). */
+     actual window height (which includes the controls budget above it). */
   flex: 0 0 auto;
   aspect-ratio: 1 / 1;
   /* Width = 100% of wrapper → the wrapper is exactly bubble-diameter
@@ -3247,15 +3271,15 @@ body[data-clips-route="recording-pill"] #root {
   color: white;
 }
 
-/* Size-control pill — lives in the bottom strip of the wrapper (beneath
+/* Size-control pill — lives in the top strip of the wrapper (above
    the circle). Centered horizontally, fades in on hover, matches Loom's
    visual weight. Because it's a sibling of `.bubble-root` (not a child),
    the border-radius clipping on the circle can't eat it. */
 .bubble-controls {
-  /* `flex: 0 0 auto` + margin-top creates the small gap between the
-     circle and the pill. */
+  /* `flex: 0 0 auto` + margin-bottom creates the small gap between the
+     pill and the circle. */
   flex: 0 0 auto;
-  margin-top: 8px;
+  margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
   gap: 8px;

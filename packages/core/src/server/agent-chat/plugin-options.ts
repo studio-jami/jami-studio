@@ -42,7 +42,9 @@ export interface AgentChatPluginOptions {
   /**
    * Opt this app into Netlify durable background-function agent-chat runs. This
    * gives hosted agent turns the 15-minute async-function budget when the app's
-   * Netlify build also emits the background function.
+   * Netlify build also emits the background function. Set this to `false` to
+   * explicitly disable a stale deploy-wide `AGENT_CHAT_DURABLE_BACKGROUND`
+   * flag for this app.
    */
   durableBackgroundRuns?: boolean;
   /** Anthropic API key. Falls back to ANTHROPIC_API_KEY env var */
@@ -107,6 +109,22 @@ export interface AgentChatPluginOptions {
    * agent mutations.
    */
   anonymousReadOnly?: boolean;
+  /**
+   * Optional auth adapter for the HTTP action route
+   * (`/_agent-native/actions/*`). Its `resolveCaller` runs before the
+   * cookie/bearer `getSession` chain, letting an app accept caller identities
+   * `getSession` doesn't understand (e.g. an A2A JWT verified with
+   * `verifyA2AToken`) declaratively, instead of pre-seeding request context
+   * from a Nitro `request` hook.
+   *
+   * Returning `null` defers to the normal chain; THROWING hard-rejects with a
+   * 401 (an invalid/forged credential must not fall through to a same-origin
+   * session cookie). A resolved caller's org comes exclusively from the
+   * verified credential — the returned `orgId` or the owner-email membership
+   * lookup — never from the request's session cookie.
+   * See {@link import("../action-routes.js").ActionRouteAuthAdapter}.
+   */
+  actionRouteAuth?: import("../action-routes.js").ActionRouteAuthAdapter;
   /**
    * Optional callback to append template-specific context to the system
    * prompt on each request. Runs after AGENTS.md / skills / memory are

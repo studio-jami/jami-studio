@@ -14,19 +14,20 @@ import {
   IconReportAnalytics,
   IconSearch,
   IconArchive,
+  IconActivity,
   IconHeartbeat,
   IconPin,
   IconPlus,
   IconLock,
   IconLink,
   IconMessageCircle,
+  IconHierarchy2,
   IconUsersGroup,
   IconEye,
   IconEyeOff,
   IconPlayerPlay,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
-  IconShieldCheck,
 } from "@tabler/icons-react";
 import {
   useQuery,
@@ -97,7 +98,7 @@ import {
   type ChatThreadSummary,
 } from "@agent-native/core/client";
 import { ExtensionsSidebarSection } from "@agent-native/core/client/extensions";
-import { OrgSwitcher, useOrgRole } from "@agent-native/core/client/org";
+import { OrgSwitcher } from "@agent-native/core/client/org";
 
 import {
   AlertDialog,
@@ -137,6 +138,7 @@ import {
   type DashboardView,
 } from "@/hooks/use-dashboard-views";
 import { useUserPref } from "@/hooks/use-user-pref";
+import { shouldRenderDashboardList } from "@/lib/dashboard-list-loading";
 import { usePopularity, popularityOf } from "@/lib/item-popularity";
 import {
   analysisDetailPrefetchKey,
@@ -183,6 +185,11 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const bottomItems = [
+  {
+    icon: IconHierarchy2,
+    labelKey: "settings.agentTitle",
+    href: "/agent",
+  },
   { icon: IconSettings, labelKey: "navigation.settings", href: "/settings" },
 ];
 
@@ -1593,7 +1600,6 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
   const navigate = useNavigate();
   const t = useT();
   const queryClient = useQueryClient();
-  const { canManageOrg } = useOrgRole();
   const { setTheme } = useTheme();
 
   const isAskRoute = location.pathname === "/ask";
@@ -1630,7 +1636,7 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
     useState<SidebarSortMode>(() => getStoredSortMode(DASHBOARD_SORT_MODE_KEY));
   const [analysisSortMode, setAnalysisSortModeState] =
     useState<SidebarSortMode>(() => getStoredSortMode(ANALYSIS_SORT_MODE_KEY));
-  const popularity = usePopularity();
+  const { data: popularity, isReady: popularityReady } = usePopularity();
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage.getItem("theme")) {
@@ -1691,7 +1697,11 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
   );
 
   // Server-backed favorites
-  const { data: favoritesData, save: saveFavorites } = useUserPref<{
+  const {
+    data: favoritesData,
+    isLoading: favoritesLoading,
+    save: saveFavorites,
+  } = useUserPref<{
     ids: string[];
   }>("favorites");
   const favoriteIds = useMemo(
@@ -1780,6 +1790,7 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
   const {
     data: sqlDashboards = [],
     isLoading: sqlDashboardsLoading,
+    isPlaceholderData: sqlDashboardsPlaceholder,
     isError: sqlDashboardsError,
     refetch: refetchSqlDashboards,
   } = useQuery({
@@ -1921,7 +1932,7 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
       const aPop = popularityOf(popularity, "dashboard", a.id);
       const bPop = popularityOf(popularity, "dashboard", b.id);
       if (aPop !== bPop) return bPop - aPop;
-      return a.name.localeCompare(b.name);
+      return a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
     });
   }, [
     hiddenIds,
@@ -1976,6 +1987,19 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
         : topLevelDashboards.slice(0, SIDEBAR_PREVIEW_COUNT),
     [topLevelDashboards, dashShowAll],
   );
+
+  const dashboardListHasRendered = useRef(false);
+  const dashboardListReady = shouldRenderDashboardList({
+    sqlDashboardsLoading,
+    sqlDashboardsPlaceholder,
+    isInitialLoad: !dashboardListHasRendered.current,
+    favoritesLoading,
+    popularityReady,
+    sortMode: dashboardSortMode,
+  });
+  useEffect(() => {
+    if (dashboardListReady) dashboardListHasRendered.current = true;
+  }, [dashboardListReady]);
 
   // The flattened id order exactly as rendered (each parent immediately
   // followed by its nested children). Drag reordering must use this so the
@@ -2428,16 +2452,12 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
       href: "/monitoring",
       active: location.pathname.startsWith("/monitoring"),
     },
-    ...(canManageOrg
-      ? [
-          {
-            icon: IconShieldCheck,
-            label: t("navigation.admin"),
-            href: "/agents?view=dashboards",
-            active: location.pathname.startsWith("/agents"),
-          },
-        ]
-      : []),
+    {
+      icon: IconActivity,
+      label: t("navigation.agents"),
+      href: "/agents",
+      active: location.pathname.startsWith("/agents"),
+    },
     {
       icon: IconDatabase,
       label: t("navigation.dataSources"),
@@ -2449,6 +2469,12 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
       label: t("navigation.dataDictionary"),
       href: "/data-dictionary",
       active: location.pathname.startsWith("/data-dictionary"),
+    },
+    {
+      icon: IconHierarchy2,
+      label: t("settings.agentTitle"),
+      href: "/agent",
+      active: location.pathname === "/agent",
     },
     {
       icon: IconSettings,
@@ -2641,20 +2667,19 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
                 {t("navigation.monitoring")}
               </Link>
 
-              {canManageOrg ? (
-                <Link
-                  to="/agents?view=dashboards"
-                  className={cn(
-                    "order-6 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:text-primary",
-                    location.pathname.startsWith("/agents")
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-muted-foreground hover:bg-sidebar-accent/50",
-                  )}
-                >
-                  <IconShieldCheck className="h-4 w-4" />
-                  {t("navigation.admin")}
-                </Link>
-              ) : null}
+              {/* Agents link */}
+              <Link
+                to="/agents"
+                className={cn(
+                  "order-6 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:text-primary",
+                  location.pathname.startsWith("/agents")
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent/50",
+                )}
+              >
+                <IconActivity className="h-4 w-4" />
+                {t("navigation.agents")}
+              </Link>
 
               {/* Data Sources link */}
               <Link
@@ -2745,64 +2770,67 @@ export function Sidebar({ mobile }: { mobile?: boolean } = {}) {
                       strategy={verticalListSortingStrategy}
                     >
                       <div className="ms-4 min-w-0 space-y-0.5">
-                        {displayedDashboards.map((d) => {
-                          const children = dashboardChildren.get(d.id) ?? [];
-                          return (
-                            <Fragment key={d.id}>
-                              <SortableDashboardItem
-                                d={d}
-                                isActive={activeDashboardId === d.id}
-                                location={location}
-                                favoriteIds={favoriteIds}
-                                onToggleFavorite={toggleFavorite}
-                                onDelete={handleDashboardDelete}
-                                onRename={handleDashboardRename}
-                                onArchive={handleDashboardArchive}
-                                onSetVisibility={handleDashboardSetVisibility}
-                                onPrefetch={prefetchDashboard}
-                                views={allViewsMap[d.id]}
-                              />
-                              {children.length > 0 && (
-                                <div className="ms-3 space-y-0.5 border-s border-sidebar-border/60 ps-1">
-                                  {children.map((child) => (
-                                    <SortableDashboardItem
-                                      key={child.id}
-                                      d={child}
-                                      isActive={activeDashboardId === child.id}
-                                      location={location}
-                                      favoriteIds={favoriteIds}
-                                      onToggleFavorite={toggleFavorite}
-                                      onDelete={handleDashboardDelete}
-                                      onRename={handleDashboardRename}
-                                      onArchive={handleDashboardArchive}
-                                      onSetVisibility={
-                                        handleDashboardSetVisibility
-                                      }
-                                      onPrefetch={prefetchDashboard}
-                                      views={allViewsMap[child.id]}
-                                    />
-                                  ))}
-                                </div>
-                              )}
-                            </Fragment>
-                          );
-                        })}
-                        {topLevelDashboards.length > SIDEBAR_PREVIEW_COUNT && (
-                          <button
-                            onClick={() => setDashShowAll(!dashShowAll)}
-                            className="flex items-center gap-1 px-3 py-1 text-[11px] text-muted-foreground/70 hover:text-primary"
-                          >
-                            {dashShowAll
-                              ? t("sidebar.showLess")
-                              : t("sidebar.showMore", {
-                                  count:
-                                    topLevelDashboards.length -
-                                    SIDEBAR_PREVIEW_COUNT,
-                                })}
-                          </button>
-                        )}
-                        {sqlDashboardsLoading &&
-                          sqlDashboards.length === 0 &&
+                        {dashboardListReady &&
+                          displayedDashboards.map((d) => {
+                            const children = dashboardChildren.get(d.id) ?? [];
+                            return (
+                              <Fragment key={d.id}>
+                                <SortableDashboardItem
+                                  d={d}
+                                  isActive={activeDashboardId === d.id}
+                                  location={location}
+                                  favoriteIds={favoriteIds}
+                                  onToggleFavorite={toggleFavorite}
+                                  onDelete={handleDashboardDelete}
+                                  onRename={handleDashboardRename}
+                                  onArchive={handleDashboardArchive}
+                                  onSetVisibility={handleDashboardSetVisibility}
+                                  onPrefetch={prefetchDashboard}
+                                  views={allViewsMap[d.id]}
+                                />
+                                {children.length > 0 && (
+                                  <div className="ms-3 space-y-0.5 border-s border-sidebar-border/60 ps-1">
+                                    {children.map((child) => (
+                                      <SortableDashboardItem
+                                        key={child.id}
+                                        d={child}
+                                        isActive={
+                                          activeDashboardId === child.id
+                                        }
+                                        location={location}
+                                        favoriteIds={favoriteIds}
+                                        onToggleFavorite={toggleFavorite}
+                                        onDelete={handleDashboardDelete}
+                                        onRename={handleDashboardRename}
+                                        onArchive={handleDashboardArchive}
+                                        onSetVisibility={
+                                          handleDashboardSetVisibility
+                                        }
+                                        onPrefetch={prefetchDashboard}
+                                        views={allViewsMap[child.id]}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </Fragment>
+                            );
+                          })}
+                        {dashboardListReady &&
+                          topLevelDashboards.length > SIDEBAR_PREVIEW_COUNT && (
+                            <button
+                              onClick={() => setDashShowAll(!dashShowAll)}
+                              className="flex items-center gap-1 px-3 py-1 text-[11px] text-muted-foreground/70 hover:text-primary"
+                            >
+                              {dashShowAll
+                                ? t("sidebar.showLess")
+                                : t("sidebar.showMore", {
+                                    count:
+                                      topLevelDashboards.length -
+                                      SIDEBAR_PREVIEW_COUNT,
+                                  })}
+                            </button>
+                          )}
+                        {!dashboardListReady &&
                           Array.from({ length: 3 }).map((_, i) => (
                             <div
                               key={`sql-skeleton-${i}`}

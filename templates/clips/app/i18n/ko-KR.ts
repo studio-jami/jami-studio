@@ -13,6 +13,7 @@ const messages = {
   root: {
     commandActions: "작업",
     commandSearch: "검색",
+    openAgent: "에이전트 열기",
     commandAppearance: "화면 표시",
     toggleTheme: "테마 전환",
     extensionSignedInTitle: "로그인됨",
@@ -54,6 +55,7 @@ const messages = {
     dictate: "받아쓰기",
     archive: "보관함",
     trash: "휴지통",
+    agent: "에이전트",
     settings: "설정",
     notifications: "알림",
     insights: "인사이트",
@@ -169,7 +171,7 @@ const messages = {
       "데스크톱 레코더가 완료되고 로컬 복사본을 저장했지만 Clips가 이를 업로드할 수 없습니다. 다시 녹음하지 않고 Clips 메뉴에서 다시 시도할 수 있습니다.",
     retryLibrary: "라이브러리에서 다시 시도할 수 있습니다.",
     processingStuck:
-      "30초 후에도 처리가 완료되지 않았습니다(상태={{status}}). 클립 업로드가 완료되지 않았을 수 있습니다. 서버 로그에서 청크/완결 메시지를 확인하세요.",
+      "저장하는 데 예상보다 오래 걸리고 있습니다(상태={{status}}). 데스크톱 앱에서 녹화했다면 메뉴 막대에서 Clips를 열어 업로드를 다시 시도하거나 저장된 로컬 사본을 다운로드한 다음 다시 확인하세요.",
     uploadingAssembling:
       "비디오 업로드 및 취합 – 일반적으로 몇 초 밖에 걸리지 않습니다.",
     connectStorageImportLoom: "이 Loom를 가져오려면 저장소를 연결하세요.",
@@ -216,6 +218,9 @@ const messages = {
     autoChapters: "자동 챕터",
     removeFillerWords: "필러 단어 제거",
     removeSilences: "무음 제거(>1.2초)",
+    silenceWorking: "무음 구간을 제거하는 중…",
+    silenceCompleted: "무음 구간 제거 완료",
+    silenceFailed: "무음 구간 제거 실패",
     generatePrSummary: "PR 요약 생성",
     generateSop: "SOP 생성",
     generateSopTooltip:
@@ -440,6 +445,7 @@ const messages = {
     invite: "초대",
     embed: "임베드",
     shareLink: "공유 링크",
+    shareWithHumans: "사람과 공유",
     shareWithAgents: "상담원과 공유",
     copyAgentPrompt: "에이전트 프롬프트 복사",
     agentPrompt:
@@ -450,6 +456,8 @@ const messages = {
     retryAgentLink: "다시 시도",
     gifPreview: "GIF 미리보기",
     openPlayer: "플레이어 열기",
+    chooseFile: "파일 선택",
+    remove: "제거",
     downloadMp4: "MP4 다운로드",
     embedsNeedPublic: "퍼가기에는 공개 클립이 필요합니다",
     embedPublicDescription:
@@ -534,6 +542,9 @@ const messages = {
     brandingUpdated: "브랜딩이 업데이트됨",
     saveFailed: "저장 실패",
     organizationName: "조직 이름",
+    defaultVisibility: "새 녹화의 기본 공개 범위",
+    defaultVisibilityDescription:
+      "다른 공개 범위를 선택하지 않으면 새 녹화에 적용됩니다.",
     brandColor: "브랜드 색상",
     brandColorPicker: "브랜드 색상 선택기",
     useColor: "{{color}} 사용",
@@ -882,15 +893,6 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
       "{{email}}은 이 조직에 대한 액세스 권한을 잃습니다. 언제든 다시 초대할 수 있습니다.",
     remove: "제거",
   },
-  slackShareHint: {
-    playsInline: "Slack에서 인라인 재생",
-    connectedDescription:
-      "이 링크를 연결된 워크스페이스에 붙여넣으면 인라인으로 재생됩니다.",
-    makeInline: "Slack에서 인라인 재생하기",
-    connectDescription:
-      "워크스페이스를 연결하면 이 링크가 동영상으로 펼쳐집니다.",
-    connect: "연결",
-  },
   commentsPanel: {
     disabled: "이 녹화에서는 댓글이 비활성화되어 있습니다.",
     beFirst: "첫 댓글을 남겨보세요",
@@ -1229,9 +1231,10 @@ Clips의 모든 사용자 대상 변경 사항은 여기에 기록됩니다. 명
     visibilityOrg: "Organization (현지화됨)",
     visibilityPublic: "Public (현지화됨)",
     passwordProtection: "Password protection (현지화됨)",
-    passwordSetPlaceholder:
-      "Password is set — type to replace, leave empty + Save to clear (현지화됨)",
+    passwordSetPlaceholder: "Password is set — type to replace (현지화됨)",
     noPasswordPlaceholder: "No password (현지화됨)",
+    passwordWhitespaceOnly: "Spaces alone aren't a valid password. (현지화됨)",
+    removePassword: "Remove (현지화됨)",
     expiry: "Expiry (현지화됨)",
     viewerOptions: "Viewer options (현지화됨)",
     comments: "Comments (현지화됨)",

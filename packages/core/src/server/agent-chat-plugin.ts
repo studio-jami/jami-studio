@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import nodePath from "node:path";
 
 import {
@@ -19,7 +20,10 @@ import {
   isTrustedLocalRuntime,
 } from "../a2a/auth-policy.js";
 import { applyAgentTextEventToBuffer } from "../a2a/response-text.js";
-import { updateTaskStatusMessage } from "../a2a/task-store.js";
+import {
+  createA2AApproval,
+  updateTaskStatusMessage,
+} from "../a2a/task-store.js";
 import type { ActionHttpConfig } from "../action.js";
 import {
   canUpdateAgentAppModelDefaultSettings,
@@ -52,12 +56,12 @@ import {
   createProductionAgentHandler,
   actionsToEngineTools,
   executeAgentToolCall,
+  toolCallCacheKey,
   getActiveRunForThreadAsync,
   abortRunDurably,
   subscribeToRun,
   type ActionEntry,
 } from "../agent/production-agent.js";
-import { runAgentLoopDirectWithSoftTimeout } from "../agent/run-loop-with-resume.js";
 import {
   callerHasRunAccess,
   callerHasThreadAccess,
@@ -82,7 +86,6 @@ import type {
   MentionProvider,
 } from "../agent/types.js";
 import { readAppStateForCurrentTab } from "../application-state/script-helpers.js";
-import { appStateGet } from "../application-state/store.js";
 import {
   createThread,
   forkThread,
@@ -135,6 +138,7 @@ import {
   WORKSPACE_OWNER,
 } from "../resources/store.js";
 import { normalizeDatabaseToolsMode } from "../scripts/db/tool-mode.js";
+import type { ResolvedKeyReference } from "../secrets/substitution.js";
 import { getSetting, putSetting } from "../settings/store.js";
 import {
   handleSharedThreadRequest,
@@ -162,13 +166,11 @@ import {
 } from "./framework-request-handler.js";
 import { getOrigin } from "./google-oauth.js";
 import { readBody } from "./h3-helpers.js";
-import {
-  FIRST_SESSION_PERSONALIZATION,
-  getModelFamilyOverlay,
-} from "./prompts/index.js";
+import { getModelFamilyOverlay } from "./prompts/index.js";
 import { mountRealtimeVoiceRoutes } from "./realtime-voice.js";
 import {
   runWithRequestContext,
+  getRequestContext,
   getRequestOrgId,
   getRequestUserEmail,
   getRequestRunContext,
@@ -189,6 +191,10 @@ async function lazyFs(): Promise<typeof import("fs")> {
   return _fs;
 }
 
+import {
+  buildSystemManifestSections,
+  setContextXraySystemSections,
+} from "../agent/context-xray/manifest.js";
 // ---------------------------------------------------------------------------
 // The bulk of this file's former implementation now lives in focused sibling
 // modules under `./agent-chat/`. This file re-imports them (and re-exports
@@ -202,6 +208,7 @@ import {
   filterReadOnlyActions,
   resolveInitialToolNames,
   runA2AAgentLoop,
+  runMCPAgentLoop,
   assembleA2AFinalResponse,
   buildPublicAgentA2ASkills,
   resolveArtifactBaseUrl,
@@ -232,6 +239,7 @@ import {
 import { finalizeClaimedAgentChatProcessRunFailure } from "./agent-chat/process-run-failure.js";
 import {
   loadResourcesForPrompt,
+  promptResourceManifestSections,
   resourceScopeForOwner,
 } from "./agent-chat/prompt-resources.js";
 import { shouldDisableRecurringJobsRuntime } from "./agent-chat/recurring-jobs-runtime.js";
@@ -257,45 +265,18 @@ export { buildPublicAgentA2ASkills };
 export { assembleA2AFinalResponse };
 export type { AgentChatPluginOptions };
 export { runA2AAgentLoop };
+export { runMCPAgentLoop };
 export { createA2AEngineToolSurface };
 export { shouldBlockInProductCodeEditingSurface };
 export { loadRunCodeToolEntries };
 export { shouldDisableRecurringJobsRuntime };
 export { finalizeClaimedAgentChatProcessRunFailure };
 
-/**
- * Returns whether `owner` has already finished (or explicitly skipped) the
- * First-Session Personalization flow, via the owner-scoped
- * `application_state` "personalization" flag the agent itself writes
- * (`writeAppState("personalization", { done: true })` — see
- * FIRST_SESSION_PERSONALIZATION in prompts/framework-core.ts).
- *
- * This used to be gated on "does this thread have prior messages", which
- * flips false the instant a second request comes in for the SAME thread —
- * making turn 2's system prompt diverge from turn 1's and invalidating the
- * prompt-cache prefix on every thread's second request. The flow itself
- * spans two turns (turn 1 asks the personalization questions and waits;
- * turn 2 answers them and only then writes the "done" flag), so this flag
- * is still false when BOTH turns' system prompts are assembled — turn 1
- * and turn 2 come out byte-identical. It only flips once the flow
- * completes, and it never flips back, so every later turn (and every
- * later thread the same owner creates) stays consistent from then on. As
- * a bonus, it also fixes a latent waste: the old gate re-included the
- * ~1.5KB block on turn 1 of every new thread a user ever created, even
- * long after they'd completed personalization once.
- */
-export async function hasCompletedFirstSessionPersonalization(
-  owner: string,
-): Promise<boolean> {
-  try {
-    const state = await appStateGet(owner, "personalization");
-    return state?.done === true;
-  } catch {
-    // Fail open to "not done" — same default as a brand-new user (block
-    // shown) rather than silently skipping personalization because of a
-    // transient appstate read error.
-    return false;
-  }
+export function buildLeanRunPolicyPrompt(
+  codeEditingSurfaceRestriction: string,
+  prodCodeExecPromptNote: string,
+): string {
+  return codeEditingSurfaceRestriction + prodCodeExecPromptNote;
 }
 
 /**
@@ -308,6 +289,41 @@ const generateTitleRateLimit = new Map<string, number[]>();
 /** Only sweep drained rate-limit entries once the map grows past this size,
  * so the common small-map case stays O(1). */
 const RATE_LIMIT_SWEEP_THRESHOLD = 1000;
+
+/**
+ * Pick the URL allowlist to enforce for a `${keys.NAME}` reference used by
+ * the agent fetch tool.
+ *
+ * SECURITY (audit 05 H2 alignment): the allowlist check must stay
+ * consistent with the scope a key actually resolved at (see the
+ * `getKeyAllowlist` docstring in secrets/substitution.ts). Since the fetch
+ * tool now resolves keys via `resolveKeyReferencesWithRequestScopes` — which
+ * cascades user → org → workspace scope — a plain user-scope-only allowlist
+ * lookup would silently miss an allowlist configured on the org/workspace
+ * row that actually supplied the value. When `resolvedKeys` reports which
+ * scope a key resolved at, look up the allowlist there; only fall back to
+ * the legacy user-scope lookup for a key the resolver didn't report (should
+ * not normally happen — every key the cascade resolves reports a ref).
+ */
+export async function resolveFetchToolKeyAllowlist(
+  keyName: string,
+  resolvedKeys: ResolvedKeyReference[] | undefined,
+  owner: string,
+  deps: {
+    getKeyAllowlist: (
+      name: string,
+      scope: "user",
+      scopeId: string,
+    ) => Promise<string[] | null>;
+    getResolvedKeyAllowlist: (
+      ref: ResolvedKeyReference,
+    ) => Promise<string[] | null>;
+  },
+): Promise<string[] | null> {
+  const ref = resolvedKeys?.find((candidate) => candidate.name === keyName);
+  if (ref) return deps.getResolvedKeyAllowlist(ref);
+  return deps.getKeyAllowlist(keyName, "user", owner);
+}
 
 export function createAgentChatPlugin(
   options?: AgentChatPluginOptions,
@@ -480,6 +496,12 @@ export function createAgentChatPlugin(
         } catch {
           // Filesystem discovery unavailable (serverless bundle) — skip.
         }
+      }
+      try {
+        const { mergePackageActions } = await import("./action-discovery.js");
+        mergePackageActions(templateScriptsAll);
+      } catch {
+        // Package action registration is optional.
       }
 
       // Resource, chat, docs, db, and cross-agent scripts are available in both prod and dev modes
@@ -779,21 +801,38 @@ export function createAgentChatPlugin(
       try {
         const { createFetchToolEntry } =
           await import("../extensions/fetch-tool.js");
-        const { resolveKeyReferences, validateUrlAllowlist, getKeyAllowlist } =
-          await import("../secrets/substitution.js");
+        // Resolve `${keys.NAME}` through the same request-scope cascade
+        // already used by extension fetches (extensions/routes.ts) and
+        // automation connector headers (automation/index.ts): user scope
+        // first (personal overrides win), then the active org scope (the
+        // Dispatch vault syncs workspace secrets here), then workspace
+        // scope. Org/workspace vault rows are write-gated (org-admin +
+        // Dispatch vault UI), so this is safe to read by default — unlike
+        // the opt-in-only user→workspace fallback in resolveKeyReferences
+        // (see audit 05 H2 in secrets/substitution.ts), which stays off.
+        // Previously this tool only looked at scope "user", so a
+        // ${keys.NAME} reference to a key synced into the org/workspace
+        // vault could never resolve here even though the same key already
+        // worked for extension fetches and automations.
+        const {
+          resolveKeyReferencesWithRequestScopes,
+          validateUrlAllowlist,
+          getKeyAllowlist,
+          getResolvedKeyAllowlist,
+        } = await import("../secrets/substitution.js");
         fetchTool = createFetchToolEntry({
           resolveKeys: async (text) =>
-            resolveKeyReferences(
+            resolveKeyReferencesWithRequestScopes(
               text,
-              "user",
               requireCurrentRunOwner("resolve key references"),
             ),
-          validateUrl: async (url, usedKeys) => {
+          validateUrl: async (url, usedKeys, resolvedKeys) => {
             for (const keyName of usedKeys) {
-              const allowlist = await getKeyAllowlist(
+              const allowlist = await resolveFetchToolKeyAllowlist(
                 keyName,
-                "user",
+                resolvedKeys,
                 requireCurrentRunOwner("validate URL allowlist"),
+                { getKeyAllowlist, getResolvedKeyAllowlist },
               );
               if (allowlist && !validateUrlAllowlist(url, allowlist)) {
                 return false;
@@ -1104,6 +1143,25 @@ export function createAgentChatPlugin(
         publicSkillsOnly: true,
         streaming: true,
         durableBackgroundRuns: options?.durableBackgroundRuns,
+        executeApproval: async (approval) => {
+          const result = await executeAgentToolCall({
+            actions: mcpFullActions ?? allScripts,
+            name: approval.tool,
+            input: approval.input,
+            callId: approval.callId,
+            ownerEmail: approval.ownerEmail,
+            orgId: approval.orgId ?? null,
+            approvedToolCalls: [approval.approvalKey],
+          });
+          if (result.status === "approval_required") {
+            return {
+              status: "failed" as const,
+              output:
+                "The approved action was unexpectedly gated again and did not run.",
+            };
+          }
+          return { status: result.status, output: result.output };
+        },
         handler: async function* (message, context) {
           // Resolve the caller's identity for user-scoped data access.
           // Priority: A2A-JWT verified email (set by the A2A handler in
@@ -1251,9 +1309,41 @@ export function createAgentChatPlugin(
 
           // Use the SAME agent setup as the interactive chat — identical tools,
           // prompt, and capabilities. The A2A agent IS the app's agent.
+          const { getOwnerActiveApiKey } =
+            await import("../agent/production-agent.js");
+          const ownerApiKey = await getOwnerActiveApiKey(userEmail);
+          // A2A runs are reconstructed in a fresh processor request, so they
+          // do not pass through the interactive handler's prepareRun hook.
+          // Seed the same mutable run context before resolving the engine and
+          // building tools. Provider credentials, team/fetch helpers, and
+          // other action closures read this context rather than the engine
+          // argument alone; without it delegated runs can silently fall back
+          // to an unscoped/unconfigured provider path even though interactive
+          // chat works for the same owner.
+          const a2aRunContext = ensureRequestRunContext();
+          if (a2aRunContext) {
+            a2aRunContext.owner = userEmail;
+            a2aRunContext.userApiKey = ownerApiKey;
+            // The async processor restores the original request origin from
+            // task metadata. Only derive a fallback for synchronous A2A calls
+            // where the inbound event is still the caller request.
+            if (!a2aRunContext.requestOrigin) {
+              const restoredOrigin = getRequestContext()?.requestOrigin;
+              if (restoredOrigin) {
+                a2aRunContext.requestOrigin = restoredOrigin;
+              }
+            }
+            if (!a2aRunContext.requestOrigin) {
+              try {
+                a2aRunContext.requestOrigin = getOrigin(context.event as any);
+              } catch {
+                // Keep the owner context even when no browser origin exists.
+              }
+            }
+          }
           const a2aEngine = await resolveEngine({
             engineOption: options?.engine,
-            apiKey: options?.apiKey,
+            apiKey: ownerApiKey ?? options?.apiKey,
             appId: options?.appId,
           });
 
@@ -1270,14 +1360,6 @@ export function createAgentChatPlugin(
             ? ""
             : await buildSchemaBlock(owner, databaseToolsMode);
           const extra = await resolveExtraContext(context.event, owner);
-          // Stable content first, most-volatile-per-day last: the
-          // runtime-context block is appended after resources/schema/extra so
-          // a day rollover (or the resources/extra content changing) only
-          // invalidates the cached prompt prefix as late as possible.
-          const runtimeContext = runtimeContextForEvent(context.event);
-          const systemPrompt = devActive
-            ? devPrompt + resources + schemaBlock + extra + runtimeContext
-            : basePrompt + resources + schemaBlock + extra + runtimeContext;
 
           const a2aModelCandidate =
             options?.model ??
@@ -1286,6 +1368,34 @@ export function createAgentChatPlugin(
             })) ??
             a2aEngine.defaultModel;
           const model = normalizeModelForEngine(a2aEngine, a2aModelCandidate);
+          if (a2aRunContext) {
+            a2aRunContext.engine = a2aEngine;
+            a2aRunContext.model = model;
+          }
+
+          // Keep delegated runs aligned with the interactive production
+          // prompt's model-specific behavior without importing interactive
+          // onboarding into a background/cross-app task.
+          const modelOverlay = getModelFamilyOverlay(model);
+          // Stable content first, most-volatile-per-day last: the
+          // runtime-context block is appended after resources/schema/extra so
+          // a day rollover (or the resources/extra content changing) only
+          // invalidates the cached prompt prefix as late as possible.
+          const runtimeContext = runtimeContextForEvent(context.event);
+          const systemPrompt = devActive
+            ? devPrompt +
+              resources +
+              schemaBlock +
+              extra +
+              modelOverlay +
+              runtimeContext
+            : basePrompt +
+              resources +
+              schemaBlock +
+              extra +
+              modelOverlay +
+              runtimeContext;
+          if (a2aRunContext) a2aRunContext.systemPrompt = systemPrompt;
 
           // Build tools — same as interactive handler but WITHOUT call-agent
           // to prevent infinite recursive A2A loops (agent calling itself).
@@ -1370,6 +1480,16 @@ export function createAgentChatPlugin(
               availableTools: a2aToolSurface.availableTools,
               messages: a2aMessages,
               actions: a2aActions,
+              // A2A already establishes these values in request context. Pass
+              // them explicitly too so delegated tool execution and template
+              // final-response guards cannot lose the authenticated caller's
+              // scope when a processor hop or alternate runner is involved.
+              ownerEmail: userEmail,
+              orgId: getRequestOrgId() ?? null,
+              approvedToolCalls: context.approvedActions?.map((approved) =>
+                toolCallCacheKey(approved.tool, approved.input),
+              ),
+              executionMode: "act",
               send: (event) => {
                 a2aEvents.push(event);
                 if (event.type === "tool_start") {
@@ -1422,6 +1542,62 @@ export function createAgentChatPlugin(
                 isInBackgroundFunctionRuntime(),
             },
           );
+
+          const approval = [...a2aEvents]
+            .reverse()
+            .find(
+              (
+                event,
+              ): event is Extract<
+                AgentChatEvent,
+                { type: "approval_required" }
+              > => event.type === "approval_required",
+            );
+          if (approval) {
+            const pending = await createA2AApproval({
+              taskId: context.taskId,
+              ownerEmail: userEmail,
+              orgId: getRequestOrgId() ?? null,
+              tool: approval.tool,
+              toolInput: approval.input,
+              approvalKey: approval.approvalKey,
+              callId: approval.toolCallId ?? crypto.randomUUID(),
+            });
+            const baseUrl = resolveArtifactBaseUrl(context.event);
+            const approvalPath = `/_agent-native/a2a/approvals/${encodeURIComponent(pending.id)}`;
+            const approvalUrl = baseUrl
+              ? `${baseUrl}${approvalPath}`
+              : approvalPath;
+            yield {
+              role: "agent" as const,
+              metadata: {
+                agentNativeTaskState: "input-required",
+                agentNativeApproval: {
+                  id: pending.id,
+                  tool: approval.tool,
+                  url: approvalUrl,
+                },
+              },
+              parts: [
+                {
+                  type: "text" as const,
+                  text:
+                    `Human approval is required to run ${approval.tool}. ` +
+                    `Open ${approvalUrl} to review and approve this one-time action.`,
+                },
+                {
+                  type: "data" as const,
+                  data: {
+                    kind: "agent-native/approval-required",
+                    approvalId: pending.id,
+                    tool: approval.tool,
+                    approvalUrl,
+                  },
+                },
+              ],
+            };
+            return;
+          }
 
           const { responseText, finalText } = assembleA2AFinalResponse(
             a2aEvents,
@@ -1516,9 +1692,15 @@ export function createAgentChatPlugin(
             ? { externalAgents: options.externalAgents }
             : {}),
           askAgent: async (message: string) => {
+            const ownerEmail = getRequestUserEmail();
+            const { getOwnerActiveApiKey } =
+              await import("../agent/production-agent.js");
+            const ownerApiKey = ownerEmail
+              ? await getOwnerActiveApiKey(ownerEmail)
+              : undefined;
             const mcpEngine = await resolveEngine({
               engineOption: options?.engine,
-              apiKey: options?.apiKey,
+              apiKey: ownerApiKey ?? options?.apiKey,
               appId: options?.appId,
             });
             const mcpModelCandidate =
@@ -1618,7 +1800,7 @@ export function createAgentChatPlugin(
             let accumulatedText = "";
             const controller = new AbortController();
 
-            await runAgentLoopDirectWithSoftTimeout(
+            await runMCPAgentLoop(
               {
                 engine: mcpEngine,
                 model,
@@ -1639,6 +1821,9 @@ export function createAgentChatPlugin(
                   },
                 ],
                 actions: mcpActions,
+                ownerEmail: getRequestUserEmail(),
+                orgId: getRequestOrgId() ?? null,
+                executionMode: "act",
                 send: (event) => {
                   accumulatedText = applyAgentTextEventToBuffer(
                     accumulatedText,
@@ -1647,7 +1832,10 @@ export function createAgentChatPlugin(
                 },
                 signal: controller.signal,
               },
-              options?.runSoftTimeoutMs,
+              {
+                finalResponseGuard: options?.finalResponseGuard,
+                runSoftTimeoutMs: options?.runSoftTimeoutMs,
+              },
               {
                 backgroundFunction:
                   options?.durableBackgroundRuns === true &&
@@ -1719,6 +1907,7 @@ export function createAgentChatPlugin(
           getOwnerFromEvent,
           getUserNameFromEvent,
           resolveOrgId: options?.resolveOrgId,
+          actionRouteAuth: options?.actionRouteAuth,
         });
       }
 
@@ -2256,6 +2445,104 @@ export function createAgentChatPlugin(
         return prompt;
       };
 
+      const emitContextXraySystemSections = async (
+        event: any,
+        input: {
+          frameworkPrompt?: string;
+          actionsPrompt?: string;
+          resources?: string;
+          schemaBlock?: string;
+          modelOverlay?: string;
+          runtimeContext?: string;
+          additionalFramework?: string;
+          extra?: string;
+        },
+      ): Promise<void> => {
+        const sections = await buildSystemManifestSections([
+          ...(input.frameworkPrompt
+            ? [
+                {
+                  label: "Framework core",
+                  provenance: "framework-core" as const,
+                  governance: "required" as const,
+                  content: input.frameworkPrompt,
+                  sourceRef: { scope: "framework" },
+                },
+              ]
+            : []),
+          ...(input.actionsPrompt
+            ? [
+                {
+                  label: "Available actions prompt",
+                  provenance: "actions-prompt" as const,
+                  governance: "required" as const,
+                  content: input.actionsPrompt,
+                  sourceRef: { scope: "actions" },
+                },
+              ]
+            : []),
+          ...(input.resources
+            ? promptResourceManifestSections(input.resources)
+            : []),
+          ...(input.schemaBlock
+            ? [
+                {
+                  label: "SQL schema",
+                  provenance: "db-schema" as const,
+                  governance: "required" as const,
+                  content: input.schemaBlock,
+                  sourceRef: { scope: "sql" },
+                },
+              ]
+            : []),
+          ...(input.additionalFramework
+            ? [
+                {
+                  label: "Framework run policy",
+                  provenance: "framework-core" as const,
+                  governance: "required" as const,
+                  content: input.additionalFramework,
+                  sourceRef: { scope: "framework" },
+                },
+              ]
+            : []),
+          ...(input.extra
+            ? [
+                {
+                  label: "App runtime context",
+                  provenance: "runtime-context" as const,
+                  governance: "inherited" as const,
+                  content: input.extra,
+                  sourceRef: { scope: "app" },
+                },
+              ]
+            : []),
+          ...(input.modelOverlay
+            ? [
+                {
+                  label: "Model overlay",
+                  provenance: "model-overlay" as const,
+                  governance: "required" as const,
+                  content: input.modelOverlay,
+                  sourceRef: { scope: "model" },
+                },
+              ]
+            : []),
+          ...(input.runtimeContext
+            ? [
+                {
+                  label: "Runtime context",
+                  provenance: "runtime-context" as const,
+                  governance: "required" as const,
+                  content: input.runtimeContext,
+                  sourceRef: { scope: "runtime" },
+                },
+              ]
+            : []),
+        ]);
+        setContextXraySystemSections(event, sections);
+      };
+
       /**
        * Read the model family overlay for the currently-resolved model.
        * onEngineResolved sets runCtx.model before systemPrompt is called, so
@@ -2330,14 +2617,6 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
           )
             ? APP_RENDERED_CHAT_NO_DIRECT_CODE_PROMPT
             : "";
-          // Personalization block: included until this owner has finished (or
-          // skipped) the flow — see hasCompletedFirstSessionPersonalization
-          // for why this is gated on the owner-scoped appstate flag rather
-          // than "is this a new thread" (keeps turn 1 and turn 2 identical).
-          const personalizationBlock =
-            (await hasCompletedFirstSessionPersonalization(owner))
-              ? ""
-              : FIRST_SESSION_PERSONALIZATION;
           // Per-model overlay: nudge GPT/Gemini engines toward our behavioral norms.
           const modelOverlay = resolveModelOverlay();
           // Stable-first ordering: base prompt / schema / extra come before
@@ -2347,10 +2626,24 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
           // everything that follows it — putting it last means a day
           // rollover invalidates as little of the prefix as possible.
           if (leanPrompt) {
+            const leanRunPolicyPrompt = buildLeanRunPolicyPrompt(
+              codeEditingSurfaceRestriction,
+              prodCodeExecPromptNote,
+            );
+            await emitContextXraySystemSections(event, {
+              frameworkPrompt: leanBasePrompt.slice(
+                0,
+                Math.max(0, leanBasePrompt.length - prodActionsPrompt.length),
+              ),
+              actionsPrompt: prodActionsPrompt,
+              additionalFramework: leanRunPolicyPrompt,
+              extra,
+              modelOverlay,
+              runtimeContext,
+            });
             return setSystemPromptOnContext(
               leanBasePrompt +
-                codeEditingSurfaceRestriction +
-                prodCodeExecPromptNote +
+                leanRunPolicyPrompt +
                 extra +
                 modelOverlay +
                 runtimeContext,
@@ -2366,9 +2659,22 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
           const schemaBlock = lazyContext
             ? ""
             : await buildSchemaBlock(owner, databaseToolsMode);
+          await emitContextXraySystemSections(event, {
+            frameworkPrompt: basePrompt.slice(
+              0,
+              Math.max(0, basePrompt.length - prodActionsPrompt.length),
+            ),
+            actionsPrompt: prodActionsPrompt,
+            resources,
+            schemaBlock,
+            extra,
+            modelOverlay,
+            runtimeContext,
+            additionalFramework:
+              codeEditingSurfaceRestriction + prodCodeExecPromptNote,
+          });
           return setSystemPromptOnContext(
             basePrompt +
-              personalizationBlock +
               resources +
               schemaBlock +
               codeEditingSurfaceRestriction +
@@ -2475,6 +2781,11 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
               actions: anonymousReadOnlyActions,
               systemPrompt: async (event: any) => {
                 const { extra } = await prepareRun(event);
+                await emitContextXraySystemSections(event, {
+                  frameworkPrompt: anonymousReadOnlyPrompt,
+                  extra,
+                  runtimeContext: runtimeContextForEvent(event),
+                });
                 return setSystemPromptOnContext(
                   anonymousReadOnlyPrompt +
                     extra +
@@ -2585,16 +2896,22 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
           systemPrompt: async (event: any) => {
             const { owner, extra } = await prepareRun(event);
             const runtimeContext = runtimeContextForEvent(event);
-            const personalizationBlock =
-              (await hasCompletedFirstSessionPersonalization(owner))
-                ? ""
-                : FIRST_SESSION_PERSONALIZATION;
             const modelOverlay = resolveModelOverlay();
             // Stable-first ordering: runtimeContext (day-granular) is
             // appended LAST so a day rollover invalidates as little of the
             // cached prompt prefix as possible. See the prod handler above
             // for the same pattern.
             if (leanPrompt) {
+              await emitContextXraySystemSections(event, {
+                frameworkPrompt: leanBasePrompt.slice(
+                  0,
+                  Math.max(0, leanBasePrompt.length - prodActionsPrompt.length),
+                ),
+                actionsPrompt: prodActionsPrompt,
+                extra,
+                modelOverlay,
+                runtimeContext,
+              });
               return setSystemPromptOnContext(
                 leanBasePrompt + extra + modelOverlay + runtimeContext,
               );
@@ -2608,9 +2925,25 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
               lazyContext || !databaseToolsEnabled
                 ? ""
                 : await buildSchemaBlock(owner, databaseToolsMode);
+            await emitContextXraySystemSections(event, {
+              frameworkPrompt: devNative
+                ? basePrompt.slice(
+                    0,
+                    Math.max(0, basePrompt.length - prodActionsPrompt.length),
+                  )
+                : devPrompt.slice(
+                    0,
+                    Math.max(0, devPrompt.length - devActionsPrompt.length),
+                  ),
+              actionsPrompt: devNative ? prodActionsPrompt : devActionsPrompt,
+              resources,
+              schemaBlock,
+              extra,
+              modelOverlay,
+              runtimeContext,
+            });
             return setSystemPromptOnContext(
               devPrompt +
-                personalizationBlock +
                 resources +
                 schemaBlock +
                 extra +
@@ -5320,6 +5653,9 @@ Non-code requests are still fine on this surface: read data, navigate the UI, su
         "/_agent-native/actions",
         "/_agent-native/agent-model-defaults",
         "/_agent-native/mcp",
+        "/mcp",
+        "/.well-known/agent-card.json",
+        "/_agent-native/a2a",
       ],
     });
   };

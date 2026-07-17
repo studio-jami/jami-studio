@@ -8,6 +8,7 @@ import {
   resolveAgentChatProcessRunDispatchPath,
 } from "../agent/durable-background.js";
 import { withConfiguredAppBasePath } from "../server/app-base-path.js";
+import { getOrigin, isConfiguredAppOrigin } from "../server/google-oauth.js";
 import { fireInternalDispatch } from "../server/self-dispatch.js";
 import { agentChat } from "../shared/agent-chat.js";
 import {
@@ -26,8 +27,10 @@ import {
   settleProcessingA2ATask,
   touchQueuedA2ATaskDispatch,
   touchProcessingA2ATask,
+  pauseProcessingA2ATask,
 } from "./task-store.js";
 import type {
+  A2AApprovedAction,
   A2AConfig,
   A2AHandler,
   A2AHandlerContext,
@@ -41,9 +44,98 @@ import type {
 // transitive deps) into the a2a/handlers test boundary. Must stay in sync
 // with FRAMEWORK_ROUTE_PREFIX in `server/core-routes-plugin.ts`.
 const A2A_PROCESS_TASK_PATH = "/_agent-native/a2a/_process-task";
+const PORTABLE_FALLBACK_HANDOFF_TIMEOUT_MS = 1_000;
 const A2A_QUEUED_DISPATCH_STUCK_AFTER_MS = 10_000;
 const A2A_PROCESSING_STUCK_AFTER_MS = 5 * 60 * 1000;
 const A2A_PROCESSING_HEARTBEAT_MS = 30_000;
+const MAX_A2A_APPROVED_ACTIONS = 10;
+
+function trustedApprovedActions(
+  value: unknown,
+  event: any | undefined,
+): A2AApprovedAction[] | undefined {
+  // Static API keys and unsigned requests do not prove which user authorized
+  // a consequential action. Only a verified identity-bearing JWT may carry
+  // chat authorization across the A2A boundary.
+  if (!event?.context?.__a2aVerifiedEmail || !Array.isArray(value)) {
+    return undefined;
+  }
+  const approved = value
+    .slice(0, MAX_A2A_APPROVED_ACTIONS)
+    .filter(
+      (candidate): candidate is A2AApprovedAction =>
+        !!candidate &&
+        typeof candidate === "object" &&
+        typeof (candidate as Record<string, unknown>).tool === "string" &&
+        !!(candidate as Record<string, unknown>).tool,
+    )
+    .map((candidate) => ({ tool: candidate.tool, input: candidate.input }));
+  return approved.length > 0 ? approved : undefined;
+}
+
+/**
+ * Request origin is routing/link context, not an identity signal. Accept only
+ * an absolute HTTP(S) origin from caller metadata so queued runs can preserve
+ * custom-domain/workspace links without allowing arbitrary values to leak
+ * into browser or artifact URLs.
+ */
+function requestOriginFromMetadata(
+  metadata: Record<string, unknown> | undefined,
+): string | undefined {
+  const raw = metadata?.requestOrigin;
+  if (typeof raw !== "string" || !raw.trim()) return undefined;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
+    return url.origin;
+  } catch {
+    return undefined;
+  }
+}
+
+function requestOriginFromEvent(event: any | undefined): string | undefined {
+  if (!event) return undefined;
+  try {
+    return requestOriginFromMetadata({
+      requestOrigin: getOrigin(event as any),
+    });
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Prefer the origin resolved from the receiving request. A distinct public
+ * browser origin is allowed only when the receiver configured it explicitly;
+ * arbitrary caller metadata must not steer links or service-token URLs.
+ */
+function requestOriginForContext(
+  metadata: Record<string, unknown> | undefined,
+  event: any | undefined,
+): string | undefined {
+  if (!event) return undefined;
+  const receiverOrigin = requestOriginFromEvent(event);
+  const metadataOrigin = requestOriginFromMetadata(metadata);
+  if (
+    metadataOrigin &&
+    (metadataOrigin === receiverOrigin || isConfiguredAppOrigin(metadataOrigin))
+  ) {
+    return metadataOrigin;
+  }
+  return receiverOrigin;
+}
+
+function trustedA2AMetadata(
+  metadata: Record<string, unknown> | undefined,
+  event: any | undefined,
+): Record<string, unknown> | undefined {
+  if (!metadata) return undefined;
+  const trusted = { ...metadata };
+  const requestOrigin = requestOriginForContext(metadata, event);
+  if (requestOrigin) trusted.requestOrigin = requestOrigin;
+  else delete trusted.requestOrigin;
+  return trusted;
+}
 
 /**
  * Hard cap on how long a task may sit in submitted/working (never reaching
@@ -82,33 +174,57 @@ async function fireProcessTaskDispatch(
   event: any,
   taskId: string,
   config: A2AConfig,
-  options?: { awaitResponse?: boolean },
 ): Promise<void> {
   const backgroundPath = resolveAgentChatProcessRunDispatchPath();
   const useBackgroundWorker =
     isAgentChatDurableBackgroundEnabled({
-      appOptIn: config.durableBackgroundRuns === true,
+      appOptIn: config.durableBackgroundRuns,
     }) && dispatchPathTargetsNetlifyBackgroundFunction(backgroundPath);
 
-  await fireInternalDispatch({
-    event,
-    path: useBackgroundWorker ? backgroundPath : A2A_PROCESS_TASK_PATH,
-    taskId,
-    ...(useBackgroundWorker
-      ? {
-          body: {
-            [AGENT_BACKGROUND_PROCESSOR_FIELD]: AGENT_BACKGROUND_PROCESSOR_A2A,
-          },
-        }
-      : {}),
-    // Only Netlify's background-function URL acknowledges enqueue with 202.
-    // The portable framework route keeps its HTTP response open until the
-    // processor completes, so awaiting that response would turn async
-    // message/send into a long synchronous request (or a 15s timeout).
-    ...(options?.awaitResponse && useBackgroundWorker
-      ? { awaitResponse: true }
-      : {}),
-  });
+  if (!useBackgroundWorker) {
+    await fireInternalDispatch({
+      event,
+      path: A2A_PROCESS_TASK_PATH,
+      taskId,
+    });
+    return;
+  }
+
+  try {
+    // A real Netlify background function acknowledges the enqueue quickly.
+    // Await that acknowledgement so a missing or rejected worker can fall
+    // back before the task is left in `working` with no processor.
+    await fireInternalDispatch({
+      event,
+      path: backgroundPath,
+      taskId,
+      body: {
+        [AGENT_BACKGROUND_PROCESSOR_FIELD]: AGENT_BACKGROUND_PROCESSOR_A2A,
+      },
+      awaitResponse: true,
+    });
+  } catch (backgroundError) {
+    // Deploys can retain a runtime env opt-in after the corresponding
+    // background function was removed from the build. Keep async A2A useful
+    // in that state by falling back to the portable processor route, which
+    // runs in the regular framework function with the same task/auth checks.
+    console.error(
+      "[a2a] Durable background dispatch failed; falling back to portable processor:",
+      backgroundError,
+    );
+    await fireInternalDispatch({
+      event,
+      path: A2A_PROCESS_TASK_PATH,
+      taskId,
+      // The caller is about to return after a failed background handoff.
+      // Await the portable route briefly so the request definitely leaves this
+      // invocation, but do not hold async message/send open for the full agent
+      // run. The target processor continues independently after this bounded
+      // client-side timeout if the handler takes longer.
+      awaitResponse: true,
+      responseTimeoutMs: PORTABLE_FALLBACK_HANDOFF_TIMEOUT_MS,
+    });
+  }
 }
 
 /**
@@ -147,6 +263,12 @@ export async function processA2ATaskFromQueue(
   const processorMeta = (meta.__a2a_processor ?? {}) as Record<string, unknown>;
   const verifiedEmail = processorMeta.verifiedEmail as string | undefined;
   const orgDomainHint = processorMeta.orgDomainHint as string | undefined;
+  // The processor metadata was created by the authenticated inbound handler
+  // from that request's resolved origin. Prefer it over the processor event,
+  // whose host may be an internal worker/dispatch origin. Legacy tasks that
+  // predate this metadata fall back to the processor event.
+  const requestOrigin =
+    requestOriginFromMetadata(processorMeta) ?? requestOriginFromEvent(event);
   const contextId =
     (processorMeta.contextId as string | null | undefined) ?? undefined;
   const callerMetadata =
@@ -154,6 +276,9 @@ export async function processA2ATaskFromQueue(
       | Record<string, unknown>
       | null
       | undefined) ?? undefined;
+  const approvedActions = Array.isArray(processorMeta.approvedActions)
+    ? (processorMeta.approvedActions as A2AApprovedAction[])
+    : undefined;
 
   const resolvedOrgId = await resolveVerifiedA2AOrgId(
     verifiedEmail,
@@ -172,7 +297,11 @@ export async function processA2ATaskFromQueue(
   ).unref?.();
   try {
     await runWithRequestContext(
-      { userEmail: verifiedEmail, orgId: resolvedOrgId },
+      {
+        userEmail: verifiedEmail,
+        orgId: resolvedOrgId,
+        ...(requestOrigin ? { requestOrigin } : {}),
+      },
       () =>
         runHandlerAndPersist(
           taskId,
@@ -181,6 +310,7 @@ export async function processA2ATaskFromQueue(
           contextId,
           callerMetadata,
           event,
+          approvedActions,
         ),
     );
   } catch (err: any) {
@@ -286,6 +416,7 @@ function makeHandlerContext(
   contextId?: string,
   metadata?: Record<string, unknown>,
   event?: any,
+  approvedActions?: A2AApprovedAction[],
 ): {
   context: A2AHandlerContext;
   artifacts: Artifact[];
@@ -296,6 +427,7 @@ function makeHandlerContext(
     contextId,
     metadata,
     event,
+    approvedActions,
     writeArtifact(name, content, mimeType) {
       const artifact: Artifact = {
         name,
@@ -324,7 +456,7 @@ function makeHandlerContext(
  * inside `runWithRequestContext` so downstream actions see the org.
  */
 async function withA2ARequestContext<T>(
-  _metadata: Record<string, unknown> | undefined,
+  metadata: Record<string, unknown> | undefined,
   event: any | undefined,
   fn: () => Promise<T>,
 ): Promise<T> {
@@ -341,9 +473,14 @@ async function withA2ARequestContext<T>(
     (event?.context?.__a2aOrgDomain as string | undefined) ?? undefined;
 
   const resolvedOrgId = await resolveVerifiedA2AOrgId(verifiedEmail, orgDomain);
+  const requestOrigin = requestOriginForContext(metadata, event);
 
   return runWithRequestContext(
-    { userEmail: verifiedEmail, orgId: resolvedOrgId },
+    {
+      userEmail: verifiedEmail,
+      orgId: resolvedOrgId,
+      ...(requestOrigin ? { requestOrigin } : {}),
+    },
     fn,
   ) as Promise<T>;
 }
@@ -386,12 +523,14 @@ async function runHandlerAndPersist(
   contextId: string | undefined,
   metadata: Record<string, unknown> | undefined,
   event?: any,
+  approvedActions?: A2AApprovedAction[],
 ): Promise<void> {
   const { context, artifacts } = makeHandlerContext(
     taskId,
     contextId,
     metadata,
     event,
+    approvedActions,
   );
   try {
     const result = getHandler(config)(message, context);
@@ -405,6 +544,10 @@ async function runHandlerAndPersist(
       for await (const msg of result as AsyncGenerator<Message>) {
         lastMessage = msg;
       }
+      if (lastMessage?.metadata?.agentNativeTaskState === "input-required") {
+        await pauseProcessingA2ATask(taskId, lastMessage);
+        return;
+      }
       await settleProcessingA2ATask(taskId, {
         state: "completed",
         message: lastMessage,
@@ -415,6 +558,10 @@ async function runHandlerAndPersist(
 
     const handlerResult = await (result as Promise<A2AHandlerResult>);
     const allArtifacts = [...artifacts, ...(handlerResult.artifacts ?? [])];
+    if (handlerResult.taskState === "input-required") {
+      await pauseProcessingA2ATask(taskId, handlerResult.message);
+      return;
+    }
     await settleProcessingA2ATask(taskId, {
       state: "completed",
       message: handlerResult.message,
@@ -450,6 +597,7 @@ async function handleSend(
 
   const contextId = params.contextId as string | undefined;
   const metadata = params.metadata as Record<string, unknown> | undefined;
+  const approvedActions = trustedApprovedActions(params.approvedActions, event);
 
   // The JWT-verified caller email (set by mountA2A in server.ts) is the
   // single source of truth for task ownership — bound at creation, checked
@@ -503,14 +651,18 @@ async function handleSend(
     // to metadata.orgDomain which is caller-supplied and unverified.
     const orgDomainHint =
       (event?.context?.__a2aOrgDomain as string | undefined) ?? undefined;
+    const requestOrigin = requestOriginForContext(metadata, event);
+    const safeMetadata = trustedA2AMetadata(metadata, event);
 
     const taskMetadata: Record<string, unknown> = {
-      ...(metadata ?? {}),
+      ...(safeMetadata ?? {}),
       __a2a_processor: {
         verifiedEmail,
         orgDomainHint,
+        ...(requestOrigin ? { requestOrigin } : {}),
         contextId: contextId ?? null,
-        callerMetadata: metadata ?? null,
+        callerMetadata: safeMetadata ?? null,
+        approvedActions: approvedActions ?? null,
       },
     };
     const task = await createTask(
@@ -525,20 +677,19 @@ async function handleSend(
     // detached dispatch fetch racing only a short settle timer can be killed
     // mid-flight when the serverless response is flushed WITHOUT rejecting —
     // see the `awaitResponse` doc on `fireInternalDispatch` in
-    // server/self-dispatch.ts. `awaitResponse: true` requests the stronger
-    // guarantee; `fireProcessTaskDispatch` only honors it for the Netlify
-    // background-worker path (fast 202 ack) and falls back to the settle
-    // race for the portable route, which holds its response open until the
-    // handler finishes.
+    // server/self-dispatch.ts. The durable worker path gets a fast 202
+    // acknowledgement; a stale-worker fallback uses a short bounded timeout
+    // because the portable route responds after processing the task.
     try {
-      await fireProcessTaskDispatch(event, task.id, config, {
-        awaitResponse: true,
-      });
+      await fireProcessTaskDispatch(event, task.id, config);
     } catch (err) {
       console.error("[a2a] Failed to dispatch process-task:", err);
     }
 
-    return { ...jsonRpcResult(0, working ?? task), _id: 0 };
+    return {
+      ...jsonRpcResult(0, sanitizeTaskForResponse(working ?? task)),
+      _id: 0,
+    };
   }
 
   return withA2ARequestContext(metadata, event, async () => {
@@ -550,7 +701,13 @@ async function handleSend(
     );
     await updateTask(task.id, { state: "working" });
 
-    const ctx = makeHandlerContext(task.id, contextId, metadata, event);
+    const ctx = makeHandlerContext(
+      task.id,
+      contextId,
+      trustedA2AMetadata(metadata, event),
+      event,
+      approvedActions,
+    );
 
     try {
       const result = getHandler(config)(message, ctx.context);
@@ -563,6 +720,13 @@ async function handleSend(
         let lastMessage: Message | undefined;
         for await (const msg of result as AsyncGenerator<Message>) {
           lastMessage = msg;
+        }
+        if (lastMessage?.metadata?.agentNativeTaskState === "input-required") {
+          const updated = await updateTask(task.id, {
+            state: "input-required",
+            message: lastMessage,
+          });
+          return { ...jsonRpcResult(0, updated), _id: 0 };
         }
         const updated = await updateTask(task.id, {
           state: "completed",
@@ -577,6 +741,13 @@ async function handleSend(
         ...ctx.artifacts,
         ...(handlerResult.artifacts ?? []),
       ];
+      if (handlerResult.taskState === "input-required") {
+        const updated = await updateTask(task.id, {
+          state: "input-required",
+          message: handlerResult.message,
+        });
+        return { ...jsonRpcResult(0, updated), _id: 0 };
+      }
       const updated = await updateTask(task.id, {
         state: "completed",
         message: handlerResult.message,
@@ -616,6 +787,7 @@ async function handleStream(
 
   const contextId = params.contextId as string | undefined;
   const metadata = params.metadata as Record<string, unknown> | undefined;
+  const approvedActions = trustedApprovedActions(params.approvedActions, event);
   const ownerEmailForTask =
     (event?.context?.__a2aVerifiedEmail as string | undefined) ?? null;
 
@@ -632,8 +804,9 @@ async function handleStream(
     const { context, artifacts } = makeHandlerContext(
       task.id,
       contextId,
-      metadata,
+      trustedA2AMetadata(metadata, event),
       event,
+      approvedActions,
     );
 
     try {

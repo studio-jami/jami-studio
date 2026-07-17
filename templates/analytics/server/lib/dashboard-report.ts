@@ -1,4 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
+import { readdir, rm, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import {
   getAppProductionUrl,
@@ -7,6 +11,7 @@ import {
 } from "@agent-native/core/server";
 import {
   EMBED_MODE_QUERY_PARAM,
+  EMBED_SESSION_COOKIE,
   EMBED_TOKEN_QUERY_PARAM,
 } from "@agent-native/core/shared";
 
@@ -44,11 +49,29 @@ const DASHBOARD_REPORT_CID = "dashboard-report-snapshot";
 const LOCAL_SCREENSHOT_TIMEOUT_MS = 90_000;
 const SERVERLESS_SCREENSHOT_TIMEOUT_MS = 90_000;
 const SERVERLESS_SECOND_READY_TIMEOUT_MS = 45_000;
+// Keep enough room under Netlify's 300s background-function limit for the
+// bounded browser-close/profile-cleanup steps after each failed attempt and
+// for the final email send. The three attempts total 225s; cleanup can spend
+// up to 60s, leaving a small delivery buffer.
+const SERVERLESS_FULL_ATTEMPT_TIMEOUT_MS = 110_000;
+const SERVERLESS_LIGHTWEIGHT_ATTEMPT_TIMEOUT_MS = 70_000;
+const BROWSER_CLEANUP_TIMEOUT_MS = 10_000;
 const SCREENSHOT_VIEWPORT_PADDING = 64;
 
 type DashboardScreenshotAttempt = {
-  label: "full" | "full-lightweight";
+  label: "full" | "full-lightweight" | "limited";
   viewport: { width: number; height: number };
+  captureScale?: number;
+  readyTimeout?: number;
+  secondReadyTimeout?: number;
+  totalTimeout?: number;
+  reportPanelLimit?: number;
+};
+
+type LaunchedScreenshotBrowser = {
+  browser: any;
+  cleanup: () => Promise<void>;
+  newPage: () => Promise<any>;
 };
 
 function daysAgo(n: number): string {
@@ -216,14 +239,44 @@ function localChromiumExecutablePath(): string | null {
   return candidates.find((candidate) => existsSync(candidate)) ?? null;
 }
 
-async function launchScreenshotBrowser() {
+async function sweepStaleScreenshotProfiles(): Promise<void> {
+  let entries: string[];
+  try {
+    entries = await readdir(tmpdir());
+  } catch {
+    return;
+  }
+  const stale = entries
+    .filter((entry) => entry.startsWith("dashboard-report-playwright-"))
+    .slice(0, 8);
+  for (const entry of stale) {
+    const full = join(tmpdir(), entry);
+    const info = await stat(full).catch(() => null);
+    if (info && Date.now() - info.mtimeMs > 30 * 60_000) {
+      await rm(full, { recursive: true, force: true }).catch(() => {});
+    }
+  }
+}
+
+async function launchScreenshotBrowser(
+  viewport: DashboardScreenshotAttempt["viewport"],
+): Promise<LaunchedScreenshotBrowser> {
   const { chromium: playwright } = await import("playwright-core");
   const localExecutablePath = localChromiumExecutablePath();
   if (localExecutablePath) {
-    return playwright.launch({
+    const browser = await playwright.launch({
       executablePath: localExecutablePath,
       headless: true,
     });
+    return {
+      browser,
+      cleanup: async () => {},
+      newPage: () =>
+        browser.newPage({
+          viewport,
+          deviceScaleFactor: 1,
+        }),
+    };
   }
 
   if (isServerlessBrowserRuntime()) {
@@ -232,19 +285,54 @@ async function launchScreenshotBrowser() {
     const packUrl =
       process.env.DASHBOARD_REPORT_CHROMIUM_PACK_URL?.trim() ||
       DEFAULT_SERVERLESS_CHROMIUM_PACK_URL;
-    return playwright.launch({
-      args: [
-        ...chromium.args,
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--hide-scrollbars",
-      ],
-      executablePath: await chromium.executablePath(packUrl),
-      headless: true,
-    });
+    await sweepStaleScreenshotProfiles();
+    const userDataDir = join(
+      tmpdir(),
+      `dashboard-report-playwright-${randomUUID()}`,
+    );
+    const cleanup = async () => {
+      await rm(userDataDir, { recursive: true, force: true }).catch((err) => {
+        console.error(
+          "[dashboard-report] Failed to clean Chromium profile:",
+          errorMessage(err),
+        );
+      });
+    };
+
+    try {
+      const browser = await playwright.launchPersistentContext(userDataDir, {
+        args: [
+          ...chromium.args,
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--hide-scrollbars",
+        ],
+        deviceScaleFactor: 1,
+        executablePath: await chromium.executablePath(packUrl),
+        headless: true,
+        viewport,
+      });
+      return {
+        browser,
+        cleanup,
+        newPage: () => browser.newPage(),
+      };
+    } catch (err) {
+      await cleanup();
+      throw err;
+    }
   }
 
-  return playwright.launch({ headless: true });
+  const browser = await playwright.launch({ headless: true });
+  return {
+    browser,
+    cleanup: async () => {},
+    newPage: () =>
+      browser.newPage({
+        viewport,
+        deviceScaleFactor: 1,
+      }),
+  };
 }
 
 function screenshotTimeoutMs(): number {
@@ -350,6 +438,130 @@ async function fitViewportWidthToDashboardCapture(
   await page.waitForTimeout(250);
 }
 
+async function scaleDashboardCapture(
+  page: any,
+  scale: number | undefined,
+): Promise<void> {
+  if (!scale || scale >= 1) return;
+  await page.evaluate(`(() => {
+    const root = document.querySelector("[data-dashboard-report-capture]");
+    if (root instanceof HTMLElement) root.style.zoom = "${scale}";
+  })()`);
+  await page.waitForTimeout(250);
+}
+
+async function runBoundedBrowserCleanup(
+  label: string,
+  operation: () => Promise<void>,
+): Promise<void> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      operation(),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(
+          () => reject(new Error(`${label} exceeded cleanup timeout`)),
+          BROWSER_CLEANUP_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } catch (err) {
+    console.error(`[dashboard-report] ${label}:`, errorMessage(err));
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
+const DIAGNOSTICS_PROBE_TIMEOUT_MS = 2_000;
+const DIAGNOSTICS_MAX_LENGTH = 700;
+const DIAGNOSTICS_COLLECTOR_LIMIT = 5;
+
+// Best-effort page inspection used when the report surface never becomes
+// visible, so failures carry enough state to tell wrong-page/wedged-renderer/
+// auth-bounce apart. Must never throw and must stay bounded even if the page
+// is hung.
+async function collectPageDiagnostics(
+  page: any,
+  consoleErrors: string[],
+  failedRequests: string[],
+): Promise<string> {
+  try {
+    let responsive = true;
+    let probeTimeout: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        Promise.resolve(page.evaluate("1")),
+        new Promise((_, reject) => {
+          probeTimeout = setTimeout(
+            () => reject(new Error("diagnostics probe timed out")),
+            DIAGNOSTICS_PROBE_TIMEOUT_MS,
+          );
+        }),
+      ]);
+    } catch {
+      responsive = false;
+    } finally {
+      if (probeTimeout) clearTimeout(probeTimeout);
+    }
+
+    if (!responsive) {
+      return `page unresponsive (renderer hung or crashed); consoleErrors=${JSON.stringify(
+        consoleErrors,
+      )} failedRequests=${JSON.stringify(failedRequests)}`.slice(
+        0,
+        DIAGNOSTICS_MAX_LENGTH,
+      );
+    }
+
+    let url = "";
+    try {
+      url = page.url();
+    } catch {
+      // page may already be closed; leave url empty
+    }
+
+    let title = "";
+    let bodyText = "";
+    let detailsTimeout: ReturnType<typeof setTimeout> | undefined;
+    try {
+      // page.evaluate ignores setDefaultTimeout, so race it like the probe —
+      // a renderer that wedges after the probe must not stall diagnostics.
+      const details = await Promise.race([
+        Promise.resolve(
+          page.evaluate(
+            `(() => ({
+              title: document.title,
+              bodyText: document.body?.innerText?.slice(0, 240) ?? "",
+            }))()`,
+          ),
+        ),
+        new Promise<never>((_, reject) => {
+          detailsTimeout = setTimeout(
+            () => reject(new Error("diagnostics details timed out")),
+            DIAGNOSTICS_PROBE_TIMEOUT_MS,
+          );
+        }),
+      ]);
+      title = (details as any)?.title ?? "";
+      bodyText = (details as any)?.bodyText ?? "";
+    } catch {
+      // best effort; leave title/bodyText empty
+    } finally {
+      if (detailsTimeout) clearTimeout(detailsTimeout);
+    }
+
+    return `page state: ${JSON.stringify({
+      url,
+      title,
+      bodyText,
+      consoleErrors,
+      failedRequests,
+    })}`.slice(0, DIAGNOSTICS_MAX_LENGTH);
+  } catch {
+    return "diagnostics unavailable";
+  }
+}
+
 async function captureDashboardPng(
   sub: DashboardReportSubscription,
   snapshot: ReportSnapshot,
@@ -372,14 +584,100 @@ async function captureDashboardPng(
   const screenshotUrl = new URL(targetPath, `${dashboardBaseUrl()}/`);
   screenshotUrl.searchParams.set(EMBED_MODE_QUERY_PARAM, "1");
   screenshotUrl.searchParams.set(EMBED_TOKEN_QUERY_PARAM, token);
+  if (attempt.reportPanelLimit) {
+    screenshotUrl.searchParams.set(
+      "reportPanelLimit",
+      String(attempt.reportPanelLimit),
+    );
+  }
 
-  const browser = await launchScreenshotBrowser();
+  let browser: any;
+  let cleanup = async () => {};
+  let newPage = async (): Promise<any> => {
+    throw new Error("Screenshot browser did not provide a page factory");
+  };
+  let launchPromise: Promise<LaunchedScreenshotBrowser> | undefined;
+  let launchTimeout: ReturnType<typeof setTimeout> | undefined;
+  let captureStage = "launching the screenshot browser";
+  let attemptTimedOut = false;
+  let lastDiagnostics: string | null = null;
+  const attemptTimeout = attempt.totalTimeout
+    ? setTimeout(() => {
+        attemptTimedOut = true;
+        if (browser) void browser.close().catch(() => {});
+      }, attempt.totalTimeout)
+    : null;
   try {
+    launchPromise = launchScreenshotBrowser(attempt.viewport);
+    const launched = attempt.totalTimeout
+      ? await Promise.race([
+          launchPromise,
+          new Promise<never>((_, reject) => {
+            launchTimeout = setTimeout(() => {
+              attemptTimedOut = true;
+              reject(
+                new Error(
+                  `${attempt.label} browser launch exceeded ${attempt.totalTimeout}ms`,
+                ),
+              );
+            }, attempt.totalTimeout);
+          }),
+        ])
+      : await launchPromise;
+    browser = launched.browser;
+    cleanup = launched.cleanup;
+    newPage = launched.newPage;
+    if (attemptTimedOut) {
+      throw new Error("Screenshot browser launch exceeded attempt timeout");
+    }
+
     const timeout = screenshotTimeoutMs();
-    const page = await browser.newPage({
-      viewport: attempt.viewport,
-      deviceScaleFactor: 1,
+    const page = await newPage();
+
+    // Belt-and-braces auth: the query token authenticates only after the
+    // client-side bootstrap harvests it from the URL, which gives the
+    // stripped-down serverless browser several ways to end up session-less.
+    // Seeding the same signed token as a cookie authenticates every request
+    // server-side with no client cooperation. Never abort the capture over
+    // this — the query token path still exists.
+    try {
+      await page.context().addCookies([
+        {
+          name: EMBED_SESSION_COOKIE,
+          value: token,
+          url: `${dashboardBaseUrl()}/`,
+        },
+      ]);
+    } catch (err) {
+      console.warn(
+        "[dashboard-report] Failed to pre-seed embed session cookie:",
+        errorMessage(err),
+      );
+    }
+
+    // Bounded diagnostics collectors so a failed wait carries evidence of
+    // wrong-page/wedged-renderer/auth-bounce instead of a bare timeout.
+    const consoleErrors: string[] = [];
+    page.on("console", (msg: any) => {
+      if (msg.type() !== "error") return;
+      if (consoleErrors.length >= DIAGNOSTICS_COLLECTOR_LIMIT) return;
+      consoleErrors.push(msg.text().slice(0, 160));
     });
+    const failedRequests: string[] = [];
+    page.on("requestfailed", (req: any) => {
+      if (failedRequests.length >= DIAGNOSTICS_COLLECTOR_LIMIT) return;
+      failedRequests.push(
+        `${req.method()} ${req.url().slice(0, 120)}: ${req.failure()?.errorText ?? "failed"}`,
+      );
+    });
+    page.on("response", (res: any) => {
+      if (res.status() < 400) return;
+      if (failedRequests.length >= DIAGNOSTICS_COLLECTOR_LIMIT) return;
+      failedRequests.push(
+        `${res.request().method()} ${res.url().slice(0, 120)}: HTTP ${res.status()}`,
+      );
+    });
+
     page.setDefaultTimeout(timeout);
     await page.emulateMedia({ media: "screen", colorScheme: "light" });
     await page.addInitScript(() => {
@@ -390,14 +688,31 @@ async function captureDashboardPng(
       timeout,
     });
 
+    captureStage = "waiting for the report surface";
     const capture = page.locator("[data-dashboard-report-capture]");
-    await capture.waitFor({ state: "visible", timeout });
-    await waitForDashboardReportReady(page, timeout);
+    try {
+      await capture.waitFor({ state: "visible", timeout });
+    } catch (err) {
+      lastDiagnostics = errorMessage(
+        await collectPageDiagnostics(page, consoleErrors, failedRequests),
+      );
+      throw new Error(`${errorMessage(err)}; ${lastDiagnostics}`);
+    }
+    captureStage = "waiting for dashboard queries";
+    await waitForDashboardReportReady(page, attempt.readyTimeout ?? timeout);
+    captureStage = "rendering lazy dashboard panels";
     await scrollDashboardForLazyRendering(page);
-    await waitForDashboardReportReady(page, secondReadyTimeoutMs());
+    captureStage = "waiting for lazy dashboard panels";
+    await waitForDashboardReportReady(
+      page,
+      attempt.secondReadyTimeout ?? secondReadyTimeoutMs(),
+    );
 
+    captureStage = "sizing the dashboard capture";
     await fitViewportWidthToDashboardCapture(page, capture, attempt.viewport);
+    await scaleDashboardCapture(page, attempt.captureScale);
     await capture.scrollIntoViewIfNeeded();
+    captureStage = "rasterizing the dashboard PNG";
     const image = await capture.screenshot({
       type: "png",
       animations: "disabled",
@@ -406,8 +721,40 @@ async function captureDashboardPng(
       throw new Error("Dashboard screenshot was empty");
     }
     return Buffer.from(image);
+  } catch (err) {
+    if (attemptTimedOut) {
+      throw new Error(
+        `${attempt.label} capture exceeded ${attempt.totalTimeout}ms while ${captureStage}` +
+          (lastDiagnostics ? `; ${lastDiagnostics}` : ""),
+      );
+    }
+    throw new Error(`${captureStage}: ${errorMessage(err)}`);
   } finally {
-    await browser.close();
+    if (attemptTimeout) clearTimeout(attemptTimeout);
+    if (launchTimeout) clearTimeout(launchTimeout);
+    if (!browser && launchPromise) {
+      void launchPromise.then(
+        async (lateBrowser) => {
+          await runBoundedBrowserCleanup(
+            "Failed to close late screenshot browser",
+            () => lateBrowser.browser.close(),
+          );
+          await runBoundedBrowserCleanup(
+            "Failed to clean late Chromium profile",
+            lateBrowser.cleanup,
+          );
+        },
+        () => {
+          // The launch rejection was already handled by the race above.
+        },
+      );
+    }
+    if (browser) {
+      await runBoundedBrowserCleanup("Failed to close screenshot browser", () =>
+        browser.close(),
+      );
+    }
+    await runBoundedBrowserCleanup("Failed to clean Chromium profile", cleanup);
   }
 }
 
@@ -419,36 +766,90 @@ function errorMessage(err: unknown): string {
   );
 }
 
+function storedAttemptError(message: string): string {
+  const normalized = message.replace(/\s+/g, " ").trim();
+  return normalized.length > 400 ? `${normalized.slice(0, 399)}…` : normalized;
+}
+
 async function captureDashboardPngWithFallback(
   sub: DashboardReportSubscription,
   snapshot: ReportSnapshot,
+  options?: { includeLimitedFallback?: boolean },
 ): Promise<{
   png: Buffer | null;
-  mode: "full" | "full-lightweight" | "none";
+  mode: "full" | "full-lightweight" | "limited" | "none";
   error?: string;
 }> {
+  const serverless = isServerlessBrowserRuntime();
   const attempts: DashboardScreenshotAttempt[] = [
-    { label: "full", viewport: { width: 1440, height: 1800 } },
-    { label: "full-lightweight", viewport: { width: 1200, height: 1400 } },
+    {
+      label: "full",
+      viewport: { width: 1440, height: 1800 },
+      captureScale: 0.85,
+      ...(serverless
+        ? {
+            secondReadyTimeout: 25_000,
+            totalTimeout: SERVERLESS_FULL_ATTEMPT_TIMEOUT_MS,
+          }
+        : {}),
+    },
+    {
+      label: "full-lightweight",
+      viewport: { width: 1200, height: 1400 },
+      captureScale: 0.7,
+      ...(serverless
+        ? {
+            readyTimeout: 55_000,
+            secondReadyTimeout: 15_000,
+            totalTimeout: SERVERLESS_LIGHTWEIGHT_ATTEMPT_TIMEOUT_MS,
+          }
+        : {}),
+    },
   ];
-  let lastError: string | undefined;
+  if (options?.includeLimitedFallback) {
+    // Only added on the final sweep after the 1-hour retry window, when the
+    // alternative is a no-image fallback email. All three serverless attempt
+    // totalTimeouts sum to 225s, leaving room for bounded cleanup and email
+    // delivery under the 300s Netlify background-function timeout.
+    attempts.push({
+      label: "limited",
+      viewport: { width: 1200, height: 1400 },
+      captureScale: 0.7,
+      reportPanelLimit: 8,
+      ...(serverless
+        ? {
+            readyTimeout: 40_000,
+            secondReadyTimeout: 10_000,
+            totalTimeout: 45_000,
+          }
+        : {}),
+    });
+  }
+  const errors: string[] = [];
 
   for (const attempt of attempts) {
     try {
+      const png = await captureDashboardPng(sub, snapshot, attempt);
       return {
-        png: await captureDashboardPng(sub, snapshot, attempt),
+        png,
         mode: attempt.label,
+        ...(errors.length ? { error: errors.join(" | ") } : {}),
       };
     } catch (err) {
-      lastError = errorMessage(err);
+      const attemptError = errorMessage(err);
+      errors.push(`${attempt.label}: ${storedAttemptError(attemptError)}`);
       console.error(
         `[dashboard-report] ${attempt.label} screenshot failed for subscription ${sub.id}:`,
-        lastError,
+        attemptError,
       );
     }
   }
 
-  return { png: null, mode: "none", error: lastError };
+  return {
+    png: null,
+    mode: "none",
+    ...(errors.length ? { error: errors.join(" | ") } : {}),
+  };
 }
 
 function reportDate(snapshot: ReportSnapshot): string {
@@ -461,7 +862,10 @@ function reportDate(snapshot: ReportSnapshot): string {
 
 function renderReportEmailHtml(
   snapshot: ReportSnapshot,
-  options: { screenshotAttached: boolean },
+  options: {
+    screenshotAttached: boolean;
+    screenshotMode: "full" | "full-lightweight" | "limited" | "none";
+  },
 ): string {
   const title = escapeHtml(snapshot.title);
   const dashboardUrl = escapeHtml(snapshot.dashboardUrl);
@@ -474,6 +878,12 @@ function renderReportEmailHtml(
     : `<div style="margin:18px 0;padding:14px 16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#374151;font-size:14px;line-height:1.5;">
       The dashboard image was unavailable for this run. Open the live dashboard to view the latest report.
     </div>`;
+  const limitedScreenshotNotice =
+    options.screenshotMode === "limited"
+      ? `<div style="margin:12px 0 0;padding:12px 14px;border:1px solid #f3c46b;border-radius:8px;background:#fff8e6;color:#6b4f14;font-size:13px;line-height:1.45;">
+      This is a limited fallback image and may omit some dashboard panels. <a href="${dashboardUrl}" style="color:#2563eb;text-decoration:none;">Open the full dashboard</a> to see every panel.
+    </div>`
+      : "";
 
   return `<!doctype html>
 <html>
@@ -482,6 +892,7 @@ function renderReportEmailHtml(
       Here's your report of <a href="${dashboardUrl}" style="color:#2563eb;text-decoration:none;">${title}</a> for ${date}
     </p>
     ${screenshotBlock}
+    ${limitedScreenshotNotice}
     <p style="margin:18px 0 0;color:#525866;font-size:13px;line-height:1.45;">
       <a href="${dashboardUrl}" style="color:#2563eb;text-decoration:none;">Open dashboard</a>
       <span style="color:#9ca3af;"> · </span>
@@ -493,7 +904,10 @@ function renderReportEmailHtml(
 
 function renderReportText(
   snapshot: ReportSnapshot,
-  options: { screenshotAttached: boolean },
+  options: {
+    screenshotAttached: boolean;
+    screenshotMode: "full" | "full-lightweight" | "limited" | "none";
+  },
 ): string {
   const lines = [
     `Daily dashboard report: ${snapshot.title}`,
@@ -503,6 +917,11 @@ function renderReportText(
   ];
   if (!options.screenshotAttached) {
     lines.push("Dashboard image unavailable for this run.");
+  }
+  if (options.screenshotMode === "limited") {
+    lines.push(
+      `This is a limited fallback image and may omit some dashboard panels. Open the full dashboard: ${snapshot.dashboardUrl}`,
+    );
   }
   return lines.join("\n");
 }
@@ -518,16 +937,23 @@ function reportFilename(title: string): string {
 
 export async function sendDashboardReportSubscription(
   sub: DashboardReportSubscription,
-  options: { requireScreenshot?: boolean } = {},
+  options: {
+    requireScreenshot?: boolean;
+    skipEmailWithoutScreenshot?: boolean;
+    allowLimitedFallback?: boolean;
+  } = {},
 ): Promise<{
   dashboardUrl: string;
   recipientCount: number;
   screenshotAttached: boolean;
-  screenshotMode: "full" | "full-lightweight" | "none";
+  screenshotMode: "full" | "full-lightweight" | "limited" | "none";
   screenshotError?: string;
+  emailsSent: boolean;
 }> {
   const snapshot = await collectReportSnapshot(sub);
-  const capture = await captureDashboardPngWithFallback(sub, snapshot);
+  const capture = await captureDashboardPngWithFallback(sub, snapshot, {
+    includeLimitedFallback: options?.allowLimitedFallback,
+  });
   if (!capture.png && options.requireScreenshot) {
     throw new Error(
       capture.error
@@ -535,9 +961,25 @@ export async function sendDashboardReportSubscription(
         : "Dashboard screenshot unavailable",
     );
   }
+  if (!capture.png && options.skipEmailWithoutScreenshot) {
+    return {
+      dashboardUrl: snapshot.dashboardUrl,
+      recipientCount: sub.recipients.length,
+      screenshotAttached: false,
+      screenshotMode: capture.mode,
+      emailsSent: false,
+      ...(capture.error ? { screenshotError: capture.error } : {}),
+    };
+  }
   const screenshotAttached = Boolean(capture.png);
-  const html = renderReportEmailHtml(snapshot, { screenshotAttached });
-  const text = renderReportText(snapshot, { screenshotAttached });
+  const html = renderReportEmailHtml(snapshot, {
+    screenshotAttached,
+    screenshotMode: capture.mode,
+  });
+  const text = renderReportText(snapshot, {
+    screenshotAttached,
+    screenshotMode: capture.mode,
+  });
   const subject = `Daily dashboard: ${snapshot.title}`;
 
   for (const to of sub.recipients) {
@@ -565,6 +1007,7 @@ export async function sendDashboardReportSubscription(
     recipientCount: sub.recipients.length,
     screenshotAttached,
     screenshotMode: capture.mode,
+    emailsSent: true,
     ...(capture.error ? { screenshotError: capture.error } : {}),
   };
 }

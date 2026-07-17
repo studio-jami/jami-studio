@@ -92,6 +92,27 @@ export function getDesignToolActivationState(tool: DesignTool): {
   return { mode: "edit", drawMode: false, pinMode: false };
 }
 
+export function shouldAutoEnableDrawOverlay(args: {
+  mode: EditorMode;
+  activeTool: DesignTool;
+  pinMode: boolean;
+}): boolean {
+  return (
+    args.mode === "annotate" && args.activeTool === "draw" && !args.pinMode
+  );
+}
+
+export type DesignBottomToolbarMode = "editor" | "commenter" | "hidden";
+
+export function getDesignBottomToolbarMode(args: {
+  isSignedIn: boolean;
+  canEditDesign: boolean;
+  hasActiveFile: boolean;
+}): DesignBottomToolbarMode {
+  if (!args.isSignedIn || !args.hasActiveFile) return "hidden";
+  return args.canEditDesign ? "editor" : "commenter";
+}
+
 export function getSingleScreenCreationTool(args: {
   activeTool: DesignTool;
   viewMode: "single" | "overview";

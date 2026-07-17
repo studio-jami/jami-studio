@@ -35,7 +35,13 @@ export type {
   SessionReplayNetworkOptions,
   SessionReplayOptions,
   SessionReplayStartResult,
+  SessionReplayContext,
+  SessionReplayLinkOptions,
   SessionReplayUrlMatcher,
+} from "./session-replay.js";
+export {
+  getSessionReplayContext,
+  getSessionReplayUrl,
 } from "./session-replay.js";
 
 declare global {
@@ -96,6 +102,15 @@ export type ConfigureTrackingOptions = {
   contentCapture?: boolean;
   /** Resolve content capture synchronously for each browser pathname. */
   contentCaptureForPath?: (pathname: string) => boolean;
+  /**
+   * Whether tracking may read the authenticated agent-engine status endpoint.
+   * Disable this on anonymous/public routes to avoid an expected 401 request.
+   */
+  llmConnectionStatus?: boolean;
+  /** Disable framework auth refresh when the host owns identity/session state. */
+  authSessionRefresh?: boolean;
+  /** Disable automatic history/pageview events when the host emits its own. */
+  pageviewTracking?: boolean;
   sessionReplay?: boolean | SessionReplayOptions;
   /**
    * First-party, Sentry-style error capture. Auto-captures uncaught errors
@@ -105,7 +120,7 @@ export type ConfigureTrackingOptions = {
   errorCapture?: boolean | ErrorCaptureConfigOptions;
 };
 
-type SentryUser = {
+export type TrackingIdentityUser = {
   id?: string;
   email?: string;
   username?: string;
@@ -143,7 +158,7 @@ let _trackingContentCaptureEnabled = true;
 let _contentCaptureForPath: ((pathname: string) => boolean) | null = null;
 // Buffer for setSentryUser calls made before Sentry has initialized.
 // `undefined` means "no pending update"; `null` means "pending clear".
-let _pendingSentryUser: SentryUser | null | undefined = undefined;
+let _pendingSentryUser: TrackingIdentityUser | null | undefined = undefined;
 let _pendingSentryOrgId: string | null | undefined = undefined;
 
 const AGENT_NATIVE_ANALYTICS_DEFAULT_ENDPOINT =
@@ -646,6 +661,19 @@ function shouldDropBrowserSentryNoise(event: Sentry.Event): boolean {
     typeof event.tags?.url === "string" ? event.tags.url : undefined;
   const requestUrl = (event.request?.url ?? taggedUrl ?? "").toLowerCase();
   const isDocsPage = isAgentNativeDocsUrl(requestUrl);
+  // A server-owned run can emit an expected run_timeout while handing off to
+  // its continuation. AssistantChat retries these transitions automatically;
+  // only locally timed-out or ultimately unrecoverable runs should create a
+  // Sentry issue. Keep this scoped to the explicit chat tags so real provider
+  // and network timeout errors remain visible.
+  if (
+    event.tags?.context === "agent-native-chat" &&
+    event.tags?.errorCode === "run_timeout" &&
+    event.tags?.reconnectTimedOut === "false" &&
+    event.tags?.reconnectTerminalReason === "run_timeout"
+  ) {
+    return true;
+  }
   // rrweb 2.1.0 replays recorded media interactions with `void media.play()`.
   // Browsers may reject that promise when the recorded media was unmuted and
   // no user activation is still active, which becomes a source-less unhandled
@@ -887,7 +915,7 @@ function ensureSentry(): void {
  * for filtering Sentry by tenant.
  */
 export function setSentryUser(
-  user: SentryUser | null,
+  user: TrackingIdentityUser | null,
   orgId?: string | null,
 ): void {
   let shouldRetryReplay = false;
@@ -926,6 +954,14 @@ export function setSentryUser(
   if (orgId !== undefined) {
     _pendingSentryOrgId = orgId ?? null;
   }
+}
+
+/** Neutral alias for hosts that own identity outside Sentry. */
+export function setTrackingIdentity(
+  user: TrackingIdentityUser | null,
+  orgId?: string | null,
+): void {
+  setSentryUser(user, orgId);
 }
 
 export interface ClientCaptureContext {
@@ -1029,9 +1065,15 @@ export function configureTracking(options: ConfigureTrackingOptions): void {
     ensureSentry();
     ensureAmplitude();
     captureFirstTouchAttribution();
-    installLlmConnectionRefresh();
-    installTrackingAuthSessionRefresh();
-    installPageviewTracking();
+    if (options.llmConnectionStatus !== false) {
+      installLlmConnectionRefresh();
+    }
+    if (options.authSessionRefresh !== false) {
+      installTrackingAuthSessionRefresh();
+    }
+    if (options.pageviewTracking !== false) {
+      installPageviewTracking();
+    }
     maybeInstallSessionReplay(
       options.sessionReplay,
       {
@@ -1351,6 +1393,7 @@ async function startConfiguredSessionReplay(
       return { started: false, reason: "disabled" as const };
     }
     const mod = await import("./session-replay.js");
+    _sessionReplayModuleForCapture = mod;
     if (!_trackingContentCaptureEnabled) {
       return { started: false, reason: "disabled" as const };
     }
@@ -1378,6 +1421,7 @@ export async function startSessionReplay(
     return { started: false, reason: "missing-user-id" };
   }
   const mod = await import("./session-replay.js");
+  _sessionReplayModuleForCapture = mod;
   return mod.startSessionReplay({
     ...configured,
     shouldStart: () =>
@@ -1446,7 +1490,29 @@ function resolveProps(
   for (const [key, value] of Object.entries(llmProps)) {
     if (enriched[key] === undefined) enriched[key] = value;
   }
+  const replayProps = sessionReplayTrackingProperties();
+  for (const [key, value] of Object.entries(replayProps)) {
+    if (enriched[key] === undefined) enriched[key] = value;
+  }
   return applyTrackingIdentity(enriched);
+}
+
+function sessionReplayTrackingProperties(): Record<string, unknown> {
+  const module = _sessionReplayModuleForCapture;
+  if (!module) return {};
+  const context = module.getSessionReplayContext?.();
+  if (!context?.active) return {};
+  const occurredAt = new Date().toISOString();
+  return {
+    sessionReplayId: context.replayId,
+    sessionReplayStartedAt: context.startedAt,
+    sessionReplayAt: occurredAt,
+    ...(module.getSessionReplayUrl
+      ? {
+          sessionReplayUrl: module.getSessionReplayUrl({ at: occurredAt }),
+        }
+      : {}),
+  };
 }
 
 function pageviewKey(): string {

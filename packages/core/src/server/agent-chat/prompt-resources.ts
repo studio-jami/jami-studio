@@ -14,6 +14,11 @@ import {
   sharedResourceOwner,
   WORKSPACE_OWNER,
 } from "../../resources/store.js";
+import type {
+  ContextGovernanceTier,
+  ContextManifestSourceRef,
+  ContextSystemProvenance,
+} from "../../shared/context-xray.js";
 import { discoverAgents } from "../agent-discovery.js";
 import { getRequestOrgId } from "../request-context.js";
 import { parseSkillFrontmatter } from "./skill-frontmatter.js";
@@ -28,6 +33,97 @@ import { parseSkillFrontmatter } from "./skill-frontmatter.js";
 const SHARED_PROMPT_RESOURCE_MAX_CHARS = 30_000;
 export const COMPACT_PROMPT_RESOURCE_MAX_CHARS = 6_000;
 const COMPACT_PROMPT_RESOURCES_TOTAL_MAX_CHARS = 48_000;
+const PROMPT_CONTEXT_PROVIDER_MAX_CHARS = 8_000;
+
+export interface PromptContextProviderContext {
+  owner: string;
+  compact: boolean;
+  selfAppId?: string;
+  orgId: string | null;
+}
+
+export interface PromptContextProviderContribution {
+  content: string;
+  label?: string;
+  provenance?: ContextSystemProvenance;
+  governance?: ContextGovernanceTier;
+  sourceRef?: ContextManifestSourceRef;
+}
+
+export interface PromptContextProvider {
+  id: string;
+  load(
+    context: PromptContextProviderContext,
+  ):
+    | Promise<PromptContextProviderContribution | null | undefined>
+    | PromptContextProviderContribution
+    | null
+    | undefined;
+}
+
+const promptContextProviders = new Map<string, PromptContextProvider>();
+
+/** Register a package-owned, request-scoped system-context contribution. */
+export function registerPromptContextProvider(
+  provider: PromptContextProvider,
+): () => void {
+  const id = provider.id.trim();
+  if (!/^[a-z][a-z0-9-]{1,63}$/.test(id)) {
+    throw new Error(
+      "Prompt context provider ids must be 2-64 lowercase letters, digits, or hyphens",
+    );
+  }
+  const registered = { ...provider, id };
+  promptContextProviders.set(id, registered);
+  return () => {
+    if (promptContextProviders.get(id) === registered) {
+      promptContextProviders.delete(id);
+    }
+  };
+}
+
+function xmlAttributeEscape(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+async function loadPromptContextProviderBlocks(
+  context: PromptContextProviderContext,
+): Promise<string[]> {
+  const providers = [...promptContextProviders.values()].sort((a, b) =>
+    a.id.localeCompare(b.id),
+  );
+  const settled = await Promise.allSettled(
+    providers.map(async (provider) => ({
+      provider,
+      contribution: await provider.load(context),
+    })),
+  );
+  const blocks: string[] = [];
+  for (const result of settled) {
+    if (result.status !== "fulfilled") continue;
+    const { provider, contribution } = result.value;
+    if (!contribution) continue;
+    const content = contribution.content.trim();
+    if (!content) continue;
+    const boundedContent =
+      content.length <= PROMPT_CONTEXT_PROVIDER_MAX_CHARS
+        ? content
+        : `${content.slice(0, PROMPT_CONTEXT_PROVIDER_MAX_CHARS)}\n[truncated after ${PROMPT_CONTEXT_PROVIDER_MAX_CHARS.toLocaleString()} characters]`;
+    const label = contribution.label?.trim() || provider.id;
+    const provenance = contribution.provenance ?? "runtime-context";
+    const governance = contribution.governance ?? "inherited";
+    const sourceScope = contribution.sourceRef?.scope?.trim() || "provider";
+    const sourcePath = contribution.sourceRef?.path?.trim() || provider.id;
+    blocks.push(
+      `<prompt-context-provider id="${xmlAttributeEscape(provider.id)}" label="${xmlAttributeEscape(label)}" provenance="${provenance}" governance="${governance}" scope="${xmlAttributeEscape(sourceScope)}" path="${xmlAttributeEscape(sourcePath)}">\n${boundedContent.replace(/<\/prompt-context-provider>/gi, "&lt;/prompt-context-provider&gt;")}\n</prompt-context-provider>`,
+    );
+  }
+  return blocks;
+}
 
 export function compactPromptLine(value: string, maxChars: number): string {
   const line = value.replace(/\s+/g, " ").trim();
@@ -40,8 +136,219 @@ const PROMPT_SKILL_METADATA_READ_LIMIT = 80;
 const PROMPT_INSTRUCTION_SUMMARY_LIMIT = 20;
 const PROMPT_SUMMARY_DESCRIPTION_MAX_CHARS = 180;
 
+export interface PromptResourceManifestSection {
+  label: string;
+  provenance: ContextSystemProvenance;
+  governance: ContextGovernanceTier;
+  content: string;
+  sourceRef?: ContextManifestSourceRef;
+}
+
 function normalizeResourcePathForPrompt(path: string): string {
   return path.replace(/^\/+/, "").trim();
+}
+
+function xmlAttribute(attrs: string, name: string): string | undefined {
+  const match = new RegExp(`\\b${name}="([^"]*)"`).exec(attrs);
+  return match?.[1];
+}
+
+function resourceManifestClassification(
+  scope: string,
+  path: string,
+  index: number,
+): {
+  provenance: ContextSystemProvenance;
+  governance: ContextGovernanceTier;
+} {
+  const normalizedPath = normalizeResourcePathForPrompt(path);
+  if (scope === "template") {
+    return { provenance: "template", governance: "inherited" };
+  }
+  if (scope.startsWith("workspace")) {
+    return {
+      provenance:
+        scope === "workspace" && index === 0
+          ? "enterprise-workspace-core"
+          : "sql-workspace",
+      governance:
+        scope === "workspace" && index === 0 ? "required" : "inherited",
+    };
+  }
+  if (scope.startsWith("personal")) {
+    return {
+      provenance: normalizedPath === "memory/MEMORY.md" ? "memory" : "personal",
+      governance: "user",
+    };
+  }
+  if (scope.startsWith("app-default")) {
+    return { provenance: "legacy-app-default", governance: "inherited" };
+  }
+  if (scope.startsWith("organization")) {
+    return { provenance: "organization", governance: "inherited" };
+  }
+  if (scope.startsWith("shared")) {
+    return {
+      provenance:
+        normalizedPath === "LEARNINGS.md"
+          ? "organization"
+          : "legacy-app-default",
+      governance: "inherited",
+    };
+  }
+  return { provenance: "template", governance: "inherited" };
+}
+
+/**
+ * Extracts bounded-in-memory metadata from the already-composed resource
+ * prompt. The caller turns these inputs into hashed/previews before anything
+ * is persisted; this helper never writes or returns the full manifest.
+ */
+export function promptResourceManifestSections(
+  prompt: string,
+): PromptResourceManifestSection[] {
+  const sections: PromptResourceManifestSection[] = [];
+  const resourcePattern = /<resource\b([^>]*)>([\s\S]*?)<\/resource>/g;
+  let match: RegExpExecArray | null;
+  let workspaceIndex = 0;
+  let sharedIndex = 0;
+  while ((match = resourcePattern.exec(prompt))) {
+    const attrs = match[1] ?? "";
+    const scope = xmlAttribute(attrs, "scope") ?? "resource";
+    const path =
+      xmlAttribute(attrs, "path") ?? xmlAttribute(attrs, "name") ?? "";
+    const name = xmlAttribute(attrs, "name") ?? (path || "resource");
+    const index = scope.startsWith("workspace")
+      ? workspaceIndex++
+      : scope.startsWith("shared")
+        ? sharedIndex++
+        : 0;
+    const classification = resourceManifestClassification(scope, path, index);
+    sections.push({
+      label: name,
+      ...classification,
+      content: match[2] ?? "",
+      sourceRef: {
+        ...(path ? { path } : {}),
+        scope,
+      },
+    });
+  }
+
+  const providerPattern =
+    /<prompt-context-provider\b([^>]*)>([\s\S]*?)<\/prompt-context-provider>/g;
+  while ((match = providerPattern.exec(prompt))) {
+    const attrs = match[1] ?? "";
+    const id = xmlAttribute(attrs, "id") ?? "prompt-context-provider";
+    const label = xmlAttribute(attrs, "label") ?? id;
+    const provenanceValue = xmlAttribute(attrs, "provenance");
+    const governanceValue = xmlAttribute(attrs, "governance");
+    const provenance = (
+      [
+        "framework-core",
+        "actions-prompt",
+        "template",
+        "enterprise-workspace-core",
+        "sql-workspace",
+        "legacy-app-default",
+        "organization",
+        "personal",
+        "memory",
+        "db-schema",
+        "tools",
+        "model-overlay",
+        "runtime-context",
+      ] as const
+    ).includes(provenanceValue as ContextSystemProvenance)
+      ? (provenanceValue as ContextSystemProvenance)
+      : "runtime-context";
+    const governance = (["required", "inherited", "user"] as const).includes(
+      governanceValue as ContextGovernanceTier,
+    )
+      ? (governanceValue as ContextGovernanceTier)
+      : "inherited";
+    sections.push({
+      label,
+      provenance,
+      governance,
+      content: match[2] ?? "",
+      sourceRef: {
+        path: xmlAttribute(attrs, "path") ?? id,
+        scope: xmlAttribute(attrs, "scope") ?? "provider",
+      },
+    });
+  }
+
+  const taggedSections = [
+    {
+      tag: "skills-summary",
+      label: "Workspace skills index",
+      provenance: "template" as const,
+      governance: "inherited" as const,
+    },
+    {
+      tag: "resource-skills",
+      label: "Workspace resource skills",
+      provenance: "template" as const,
+      governance: "inherited" as const,
+    },
+    {
+      tag: "instruction-resources",
+      label: "Instruction resources index",
+      provenance: "sql-workspace" as const,
+      governance: "inherited" as const,
+    },
+    {
+      tag: "workspace-resources",
+      label: "Workspace reference resources",
+      provenance: "sql-workspace" as const,
+      governance: "inherited" as const,
+    },
+    {
+      tag: "context-note",
+      label: "Resource availability note",
+      provenance: "framework-core" as const,
+      governance: "required" as const,
+    },
+    {
+      tag: "context-budget-note",
+      label: "Context budget note",
+      provenance: "framework-core" as const,
+      governance: "required" as const,
+    },
+    {
+      tag: "available-apps",
+      label: "Available workspace apps",
+      provenance: "tools" as const,
+      governance: "required" as const,
+    },
+  ];
+  for (const tagged of taggedSections) {
+    const pattern = new RegExp(
+      `<${tagged.tag}\\b[^>]*>([\\s\\S]*?)</${tagged.tag}>`,
+      "g",
+    );
+    let taggedMatch: RegExpExecArray | null;
+    while ((taggedMatch = pattern.exec(prompt))) {
+      const taggedAttrs =
+        taggedMatch[0]?.slice(tagged.tag.length + 1).split(">")[0] ?? "";
+      const taggedScope = xmlAttribute(taggedAttrs, "scope");
+      const taggedClassification =
+        tagged.tag === "instruction-resources" && taggedScope
+          ? resourceManifestClassification(taggedScope, "", 0)
+          : {
+              provenance: tagged.provenance,
+              governance: tagged.governance,
+            };
+      sections.push({
+        label: tagged.label,
+        ...taggedClassification,
+        content: taggedMatch[1] ?? "",
+        ...(taggedScope ? { sourceRef: { scope: taggedScope } } : {}),
+      });
+    }
+  }
+  return sections;
 }
 
 function resourceToolHint(
@@ -541,14 +848,14 @@ export async function loadResourcesForPrompt(
   if (organizationOwner !== SHARED_OWNER) {
     const organizationAgents = await loadAgentsResourceForPrompt(
       organizationOwner,
-      "shared",
+      "organization",
       promptResourceMaxChars,
     );
     if (organizationAgents) sections.push(organizationAgents);
     sections.push(
       ...(await loadInstructionResourcesForPrompt(
         organizationOwner,
-        "shared-instruction",
+        "organization-instruction",
         promptResourceMaxChars,
         compact,
       )),
@@ -658,6 +965,15 @@ export async function loadResourcesForPrompt(
     );
     if (organizationResourceIndex) sections.push(organizationResourceIndex);
   }
+
+  sections.push(
+    ...(await loadPromptContextProviderBlocks({
+      owner,
+      compact,
+      selfAppId,
+      orgId,
+    })),
+  );
 
   try {
     const agents = (await discoverAgents(selfAppId)).slice(0, 30);

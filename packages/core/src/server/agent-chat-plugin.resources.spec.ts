@@ -54,6 +54,10 @@ vi.mock("./agents-bundle.js", () => ({
 }));
 
 import { loadResourcesForPrompt } from "./agent-chat-plugin.js";
+import {
+  promptResourceManifestSections,
+  registerPromptContextProvider,
+} from "./agent-chat/prompt-resources.js";
 
 const resourcesById = new Map([
   [
@@ -248,7 +252,100 @@ beforeEach(() => {
   mocks.resourceGet.mockImplementation(async (id) => resourcesById.get(id));
 });
 
+describe("promptResourceManifestSections", () => {
+  it("accounts for runtime resource notes, budget notes, and available apps", () => {
+    const sections = promptResourceManifestSections(`
+<context-note>Personal memory remains available on demand.</context-note>
+<context-budget-note>Some startup context was omitted.</context-budget-note>
+<available-apps>Analytics (analytics) — Query product data.</available-apps>
+`);
+
+    expect(sections).toEqual([
+      expect.objectContaining({
+        label: "Resource availability note",
+        provenance: "framework-core",
+        governance: "required",
+        content: "Personal memory remains available on demand.",
+      }),
+      expect.objectContaining({
+        label: "Context budget note",
+        provenance: "framework-core",
+        governance: "required",
+        content: "Some startup context was omitted.",
+      }),
+      expect.objectContaining({
+        label: "Available workspace apps",
+        provenance: "tools",
+        governance: "required",
+        content: "Analytics (analytics) — Query product data.",
+      }),
+    ]);
+  });
+
+  it("accounts for registered package context with explicit provenance", () => {
+    const sections = promptResourceManifestSections(`
+<prompt-context-provider id="creative-context" label="Published brand context" provenance="organization" governance="inherited" scope="org" path="context/brand-context.md">
+<brand-context><color>#6633ff</color></brand-context>
+</prompt-context-provider>
+`);
+
+    expect(sections).toEqual([
+      expect.objectContaining({
+        label: "Published brand context",
+        provenance: "organization",
+        governance: "inherited",
+        content: "\n<brand-context><color>#6633ff</color></brand-context>\n",
+        sourceRef: {
+          path: "context/brand-context.md",
+          scope: "org",
+        },
+      }),
+    ]);
+  });
+});
+
 describe("loadResourcesForPrompt", () => {
+  it("loads bounded package context providers into every prompt path", async () => {
+    const unregister = registerPromptContextProvider({
+      id: "creative-context-test",
+      load: async (context) => ({
+        label: "Published brand context",
+        provenance: context.orgId ? "organization" : "personal",
+        governance: "inherited",
+        sourceRef: {
+          path: "context/brand-context.md",
+          scope: context.orgId ? "org" : "user",
+        },
+        content: "<brand-context><font>Inter</font></brand-context>",
+      }),
+    });
+
+    try {
+      const prompt = await loadResourcesForPrompt(
+        "user@example.test",
+        false,
+        "slides",
+        "org_example",
+      );
+      expect(prompt).toContain(
+        '<prompt-context-provider id="creative-context-test"',
+      );
+      expect(prompt).toContain(
+        "<brand-context><font>Inter</font></brand-context>",
+      );
+      expect(promptResourceManifestSections(prompt)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            label: "Published brand context",
+            provenance: "organization",
+          }),
+        ]),
+      );
+    } finally {
+      unregister();
+    }
+  });
+
   it("assembles the same inherited workspace context for every app without sync writes", async () => {
     const analyticsPrompt = await loadResourcesForPrompt(
       "user@example.test",

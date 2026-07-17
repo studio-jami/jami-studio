@@ -15,6 +15,13 @@ import {
   parseContentSourceFile,
   type ParsedContentSourceFile,
 } from "../shared/content-source.js";
+import { ensureDocumentsFilesMembership } from "./_content-files.js";
+import { resolveContentSpaceAccess } from "./_content-space-access.js";
+import {
+  organizationContentSpaceId,
+  personalContentSpaceId,
+  provisionContentSpaces,
+} from "./_content-spaces.js";
 
 const MAX_SOURCE_FILES = 500;
 const MAX_SOURCE_FILE_BYTES = 2 * 1024 * 1024;
@@ -187,6 +194,18 @@ export default defineAction({
     const currentOrgId = getRequestOrgId() ?? null;
     const db = getDb();
     const now = new Date().toISOString();
+    const defaultSpaceId = currentOrgId
+      ? organizationContentSpaceId(currentOrgId)
+      : personalContentSpaceId(currentUserEmail);
+    if (!dryRun) {
+      const provisioned = await provisionContentSpaces(db, currentUserEmail);
+      if (!provisioned.spaceIds.includes(defaultSpaceId)) {
+        throw new Error(
+          "The active organization does not have a writable Content space.",
+        );
+      }
+      await resolveContentSpaceAccess(defaultSpaceId, "editor");
+    }
     const parsed: ParsedContentSourceFile[] = entries.map(
       ([filePath, source]) => parseContentSourceFile(filePath, source),
     );
@@ -229,6 +248,7 @@ export default defineAction({
     const idByPath = new Map<string, string>();
     const pathById = new Map<string, string>();
     const ownerById = new Map<string, string>();
+    const spaceById = new Map<string, string>();
     const desiredParentById = new Map<string, string | null>();
     const desiredPositionById = new Map<string, number>();
     const currentParentById = new Map<string, string | null>();
@@ -271,7 +291,9 @@ export default defineAction({
       }
 
       if (existing) {
+        const existingSpaceId = existing.spaceId ?? defaultSpaceId;
         ownerById.set(id, existing.ownerEmail as string);
+        spaceById.set(id, existingSpaceId);
         currentParentById.set(id, existing.parentId ?? null);
         currentPositionById.set(id, existing.position ?? 0);
         if (file.parentId !== undefined) {
@@ -282,6 +304,9 @@ export default defineAction({
         }
         const titleChanged = file.title !== existing.title;
         const contentChanged = file.content !== existing.content;
+        const descriptionChanged =
+          file.description !== undefined &&
+          file.description !== existing.description;
         const iconChanged =
           file.icon !== undefined && file.icon !== existing.icon;
         const favoriteChanged =
@@ -296,13 +321,16 @@ export default defineAction({
           existing.sourceKind !== sourceUpdates.sourceKind ||
           existing.sourcePath !== sourceUpdates.sourcePath ||
           existing.sourceRootPath !== sourceUpdates.sourceRootPath;
+        const spaceChanged = !existing.spaceId;
         const anyChange =
           titleChanged ||
           contentChanged ||
+          descriptionChanged ||
           iconChanged ||
           favoriteChanged ||
           discoverabilityChanged ||
-          sourceChanged;
+          sourceChanged ||
+          spaceChanged;
 
         if (!anyChange) {
           unchanged.push({ id, path: file.path, title: existing.title });
@@ -320,8 +348,10 @@ export default defineAction({
           }
 
           const updates: Record<string, unknown> = { updatedAt: now };
+          if (!existing.spaceId) updates.spaceId = existingSpaceId;
           if (titleChanged) updates.title = file.title;
           if (contentChanged) updates.content = file.content;
+          if (descriptionChanged) updates.description = file.description;
           if (iconChanged) updates.icon = file.icon ?? null;
           if (favoriteChanged) updates.isFavorite = boolToInt(file.isFavorite);
           if (discoverabilityChanged) {
@@ -343,10 +373,12 @@ export default defineAction({
         try {
           await db.insert(schema.documents).values({
             id,
+            spaceId: defaultSpaceId,
             ownerEmail: currentUserEmail,
             orgId: currentOrgId,
             parentId: null,
             title: file.title,
+            description: file.description ?? "",
             content: file.content,
             icon: file.icon ?? null,
             position: file.position ?? index,
@@ -376,6 +408,7 @@ export default defineAction({
       desiredParentById.set(id, file.parentId ?? null);
       desiredPositionById.set(id, file.position ?? index);
       ownerById.set(id, currentUserEmail);
+      spaceById.set(id, defaultSpaceId);
       created.push({ id, path: file.path, title: file.title });
     }
 
@@ -404,7 +437,8 @@ export default defineAction({
           const parentAccess = await resolveAccess("document", parentId);
           if (
             parentAccess &&
-            (parentAccess.resource.ownerEmail as string) === ownerEmail
+            (parentAccess.resource.ownerEmail as string) === ownerEmail &&
+            parentAccess.resource.spaceId === spaceById.get(id)
           ) {
             try {
               await assertParentIsNotDescendant({ ownerEmail, id, parentId });
@@ -422,7 +456,7 @@ export default defineAction({
           } else {
             skipped.push({
               path: pathById.get(id) ?? id,
-              reason: `Skipped parent "${parentId}" because it is not editable in the same owner scope.`,
+              reason: `Skipped parent "${parentId}" because it is not editable in the same Content space.`,
             });
           }
         }
@@ -445,6 +479,18 @@ export default defineAction({
           })
           .where(eq(schema.documents.id, id));
       }
+
+      await ensureDocumentsFilesMembership(
+        db,
+        [
+          ...new Set([
+            ...created.map((row) => row.id),
+            ...updated.map((row) => row.id),
+            ...unchanged.map((row) => row.id),
+          ]),
+        ],
+        now,
+      );
 
       await writeAppState("refresh-signal", { ts: Date.now() });
     }

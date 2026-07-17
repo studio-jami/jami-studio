@@ -843,7 +843,6 @@ export default function RecordRoute() {
   const [error, setError] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const visibilityAutoPausedRef = useRef(false);
-  const [elapsedMs, setElapsedMs] = useState(0);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraSize, setCameraSize] = useState<CameraBubbleSize>(
     () => loadRecorderPreferences().cameraSize ?? "md",
@@ -985,35 +984,15 @@ export default function RecordRoute() {
     micDeviceLabel?: string | null;
     cameraDeviceId: string | null;
   } | null>(null);
-  const tickRef = useRef<number | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement>(null);
   const fileUploadAbortRef = useRef<AbortController | null>(null);
   const browserDiagnosticsRef = useRef<BrowserDiagnosticsCapture | null>(null);
   // Bumped by doCancel() to invalidate any in-flight startFlow().
   const startSessionRef = useRef(0);
 
-  // -------------------------------------------------------------------------
-  // Timer
-  // -------------------------------------------------------------------------
-  useEffect(() => {
-    if (uiState !== "recording") {
-      if (tickRef.current !== null) {
-        window.clearInterval(tickRef.current);
-        tickRef.current = null;
-      }
-      return;
-    }
-    tickRef.current = window.setInterval(() => {
-      const e = engineRef.current?.getElapsedMs() ?? 0;
-      setElapsedMs(e);
-    }, 250);
-    return () => {
-      if (tickRef.current !== null) {
-        window.clearInterval(tickRef.current);
-        tickRef.current = null;
-      }
-    };
-  }, [uiState]);
+  // Elapsed-time display now ticks inside RecordingToolbar itself (via
+  // `active` + `getElapsedMs`) so the ~4x/sec poll doesn't re-render this
+  // whole route — see the `active`/`getElapsedMs` props passed below.
 
   // -------------------------------------------------------------------------
   // Wire preview stream into its video element.
@@ -1259,7 +1238,7 @@ export default function RecordRoute() {
               sourceWindowTitle: captureTitle.sourceWindowTitle,
               hasCamera: opts.mode !== "screen",
               hasAudio: wantsMic,
-              visibility: reportContext ? "org" : "public",
+              visibility: reportContext ? "org" : undefined,
               spaceIds: spaceIdFromUrl ? [spaceIdFromUrl] : undefined,
               folderId: folderIdFromUrl ?? undefined,
               mimeType: pickMimeType() || undefined,
@@ -1582,7 +1561,7 @@ export default function RecordRoute() {
               hasAudio: true,
               width: meta.width,
               height: meta.height,
-              visibility: reportContext ? "org" : "public",
+              visibility: reportContext ? "org" : undefined,
               spaceIds: spaceIdFromUrl ? [spaceIdFromUrl] : undefined,
               folderId: folderIdFromUrl ?? undefined,
               mimeType: uploadMimeType,
@@ -2138,6 +2117,27 @@ export default function RecordRoute() {
             transcriptRes.status,
           );
         }
+      } else {
+        await fetch(
+          agentNativePath("/_agent-native/actions/save-browser-transcript"),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              recordingId: pending.id,
+              fullText: "",
+              source: "web-speech",
+              failureReason: liveTranscription.supported
+                ? "Browser native transcription returned no speech before recording stopped."
+                : "Browser Web Speech recognition is unavailable in this browser.",
+            }),
+          },
+        ).catch((err) => {
+          console.warn(
+            "[recorder] native transcript failure save failed:",
+            err,
+          );
+        });
       }
 
       const stopResult = await engine.stop();
@@ -2671,7 +2671,8 @@ export default function RecordRoute() {
       {/* Floating toolbar */}
       {showRecordingUi && (
         <RecordingToolbar
-          elapsedMs={elapsedMs}
+          active={uiState === "recording"}
+          getElapsedMs={() => engineRef.current?.getElapsedMs() ?? 0}
           isPaused={isPaused}
           onTogglePause={togglePause}
           onStop={() => void doStop()}

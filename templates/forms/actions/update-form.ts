@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { getDb, schema } from "../server/db/index.js";
 import { assertIntegrationUrlsAllowed } from "../server/lib/integrations.js";
+import { invalidatePublicFormCache } from "../server/lib/public-form-ssr.js";
 import { assertValidFields } from "../server/lib/validate-fields.js";
 import type { FormField, FormSettings } from "../shared/types.js";
 import { assertPublishableForm } from "./lib/assert-publishable-form.js";
@@ -18,7 +19,8 @@ function slugify(text: string): string {
 }
 
 export default defineAction({
-  description: "Update an existing form.",
+  description:
+    "Update an existing form, including settings.emailOnNewResponses to email the form owner when new responses arrive.",
   schema: z.object({
     id: z.string().describe("Form ID (required)"),
     title: z.string().optional().describe("New title"),
@@ -34,7 +36,9 @@ export default defineAction({
     settings: z
       .union([z.string(), z.record(z.string(), z.any())])
       .optional()
-      .describe("Form settings object (or JSON string of the same)"),
+      .describe(
+        "Form settings object (or JSON string of the same). Set emailOnNewResponses=true to email the form owner for each new response.",
+      ),
     status: z
       .enum(["draft", "published", "closed"])
       .optional()
@@ -132,6 +136,8 @@ export default defineAction({
       .from(schema.forms)
       .where(eq(schema.forms.id, args.id))
       .limit(1);
+
+    invalidatePublicFormCache(existing, row);
 
     return {
       id: row!.id,

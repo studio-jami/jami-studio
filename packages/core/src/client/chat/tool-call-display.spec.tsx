@@ -705,6 +705,32 @@ describe("ToolCallDisplay native renderers", () => {
     ).toEqual([null]);
   });
 
+  it("keeps the latest completed reconnect thought expanded while a tool runs", () => {
+    const content: ContentPart[] = [
+      { type: "reasoning", text: "Completed thought" },
+      {
+        type: "tool-call",
+        toolCallId: "tc_1",
+        toolName: "read-file",
+        args: {},
+      },
+    ];
+
+    act(() => {
+      root.render(
+        <ChatRunningContext.Provider value={true}>
+          <ReconnectStreamMessage content={content} />
+        </ChatRunningContext.Provider>,
+      );
+    });
+
+    const thoughtButton = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent?.startsWith("Thought"),
+    );
+    expect(thoughtButton?.getAttribute("aria-expanded")).toBe("true");
+    expect(container.textContent).toContain("Completed thought");
+  });
+
   it("keeps only the active reconnect reasoning segment expanded", () => {
     const content: ContentPart[] = [
       { type: "reasoning", text: "First thought" },
@@ -733,6 +759,16 @@ describe("ToolCallDisplay native renderers", () => {
       thoughtButtons.map((button) => button.getAttribute("aria-expanded")),
     ).toEqual(["false", "true"]);
     expect(container.textContent).not.toContain("First thought");
+    expect(container.textContent).not.toContain("Current thought");
+
+    act(() => {
+      root.render(
+        <ChatRunningContext.Provider value={false}>
+          <ReconnectStreamMessage content={content} />
+        </ChatRunningContext.Provider>,
+      );
+    });
+
     expect(container.textContent).toContain("Current thought");
   });
 });
@@ -841,6 +877,22 @@ describe("ReasoningCell", () => {
     expect(shimmer?.textContent).toBe("Thinking");
   });
 
+  it("smoothly reveals reasoning text while streaming and completes it when done", () => {
+    const text = "Weighing options carefully.";
+
+    act(() => {
+      root.render(<ReasoningCell text={text} isStreaming />);
+    });
+
+    expect(container.textContent).not.toContain(text);
+
+    act(() => {
+      root.render(<ReasoningCell text={text} isStreaming={false} />);
+    });
+
+    expect(container.textContent).toContain(text);
+  });
+
   it('falls back to a plain "Thought" label with no live timing', () => {
     act(() => {
       root.render(<ReasoningCell text="Some finished reasoning." />);
@@ -910,6 +962,53 @@ describe("ReasoningCell", () => {
     ).toBe("closed");
   });
 
+  it("keeps a finished reasoning segment open until a newer one replaces it", () => {
+    act(() => {
+      root.render(
+        <ReasoningCell
+          text="The first thought is complete."
+          isStreaming
+          defaultOpen
+        />,
+      );
+    });
+
+    act(() => {
+      root.render(
+        <ReasoningCell
+          text="The first thought is complete."
+          isStreaming={false}
+          durationMs={1400}
+        />,
+      );
+    });
+
+    expect(container.querySelector('button[aria-expanded="true"]')).not.toBe(
+      null,
+    );
+    expect(container.textContent).toContain("The first thought is complete.");
+
+    act(() => {
+      root.render(
+        <ReasoningCell
+          text="The first thought is complete."
+          isStreaming={false}
+          durationMs={1400}
+          collapseWhenReplaced
+        />,
+      );
+    });
+
+    expect(container.querySelector('button[aria-expanded="false"]')).not.toBe(
+      null,
+    );
+    expect(
+      container
+        .querySelector(".agent-chat-collapse")
+        ?.getAttribute("data-state"),
+    ).toBe("closed");
+  });
+
   it("clamps to a tail view while streaming and open, and unclamps once done", () => {
     act(() => {
       root.render(
@@ -934,6 +1033,50 @@ describe("ReasoningCell", () => {
     });
 
     expect(container.querySelector(".reasoning-cell-tail")).toBe(null);
+  });
+});
+
+describe("WorkedForSummary", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it("does not flash open when a completed summary remounts", () => {
+    function Harness({ visible }: { visible: boolean }) {
+      return visible ? (
+        <WorkedForSummary durationMs={11_000} autoCollapse>
+          <ReasoningCell text="The old thought stays collapsed." />
+        </WorkedForSummary>
+      ) : null;
+    }
+
+    act(() => root.render(<Harness visible />));
+    expect(
+      container.querySelector("button")?.getAttribute("aria-expanded"),
+    ).toBe("false");
+
+    act(() => root.render(<Harness visible={false} />));
+    act(() => root.render(<Harness visible />));
+
+    expect(
+      container.querySelector("button")?.getAttribute("aria-expanded"),
+    ).toBe("false");
+    expect(container.textContent).not.toContain(
+      "The old thought stays collapsed.",
+    );
   });
 });
 

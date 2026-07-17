@@ -12,17 +12,17 @@ export const meta = () =>
     [
       {
         title:
-          "Jami Studio Analytics — Open Source Alternative to Amplitude & Mixpanel",
+          "Jami Studio Analytics — Open Source Alternative to Amplitude & FullStory",
       },
       {
         name: "description",
         content:
-          "Connect your warehouse or production database, build dashboards in seconds, and track product metrics using natural language. Open source alternative to Amplitude, Mixpanel, and static BI tools.",
+          "Build AI-powered analytics dashboards you own. Open source alternative to Amplitude and FullStory. Multiple data connectors, SQL query explorer, reusable dashboards, data dictionary, and natural language chart generation.",
       },
       {
         property: "og:title",
         content:
-          "Jami Studio Analytics — Open Source Alternative to Amplitude & Mixpanel",
+          "Jami Studio Analytics — Open Source Alternative to Amplitude & FullStory",
       },
       {
         property: "og:description",
@@ -32,7 +32,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI analytics, open source analytics, Amplitude alternative, Mixpanel alternative, Looker alternative, AI dashboard builder, AI data visualization, agent-native analytics, AI-powered BI tool, open source business intelligence, AI chart generator, natural language SQL, BigQuery dashboard",
+          "AI analytics, open source analytics, Amplitude alternative, FullStory alternative, Mixpanel alternative, Looker alternative, AI dashboard builder, AI data visualization, Jami Studio Analytics, AI-powered BI tool, open source business intelligence, AI chart generator, natural language SQL, BigQuery dashboard",
       },
     ],
     "Analytics",

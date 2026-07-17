@@ -33,6 +33,7 @@
  */
 
 import { defineAction } from "@agent-native/core";
+import type { ActionRunContext } from "@agent-native/core/action";
 import {
   readAppState,
   writeAppState,
@@ -453,6 +454,18 @@ function fullTextSegmentJson(
   return JSON.stringify(buildCaptionSegmentsFromText(text, durationMs));
 }
 
+export function isSafeTranscriptCleanupReplacement(
+  sourceText: string,
+  cleanedText: string,
+): boolean {
+  const sourceLength = sourceText.trim().length;
+  const cleanedLength = cleanedText.trim().length;
+  if (!sourceLength || !cleanedLength) return false;
+  if (sourceLength < 200) return true;
+  const retention = cleanedLength / sourceLength;
+  return retention >= 0.6 && retention <= 1.25;
+}
+
 async function failEmptyProviderTranscript({
   db,
   recordingId,
@@ -718,19 +731,49 @@ async function cleanupNativeTranscript({
       });
       return { cleaned: false, provider: result.provider };
     }
+    if (!isSafeTranscriptCleanupReplacement(sourceText, cleanedText)) {
+      await writeTranscriptCleanupState(recordingId, {
+        status: "failed",
+        provider: result.provider,
+        failureReason:
+          "Cleanup output was incomplete; the original transcript was kept.",
+        sourceChars: sourceText.length,
+        cleanedChars: cleanedText.length,
+      });
+      return { cleaned: false, provider: result.provider };
+    }
 
     const now = new Date().toISOString();
     const language = await resolveStoredLanguage(db, recordingId);
-    await upsertTranscriptRow(db, {
-      recordingId,
-      ownerEmail,
-      status: "ready",
-      failureReason: null,
-      language,
-      segmentsJson: fullTextSegmentJson(cleanedText, durationMs),
-      fullText: cleanedText,
-      now,
-    });
+    const updated = await db
+      .update(schema.recordingTranscripts)
+      .set({
+        ownerEmail,
+        status: "ready",
+        failureReason: null,
+        language,
+        segmentsJson: fullTextSegmentJson(cleanedText, durationMs),
+        fullText: cleanedText,
+        retryCount: 0,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(schema.recordingTranscripts.recordingId, recordingId),
+          eq(schema.recordingTranscripts.status, "ready"),
+          eq(schema.recordingTranscripts.fullText, sourceText),
+        ),
+      )
+      .returning({ recordingId: schema.recordingTranscripts.recordingId });
+    if (!updated.length) {
+      await writeTranscriptCleanupState(recordingId, {
+        status: "failed",
+        provider: result.provider,
+        failureReason:
+          "Transcript changed during cleanup; the newer transcript was kept.",
+      });
+      return { cleaned: false, provider: result.provider };
+    }
     await writeTranscriptCleanupState(recordingId, {
       status: "ready",
       provider: result.provider,
@@ -1054,10 +1097,49 @@ const requestTranscriptAction = defineAction({
         "Internal — set only by the bounded automatic retry scheduler after a transient failure (ffmpeg timeout, transient provider error). Do not set this when calling request-transcript manually or from the agent; omitting it means the retry budget never applies to this call.",
       ),
   }),
-  run: async (args) => {
+  run: async (args, context?: ActionRunContext) => {
     await assertAccess("recording", args.recordingId, "editor");
 
     const db = getDb();
+
+    if (context?.caller === "tool" || context?.caller === "frontend") {
+      const [existingTranscript] = await db
+        .select({
+          status: schema.recordingTranscripts.status,
+          updatedAt: schema.recordingTranscripts.updatedAt,
+        })
+        .from(schema.recordingTranscripts)
+        .where(eq(schema.recordingTranscripts.recordingId, args.recordingId))
+        .limit(1);
+      if (
+        existingTranscript &&
+        isRecentlyPendingTranscript(existingTranscript)
+      ) {
+        console.log(
+          `[clips] Transcript already pending for ${args.recordingId}; skipping duplicate agent request.`,
+        );
+        return {
+          recordingId: args.recordingId,
+          status: "pending" as const,
+          skipped: true,
+          reason: "already-pending",
+        };
+      }
+
+      await dispatchPostFinalizeJob({
+        recordingId: args.recordingId,
+        kind: "transcript",
+        ...(args.regenerate ? { regenerate: true } : {}),
+      });
+      return {
+        recordingId: args.recordingId,
+        status: "pending" as const,
+        queued: true,
+        regenerate: Boolean(args.regenerate),
+        provider: "background" as const,
+      };
+    }
+
     const ownerEmail = getCurrentOwnerEmail();
     const now = new Date().toISOString();
 

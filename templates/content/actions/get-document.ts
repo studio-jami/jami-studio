@@ -9,16 +9,12 @@ import {
 } from "../server/lib/documents.js";
 import {
   getDatabaseByDocumentId,
+  getDocumentContextPath,
   getDatabaseItemByDocumentId,
   isSoftDeletedDatabaseDocument,
   serializeDatabaseMembership,
 } from "./_database-utils.js";
 import { serializeDocumentSource } from "./_document-source.js";
-import {
-  getLocalFileDocument,
-  isLocalDocumentId,
-  isContentLocalFileMode,
-} from "./_local-file-documents.js";
 import "../server/db/index.js";
 import {
   listPropertiesForDocument,
@@ -43,10 +39,6 @@ export default defineAction({
   publicAgent: { expose: true, readOnly: true, requiresAuth: true },
   run: async (args) => {
     if (!args.id) throw new Error("--id is required");
-
-    if ((await isContentLocalFileMode()) && isLocalDocumentId(args.id)) {
-      return getLocalFileDocument(args.id);
-    }
 
     const access = await resolveAccess("document", args.id);
     // Not-found is a deterministic client-state condition (deleted or
@@ -76,6 +68,7 @@ export default defineAction({
       parentId: doc.parentId,
       title: doc.title,
       content: doc.content,
+      description: doc.description,
       icon: doc.icon,
       position: doc.position,
       isFavorite: parseDocumentFavorite(doc.isFavorite),
@@ -85,13 +78,16 @@ export default defineAction({
       accessRole: access.role,
       canEdit: canEditRole(access.role),
       canManage: canManageRole(access.role),
-      database: database ? serializeDatabase(database) : undefined,
+      database: database
+        ? serializeDatabase(database, doc.description)
+        : undefined,
       databaseMembership: databaseMembership
         ? serializeDatabaseMembership(databaseMembership)
         : undefined,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       properties: await listPropertiesForDocument(doc),
+      contextPath: await getDocumentContextPath(doc),
     };
   },
   link: ({ result }) => {

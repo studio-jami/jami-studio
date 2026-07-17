@@ -19,10 +19,6 @@ import {
 } from "../server/lib/documents.js";
 import { serializeDatabaseMembership } from "./_database-utils.js";
 import { serializeDocumentSource } from "./_document-source.js";
-import {
-  isContentLocalFileMode,
-  listLocalFileDocuments,
-} from "./_local-file-documents.js";
 import { parseDatabaseViewConfig } from "./_property-utils.js";
 
 function contentPreview(content: string, maxLength = 180) {
@@ -52,9 +48,6 @@ export default defineAction({
   schema: z.object({}),
   http: { method: "GET" },
   run: async () => {
-    const localFileMode = await isContentLocalFileMode();
-    const localDocuments = localFileMode ? await listLocalFileDocuments() : [];
-
     const db = getDb();
     const userEmail = getRequestUserEmail();
     const orgId = getRequestOrgId();
@@ -70,6 +63,7 @@ export default defineAction({
         id: schema.documents.id,
         parentId: schema.documents.parentId,
         title: schema.documents.title,
+        description: schema.documents.description,
         contentSnippet: sql<string>`substr(${schema.documents.content}, 1, 400)`,
         contentLength: sql<number>`length(${schema.documents.content})`,
         icon: schema.documents.icon,
@@ -173,6 +167,10 @@ export default defineAction({
               inArray(schema.contentDatabases.documentId, visibleDocumentIds),
               isNull(schema.contentDatabases.deletedAt),
             ),
+          )
+          .orderBy(
+            sql`CASE WHEN ${schema.contentDatabases.systemRole} IS NULL THEN 0 ELSE 1 END`,
+            asc(schema.contentDatabases.id),
           ),
         db
           .select({
@@ -195,6 +193,10 @@ export default defineAction({
               ),
               isNull(schema.contentDatabases.deletedAt),
             ),
+          )
+          .orderBy(
+            sql`CASE WHEN ${schema.contentDatabases.systemRole} IS NULL THEN 0 ELSE 1 END`,
+            asc(schema.contentDatabases.id),
           ),
         db
           .select({
@@ -229,7 +231,9 @@ export default defineAction({
       }
 
       for (const row of databaseMemberships) {
-        databaseMembershipByDocumentId.set(row.item.documentId, row);
+        if (!databaseMembershipByDocumentId.has(row.item.documentId)) {
+          databaseMembershipByDocumentId.set(row.item.documentId, row);
+        }
       }
 
       for (const database of softDeletedDatabases) {
@@ -282,6 +286,7 @@ export default defineAction({
           id: d.id,
           parentId: d.parentId,
           title: d.title,
+          description: d.description,
           contentPreview: contentPreview(d.contentSnippet),
           contentLength: Number(d.contentLength) || 0,
           icon: d.icon,
@@ -299,6 +304,7 @@ export default defineAction({
                 id: database.id,
                 documentId: database.documentId,
                 title: database.title,
+                description: d.description,
                 viewConfig: parseDatabaseViewConfig(database.viewConfigJson),
                 createdAt: database.createdAt,
                 updatedAt: database.updatedAt,
@@ -315,6 +321,6 @@ export default defineAction({
         };
       });
 
-    return { documents: [...localDocuments, ...mapped] };
+    return { documents: mapped };
   },
 });

@@ -115,7 +115,14 @@ export function McpIntegrationDialog({
       ...(mcpServersQuery.data?.user ?? []),
       ...(mcpServersQuery.data?.org ?? []),
     ];
-    return new Set(servers.map((server) => compareUrl(server.url)));
+    // A saved server is not necessarily a working connection. The settings
+    // page reports failed and unknown health states separately, so only mark
+    // catalog entries as connected after the health probe succeeds.
+    return new Set(
+      servers
+        .filter((server) => server.status.state === "connected")
+        .map((server) => compareUrl(server.url)),
+    );
   }, [mcpServersQuery.data]);
 
   const filteredIntegrations = useMemo(
@@ -447,6 +454,11 @@ export function McpIntegrationDialog({
             <div className="min-h-0 flex-1 overflow-y-auto px-7 py-5">
               <div className="space-y-3">
                 {renderScopeSelector()}
+                {selected?.setupNoteKey && (
+                  <div className="rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-700 dark:text-amber-300">
+                    {t(selected.setupNoteKey)}
+                  </div>
+                )}
                 {selected?.authMode === "oauth" && (
                   <div className="rounded-md border border-blue-500/20 bg-blue-500/5 px-3 py-2 text-[11px] leading-relaxed text-blue-700 dark:text-blue-300">
                     {t("mcpIntegrations.oauthNotice")}

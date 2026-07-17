@@ -1201,6 +1201,18 @@ describe("missing agent engine setup", () => {
   });
 });
 
+describe("centered chat loading fallback", () => {
+  it("keeps the loading composer in the same ordered stack as the real composer", () => {
+    const source = readFileSync("src/client/AgentPanel.tsx", {
+      encoding: "utf8",
+    });
+
+    expect(source).toMatch(
+      /<div className="agent-composer-stack">\s*<div\s+className=\{cn\(\s*"agent-composer-area shrink-0 px-3 py-2"/s,
+    );
+  });
+});
+
 describe("resolveAssistantChatRunningState", () => {
   it("keeps UI running during auto-continuation gaps without changing queue gating", () => {
     expect(
@@ -1604,6 +1616,19 @@ describe("chat submit and stop hardening", () => {
     expect(source).not.toContain("await ensureAgentEngineReadyForSubmit()");
   });
 
+  it("keeps the chat composer editable while provider readiness is loading", () => {
+    const source = readFileSync("src/client/AssistantChat.tsx", {
+      encoding: "utf8",
+    });
+
+    expect(source).toContain(
+      "const isComposerDisabled = missingApiKey || composerDisabled;",
+    );
+    expect(source).not.toContain(
+      "missingApiKey || isProviderStatusChecking || composerDisabled",
+    );
+  });
+
   it("clears queued follow-ups and settles stopped tool calls by default", () => {
     const source = readFileSync("src/client/AssistantChat.tsx", {
       encoding: "utf8",
@@ -1622,6 +1647,25 @@ describe("chat submit and stop hardening", () => {
     expect(helperSource).toContain("resetRunningActivity()");
     expect(helperSource).toContain("includeActivity: true");
     expect(helperSource).toContain("settleVisibleInterruptedTools()");
+  });
+
+  it("wakes the dequeue loop after its startup guard expires", () => {
+    const source = readFileSync("src/client/AssistantChat.tsx", {
+      encoding: "utf8",
+    });
+    const start = source.indexOf("// Auto-dequeue:");
+    const end = source.indexOf(
+      "// Clear frozen reconnect content + forceStopped",
+    );
+    const dequeueSource = source.slice(start, end);
+
+    expect(source).toContain(
+      "const [queueWakeVersion, setQueueWakeVersion] = useState(0);",
+    );
+    expect(dequeueSource).toContain(
+      "setQueueWakeVersion((version) => version + 1);",
+    );
+    expect(dequeueSource).toContain("queueWakeVersion,");
   });
 });
 
@@ -2225,6 +2269,52 @@ describe("AssistantMessageListErrorBoundary", () => {
 
     expect(container.textContent).toContain("Recovered messages");
     expect(analyticsMock.captureError).not.toHaveBeenCalled();
+  });
+
+  it("preserves message disclosure state when the message reset key changes", () => {
+    function StatefulMessageList() {
+      const [expanded, setExpanded] = React.useState(false);
+      return React.createElement(
+        "button",
+        {
+          type: "button",
+          "aria-expanded": expanded,
+          onClick: () => setExpanded((value) => !value),
+        },
+        expanded ? "open" : "closed",
+      );
+    }
+
+    act(() => {
+      root.render(
+        React.createElement(
+          AssistantMessageListErrorBoundary,
+          { resetKey: "messages:1" },
+          React.createElement(StatefulMessageList),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector("button")?.click();
+    });
+    expect(
+      container.querySelector("button")?.getAttribute("aria-expanded"),
+    ).toBe("true");
+
+    act(() => {
+      root.render(
+        React.createElement(
+          AssistantMessageListErrorBoundary,
+          { resetKey: "messages:2" },
+          React.createElement(StatefulMessageList),
+        ),
+      );
+    });
+
+    expect(
+      container.querySelector("button")?.getAttribute("aria-expanded"),
+    ).toBe("true");
   });
 });
 

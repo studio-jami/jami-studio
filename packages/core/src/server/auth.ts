@@ -74,6 +74,11 @@ import {
 } from "../db/client.js";
 import { ensureColumnExists, ensureTableExists } from "../db/ddl-guard.js";
 import { widenIntColumnsToBigInt } from "../db/widen-columns.js";
+import {
+  MCP_LEGACY_ROUTE_PREFIX,
+  MCP_PUBLIC_ROUTE_PREFIX,
+  isMcpProtocolPath,
+} from "../mcp/route-paths.js";
 import { readBody } from "../server/h3-helpers.js";
 import { putSetting } from "../settings/store.js";
 import { DEFAULT_SSR_CACHE_HEADERS } from "../shared/cache-control.js";
@@ -99,9 +104,12 @@ import type { BetterAuthConfig } from "./better-auth-instance.js";
 import {
   BUILDER_CONNECT_OWNER_COOKIE,
   BUILDER_CONNECT_PARAM,
+  BUILDER_RELAY_PATH,
+  BUILDER_RELAY_STATE_PARAM,
   BUILDER_STATE_PARAM,
   verifyBuilderCallbackStateAndGetOwner,
   verifyBuilderConnectTokenAndGetOwner,
+  verifyBuilderPreviewRelayStateForCallback,
 } from "./builder-browser.js";
 import { resolveAuthCookieNamespace } from "./cookie-namespace.js";
 import {
@@ -139,6 +147,7 @@ import {
   type OnboardingHtmlOptions,
 } from "./onboarding-html.js";
 import { captureAuthError } from "./sentry.js";
+import { isWorkspaceOAuthCallbackRelayEnabled } from "./workspace-oauth.js";
 
 /**
  * Get the configured session max age. Desktop SSO broker writes from
@@ -718,8 +727,9 @@ async function getBearerLegacySession(
  * `agent-native connect` mints this token for the local Plans publish flow and
  * POSTs it to the HOSTED action route
  * `/_agent-native/actions/import-visual-plan-source`. That token is audience-
- * bound to the app's MCP resource (`{appUrl}/_agent-native/mcp`), not to the
- * legacy `sessions` table — so the legacy bearer lookup above never matches it.
+ * bound to the app's canonical MCP resource (`{appUrl}/mcp`; the legacy
+ * `/_agent-native/mcp` resource is also accepted), not to the legacy `sessions`
+ * table — so the legacy bearer lookup above never matches it.
  * Reuse the MCP surface's canonical `verifyAuth` here so the HTTP action surface
  * honors EXACTLY the tokens the MCP endpoint honors: same signature check, same
  * audience binding to THIS app's resource, same connect-token revocation gate.
@@ -740,13 +750,13 @@ async function getMcpOAuthBearerSession(
   if (!bearerToken) return null;
 
   try {
-    const [{ getMcpOAuthResource }, { verifyAuth, resolveOrgIdFromDomain }] =
+    const [{ getMcpOAuthAudiences }, { verifyAuth, resolveOrgIdFromDomain }] =
       await Promise.all([
         import("../mcp/oauth-route.js"),
         import("../mcp/build-server.js"),
       ]);
     const result = await verifyAuth(authHeader, undefined, {
-      resourceUrl: getMcpOAuthResource(event),
+      resourceUrl: getMcpOAuthAudiences(event),
       allowDevOpen: false,
     });
     const identity = result.authed ? result.identity : undefined;
@@ -1449,13 +1459,6 @@ function mountAuthCorsMiddleware(app: H3App): void {
   app.use("/_agent-native/google", handler);
 }
 
-function isWorkspaceOAuthCallbackRelayEnabled(): boolean {
-  return (
-    process.env.AGENT_NATIVE_WORKSPACE === "1" ||
-    process.env.VITE_AGENT_NATIVE_WORKSPACE === "1"
-  );
-}
-
 function isFrameworkOAuthCallbackPath(pathname: string): boolean {
   return (
     pathname.startsWith("/_agent-native/") &&
@@ -1522,7 +1525,15 @@ function verifiedBuilderConnectOwnerFromUrl(url: string): string | null {
   return verifyBuilderConnectTokenAndGetOwner(token);
 }
 
-function shouldBypassAuthForBuilderConnect(event: H3Event, p: string): boolean {
+export function shouldBypassAuthForBuilderConnect(
+  event: H3Event,
+  p: string,
+): boolean {
+  // The preview-safe second hop is authenticated by its timestamped HMAC and
+  // one-shot pending row. It cannot carry a browser session from the corporate
+  // callback deployment, so let the route perform that stronger check itself.
+  if (p === BUILDER_RELAY_PATH) return true;
+
   if (p === "/_agent-native/builder/connect") {
     const url = event.node?.req?.url ?? event.path ?? "/";
     return Boolean(verifiedBuilderConnectOwnerFromUrl(url));
@@ -1537,6 +1548,19 @@ function shouldBypassAuthForBuilderConnect(event: H3Event, p: string): boolean {
             BUILDER_STATE_PARAM,
           )
         : null;
+    const relayState =
+      queryStart >= 0
+        ? new URLSearchParams(url.slice(queryStart + 1)).get(
+            BUILDER_RELAY_STATE_PARAM,
+          )
+        : null;
+    if (relayState) {
+      try {
+        if (verifyBuilderPreviewRelayStateForCallback(relayState)) return true;
+      } catch {
+        // Dedicated relay secret missing: let the auth guard fail closed.
+      }
+    }
     // The signed `_an_state` authenticates this specific Builder callback
     // flow back to our app. A stale localhost session cookie can otherwise
     // make the global guard reject the callback before the handler gets to
@@ -1775,7 +1799,11 @@ function createAuthGuardFn(): (
     // the stdio proxy or HTTP can never reach it. Exact protocol endpoint only:
     // tolerate the common trailing slash, but keep
     // `/_agent-native/mcp/*` management subroutes on normal session auth.
-    if (p === "/_agent-native/mcp" || p === "/_agent-native/mcp/") {
+    if (
+      isMcpProtocolPath(p) ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/` ||
+      p === `${MCP_LEGACY_ROUTE_PREFIX}/`
+    ) {
       return;
     }
 
@@ -1806,7 +1834,13 @@ function createAuthGuardFn(): (
       p === "/_agent-native/mcp/connect/device/poll" ||
       p === "/_agent-native/mcp/oauth/authorize" ||
       p === "/_agent-native/mcp/oauth/token" ||
-      p === "/_agent-native/mcp/oauth/register"
+      p === "/_agent-native/mcp/oauth/register" ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/connect` ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/connect/device/start` ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/connect/device/poll` ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/oauth/authorize` ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/oauth/token` ||
+      p === `${MCP_PUBLIC_ROUTE_PREFIX}/oauth/register`
     ) {
       return;
     }

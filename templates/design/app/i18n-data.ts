@@ -1,4 +1,5 @@
 import type { LocaleCode } from "@agent-native/core/client";
+import { creativeContextMessagesByLocale } from "@agent-native/creative-context/messages";
 
 import { breakpointBarOverrides } from "./i18n-breakpoints";
 import {
@@ -11,10 +12,12 @@ import { designTemplateFeatureOverrides } from "./i18n-template-feature";
 import zhTW from "./i18n/zh-TW";
 
 const enUS = {
+  creativeContext: creativeContextMessagesByLocale["en-US"],
   root: {
     commandActions: "Actions",
     commandSearch: "Search",
     commandAppearance: "Appearance",
+    openAgent: "Open Agent",
     toggleTheme: "Toggle theme",
   },
   navigation: {
@@ -23,16 +26,17 @@ const enUS = {
     templates: "Templates",
     designSystems: "Design Systems",
     setupDesignSystem: "Set up design system",
+    agent: "Agent",
     settings: "Settings",
     openNavigation: "Open navigation",
     expandSidebar: "Expand sidebar",
     collapseSidebar: "Collapse sidebar",
   },
   settings: {
-    agentTitle: "Agent settings",
+    agentTitle: "Agent workspace",
     agentDescription:
-      "Open the agent sidebar settings for model, API keys, automations, voice, and other agent controls.",
-    openAgentSettings: "Open agent settings",
+      "Open the agent workspace for model, API keys, automations, voice, and other agent controls.",
+    openAgentSettings: "Open agent workspace",
     languageTitle: "Language",
     languageDescription: "Choose the interface language for Design.",
     languageLabel: "Interface language",
@@ -1121,6 +1125,18 @@ const enUS = {
     designSystem: "Design system",
     noDesignSystem: "No design system",
     newDesignSystem: "New",
+    createDesignSystem: "Create design system",
+    template: "Template",
+    blank: "Blank",
+    builtIn: "Built-in",
+    chooseTemplate: "Choose a template",
+    searchTemplates: "Search templates...",
+    noTemplatesFound: "No templates found.",
+    yourTemplates: "Your templates",
+    builtInTemplates: "Built-in templates",
+    templatePromptPlaceholder: "Describe how to adapt {{title}}...",
+    reskinTemplatePrompt:
+      "Apply the {{system}} design system to {{title}} while preserving its structure and locked layers.",
     addAttachment: "Add",
     removeAttachment: "Remove {{name}}",
     uploadFile: "Upload file",
@@ -1254,11 +1270,18 @@ const enUS = {
     description:
       "Start with the right dimensions and defaults, then prompt the unlocked content into place.",
     searchPlaceholder: "Search templates...",
-    starterTemplates: "Starter templates",
-    savedTemplates: "Saved templates",
+    starterTemplates: "Built-in templates",
+    savedTemplates: "Your templates",
     savedTemplatesDescription:
       "Save any Design project as a reusable template from its editor menu.",
     savedEmpty: "Open a design and choose Save as template to add it here.",
+    yourTemplates: "Your templates",
+    yourTemplatesDescription:
+      "Save any Design project as a reusable template from its editor menu.",
+    yourTemplatesEmpty:
+      "Open a design and choose Save as template to add it here.",
+    builtInTemplates: "Built-in templates",
+    builtIn: "Built-in",
     brand: "Brand: {{title}}",
     useTemplate: "Use template",
     useAsIs: "Use template as-is",
@@ -1550,7 +1573,11 @@ function mergeLocalizedMessages(
   overrides: PartialMessages,
 ): Messages {
   return attachLocalizedKeyboardShortcuts(
-    mergeMessages(overrides),
+    mergeMessages(
+      mergePartialMessages(overrides, {
+        creativeContext: creativeContextMessagesByLocale[locale],
+      }),
+    ),
     keyboardShortcutLabels[locale],
     keyboardKeyLabels[locale],
   );
@@ -14695,6 +14722,7 @@ export const messagesByLocale = {
           commandActions: "操作",
           commandSearch: "搜索",
           commandAppearance: "外观",
+          openAgent: "打开代理",
           toggleTheme: "切换主题",
         },
         navigation: {
@@ -14703,6 +14731,7 @@ export const messagesByLocale = {
           templates: "模板",
           designSystems: "设计系统",
           setupDesignSystem: "设置设计系统",
+          agent: "代理",
           settings: "设置",
           openNavigation: "打开导航",
           expandSidebar: "展开侧边栏",
@@ -14770,6 +14799,7 @@ export const messagesByLocale = {
           commandActions: "Acciones",
           commandSearch: "Buscar",
           commandAppearance: "Apariencia",
+          openAgent: "Abrir agente",
           toggleTheme: "Cambiar tema",
         },
         navigation: {
@@ -14777,6 +14807,7 @@ export const messagesByLocale = {
           templates: "Plantillas",
           designSystems: "Sistemas de diseño",
           setupDesignSystem: "Configurar sistema de diseño",
+          agent: "Agente",
           settings: "Ajustes",
           openNavigation: "Abrir navegación",
           expandSidebar: "Expandir barra lateral",
@@ -14847,6 +14878,7 @@ export const messagesByLocale = {
           commandActions: "Actions",
           commandSearch: "Rechercher",
           commandAppearance: "Apparence",
+          openAgent: "Ouvrir l’agent",
           toggleTheme: "Changer de thème",
         },
         navigation: {
@@ -14854,6 +14886,7 @@ export const messagesByLocale = {
           templates: "Modèles",
           designSystems: "Systèmes de design",
           setupDesignSystem: "Configurer le système de design",
+          agent: "Agent",
           settings: "Paramètres",
           openNavigation: "Ouvrir la navigation",
           expandSidebar: "Développer la barre latérale",
@@ -14924,6 +14957,7 @@ export const messagesByLocale = {
           commandActions: "Aktionen",
           commandSearch: "Suchen",
           commandAppearance: "Darstellung",
+          openAgent: "Agent öffnen",
           toggleTheme: "Theme wechseln",
         },
         navigation: {
@@ -14931,6 +14965,7 @@ export const messagesByLocale = {
           templates: "Vorlagen",
           designSystems: "Designsysteme",
           setupDesignSystem: "Designsystem einrichten",
+          agent: "Agent",
           settings: "Einstellungen",
           openNavigation: "Navigation öffnen",
           expandSidebar: "Seitenleiste erweitern",
@@ -15001,6 +15036,7 @@ export const messagesByLocale = {
           commandActions: "操作",
           commandSearch: "検索",
           commandAppearance: "外観",
+          openAgent: "エージェントを開く",
           toggleTheme: "テーマを切り替え",
         },
         navigation: {
@@ -15008,6 +15044,7 @@ export const messagesByLocale = {
           templates: "テンプレート",
           designSystems: "デザインシステム",
           setupDesignSystem: "デザインシステムを設定",
+          agent: "エージェント",
           settings: "設定",
           openNavigation: "ナビゲーションを開く",
           expandSidebar: "サイドバーを展開",
@@ -15079,6 +15116,7 @@ export const messagesByLocale = {
           commandActions: "작업",
           commandSearch: "검색",
           commandAppearance: "모양",
+          openAgent: "에이전트 열기",
           toggleTheme: "테마 전환",
         },
         navigation: {
@@ -15086,6 +15124,7 @@ export const messagesByLocale = {
           templates: "템플릿",
           designSystems: "디자인 시스템",
           setupDesignSystem: "디자인 시스템 설정",
+          agent: "에이전트",
           settings: "설정",
           openNavigation: "탐색 열기",
           expandSidebar: "사이드바 펼치기",
@@ -15155,6 +15194,7 @@ export const messagesByLocale = {
           commandActions: "Ações",
           commandSearch: "Buscar",
           commandAppearance: "Aparência",
+          openAgent: "Abrir agente",
           toggleTheme: "Alternar tema",
         },
         navigation: {
@@ -15162,6 +15202,7 @@ export const messagesByLocale = {
           templates: "Modelos",
           designSystems: "Sistemas de design",
           setupDesignSystem: "Configurar sistema de design",
+          agent: "Agente",
           settings: "Configurações",
           openNavigation: "Abrir navegação",
           expandSidebar: "Expandir barra lateral",
@@ -15232,6 +15273,7 @@ export const messagesByLocale = {
           commandActions: "क्रियाएं",
           commandSearch: "खोजें",
           commandAppearance: "रूप",
+          openAgent: "एजेंट खोलें",
           toggleTheme: "थीम बदलें",
         },
         navigation: {
@@ -15239,6 +15281,7 @@ export const messagesByLocale = {
           templates: "टेम्पलेट",
           designSystems: "डिज़ाइन सिस्टम",
           setupDesignSystem: "डिज़ाइन सिस्टम सेट करें",
+          agent: "एजेंट",
           settings: "सेटिंग्स",
           openNavigation: "नेविगेशन खोलें",
           expandSidebar: "साइडबार फैलाएं",
@@ -15309,6 +15352,7 @@ export const messagesByLocale = {
           commandActions: "الإجراءات",
           commandSearch: "بحث",
           commandAppearance: "المظهر",
+          openAgent: "فتح الوكيل",
           toggleTheme: "تبديل السمة",
         },
         navigation: {
@@ -15316,6 +15360,7 @@ export const messagesByLocale = {
           templates: "القوالب",
           designSystems: "أنظمة التصميم",
           setupDesignSystem: "إعداد نظام التصميم",
+          agent: "الوكيل",
           settings: "الإعدادات",
           openNavigation: "فتح التنقل",
           expandSidebar: "توسيع الشريط الجانبي",

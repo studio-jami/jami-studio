@@ -11,8 +11,10 @@ import {
   BranchPickerPrimitive,
   ComposerPrimitive,
   useMessagePartReasoning,
+  useMessagePartRuntime,
 } from "@assistant-ui/react";
 import type { Attachment } from "@assistant-ui/react";
+import { useAuiState } from "@assistant-ui/store";
 import {
   IconX,
   IconCheck,
@@ -62,7 +64,10 @@ import { PastedTextChip } from "../composer/PastedTextChip.js";
 import { ThumbsFeedback } from "../observability/ThumbsFeedback.js";
 import type { ContentPart } from "../sse-event-processor.js";
 import { cn } from "../utils.js";
-import { MarkdownText } from "./markdown-renderer.js";
+import {
+  MarkdownText,
+  renderMarkdownToClipboardHtml,
+} from "./markdown-renderer.js";
 import {
   ToolCallFallback,
   FilesChangedSummary,
@@ -524,7 +529,10 @@ export function MessageActionsMenu({
       .filter((p) => p.type === "text")
       .map((p) => (p as { text: string }).text)
       .join("\n");
-    void writeClipboardText(text).then((ok) => {
+    // Rich flavor keeps formatting in targets that read text/html (e.g. Slack);
+    // null when the markdown renderer isn't ready yet, so we copy plain markdown.
+    const html = renderMarkdownToClipboardHtml(text);
+    void writeClipboardText(text, html ? { html } : undefined).then((ok) => {
       if (!ok) return;
       setCopied("message");
       setTimeout(() => {
@@ -840,10 +848,39 @@ export function shouldShowAssistantMessageFooter({
   return !chatRunning && statusIsTerminal;
 }
 
+export function shouldShowAssistantWorkSummary({
+  isLast,
+  isComplete,
+  hasCollapsibleWork,
+  hasUnresolvedTool,
+}: {
+  isLast: boolean;
+  isComplete: boolean;
+  hasCollapsibleWork: boolean;
+  hasUnresolvedTool: boolean;
+}): boolean {
+  if (!hasCollapsibleWork || hasUnresolvedTool) return false;
+
+  // Keep completed historical work wrapped while a later turn is running.
+  // Removing the wrapper exposes/remounts ReasoningCell and resets its
+  // disclosure state to the default-open value on every new submission.
+  return isComplete || !isLast;
+}
+
 function ReasoningMessagePart() {
   const part = useMessagePartReasoning();
-  const chatRunning = React.useContext(ChatRunningContext);
+  const partRuntime = useMessagePartRuntime();
+  const messageParts = useAuiState((state) => state.message.parts);
   const isStreaming = part.status?.type === "running";
+  const partIndex =
+    partRuntime.path.messagePartSelector.type === "index"
+      ? partRuntime.path.messagePartSelector.index
+      : -1;
+  const latestReasoningPartIndex = messageParts.reduce(
+    (latestIndex, messagePart, index) =>
+      messagePart.type === "reasoning" ? index : latestIndex,
+    -1,
+  );
   // Time thinking client-side: record the moment streaming first starts and
   // the moment it stops so the cell can show "Thought for Xs". Historical
   // messages that were never observed streaming in this session never get a
@@ -864,17 +901,32 @@ function ReasoningMessagePart() {
     <ReasoningCell
       text={part.text}
       isStreaming={isStreaming}
+      resetKey={`message-reasoning-${partIndex}`}
       durationMs={durationMs}
-      defaultOpen={isStreaming || !chatRunning}
-      autoCollapse={chatRunning}
+      defaultOpen={partIndex === latestReasoningPartIndex}
+      collapseWhenReplaced={partIndex < latestReasoningPartIndex}
     />
+  );
+}
+
+const ALWAYS_VISIBLE_ASSISTANT_TOOLS = new Set(["connect-builder"]);
+
+export function isCollapsibleAssistantWorkPart(part: {
+  type?: string;
+  toolName?: string;
+}): boolean {
+  if (part.type === "reasoning") return true;
+  return (
+    part.type === "tool-call" &&
+    !ALWAYS_VISIBLE_ASSISTANT_TOOLS.has(part.toolName ?? "")
   );
 }
 
 function groupAssistantWorkParts(part: {
   type?: string;
+  toolName?: string;
 }): ["group-work"] | null {
-  if (part.type === "reasoning" || part.type === "tool-call") {
+  if (isCollapsibleAssistantWorkPart(part)) {
     return ["group-work"];
   }
   return null;
@@ -1006,8 +1058,8 @@ export function AssistantMessage() {
     Array.isArray(msgContent) &&
     msgContent.some(
       (p) =>
-        p.type === "reasoning" ||
-        (p.type === "tool-call" && p.activity !== true),
+        (p.type !== "tool-call" || p.activity !== true) &&
+        isCollapsibleAssistantWorkPart(p),
     );
 
   if (!hasRenderableContent) return null;
@@ -1022,8 +1074,12 @@ export function AssistantMessage() {
           {({ part, children }) => {
             switch (part.type) {
               case "group-work": {
-                const showSummary =
-                  isComplete && !chatRunning && hasCollapsibleWork;
+                const showSummary = shouldShowAssistantWorkSummary({
+                  isLast,
+                  isComplete,
+                  hasCollapsibleWork,
+                  hasUnresolvedTool,
+                });
                 if (!showSummary) return <>{children}</>;
                 return (
                   <WorkedForSummary

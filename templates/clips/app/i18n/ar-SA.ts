@@ -13,6 +13,7 @@ const messages = {
   root: {
     commandActions: "الإجراءات",
     commandSearch: "بحث",
+    openAgent: "فتح الوكيل",
     commandAppearance: "المظهر",
     toggleTheme: "تبديل السمة",
     extensionSignedInTitle: "تم تسجيل الدخول",
@@ -53,6 +54,7 @@ const messages = {
     dictate: "إملاء",
     archive: "الأرشيف",
     trash: "المهملات",
+    agent: "الوكيل",
     settings: "الإعدادات",
     notifications: "الإشعارات",
     insights: "الرؤى",
@@ -168,7 +170,7 @@ const messages = {
       "انتهى مسجل سطح المكتب وحفظ نسخة محلية، لكن لم يتمكن Clips من تحميلها. يمكنك إعادة المحاولة من قائمة Clips دون التسجيل مرة أخرى.",
     retryLibrary: "يمكنك إعادة المحاولة من المكتبة.",
     processingStuck:
-      "لم تكتمل المعالجة بعد 30 ثانية (الحالة={{status}}). ربما لم يتم الانتهاء من تحميل المقطع — تحقق من سجلات الخادم بحثًا عن الرسائل المجمعة/النهائية.",
+      "يستغرق حفظ المقطع وقتًا أطول من المتوقع (الحالة={{status}}). إذا سجلته في تطبيق سطح المكتب، فافتح Clips من شريط القوائم لإعادة محاولة الرفع أو تنزيل نسخة محلية محفوظة، ثم تحقق مرة أخرى.",
     uploadingAssembling:
       "تحميل الفيديو الخاص بك وتجميعه — يستغرق هذا عادةً بضع ثوانٍ فقط.",
     connectStorageImportLoom: "قم بتوصيل وحدة التخزين لاستيراد Loom هذا.",
@@ -212,6 +214,9 @@ const messages = {
     autoChapters: "فصول السيارات",
     removeFillerWords: "إزالة كلمات الحشو",
     removeSilences: "إزالة فترات الصمت (> 1.2 ثانية)",
+    silenceWorking: "جارٍ إزالة فترات الصمت…",
+    silenceCompleted: "اكتملت إزالة فترات الصمت",
+    silenceFailed: "فشلت إزالة فترات الصمت",
     generatePrSummary: "إنشاء ملخص للعلاقات العامة",
     generateSop: "توليد SOP",
     generateSopTooltip:
@@ -442,6 +447,7 @@ const messages = {
     invite: "دعوة",
     embed: "تضمين",
     shareLink: "رابط المشاركة",
+    shareWithHumans: "مشاركة مع الأشخاص",
     shareWithAgents: "شارك مع الوكلاء",
     copyAgentPrompt: "نسخ مطالبة الوكيل",
     agentPrompt:
@@ -452,6 +458,8 @@ const messages = {
     retryAgentLink: "إعادة المحاولة",
     gifPreview: "معاينة GIF",
     openPlayer: "مشغل مفتوح",
+    chooseFile: "اختيار ملف",
+    remove: "إزالة",
     downloadMp4: "تحميل MP4",
     embedsNeedPublic: "التضمينات تحتاج إلى مقطع عام",
     embedPublicDescription:
@@ -535,6 +543,9 @@ const messages = {
     brandingUpdated: "تم تحديث العلامة التجارية",
     saveFailed: "فشل الحفظ",
     organizationName: "اسم المؤسسة",
+    defaultVisibility: "الرؤية الافتراضية للتسجيلات الجديدة",
+    defaultVisibilityDescription:
+      "تُطبّق على التسجيلات الجديدة ما لم تختر رؤية مختلفة.",
     brandColor: "لون العلامة التجارية",
     brandColorPicker: "منتقي لون العلامة التجارية",
     useColor: "استخدم {{color}}",
@@ -885,14 +896,6 @@ const messages = {
       "سيفقد {{email}} الوصول إلى هذه المؤسسة. يمكنك دائمًا دعوته مرة أخرى.",
     remove: "إزالة",
   },
-  slackShareHint: {
-    playsInline: "يعمل داخل Slack",
-    connectedDescription:
-      "الصق هذا الرابط في أي مساحة عمل متصلة لتشغيله داخلها.",
-    makeInline: "اجعله يعمل داخل Slack",
-    connectDescription: "قم بتوصيل مساحة عمل حتى يظهر هذا الرابط كفيديو.",
-    connect: "اتصال",
-  },
   commentsPanel: {
     disabled: "تم تعطيل التعليقات لهذا التسجيل.",
     beFirst: "كن أول من يعلق",
@@ -1230,9 +1233,10 @@ const messages = {
     visibilityOrg: "Organization (مترجم)",
     visibilityPublic: "Public (مترجم)",
     passwordProtection: "Password protection (مترجم)",
-    passwordSetPlaceholder:
-      "Password is set — type to replace, leave empty + Save to clear (مترجم)",
+    passwordSetPlaceholder: "Password is set — type to replace (مترجم)",
     noPasswordPlaceholder: "No password (مترجم)",
+    passwordWhitespaceOnly: "Spaces alone aren't a valid password. (مترجم)",
+    removePassword: "Remove (مترجم)",
     expiry: "Expiry (مترجم)",
     viewerOptions: "Viewer options (مترجم)",
     comments: "Comments (مترجم)",
