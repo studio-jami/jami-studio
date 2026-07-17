@@ -144,7 +144,7 @@ export const links = () => [
 ];
 
 export const meta = () => [
-  { title: "Agent-Native — Framework for Agent-Native Apps" },
+  { title: "Jami Studio — Framework for Agent-Native Apps" },
   {
     name: "description",
     content:
@@ -153,7 +153,7 @@ export const meta = () => [
   ...defaultSocialImageMeta(),
   {
     property: "og:title",
-    content: "Agent-Native — Framework for Agent-Native Apps",
+    content: "Jami Studio — Framework for Agent-Native Apps",
   },
   {
     property: "og:description",
@@ -162,7 +162,7 @@ export const meta = () => [
   },
   { property: "og:type", content: "website" },
   { property: "og:url", content: SITE_URL },
-  { property: "og:site_name", content: "Agent-Native" },
+  { property: "og:site_name", content: "Jami Studio" },
 ];
 
 function DocsChrome({ children }: { children: React.ReactNode }) {

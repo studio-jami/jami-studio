@@ -239,15 +239,15 @@ const sourceFlow = [
 export const meta = () =>
   withDefaultSocialImage(
     [
-      { title: "Agent-Native Homepage Direction" },
+      { title: "Jami Studio Homepage Direction" },
       {
         name: "description",
         content:
-          "A module-first homepage direction for building agentic applications with replaceable Agent-Native modules and forkable example apps.",
+          "A module-first homepage direction for building agentic applications with replaceable Jami Studio modules and forkable example apps.",
       },
       {
         property: "og:title",
-        content: "Agent-Native Homepage Direction",
+        content: "Jami Studio Homepage Direction",
       },
       {
         property: "og:description",
@@ -455,7 +455,7 @@ export default function HomepageNew() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--fg-secondary)] md:text-xl">
             Build chat-first agentic apps, agents with robust UIs, and
-            automation-first workflows. Agent-Native gives you replaceable,
+            automation-first workflows. Jami Studio gives you replaceable,
             battle-tested modules so your agent can focus on what makes your
             product different.
           </p>
@@ -510,7 +510,7 @@ export default function HomepageNew() {
           <SectionHeading
             eyebrow="The modular framework"
             title="Human-verified pieces for the boring-hard parts"
-            body="Instead of asking agents to invent auth, sync, collaboration, sharing, MCP, queues, audit logs, and UI state from scratch, Agent-Native ships the pieces as modules you get for free and can replace when you need to."
+            body="Instead of asking agents to invent auth, sync, collaboration, sharing, MCP, queues, audit logs, and UI state from scratch, Jami Studio ships the pieces as modules you get for free and can replace when you need to."
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {moduleCards.map((module) => (
