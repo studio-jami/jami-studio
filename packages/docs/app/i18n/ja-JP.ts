@@ -83,10 +83,10 @@ const jaJP = {
   home: {
     hero: {
       badge: "オープンソース framework",
-      titleLine1: "agentic apps のための",
-      titleAccent: "framework",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio は、agent を中心に堅牢なアプリケーションを迅速に構築するためのオープンソース framework です。",
-      primaryCta: "app を試す",
+      primaryCta: "アプリを見る",
       secondaryCta: "ドキュメントを読む",
     },
     code: {

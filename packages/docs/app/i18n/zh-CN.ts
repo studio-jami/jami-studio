@@ -82,10 +82,10 @@ const zhCN = {
   home: {
     hero: {
       badge: "开源框架",
-      titleLine1: "面向",
-      titleAccent: "agentic apps 的框架",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio 是一个开源 framework，用于以 agent 为核心快速构建健壮的应用程序。",
-      primaryCta: "试用一个 app",
+      primaryCta: "浏览应用",
       secondaryCta: "阅读文档",
     },
     code: {

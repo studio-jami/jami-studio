@@ -94,10 +94,10 @@ const enUS = {
   home: {
     hero: {
       badge: "Open source framework",
-      titleLine1: "The framework for",
-      titleAccent: "agentic apps",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio is an open-source framework for rapidly building robust applications with agents at their core.",
-      primaryCta: "Try an app",
+      primaryCta: "Explore the apps",
       secondaryCta: "Read the docs",
     },
     code: {

@@ -82,10 +82,10 @@ const hiIN = {
   home: {
     hero: {
       badge: "ओपन सोर्स framework",
-      titleLine1: "agentic apps के लिए",
-      titleAccent: "framework",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio एक ओपन-सोर्स framework है, जो agents को कोर में रखकर मज़बूत applications तेज़ी से बनाने के लिए है।",
-      primaryCta: "एक app आज़माएँ",
+      primaryCta: "ऐप्स देखें",
       secondaryCta: "दस्तावेज़ पढ़ें",
     },
     code: {

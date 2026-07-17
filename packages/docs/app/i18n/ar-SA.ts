@@ -82,10 +82,10 @@ const arSA = {
   home: {
     hero: {
       badge: "framework مفتوح المصدر",
-      titleLine1: "framework من أجل",
-      titleAccent: "agentic apps",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio هو framework مفتوح المصدر لبناء تطبيقات قوية بسرعة مع agents في جوهرها.",
-      primaryCta: "جرّب تطبيقًا",
+      primaryCta: "استكشف التطبيقات",
       secondaryCta: "اقرأ الوثائق",
     },
     code: {

@@ -124,34 +124,6 @@ export default function CalendarTemplate() {
             </p>
 
             <div className="template-detail-actions mb-8 grid grid-cols-2 items-stretch gap-3 sm:flex sm:flex-wrap sm:items-center">
-              <a
-                href="https://calendar.jami.studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-gray-800 hover:no-underline dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                onClick={() =>
-                  trackEvent("try live demo", {
-                    template: "calendar",
-                    location: "landing_page",
-                  })
-                }
-              >
-                {t("templateLanding.calendar.s008")}
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-              </a>
               <TemplateDocsLink template={template} location="landing_page" />
               <CliCopy />
             </div>
@@ -166,18 +138,6 @@ export default function CalendarTemplate() {
               className="w-full object-cover object-top"
             />
           </div>
-        </div>
-      </section>
-
-      {/* Hosted demo note */}
-      <section className="border-t border-[var(--docs-border)] py-8">
-        <div className="rounded-xl border border-[var(--docs-border)] bg-[var(--bg-secondary)] p-5">
-          <h2 className="mb-2 text-base font-semibold">
-            {t("templateLanding.calendar.s057")}
-          </h2>
-          <p className="m-0 text-sm leading-relaxed text-[var(--fg-secondary)]">
-            {t("templateLanding.calendar.s009")}
-          </p>
         </div>
       </section>
 

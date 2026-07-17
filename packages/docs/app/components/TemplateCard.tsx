@@ -15,7 +15,6 @@ export const templates = [
     slug: "clips",
     cliCommand:
       "npx @agent-native/core@latest create my-clips-app --template clips",
-    demoUrl: "https://clips.jami.studio",
     color: "#0EA5E9",
     screenshot: "/screenshots/clips.png",
   },
@@ -23,7 +22,6 @@ export const templates = [
     name: "Plans",
     slug: "plan",
     cliCommand: "npx @agent-native/core@latest skills add visual-plan",
-    demoUrl: "https://plan.jami.studio",
     color: "#52525B",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800",
@@ -33,7 +31,6 @@ export const templates = [
     slug: "design",
     cliCommand:
       "npx @agent-native/core@latest create my-design-app --template design",
-    demoUrl: "https://design.jami.studio",
     color: "#F472B6",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800",
@@ -43,7 +40,6 @@ export const templates = [
     slug: "content",
     cliCommand:
       "npx @agent-native/core@latest create my-content-app --template content",
-    demoUrl: "https://content.jami.studio",
     color: "#7928ca",
     screenshot: "/screenshots/content.png",
   },
@@ -52,7 +48,6 @@ export const templates = [
     slug: "slides",
     cliCommand:
       "npx @agent-native/core@latest create my-slides-app --template slides",
-    demoUrl: "https://slides.jami.studio",
     color: "#f59e0b",
     screenshot: "/screenshots/slides.png",
   },
@@ -61,7 +56,6 @@ export const templates = [
     slug: "analytics",
     cliCommand:
       "npx @agent-native/core@latest create my-analytics-app --template analytics",
-    demoUrl: "https://analytics.jami.studio",
     color: "var(--docs-accent)",
     screenshot: "/screenshots/analytics.png",
   },
@@ -70,7 +64,6 @@ export const templates = [
     slug: "mail",
     cliCommand:
       "npx @agent-native/core@latest create my-mail-app --template mail",
-    demoUrl: "https://mail.jami.studio",
     color: "#0ea5e9",
     screenshot: "/screenshots/mail.png",
   },
@@ -79,7 +72,6 @@ export const templates = [
     slug: "forms",
     cliCommand:
       "npx @agent-native/core@latest create my-forms-app --template forms",
-    demoUrl: "https://forms.jami.studio",
     color: "#06B6D4",
     screenshot: "/screenshots/forms.png",
   },
@@ -88,7 +80,6 @@ export const templates = [
     slug: "brain",
     cliCommand:
       "npx @agent-native/core@latest create my-brain-app --template brain",
-    demoUrl: "https://brain.jami.studio",
     color: "#8B5CF6",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F9c9fe3b5b9494e33803cd3f494cba356?format=webp&width=800",
@@ -98,7 +89,6 @@ export const templates = [
     slug: "assets",
     cliCommand:
       "npx @agent-native/core@latest create my-assets-app --template assets",
-    demoUrl: "https://assets.jami.studio",
     color: "#0F766E",
     screenshot:
       "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F769092170a14474f998cbca47384f891?format=webp&width=800",
@@ -108,7 +98,6 @@ export const templates = [
     slug: "calendar",
     cliCommand:
       "npx @agent-native/core@latest create my-calendar-app --template calendar",
-    demoUrl: "https://calendar.jami.studio",
     color: "#10b981",
     screenshot: "/screenshots/calendar.png",
   },
@@ -117,7 +106,6 @@ export const templates = [
     slug: "dispatch",
     cliCommand:
       "npx @agent-native/core@latest create my-dispatch-app --template dispatch",
-    demoUrl: "https://dispatch.jami.studio",
     color: "#14B8A6",
     screenshot: "/screenshots/dispatch.png",
   },
@@ -126,7 +114,6 @@ export const templates = [
     slug: "chat",
     cliCommand:
       "npx @agent-native/core@latest create my-chat-app --template chat",
-    demoUrl: "https://chat.jami.studio",
     color: "#18181B",
     screenshot: "/screenshots/chat.png",
   },
@@ -220,7 +207,6 @@ function TemplateLaunchButton({ template }: { template: Template }) {
     "menu" | "editOnline" | "runLocally"
   >("menu");
   const t = useT();
-  const hasDemoUrl = "demoUrl" in template && template.demoUrl;
 
   function handleCustomizeOpenChange(open: boolean) {
     if (open) {
@@ -252,36 +238,6 @@ function TemplateLaunchButton({ template }: { template: Template }) {
 
   return (
     <div className="mt-auto flex flex-col gap-2 pt-3">
-      {hasDemoUrl && (
-        <a
-          href={template.demoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() =>
-            trackEvent("click try demo", {
-              template: template.slug,
-              location: "card",
-            })
-          }
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white no-underline transition hover:bg-gray-800 hover:no-underline dark:bg-white dark:text-black dark:hover:bg-gray-200"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>
-          {t("common.tryIt")}
-        </a>
-      )}
       <div className="flex gap-2">
         <Popover open={showCustomize} onOpenChange={handleCustomizeOpenChange}>
           <PopoverTrigger asChild>

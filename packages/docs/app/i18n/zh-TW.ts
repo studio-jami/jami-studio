@@ -80,10 +80,10 @@ const messages = {
   home: {
     hero: {
       badge: "開放原始碼框架",
-      titleLine1: "面向",
-      titleAccent: "agentic apps 的框架",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio 是一個開源 framework，用於以 agent 為核心快速建構穩健的應用程式。",
-      primaryCta: "試用一個 app",
+      primaryCta: "瀏覽應用",
       secondaryCta: "閱讀檔案",
     },
     code: {

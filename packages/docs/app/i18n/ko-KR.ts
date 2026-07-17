@@ -83,10 +83,10 @@ const koKR = {
   home: {
     hero: {
       badge: "오픈소스 framework",
-      titleLine1: "agentic apps 를 위한",
-      titleAccent: "framework",
+      titleLine1: "Just another",
+      titleAccent: "machine interface",
       body: "Jami Studio 는 agent 를 핵심으로 견고한 애플리케이션을 빠르게 구축하기 위한 오픈소스 framework 입니다.",
-      primaryCta: "app 사용해 보기",
+      primaryCta: "앱 살펴보기",
       secondaryCta: "문서 읽기",
     },
     code: {

@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { label: 'Jami',     href: '#jami' },
   { label: 'Registry', href: '#registry' },
   { label: 'Stack',    href: '#stack' },
+  { label: 'Apps',     href: '/apps' },
   { label: 'Docs',     href: '/docs' },
 ]
 
