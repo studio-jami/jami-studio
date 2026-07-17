@@ -209,10 +209,69 @@ keep controlled. Honest options:
    (action-backed cards + same-origin iframe panes), with rung 3
    (component-level reuse) as the stated polish trajectory rather than a
    v1 requirement.
-8. **Dispatch relationship**: is the shell workspace literally Dispatch's
-   next form (Dispatch chat promoted to `/`), or a new surface that
-   consumes Dispatch? Affects where the code lives and what "more focused"
-   deprecates.
+8. **Dispatch relationship — ANSWERED (recommendation accepted in
+   principle, round 3): Dispatch promoted, not wrapped.** The
+   industry-standard and first-principles answer agree here:
+   - A "new surface that consumes Dispatch" creates two owners of one
+     concern (orchestration UX) — the parallel-system trap, and exactly
+     how several-chats-per-page proliferation happened. The upstream rule
+     applies to product surfaces too: evolve the proven surface at source,
+     don't build a sibling beside it.
+   - The archetype the owner invoked IS the workbench pattern (VS Code
+     class): ONE workbench owns layout, panes, sidebar, chrome; every
+     capability is a pane/view contributed into it. Successful platforms
+     promote and refactor the proven surface in place; they don't
+     greenfield a rival shell.
+   - Precise shape ("wrap in or not is up to the sensibility of the
+     code"): the WORKBENCH primitives (split-pane layout, pane registry,
+     sidebar, card→pane→fullscreen ladder, dock ownership) become
+     framework-level packages in the fork — so every agent-native
+     workspace inherits the shell — and the app at `/` is Dispatch's next
+     form (renamed with the identity work) running that workbench as the
+     central interaction surface. Dispatch's orchestration internals
+     (jobs, resources, integrations, A2A reach) carry over as the first
+     first-class pane set rather than being re-implemented.
+   - Explicitly NOT: a wrapper app that iframes/embeds today's Dispatch,
+     or re-export shims/barrels bridging old and new surfaces during the
+     move (see engineering standard below).
+
+## Sequenced flow (owner sketch, round 3 — 2026-07-17)
+
+The owner's imagined order for the whole arc, recorded as the working
+sketch (refines, does not replace, the roadmap's phase order — formal
+ratification still lands in the hummingbird roadmap doc when each phase is
+scoped):
+
+1. **Packages reclaimed** — registry/identity work (aligns with Phase
+   2.75 de-Builder.io): packages renamed under the Jami Studio name.
+2. **Systems ported stable** — what exists runs clean on the reclaimed
+   packages (cohesion bar from Phase 2.5 carried through the rename).
+3. **Continue rename** — finish identity across fork + workspace.
+4. **Reorganization around intended workspaces** — current domain sketch:
+   **business / design / research / coding / full suite ("hummingbird?")**.
+   (Refines the earlier 5-domain sketch — project-mgmt folds into
+   business/orchestration; "full suite" is the everything-workspace,
+   possibly keeping the Hummingbird name. Still a sketch — the sidebar
+   grouping data (question 3) prototypes this before packages move.)
+5. **Orchestration** — Dispatch renamed and promoted to the central
+   interaction surface (question 8's answer executed): the workbench at
+   `/`, the one chat, the sidebar, the pane sets.
+
+### Engineering standard for this workstream (owner, round 3 — binding)
+
+This is critical load-bearing structure and gets treated as such:
+
+- **No shortcuts, no placeholders, no shims, no barrel re-exports** to
+  bridge old→new during the moves. Pillars go up even and sturdy — each
+  slice lands whole (real package homes, real imports, real deletions of
+  the superseded surface) or it doesn't land.
+- Ideal shape, standard and scalable, over fast: prefer the
+  industry-standard pattern (workbench/pane contribution model) even when
+  a bespoke hack would demo sooner.
+- This standard governs the shell/workbench, the Dispatch promotion, and
+  the workspace reorganization. (The contest demo lane — avatar plan —
+  keeps its own smaller scope and does NOT get to violate this standard in
+  shared code; demo-only glue stays in the demo slices.)
 
 ## Guardrails this work must honor (from the roadmap, restated)
 
