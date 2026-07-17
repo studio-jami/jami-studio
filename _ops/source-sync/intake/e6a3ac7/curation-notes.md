@@ -85,3 +85,24 @@ Builder branding -> `Jami Studio`, protected `github.com/BuilderIO/...`,
 - `templates.analytics.tsx` meta copy supersession noted above.
 - Upstream moved to TS 7 / core 0.105.0; version churn is not automatically
   useful for main — port by lane.
+
+## Deploy-check signal (post-merge, 2026-07-17)
+
+Vercel builds every push to this repo for two projects; they are a real
+integration check on sync merges, with one structural caveat:
+
+- **jami-studio-docs: SUCCESS on merge 296bee191** — the docs site built
+  end-to-end from the merged tree (core 0.105 content + our identity
+  overlays). Treat this as the meaningful green.
+- **jami.studio-marketing: FAILURE on every sync-lane commit** (also failed
+  on pre-merge f8d23506d) — NOT a merge regression. `packages/marketing`
+  is a Jami-main-only package; it has never existed on the sync lane
+  (upstream mirror has no marketing site), so the Vercel project's
+  rootDirectory is missing and the build dies before it starts. Because this
+  red is permanent, it poisons the combined commit status and will mask real
+  failures on sync branches.
+- Fix (owner action, needs fresh Vercel auth — local CLI token expired,
+  403): either restrict the marketing project's deployments to `main`
+  (dashboard: Settings → Git → Ignored Build Step / deploymentEnabled), or
+  add an ignore command that exits 0 when `packages/marketing` is absent.
+  After that, sync-branch status = docs project only, and red means red.
