@@ -37,7 +37,7 @@ function waitlistFormUrl(): string | undefined {
 }
 
 const primaryButtonClassName =
-  "inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200";
+  "inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--fg)] px-4 py-2 text-sm font-medium text-[var(--bg)] transition hover:opacity-85";
 
 export function WaitlistContent({
   location,

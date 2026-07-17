@@ -288,11 +288,7 @@ export function SearchModal({
               {results.map((entry, i) => (
                 <button
                   key={`${entry.path}-${entry.sectionId}`}
-                  ref={
-                    i === activeIdx
-                      ? activeItemRef
-                      : undefined
-                  }
+                  ref={i === activeIdx ? activeItemRef : undefined}
                   onClick={() => go(entry)}
                   onMouseEnter={() => setActiveIdx(i)}
                   className={`flex w-full flex-col gap-1 px-4 py-3 text-start transition ${

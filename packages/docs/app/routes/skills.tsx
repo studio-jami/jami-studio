@@ -164,7 +164,7 @@ function SkillVideo({ skill }: { skill: Skill }) {
   }
 
   return (
-    <div className="relative mt-5 aspect-[1189/1080] overflow-hidden rounded-lg border border-[var(--docs-border)] bg-black">
+    <div className="relative mt-5 aspect-[1189/1080] overflow-hidden rounded-lg border border-[var(--docs-border)] bg-[var(--bg-secondary)]">
       <video
         src={skill.videoUrl}
         aria-label={t(`skillsPage.${skill.copyKey}.videoAriaLabel`)}

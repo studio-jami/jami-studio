@@ -2,36 +2,39 @@
 @import "@agent-native/core/styles/agent-native.css";
 
 /* shadcn CSS variables required by agent-native sidebar components.
-   Dark-only — the Jami Studio marketing scheme is the one and only scheme. */
+   Dark-only — the Jami Studio marketing scheme is the one and only scheme.
+   These HSL triples are exact conversions of the marketing oklch palette
+   (packages/marketing/app/globals.css); core paints its page surfaces with
+   hsl(var(--background)), so these ARE the page background. */
 :root {
-  --background: 25 12% 9%;
-  --foreground: 45 15% 92%;
-  --card: 25 12% 12%;
-  --card-foreground: 45 15% 92%;
-  --popover: 25 12% 12%;
-  --popover-foreground: 45 15% 92%;
-  --primary: 45 15% 92%;
-  --primary-foreground: 25 12% 9%;
-  --secondary: 25 10% 16%;
-  --secondary-foreground: 45 15% 92%;
-  --muted: 25 10% 16%;
-  --muted-foreground: 35 8% 62%;
-  --accent: 25 10% 16%;
-  --accent-foreground: 45 15% 92%;
-  --destructive: 0 62% 50%;
-  --destructive-foreground: 45 15% 92%;
-  --border: 25 10% 18%;
-  --input: 25 10% 18%;
-  --ring: 45 15% 84%;
+  --background: 14.8 62.7% 3.2%;
+  --foreground: 28.6 33.4% 91.8%;
+  --card: 19.5 43.5% 6%;
+  --card-foreground: 28.6 33.4% 91.8%;
+  --popover: 19.5 43.5% 6%;
+  --popover-foreground: 28.6 33.4% 91.8%;
+  --primary: 351.9 100% 72.8%;
+  --primary-foreground: 15.7 48.2% 1.4%;
+  --secondary: 19.5 29.1% 9.5%;
+  --secondary-foreground: 28.6 17% 84%;
+  --muted: 19.5 31% 7.8%;
+  --muted-foreground: 23.5 9.1% 44.3%;
+  --accent: 19.5 29.1% 9.5%;
+  --accent-foreground: 28.6 33.4% 91.8%;
+  --destructive: 1 87.2% 57.9%;
+  --destructive-foreground: 28.6 33.4% 91.8%;
+  --border: 19.5 22% 13.2%;
+  --input: 19.5 22% 13.2%;
+  --ring: 351.9 100% 72.8%;
   --radius: 0rem;
-  --sidebar-background: 25 12% 11%;
-  --sidebar-foreground: 45 15% 92%;
-  --sidebar-primary: 45 15% 92%;
-  --sidebar-primary-foreground: 25 12% 9%;
-  --sidebar-accent: 25 10% 16%;
-  --sidebar-accent-foreground: 45 15% 92%;
-  --sidebar-border: 25 10% 16%;
-  --sidebar-ring: 45 15% 84%;
+  --sidebar-background: 14.8 62.7% 3.2%;
+  --sidebar-foreground: 28.6 33.4% 91.8%;
+  --sidebar-primary: 351.9 100% 72.8%;
+  --sidebar-primary-foreground: 15.7 48.2% 1.4%;
+  --sidebar-accent: 19.5 29.1% 9.5%;
+  --sidebar-accent-foreground: 28.6 33.4% 91.8%;
+  --sidebar-border: 19.5 22% 13.2%;
+  --sidebar-ring: 351.9 100% 72.8%;
 }
 
 @theme {
