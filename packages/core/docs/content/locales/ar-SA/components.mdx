@@ -5,7 +5,7 @@ description: "العناصر الأساسية العامة React للوكيل ا
 
 # المكون API
 
-يشحن Agent-Native شريطًا جانبيًا كاملاً، لكن الشريط الجانبي ليس العقد.
+يشحن Jami Studio شريطًا جانبيًا كاملاً، لكن الشريط الجانبي ليس العقد.
 العقد هو وقت التشغيل: تدفق الدردشة، وحالة سلسلة المحادثات، actions، والسياق،
 المرفقات واختيار النموذج وعمليات التشغيل والمزامنة المدعومة بـ SQL. استخدم المخزون
 المكونات عندما تستطيع ذلك، وقم بإسقاط الطبقة عندما تحتاج إلى منتج مخصص UI.
@@ -124,13 +124,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client` أو `/client/chat` | لديك بث Claude Agent SDK وتريد تطبيعه في الدردشة UI.                                     |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` أو `/client/chat` | لديك بث Vercel AI SDK وتريد تطبيعه في الدردشة UI.                                        |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` أو `/client/chat` | تحتاج إلى تكييف `AgentChatRuntime` مع واجهة المستخدم المساعدة بنفسك.                     |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` أو `/client/chat` | تحتاج إلى وسيلة نقل Agent-Native SSE المدمجة كمحول مساعد لواجهة المستخدم منخفضة المستوى. |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` أو `/client/chat` | تحتاج إلى وسيلة نقل Jami Studio SSE المدمجة كمحول مساعد لواجهة المستخدم منخفضة المستوى. |
 | `useChatThreads()`                   | `@agent-native/core/client` أو `/client/chat` | تحتاج إلى قائمة سلاسل محادثات مخصصة، أو منتقي السجل، أو دردشة محددة النطاق UI.           |
 | `sendToAgentChat()`                  | `@agent-native/core/client` أو `/client/chat` | يجب أن يؤدي إجراء المنتج إلى تسليم العمل إلى دردشة الوكيل.                               |
 
 `AgentChatRuntime` هو عقد وكيل BYO لقشرة الدردشة القياسية. تمرير
 من `runtime` إلى `<AssistantChat>` عندما يتعين على وكيل خارجي تشغيل
-المحادثة بينما يحتفظ Agent-Native بالملحن والنص وبطاقات الأدوات و
+المحادثة بينما يحتفظ Jami Studio بالملحن والنص وبطاقات الأدوات و
 عرض القطعة الأصلية. الموصلات أعلاه هي سطح API؛ وقت التشغيل
 يتم تدريس أشكال العقود والأحداث في
 [Native واجهة الدردشة — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

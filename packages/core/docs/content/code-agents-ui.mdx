@@ -1,9 +1,9 @@
 ---
-title: "Agent-Native Code UI"
-description: "Build and customize Agent-Native Code surfaces with the shared UI package, Desktop host bridge, and CLI run store."
+title: "Jami Studio Code UI"
+description: "Build and customize Jami Studio Code surfaces with the shared UI package, Desktop host bridge, and CLI run store."
 ---
 
-# Agent-Native Code UI
+# Jami Studio Code UI
 
 > **Who is this for:** host authors building or customizing a coding-workspace
 > surface (CLI, Desktop, or a browser template) on the shared Code UI package.
@@ -12,12 +12,12 @@ description: "Build and customize Agent-Native Code surfaces with the shared UI 
 
 | You want to…                                                               | Use                                    |
 | -------------------------------------------------------------------------- | -------------------------------------- |
-| Render a Claude-Code/Codex-style **coding workspace UI**                   | **Agent-Native Code UI** (this page)   |
+| Render a Claude-Code/Codex-style **coding workspace UI**                   | **Jami Studio Code UI** (this page)   |
 | Run Claude Code / Codex / Pi **as the agent**, with their own loop + tools | [Harness Agents](/docs/harness-agents) |
 | Swap the backend that runs the agent's **`run-code` tool**                 | [Adapters](/docs/sandbox-adapters)     |
 | Wrap a CLI tool (`gh`, `ffmpeg`) for the agent to call                     | [Adapters](/docs/sandbox-adapters)     |
 
-Agent-Native Code is the Agent-Native coding surface: a local Claude Code/Codex-style workspace for coding sessions, slash commands, migrations, audits, transcripts, run controls, and follow-ups. A bare `npx @agent-native/core@latest` command opens this workspace; `npx @agent-native/core@latest code` is the explicit subcommand for the same experience.
+Jami Studio Code is the Jami Studio coding surface: a local Claude Code/Codex-style workspace for coding sessions, slash commands, migrations, audits, transcripts, run controls, and follow-ups. A bare `npx @agent-native/core@latest` command opens this workspace; `npx @agent-native/core@latest code` is the explicit subcommand for the same experience.
 
 There are three layers:
 
@@ -92,7 +92,7 @@ There are three layers:
 
 </Diagram>
 
-The current split is intentionally converging: the standard agent sidebar and Agent Teams run on the core `run-manager` lifecycle, while Agent-Native Code uses local long-running sessions backed by the file-based Code run store and the shared background-run controller vocabulary.
+The current split is intentionally converging: the standard agent sidebar and Agent Teams run on the core `run-manager` lifecycle, while Jami Studio Code uses local long-running sessions backed by the file-based Code run store and the shared background-run controller vocabulary.
 
 The shared UI is host-driven. It does not know whether it is running in Electron, a browser template, or a future hosted shell. Hosts provide a `CodeAgentsHost` implementation.
 
@@ -120,7 +120,7 @@ export function CodeSurface() {
 }
 ```
 
-Hosts can mix run sources in the same list. Local Agent-Native Code sessions
+Hosts can mix run sources in the same list. Local Jami Studio Code sessions
 can appear next to Agent Teams or other background-run adapters as long as each
 entry normalizes to `CodeAgentRun`. When a host supplies `sourceLabel`,
 `source`, or `kind`, the hub renders a small source label such as "Local Code"
@@ -143,7 +143,7 @@ That separation matters. The UI can be reused by templates, but native process c
 
 ## Codex CLI Auth {#codex-cli-auth}
 
-Agent-Native Code can use a local Codex CLI login instead of an OpenAI API key.
+Jami Studio Code can use a local Codex CLI login instead of an OpenAI API key.
 Install the Codex CLI on your `PATH`, sign in once, then restart Desktop or the
 Code UI if it was already open:
 
@@ -237,7 +237,7 @@ Run modes make editing policy explicit per session:
 | **Plan mode** | `--plan` | Inspect, plan, and explain without writing files or running mutations.                                   |
 | **Auto mode** | `--auto` | Edit files, run checks, and pause only for genuinely destructive file, git, publish, or data operations. |
 
-Auto mode is the default for local Agent-Native Code sessions. Use Plan mode for
+Auto mode is the default for local Jami Studio Code sessions. Use Plan mode for
 assessment, architecture, review, or any task where you want a proposal before
 edits.
 
@@ -273,7 +273,7 @@ Adapter-backed hosts may also attach source metadata:
 
 ## Run Store
 
-Local Agent-Native Code runs are stored at:
+Local Jami Studio Code runs are stored at:
 
 ```text
 ~/.agent-native/code-agents
@@ -307,7 +307,7 @@ Browser hosts should return a graceful `openTerminal` error instead of trying to
 
 ## Shared Composer
 
-Agent-Native Code uses the same `AgentComposerFrame` + `PromptComposer` /
+Jami Studio Code uses the same `AgentComposerFrame` + `PromptComposer` /
 `TiptapComposer` stack exported from `@agent-native/core/client/composer` as the
 framework agent sidebar. Do not fork a separate
 textarea, coding-tool picker, upload picker, voice button, model picker, or Enter-to-submit
@@ -321,7 +321,7 @@ owns run creation, transcripts, and follow-up delivery.
 
 ## Shared Coding Tools
 
-The sidebar development agent and Agent-Native Code both use the same minimal
+The sidebar development agent and Jami Studio Code both use the same minimal
 coding-tool profile: `bash`, `read`, `edit`, and `write`. `bash` is the default
 for listing/searching files, running tests, and invoking project CLIs; `read`
 shows line-numbered file slices; `edit` applies exact text replacements; and
@@ -348,11 +348,11 @@ available when needed.
 
 ## Slash Commands
 
-Agent-Native Code treats migration as a capability, not a separate app category. `/migrate` can be a built-in goal, a project command, or a custom instruction pack on top of the same host contract.
+Jami Studio Code treats migration as a capability, not a separate app category. `/migrate` can be a built-in goal, a project command, or a custom instruction pack on top of the same host contract.
 
-### Migrating to Agent-Native with `/migrate` {#migrate}
+### Migrating to Jami Studio with `/migrate` {#migrate}
 
-`/migrate` is the built-in goal for moving an existing app, URL, or described product into Agent-Native. It is a slash goal in the Code workspace — not a separate template to scaffold and not a one-off product — so it shares the same session store, transcript, run controls, and Desktop hub as every other Code session, and you can resume, attach to, inspect, and stop it the same way.
+`/migrate` is the built-in goal for moving an existing app, URL, or described product into Jami Studio. It is a slash goal in the Code workspace — not a separate template to scaffold and not a one-off product — so it shares the same session store, transcript, run controls, and Desktop hub as every other Code session, and you can resume, attach to, inspect, and stop it the same way.
 
 <Diagram id="doc-block-1lox5dw" title="/migrate is a Code session, not a separate app" summary={"A path, URL, or description goes in; the run shares the same store, transcript, and controls as every other Code session, and can emit a portable dossier."}>
 
@@ -431,7 +431,7 @@ Project skills live in:
 .agents/skills/*/SKILL.md
 ```
 
-When the host implements `listCodePacks`, the shared UI shows project commands and skills in the rail. Command rows insert `/<command>`, and skill rows insert a focused “Use the `<skill>` skill…” prompt so the rail stays actionable. The built-in slash goals `/migrate` and `/audit` stay reserved for the global Agent-Native Code controls, as do run-control names such as `status` and `resume` — those are subcommands invoked without a slash (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), not slash goals.
+When the host implements `listCodePacks`, the shared UI shows project commands and skills in the rail. Command rows insert `/<command>`, and skill rows insert a focused “Use the `<skill>` skill…” prompt so the rail stays actionable. The built-in slash goals `/migrate` and `/audit` stay reserved for the global Jami Studio Code controls, as do run-control names such as `status` and `resume` — those are subcommands invoked without a slash (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), not slash goals.
 
 Do not create a separate slash-command registry for a new Code host. Project
 commands and skills are discovered from `.agents/commands/*.md` and
@@ -441,7 +441,7 @@ through the shared composer.
 ## Background Agent Run-Manager
 
 Background coding-agent work should reuse the same run-manager foundation as the
-rest of Agent-Native:
+rest of Jami Studio:
 
 - Use the Code run store/executor for local Code sessions.
 - Use the shared background-run adapter/foundation when a surface needs to list,

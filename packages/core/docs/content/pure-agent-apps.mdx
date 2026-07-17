@@ -1,11 +1,11 @@
 ---
 title: "Automation-First Apps"
-description: "No-browser Agent-Native apps for scheduled jobs, queues, scripts, integration workers, and external agents."
+description: "No-browser Jami Studio apps for scheduled jobs, queues, scripts, integration workers, and external agents."
 ---
 
 # Automation-First Apps
 
-Most Agent-Native products should start with chat and grow into inline results
+Most Jami Studio products should start with chat and grow into inline results
 and durable app pages. Use this pattern when the primary surface is not a
 browser UI yet: scheduled reports, queues, integration workers, CLI loops, or
 another app or agent calling this app over MCP/A2A.
@@ -15,10 +15,10 @@ Building something people browse, compare, edit, or share in a full app? See
 archetype, where the work runs without a persistent screen.
 
 Automation-first does **not** mean stateless. The app-agent loop still uses the
-same Agent-Native contract: actions, sessions, app state, history, settings,
+same Jami Studio contract: actions, sessions, app state, history, settings,
 credentials, and share records live in SQL.
 
-<Diagram id="doc-block-automation-first" title="Automation-first still uses the app contract" summary={"Jobs, scripts, channels, and external agents reach one Agent-Native loop over SQL-backed actions and state."}>
+<Diagram id="doc-block-automation-first" title="Automation-first still uses the app contract" summary={"Jobs, scripts, channels, and external agents reach one Jami Studio loop over SQL-backed actions and state."}>
 
 ```html
 <div class="diagram-pure">

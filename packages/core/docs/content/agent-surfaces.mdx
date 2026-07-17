@@ -6,7 +6,7 @@ search: "agentic app rich chat native chat UI full app automation headless BYO a
 
 # Agent Surfaces
 
-Agent-Native is deliberately composable. Most apps start with chat, add actions,
+Jami Studio is deliberately composable. Most apps start with chat, add actions,
 render structured results inline, and then grow durable pages around the same
 SQL state. The same action surface can also power embedded sidecars,
 automation-first jobs, external agents, and custom chat runtimes.
@@ -16,13 +16,13 @@ you want, then use the matching primitive.
 
 | Surface                       | Use it when                                                                                                 | Start with                                                                                  |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Rich chat on Agent-Native** | You want a standalone or embedded chat backed by the built-in agent loop.                                   | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
+| **Rich chat on Jami Studio** | You want a standalone or embedded chat backed by the built-in agent loop.                                   | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
 | **Native inline UI**          | Action results should render as first-party tables, charts, cards, approvals, or compact reports in chat.   | [Native Chat UI](/docs/native-chat-ui), `chatUI.renderer`, data widget helpers              |
 | **Generated inline UI**       | The agent should create temporary or reusable controls, pickers, calculators, or visualizers inside chat.   | [Generative UI](/docs/generative-ui), `render-inline-extension`, `create-extension`         |
 | **Full application**          | Humans and agents should share durable screens, data, navigation, and collaboration.                        | Templates, actions, SQL state, context awareness                                            |
 | **Embedded sidecar**          | You already have a SaaS app and want an agent beside it with page context and host commands.                | `createAgentNativeEmbeddedPlugin()`, `AgentNativeEmbedded`                                  |
 | **Automation-first app**      | Jobs, scripts, another app, or another agent should call the work directly without a browser UI.            | `agent-native create --headless`, `defineAction`, `agent-native agent`, HTTP, CLI, MCP, A2A |
-| **Rich chat on your agent**   | You built the agent elsewhere and want Agent-Native's composer, transcript, tool cards, and native widgets. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
+| **Rich chat on your agent**   | You built the agent elsewhere and want Jami Studio's composer, transcript, tool cards, and native widgets. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
 
 Those are stages and deployment shapes, not separate products. A workflow can
 start in chat, appear as a native table or chart, become a durable page in the
@@ -91,7 +91,7 @@ the agent calls.
 
 Use the automation-first path when no one needs a custom browser screen while
 the work runs: scheduled jobs, integrations, backend workflows, CLI loops,
-another agent, or an existing product calling into Agent-Native.
+another agent, or an existing product calling into Jami Studio.
 
 This is the shape to reach for when automation is the product surface. You send
 a request from the terminal, Slack, email, a scheduled job, another agent, or
@@ -220,7 +220,7 @@ loop in that folder: scaffold the automation-first app, add actions/instructions
 contract the app will use in production.
 
 External coding harnesses are a separate product surface for embedding Claude
-Code, Codex, Pi, Cursor, Mastra, or similar runtimes inside an Agent-Native app.
+Code, Codex, Pi, Cursor, Mastra, or similar runtimes inside a Jami Studio app.
 Use them when you are building a coding-agent product, not as the default way to
 start a local agent-native workflow.
 
@@ -248,7 +248,7 @@ outputs, and run status; permissioned writable collaboration later, so
 continuing a run, approving actions, editing schedules, or changing
 configuration goes through explicit access checks.
 
-## Rich chat on Agent-Native {#rich-chat}
+## Rich chat on Jami Studio {#rich-chat}
 
 Use the built-in chat when the user should talk to the agent, see tool calls,
 approve work, inspect native results, and keep a durable thread history.
@@ -332,8 +332,8 @@ selected values back to chat.
 ## Rich chat on your agent {#byo-agent}
 
 Use this path when your agent is already built with another framework or
-runtime and you want Agent-Native's chat UI around it. `AgentChatRuntime` is the
-boundary: your runtime streams normalized events, and Agent-Native renders the
+runtime and you want Jami Studio's chat UI around it. `AgentChatRuntime` is the
+boundary: your runtime streams normalized events, and Jami Studio renders the
 composer, transcript, tool calls, approvals, native widgets, and app layout.
 
 ```tsx
@@ -354,7 +354,7 @@ export function SupportAgentChat() {
 Ready-made runtime helpers exist for OpenAI Agents, OpenAI Responses, the Claude
 Agent SDK, the Vercel AI SDK, and AG-UI, plus the normalized HTTP runtime above
 for any other agent (Mastra, Flue, Eve, LangGraph, or a custom service). ACP is
-not the end-user app chat or A2A transport, and Agent-Native does not currently
+not the end-user app chat or A2A transport, and Jami Studio does not currently
 claim A2UI support. ACP is supported in one specific place — driving a local
 coding agent (Gemini CLI, Claude Code, …) through the
 [harness layer](/docs/harness-agents#acp), not as the chat runtime here.
@@ -368,7 +368,7 @@ tool-result metadata. Start there when wiring an external agent into the chat.
 Use the embedded sidecar when the main product already exists and you want an
 agent beside it.
 
-The server plugin mounts Agent-Native routes into your host app and resolves
+The server plugin mounts Jami Studio routes into your host app and resolves
 host identity server-side:
 
 ```ts
@@ -404,7 +404,7 @@ export function AppShell({ children }) {
 }
 ```
 
-<Diagram id="doc-block-27ug5y" title="How the sidecar bridges to a host app" summary={"The plugin mounts Agent-Native routes server-side; the React sidecar streams page context in and host commands out."}>
+<Diagram id="doc-block-27ug5y" title="How the sidecar bridges to a host app" summary={"The plugin mounts Jami Studio routes server-side; the React sidecar streams page context in and host commands out."}>
 
 ```html
 <div class="diagram-sidecar">
@@ -428,7 +428,7 @@ export function AppShell({ children }) {
     <span class="diagram-pill accent">AgentNativeEmbedded</span
     ><small class="diagram-muted">agent + workspace</small>
     <div class="diagram-box" data-rough>
-      Agent-Native routes<br /><small class="diagram-muted"
+      Jami Studio routes<br /><small class="diagram-muted"
         >mounted by the server plugin</small
       >
     </div>
@@ -489,7 +489,7 @@ want a complete product shape.
 
 | If you are thinking...                                           | Choose                    |
 | ---------------------------------------------------------------- | ------------------------- |
-| "I want the framework's agent, but chat should be the main UI."  | Rich chat on Agent-Native |
+| "I want the framework's agent, but chat should be the main UI."  | Rich chat on Jami Studio |
 | "The action result should be a chart, table, or typed card."     | Native inline UI          |
 | "I want the agent to make an interactive control right now."     | Generated inline UI       |
 | "The agent and UI should evolve together as the product."        | Full application          |

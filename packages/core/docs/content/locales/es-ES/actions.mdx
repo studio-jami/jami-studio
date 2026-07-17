@@ -227,7 +227,7 @@ export default defineAction({
 
 Para una acción `GET`, se pasa `leadId` como parámetro de consulta: `/_agent-native/actions/get-lead?leadId=abc`.
 
-<Endpoint id="doc-block-1fpkeyh" title="Endpoint de accion montado automaticamente" method="GET" path="/_agent-native/actions/get-lead" summary="Cada accion se monta aqui automaticamente: el nombre del archivo es el nombre de la accion." auth={"Cookie de sesion; las llamadas del frontend llevan `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-1fpkeyh" title="Endpoint de accion montado automaticamente" method="GET" path="/_agent-native/actions/get-lead" summary="Cada accion se monta aqui automaticamente: el nombre del archivo es el nombre de la accion." auth={"Cookie de sesion; las llamadas del frontend llevan `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -355,7 +355,7 @@ Campos `ActionRunContext`:
 | `caller`     | Establecer cuándo…                                                                                                                                                                   |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `"tool"`     | El bucle de agente en la aplicación, un subagente/equipo de agentes o una solicitud A2A (A2A impulsa el mismo bucle de agente, por lo que sus llamadas a herramientas son `"tool"`). |
-| `"frontend"` | Una llamada del navegador a través de `useActionMutation` / `useActionQuery` / `callAction` (etiquetada con el encabezado `X-Agent-Native-Frontend: 1`).                             |
+| `"frontend"` | Una llamada del navegador a través de `useActionMutation` / `useActionQuery` / `callAction` (etiquetada con el encabezado `X-Jami Studio-Frontend: 1`).                             |
 | `"http"`     | Un `POST` / `GET` a `/_agent-native/actions/<name>` programático simple sin el marcador de interfaz.                                                                                 |
 | `"cli"`      | `pnpm action <name>` (el corredor CLI).                                                                                                                                              |
 | `"mcp"`      | Un agente externo sobre el punto final MCP `tools/call`.                                                                                                                             |

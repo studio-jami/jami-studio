@@ -1,13 +1,13 @@
 ---
 title: "视觉计划"
-description: "Agent-Native 计划将您的编码代理的计划转变为结构化的、可审阅的文档 - 图表、线框图、带注释的代码、注释和共享链接。从CLI安装一次；您与之共享的审阅者以访客身份进行编辑，登录后仅可保存或共享。"
+description: "Jami Studio 计划将您的编码代理的计划转变为结构化的、可审阅的文档 - 图表、线框图、带注释的代码、注释和共享链接。从CLI安装一次；您与之共享的审阅者以访客身份进行编辑，登录后仅可保存或共享。"
 ---
 
 # 视觉计划
 
 > **大多数人会把 Plan 作为 skill 安装，而不是 scaffolded app。** 一个 CLI 命令会把 `/visual-plan`、`/visual-recap`、`/visualize-repo` skills 和托管的 Plan 连接器添加到你的 coding agent — plugin 和 marketplace 路径见 [Plan plugin & marketplace](/docs/plan-plugin)。Fork Plan 模板（见 [For developers](#for-developers)）是用于自托管或基于 Plan 本身构建的次要路径。
 
-Agent-Native 计划是编码代理的可视化计划模式。它变成了普通
+Jami Studio 计划是编码代理的可视化计划模式。它变成了普通
 Codex、Claude 代码、Markdown 或将实施计划粘贴到结构化中
 使用富文本、图表、线框图、带注释的代码演练查看表面
 以及文件树、注释、评论和可共享链接。
@@ -97,7 +97,7 @@ Codex、Claude 代码、Markdown 或将实施计划粘贴到结构化中
 
 ## 安装技能 {#install}
 
-使用 Agent-Native CLI。这是推荐的设置，因为它安装了
+使用 Jami Studio CLI。这是推荐的设置，因为它安装了
 计划技能说明，注册托管计划 MCP 连接器，**和**运行
 一步完成特定于客户端的身份验证/设置流程，因此您的第一个工具调用不会
 撞到 OAuth 墙：
@@ -159,7 +159,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ```
 
 这仅安装技能说明。它不注册托管的MCP
-连接器，因此当您需要单命令设置时请使用 Agent-Native CLI 路径。
+连接器，因此当您需要单命令设置时请使用 Jami Studio CLI 路径。
 
 > **更喜欢一次性安装插件？** Claude 代码和 Codex 可以添加
 > `Jami Studio/agent-native` 直接作为插件市场，捆绑了
@@ -169,7 +169,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ### 在 VS Code 中打开计划 {#vscode-extension}
 
 如果您使用 VS Code，请安装
-[Agent-Native Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 在侧面板中打开相同的计划审核界面，而不是让您进入
 单独的浏览器选项卡。计划工具仍然返回正常的 Web 链接，并且 MCP
 元数据还包括 VS Code 切换 URL：
@@ -179,7 +179,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 ```
 
 扩展处理 URI，在 VS Code Web 视图中打开解码后的计划 URL，
-并包含一个命令来运行 VS 的现有 Agent Native MCP 连接流程
+并包含一个命令来运行 VS 的现有 Jami Studio MCP 连接流程
 代码 / GitHub 副驾驶。这对于 Claude 代码或其他代码特别有用
 编码代理工作流程，其中计划应位于正在编辑的文件旁边。
 
@@ -340,7 +340,7 @@ http://localhost:<port>/local-plans/<slug>?path=plans%2F<slug>
 进入该存储库位置。升级后，页面重新打开，显示 `?path=...` 和
 继续将 MDX 编辑自动保存到存储库文件夹。
 
-本地文件模式可防止计划或回顾内容进入 Agent-Native
+本地文件模式可防止计划或回顾内容进入 Jami Studio
 计划数据库。它还禁用托管共享、浏览器评论、计划历史记录，
 并发布/导出收据，直到您明确选择发布。移动
 本地规划到托管数据库中，用本地调用`publish-visual-plan`
@@ -370,12 +370,12 @@ npx @agent-native/core@latest visualize-repo \
 
 ## 桌面本地文件同步 {#desktop-local-sync}
 
-Agent Native Desktop 还为托管计划提供了本机本地文件夹桥。这个
+Jami Studio Desktop 还为托管计划提供了本机本地文件夹桥。这个
 与本地文件隐私模式不同：托管计划数据库仍然是
 共享、评论、历史记录和实时评论的真实来源，而桌面
 可以将当前计划的源文件镜像到您选择的文件夹。
 
-在 Agent Native 桌面中打开计划，使用计划菜单的**本地文件** actions，
+在 Jami Studio 桌面中打开计划，使用计划菜单的**本地文件** actions，
 然后：
 
 - **链接本地文件夹** — 选择该计划的 MDX 源的文件夹。
@@ -1091,6 +1091,6 @@ Include the plan path so the agent can navigate directly to it.
 - [**PR Visual Recap**](/docs/pr-visual-recap) - 在每个拉取请求上自动运行 `/visual-recap`
 - [**Automations**](/docs/automations) — 事件触发和计划的自动化
 - [**Plan plugin & marketplace**](/docs/plan-plugin) — 将计划 skills 安装为 Claude 代码或 Codex 插件
-- [**Skills**](/docs/skills-guide) — Agent-Native 如何安装 skills
+- [**Skills**](/docs/skills-guide) — Jami Studio 如何安装 skills
 - [**MCP Clients**](/docs/mcp-clients) — 配置托管 MCP 连接器
 - [**Templates**](/docs/cloneable-saas) — 克隆自有模型

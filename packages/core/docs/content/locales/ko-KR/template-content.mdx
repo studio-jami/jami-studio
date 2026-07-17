@@ -156,7 +156,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 설치 프로그램은 코딩 에이전트에 대한 `content` 기술을 복사하고 쓰기 또는
 `docs/`, `blog/`, `content/`에 대한 콘텐츠 루트로 `agent-native.json`를 업데이트합니다.
-및 `resources/`. 로컬 콘텐츠 앱, Agent Native 데스크톱 또는 신뢰할 수 있는 경우
+및 `resources/`. 로컬 콘텐츠 앱, Jami Studio 데스크톱 또는 신뢰할 수 있는 경우
 로컬 브리지가 실행 중입니다. 에이전트는 다음과 같은 Content actions를 사용해야 합니다.
 `list-documents`, `get-document`, `edit-document`, `update-document` 및
 원시 파일 시스템 쓰기 대신 `share-local-file-document`. 그 지역이 없으면
@@ -195,14 +195,14 @@ pnpm dev
 ### 로컬 파일 동기화
 
 보호된 `/local-files` 경로는 브라우저 파일 시스템 액세스 API를 사용하거나
-읽고 쓰기 위한 Agent Native 데스크탑 내부의 보호된 기본 폴더 브리지
+읽고 쓰기 위한 Jami Studio 데스크탑 내부의 보호된 기본 폴더 브리지
 사용자가 선택한 폴더의 Markdown/MDX 파일. 폴더가 링크된 후
 가져오면 선택한 파일이 권한으로 처리됩니다. 페이지를 열면 읽습니다
 파일을 저장하고 일반 편집기 저장에서는 파일을 먼저 작성합니다. SQL는 다음과 같이 업데이트됩니다.
 기존 문서 UI, 검색 및 버전 패널에 대한 캐시/기록 레이어
 진실의 근원으로. 오른쪽 상단 페이지 메뉴에는 로컬 소스 경로가 표시됩니다:
 상대 경로는 항상 사용 가능하며, 실제 로컬 파일에서는 절대 경로가 사용 가능합니다.
-모드 및 Agent Native 데스크톱, Finder에 표시는
+모드 및 Jami Studio 데스크톱, Finder에 표시는
 데스크탑 브리지 또는 서버 지원 로컬 파일 모드.
 
 대량 동기화 경로 호출:
@@ -257,7 +257,7 @@ export const ImpactCounterInputs = {
 
 브라우저 **로컬 파일** 선택기는 다음에서 `.md` 및 `.mdx` 파일을 읽고 쓸 수 있습니다.
 자체이지만 실행 가능한 React 구성 요소 미리 보기에는 로컬 컴파일러가 필요합니다. 실행
-콘텐츠를 로컬로 사용하거나 Agent Native 데스크탑을 사용하여 선택한 작업공간 경로를 사용할 수 있습니다.
+콘텐츠를 로컬로 사용하거나 Jami Studio 데스크탑을 사용하여 선택한 작업공간 경로를 사용할 수 있습니다.
 로컬 콘텐츠 개발 서버에 등록되어야 합니다. Vite는 가져옵니다
 `components/*.tsx`, 기존 구성 요소 파일에 대한 편집 내용을 핫 리로드하고 다시 로드합니다.
 파일이 추가되거나 제거될 때 구성요소 레지스트리. 상담원은

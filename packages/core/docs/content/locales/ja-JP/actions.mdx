@@ -227,7 +227,7 @@ export default defineAction({
 
 `GET` アクションの場合、`leadId` はクエリ パラメーター `/_agent-native/actions/get-lead?leadId=abc` として渡されます。
 
-<Endpoint id="doc-block-1md4rwo" title={"自動マウントされる action エンドポイント"} method="GET" path="/_agent-native/actions/get-lead" summary={"すべての action はここに自動でマウントされます。ファイル名が action 名になります。"} auth={"セッション cookie。フロントエンド呼び出しには `X-Agent-Native-Frontend: 1` が付きます"} params={[
+<Endpoint id="doc-block-1md4rwo" title={"自動マウントされる action エンドポイント"} method="GET" path="/_agent-native/actions/get-lead" summary={"すべての action はここに自動でマウントされます。ファイル名が action 名になります。"} auth={"セッション cookie。フロントエンド呼び出しには `X-Jami Studio-Frontend: 1` が付きます"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -355,7 +355,7 @@ export default defineAction({
 | `caller`     | 次の場合に設定します…                                                                                                                                                        |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | アプリ内エージェント ループ、サブエージェント/エージェント チーム、または A2A リクエスト (A2A は同じエージェント ループを駆動するため、そのツール呼び出しは `"tool"` です)。 |
-| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction` (`X-Agent-Native-Frontend: 1` ヘッダーでタグ付け) を介したブラウザー呼び出し。                                         |
+| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction` (`X-Jami Studio-Frontend: 1` ヘッダーでタグ付け) を介したブラウザー呼び出し。                                         |
 | `"http"`     | フロントエンド マーカーのない、裸のプログラム `POST` / `GET` から `/_agent-native/actions/<name>` まで。                                                                     |
 | `"cli"`      | `pnpm action <name>` (CLI ランナー)。                                                                                                                                        |
 | `"mcp"`      | MCP `tools/call` エンドポイント上の外部エージェント。                                                                                                                        |

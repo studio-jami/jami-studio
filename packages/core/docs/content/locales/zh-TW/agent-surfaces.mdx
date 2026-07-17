@@ -1,12 +1,12 @@
 ---
 title: "代理表面"
-description: "將 Agent-Native 無頭使用，作為豐富的聊天，在現有應用程式中，或作為完整的 Agent-Native 應用程式。"
+description: "將 Jami Studio 無頭使用，作為豐富的聊天，在現有應用程式中，或作為完整的 Jami Studio 應用程式。"
 search: "無頭代理豐富聊天完整應用程式 BYO 代理執行時 AgentChatRuntime 嵌入 actions MCP A2A HTTP CLI"
 ---
 
 # 代理表面
 
-Agent-Native 是故意可組合的。不用太多就可以使用代理 UI，
+Jami Studio 是故意可組合的。不用太多就可以使用代理 UI，
 在沒有內建代理執行時的情況下使用 UI，或者將兩者一起用作完整的
 應用程式。
 
@@ -16,8 +16,8 @@ Agent-Native 是故意可組合的。不用太多就可以使用代理 UI，
 | 表面                          | 什麼時候使用它                                                                     | 開始於                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | **無頭代理**                  | 程式碼、作業、指令碼、另一個應用程式或另一個代理應直接呼叫該工作。                 | `agent-native create --headless`, `defineAction`, `agent-native agent`, HTTP, CLI, MCP, A2A |
-| **Agent-Native 上的豐富聊天** | 您想要由內建代理迴圈支援的獨立或嵌入式聊天。                                       | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
-| **與您的代理進行豐富的聊天**  | 您在其他地方建置了代理，並想要 Agent-Native 的編寫器、指令碼、工具卡和本機小工具。 | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
+| **Jami Studio 上的豐富聊天** | 您想要由內建代理迴圈支援的獨立或嵌入式聊天。                                       | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
+| **與您的代理進行豐富的聊天**  | 您在其他地方建置了代理，並想要 Jami Studio 的編寫器、指令碼、工具卡和本機小工具。 | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
 | **嵌入式邊車**                | 您已經有一個 SaaS 應用程式，並希望在其旁邊有一個具有頁面脈絡和主機指令的代理。     | `createAgentNativeEmbeddedPlugin()`, `AgentNativeEmbedded`                                  |
 | **完整應用程式**              | 人類和代理應該共用持久的螢幕、資料、導覽和協作。                                   | 範本、actions、SQL 狀態、脈絡感知                                                           |
 
@@ -87,7 +87,7 @@ Agent-Native 是故意可組合的。不用太多就可以使用代理 UI，
 
 當沒有人需要盯著自訂應用螢幕時，請使用無頭路徑
 工作執行：計畫作業、整合、後端工作流程、CLI 迴圈，
-另一個代理或呼叫 Agent-Native 的現有產品。
+另一個代理或呼叫 Jami Studio 的現有產品。
 
 這也是當**代理*是*產品**時要達到的形狀 -
 app-agent 迴圈是前門，而不是儀表板。您從
@@ -156,7 +156,7 @@ export default defineAction({
 - **CLI** — `pnpm action summarize-week --formId form_123`
 - **應用程式代理 CLI** — `pnpm agent "Summarize form_123"`
 - **MCP** — 來自 Claude、ChatGPT、Codex、Cursor、OpenCode、Copilot 和其他 MCP 主機
-- **A2A** - 來自另一個 Agent-Native 應用程式或代理對等點
+- **A2A** - 來自另一個 Jami Studio 應用程式或代理對等點
 - **UI** — 透過 `useActionQuery`、`useActionMutation` 或 `callAction`
 - **代理工具** - 來自內建聊天迴圈
 
@@ -217,9 +217,9 @@ handler](/docs/server#agent-handler) 取得完整簽名。
 應用程式將在正式環境中使用的合同。
 
 外部編碼線束是用於嵌入 Claude 的獨立產品表面
-Agent-Native 應用內的程式碼、Codex、Pi、Cursor、Mastra 或類似執行時。
+Jami Studio 應用內的程式碼、Codex、Pi、Cursor、Mastra 或類似執行時。
 在建置編碼代理產品時使用它們，而不是作為預設方式
-啟動本機 Agent-Native 工作流程。
+啟動本機 Jami Studio 工作流程。
 
 ### 雲端儲存庫存取 {#cloud-repo-access}
 
@@ -245,7 +245,7 @@ GITHUB_REPOSITORY=owner/repo pnpm agent "Read README.md and suggest the next act
 核准 actions、編輯計畫或更改設定已完成
 顯式存取檢查。
 
-## Agent-Native 上的豐富聊天 {#rich-chat}
+## Jami Studio 上的豐富聊天 {#rich-chat}
 
 當使用者應該與代理交談時使用內建聊天，檢視工具呼叫，
 核准工作、檢查本機結果並保留持久的對話串歷史紀錄。
@@ -325,8 +325,8 @@ Actions 可以返回顯式的本機小工具結果，因此聊天輸出不僅僅
 ## 與您的代理進行豐富的聊天 {#byo-agent}
 
 當您的代理已使用其他框架建置時，請使用此路徑
-執行時，你想要 Agent-Native 的聊天 UI 圍繞它。 `AgentChatRuntime` 是
-邊界：您的執行時流規範化事件，Agent-Native 呈現
+執行時，你想要 Jami Studio 的聊天 UI 圍繞它。 `AgentChatRuntime` 是
+邊界：您的執行時流規範化事件，Jami Studio 呈現
 撰寫器、指令碼、工具呼叫、核准、本機小工具和應用布局。
 
 ```tsx
@@ -347,7 +347,7 @@ export function SupportAgentChat() {
 針對 OpenAI 代理、OpenAI 回應、Claude 存在現成的執行時助手
 Agent SDK、Vercel AI SDK 和 AG-UI，以及上面的標準化 HTTP 執行時
 對於任何其他代理（Mastra、Flue、Eve、LangGraph 或自訂服務）。 ACP 是
-不是最終使用者應用聊天或 A2A 傳輸，並且 Agent-Native 目前沒有
+不是最終使用者應用聊天或 A2A 傳輸，並且 Jami Studio 目前沒有
 要求 A2UI 支援。 ACP 在一個特定位置受支援 - 駕駛本機
 編碼代理（Gemini CLI，Claude 程式碼，...）透過
 [harness layer](/docs/harness-agents#acp)，這裡不作為聊天執行時。
@@ -361,7 +361,7 @@ Agent SDK、Vercel AI SDK 和 AG-UI，以及上面的標準化 HTTP 執行時
 當主產品已經存在並且您想要一個時，請使用嵌入式 sidecar
 代理在旁邊。
 
-伺服器外掛將 Agent-Native 路由安裝到您的主機應用程式中並解析
+伺服器外掛將 Jami Studio 路由安裝到您的主機應用程式中並解析
 主機身分伺服器端：
 
 ```ts
@@ -397,7 +397,7 @@ export function AppShell({ children }) {
 }
 ```
 
-<Diagram id="doc-block-t9iu4i" title={"Sidecar 如何橋接到主機應用程式"} summary={"該外掛在伺服器端掛載 Agent-Native 路由； React sidecar 流輸入頁面脈絡並輸出主機指令。"}>
+<Diagram id="doc-block-t9iu4i" title={"Sidecar 如何橋接到主機應用程式"} summary={"該外掛在伺服器端掛載 Jami Studio 路由； React sidecar 流輸入頁面脈絡並輸出主機指令。"}>
 
 ```html
 <div class="diagram-sidecar">
@@ -418,7 +418,7 @@ export function AppShell({ children }) {
     <span class="diagram-pill accent">AgentNativeEmbedded</span
     ><small class="diagram-muted">agent + workspace</small>
     <div class="diagram-box" data-rough>
-      Agent-Native 路由<br /><small class="diagram-muted"
+      Jami Studio 路由<br /><small class="diagram-muted"
         >mounted by the server plugin</small
       >
     </div>
@@ -478,7 +478,7 @@ iframe/picker 模式，以及較低階別的橋 APIs。
 | 如果您在想...                                        | 選取                      |
 | ---------------------------------------------------- | ------------------------- |
 | “我只需要一個可呼叫的工具或工作流程。”               | 無頭代理                  |
-| “我想要框架的代理，但是聊天應該是主要的 UI。”        | Agent-Native 上的豐富聊天 |
+| “我想要框架的代理，但是聊天應該是主要的 UI。”        | Jami Studio 上的豐富聊天 |
 | “我已經有一個代理；我需要一個完美的聊天 UI。”        | 與您的代理進行豐富的聊天  |
 | “我已經有一個 SaaS 應用程式；在它旁邊新增一個代理。” | 嵌入式邊車                |
 | “代理和 UI 應該作為產品一起進化。”                   | 完整應用程式              |
@@ -494,4 +494,4 @@ iframe/picker 模式，以及較低階別的橋 APIs。
 - [**Generative UI**](/docs/generative-ui) — 在聊天中產生暫時或持久化的沙盒 UI
 - [**Automation-First Apps**](/docs/pure-agent-apps) — 面向作業、佇列、指令碼和外部代理的完整無瀏覽器模式
 - [**External Agents**](/docs/external-agents) — 將 MCP 相容主機連線到應用
-- [**A2A Protocol**](/docs/a2a-protocol) — 從其他 Agent-Native 應用呼叫代理
+- [**A2A Protocol**](/docs/a2a-protocol) — 從其他 Jami Studio 應用呼叫代理

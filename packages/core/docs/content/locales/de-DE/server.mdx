@@ -5,7 +5,7 @@ description: "Nitro-Serverrouten, Plugins, im Framework bereitgestellte Routen, 
 
 # Server
 
-Agent-native Apps verwenden [Nitro](https://nitro.build) für Serverrouten und Plugins. Das meiste Produktverhalten sollte in [Actions](/docs/actions) leben; Benutzerdefinierte Routen gelten für Protokolloberflächen, für die actions nicht geeignet ist: Uploads, Streaming, öffentliche Seiten, webhooks-, OAuth-Rückrufe und anbieterspezifische APIs.
+Jami Studio Apps verwenden [Nitro](https://nitro.build) für Serverrouten und Plugins. Das meiste Produktverhalten sollte in [Actions](/docs/actions) leben; Benutzerdefinierte Routen gelten für Protokolloberflächen, für die actions nicht geeignet ist: Uploads, Streaming, öffentliche Seiten, webhooks-, OAuth-Rückrufe und anbieterspezifische APIs.
 
 <Diagram id="doc-block-1x03es6" title={"Was auf dem Server läuft"} summary={"Aktionen sind die Standardeinstellung. Benutzerdefinierte Dateirouten und im Framework bereitgestellte Routen nutzen dieselbe Nitro-App und dieselbe SQL-Datenbank."}>
 
@@ -128,7 +128,7 @@ Verwenden Sie benutzerdefinierte `/api/*`-Routen nur, wenn Sie ein routenförmig
 
 ### API-only Apps {#api-only-apps}
 
-Sie benötigen keinen Express-Server, nur weil die App nur eine API bereitstellt. Eine Agent Native-App bringt bereits einen Nitro/H3-Server mit, und `defineAction()` ist die standardmäßige API-Oberfläche. Definieren Sie Operationen in `actions/`; das Framework stellt jede action unter `/_agent-native/actions/<name>` mit Schemavalidierung und Anforderungskontext bereit.
+Sie benötigen keinen Express-Server, nur weil die App nur eine API bereitstellt. Eine Jami Studio-App bringt bereits einen Nitro/H3-Server mit, und `defineAction()` ist die standardmäßige API-Oberfläche. Definieren Sie Operationen in `actions/`; das Framework stellt jede action unter `/_agent-native/actions/<name>` mit Schemavalidierung und Anforderungskontext bereit.
 
 Verwenden Sie die `http`-Option der action, um direkten HTTP-Zugriff zu formen: actions sind standardmäßig `POST`, `http: { method: "GET" | "PUT" | "DELETE" }` ändert das Verb, und `http: false` nimmt eine action aus HTTP heraus. Greifen Sie nur für routenförmige oder protokollbezogene Anliegen zu `server/routes/api/*`: Datei-Uploads, Streaming/SSE, webhooks, OAuth-Rückrufe, öffentliche Seiten oder eine externe REST-Form, die sich nicht sauber als action darstellen lässt. Erstellen Sie keine `/api/*`-Routen, die hauptsächlich actions umhüllen oder re-exportieren.
 
@@ -276,7 +276,7 @@ Benutzerdefinierte App-Routen sollten `/api/*`, öffentliche App-Pfade oder anbi
 
 ## SQL-Backed Sync {#sync}
 
-Agent-native verlässt sich nicht auf Dateisystem-Watcher oder einen Sticky-In-Memory-Status. Wenn actions oder Framework-Helfer Daten ändern, erhöht sich die Datenbanksynchronisierungsversion. Der Client-Hook `useDbSync()` fragt `/_agent-native/poll` ab und macht React-Abfragecaches ungültig.
+Jami Studio verlässt sich nicht auf Dateisystem-Watcher oder einen Sticky-In-Memory-Status. Wenn actions oder Framework-Helfer Daten ändern, erhöht sich die Datenbanksynchronisierungsversion. Der Client-Hook `useDbSync()` fragt `/_agent-native/poll` ab und macht React-Abfragecaches ungültig.
 
 Dies funktioniert bei serverlosen und Multi-Instanz-Bereitstellungen, da die Datenbank der Koordinationspunkt ist. Wenn Sie benutzerdefinierte Mutationen außerhalb von actions schreiben, verwenden Sie Framework-Helfer oder geben Sie die entsprechende Synchronisierungsinvalidierung aus, also öffnen Sie die Aktualisierung von UIs.
 

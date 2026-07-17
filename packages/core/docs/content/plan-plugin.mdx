@@ -1,11 +1,11 @@
 ---
 title: "Plan plugin & marketplace"
-description: "Install the Agent-Native Plan skills (/visual-plan, /visual-recap, /visualize-repo) plus the hosted Plan MCP connector as a Claude Code or Codex plugin, or with the universal CLI. How updates work and whether you need to submit anything."
+description: "Install the Jami Studio Plan skills (/visual-plan, /visual-recap, /visualize-repo) plus the hosted Plan MCP connector as a Claude Code or Codex plugin, or with the universal CLI. How updates work and whether you need to submit anything."
 ---
 
 # Plan plugin & marketplace
 
-The Agent-Native **Plan** app ships as one installable bundle. A single install adds the Plan slash-command skills **and** wires up the hosted Plan MCP connector, so the agent can generate plans and the skills can publish them straight into the Plan app.
+The Jami Studio **Plan** app ships as one installable bundle. A single install adds the Plan slash-command skills **and** wires up the hosted Plan MCP connector, so the agent can generate plans and the skills can publish them straight into the Plan app.
 
 ## What you get {#what-you-get}
 
@@ -136,7 +136,7 @@ the local Plan app can keep browser edits saving to the repo folder. The Plan
 app uses `apps.plan.roots[0].path` in `agent-native.json` as the default place
 to save promoted local plans, falling back to `plans/`.
 
-This keeps plan content out of the Agent-Native Plan database. Hosted sharing,
+This keeps plan content out of the Jami Studio Plan database. Hosted sharing,
 comments, screenshots, and plan history are unavailable until you explicitly
 publish later.
 
@@ -181,13 +181,13 @@ publish later.
 
 </Diagram>
 
-Agent Native Desktop has a separate local-file sync path for hosted plans: the
+Jami Studio Desktop has a separate local-file sync path for hosted plans: the
 Desktop app can mirror a hosted plan to local MDX files and import edits back
 without cloning the Plan app or running a CLI. That workflow keeps the hosted
 Plan database as the source of truth; use local-files privacy mode when the goal
 is no Plan DB writes.
 
-> The plugin (`agent-native-visual-plans`) carries app id `visual-plans`, which is why the Claude Code plugin name and Codex plugin name are both `agent-native-visual-plans`. The Plan app's display name is "Agent-Native Plan".
+> The plugin (`agent-native-visual-plans`) carries app id `visual-plans`, which is why the Claude Code plugin name and Codex plugin name are both `agent-native-visual-plans`. The Plan app's display name is "Jami Studio Plan".
 
 ## Install routes {#install}
 
@@ -195,7 +195,7 @@ There are three ways in. The **universal CLI route** is the one we recommend by 
 
 ### Universal skill route (any MCP host) {#universal}
 
-Works for any host — Claude Code, Codex, Cursor, Cline, Goose, ChatGPT custom MCP apps, Claude Cowork, and anything else MCP-compatible. The Agent-Native CLI installs the Plan skills, registers the hosted Plan MCP connector, **and runs auth for the selected local client(s) in the same step**, so your first tool call does not hit an OAuth wall:
+Works for any host — Claude Code, Codex, Cursor, Cline, Goose, ChatGPT custom MCP apps, Claude Cowork, and anything else MCP-compatible. The Jami Studio CLI installs the Plan skills, registers the hosted Plan MCP connector, **and runs auth for the selected local client(s) in the same step**, so your first tool call does not hit an OAuth wall:
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -224,7 +224,7 @@ access, and required Actions configuration. After install finishes, restart or
 reload the agent client so the new skills and tools load, then run
 `/visual-plan`.
 
-> Note: the bare `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) installs **instructions only** — it does not register the MCP connector. Use the Agent-Native CLI above when you want the connector wired up too.
+> Note: the bare `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) installs **instructions only** — it does not register the MCP connector. Use the Jami Studio CLI above when you want the connector wired up too.
 
 ### Claude Code (plugin) {#claude-code}
 

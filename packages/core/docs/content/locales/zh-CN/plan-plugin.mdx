@@ -1,11 +1,11 @@
 ---
 title: "规划插件和市场"
-description: "安装 Agent-Native Plan skills（/visual-plan、/visual-recap、/visualize-repo）以及托管 Plan MCP 连接器，可作为 Claude Code 或 Codex 插件安装，也可使用通用 CLI。了解更新如何工作以及是否需要提交任何内容。"
+description: "安装 Jami Studio Plan skills（/visual-plan、/visual-recap、/visualize-repo）以及托管 Plan MCP 连接器，可作为 Claude Code 或 Codex 插件安装，也可使用通用 CLI。了解更新如何工作以及是否需要提交任何内容。"
 ---
 
 # 规划插件和市场
 
-Agent-Native **Plan** 应用以一个可安装的 bundle 提供。一次安装会添加 Plan 斜杠命令 skills，**并**连接托管的 Plan MCP 连接器，让 agent 可以生成 plans，并让 skills 直接发布到 Plan 应用中。
+Jami Studio **Plan** 应用以一个可安装的 bundle 提供。一次安装会添加 Plan 斜杠命令 skills，**并**连接托管的 Plan MCP 连接器，让 agent 可以生成 plans，并让 skills 直接发布到 Plan 应用中。
 
 ## 你得到什么 {#what-you-get}
 
@@ -134,7 +134,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 应用程序使用`agent-native.json`中的`apps.plan.roots[0].path`作为默认位置
 保存升级的本地计划，回退到 `plans/`。
 
-这会将计划内容排除在 Agent-Native 计划数据库之外。托管共享，
+这会将计划内容排除在 Jami Studio 计划数据库之外。托管共享，
 除非您明确表示，评论、屏幕截图和计划历史记录均不可用
 稍后发布。
 
@@ -179,13 +179,13 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 
 </Diagram>
 
-Agent Native 桌面有一个单独的托管计划本地文件同步路径：
+Jami Studio 桌面有一个单独的托管计划本地文件同步路径：
 桌面应用程序可以将托管计划镜像到本地 MDX 文件并将编辑内容导入回来
 无需克隆 Plan 应用程序或运行 CLI。该工作流程保持托管
 计划数据库作为事实来源；当目标达到时使用本地文件隐私模式
 没有计划数据库写入。
 
-> 插件（`agent-native-visual-plans`）带有app id `visual-plans`，这就是为什么Claude代码插件名称和Codex插件名称都是`agent-native-visual-plans`。计划应用的显示名称为“Agent-Native 计划”。
+> 插件（`agent-native-visual-plans`）带有app id `visual-plans`，这就是为什么Claude代码插件名称和Codex插件名称都是`agent-native-visual-plans`。计划应用的显示名称为“Jami Studio 计划”。
 
 ## 安装路由 {#install}
 
@@ -193,7 +193,7 @@ Agent Native 桌面有一个单独的托管计划本地文件同步路径：
 
 ### 通用技能路线（任意MCP主机） {#universal}
 
-适用于任何 host — Claude Code、Codex、Cursor、Cline、Goose、ChatGPT 自定义 MCP apps、Claude Cowork 以及任何其他 MCP-compatible host。Agent-Native CLI 会安装 Plan skills，注册托管的 Plan MCP 连接器，**并在同一步中为选定的本地客户端运行身份验证**，因此你的第一次工具调用不会遇到 OAuth 墙：
+适用于任何 host — Claude Code、Codex、Cursor、Cline、Goose、ChatGPT 自定义 MCP apps、Claude Cowork 以及任何其他 MCP-compatible host。Jami Studio CLI 会安装 Plan skills，注册托管的 Plan MCP 连接器，**并在同一步中为选定的本地客户端运行身份验证**，因此你的第一次工具调用不会遇到 OAuth 墙：
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -222,7 +222,7 @@ npx @agent-native/core@latest recap doctor
 重新加载代理客户端，以便加载新的 skills 和工具，然后运行
 `/visual-plan`.
 
-> 注意：裸机 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安装**仅说明** - 它不注册 MCP 连接器。当您也想连接连接器时，请使用上面的 Agent-Native CLI。
+> 注意：裸机 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安装**仅说明** - 它不注册 MCP 连接器。当您也想连接连接器时，请使用上面的 Jami Studio CLI。
 
 ### Claude代码（插件） {#claude-code}
 

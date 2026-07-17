@@ -90,7 +90,7 @@ The flow is a standard authorize → signed-token → callback redirect, with em
 
 </Diagram>
 
-1. **App → Dispatch (authorize).** The app-side `GET /_agent-native/identity/login` route (what the "Sign in with Agent-Native" button links to) builds the redirect and sends the user to the identity authority:
+1. **App → Dispatch (authorize).** The app-side `GET /_agent-native/identity/login` route (what the "Sign in with Jami Studio" button links to) builds the redirect and sends the user to the identity authority:
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ An app participates **only** when this environment variable is set on its deploy
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **Set** → the app shows a **"Sign in with Agent-Native"** option that runs the flow above. Direct local login (email/password, Google) still works alongside it.
+- **Set** → the app shows a **"Sign in with Jami Studio"** option that runs the flow above. Direct local login (email/password, Google) still works alongside it.
 - **Unset (default)** → **zero behavior change.** The app authenticates exactly as it did before; the federation code path is dormant. There is no schema change and nothing to migrate, so flipping the variable on or off is fully reversible at any time.
 
 ## Security {#security}
@@ -282,7 +282,7 @@ Leave every other app's environment unset. Redeploy/restart so it picks up the v
 **3. Verify the canary (checklist).**
 
 - Log **out** of the app.
-- The login screen now shows **"Sign in with Agent-Native"**. Click it.
+- The login screen now shows **"Sign in with Jami Studio"**. Click it.
 - You are taken to **Dispatch** and complete its login (or pass straight through if already signed in there).
 - You are redirected **back to the app, logged in** — and it is the **same pre-existing account** (same email) you had before, not a new one.
 - **App data is intact** — your existing records, settings, and org scoping are exactly as they were.

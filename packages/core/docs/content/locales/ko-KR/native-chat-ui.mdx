@@ -1,6 +1,6 @@
 ---
 title: "기본 채팅 UI"
-description: "액션 선언 기본 채팅 렌더러, 재사용 가능한 DataTable/DataChart 출력, BYO 에이전트 런타임이 Agent-Native 채팅에 연결되는 방법"
+description: "액션 선언 기본 채팅 렌더러, 재사용 가능한 DataTable/DataChart 출력, BYO 에이전트 런타임이 Jami Studio 채팅에 연결되는 방법"
 ---
 
 # 기본 채팅 UI
@@ -251,14 +251,14 @@ export default defineAction({
 
 `AgentChatRuntime`는 채팅 셸을 위한 자체 에이전트 가져오기 계약이며,
 이 섹션은 표준 참조입니다. 다른 곳에서 구축한 에이전트를 사용할 수 있습니다
-정규화된 이벤트를 Agent-Native의 대화 UI로 스트리밍하면서
+정규화된 이벤트를 Jami Studio의 대화 UI로 스트리밍하면서
 공유 작성기, 성적표 렌더링, 도구 카드, 승인, 기본 위젯
 및 주변 앱 레이아웃. [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 런타임 스토리 및 [Component API](/docs/components#agent-chat-ui)에 대한 튜토리얼 포인트
 가져오기 경로와 함께 각 커넥터와 어댑터를 나열합니다. 계약 자체는
 아래에 설명되어 있습니다.
 
-<Diagram id="doc-block-fghf4g" title={"BYO 런타임은 Agent-Native 채팅 셸을 유지합니다."} summary={"외부 에이전트는 커넥터를 통해 정규화된 이벤트를 스트리밍합니다. Agent-Native은 작성기, 기록, 도구 카드, 승인 및 기본 위젯을 유지합니다."}>
+<Diagram id="doc-block-fghf4g" title={"BYO 런타임은 Jami Studio 채팅 셸을 유지합니다."} summary={"외부 에이전트는 커넥터를 통해 정규화된 이벤트를 스트리밍합니다. Jami Studio은 작성기, 기록, 도구 카드, 승인 및 기본 위젯을 유지합니다."}>
 
 ```html
 <div class="diagram-byo">
@@ -385,7 +385,7 @@ data: {"type":"done","reason":"complete"}
 `chatUI` 메타데이터이므로 작업으로 선언된 기본 위젯은 여전히 메타데이터 없이 렌더링됩니다.
 iframe.
 
-내장된 Agent-Native 전송을 런타임 개체로 사용하려면 다음을 사용하세요.
+내장된 Jami Studio 전송을 런타임 개체로 사용하려면 다음을 사용하세요.
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -398,7 +398,7 @@ const runtime = createAgentNativeChatRuntime({
 
 전체가 필요할 때만 `<AssistantChat createAdapter={...} />`를 사용하세요
 assistant-ui 어댑터 제어. 제품을 사용할 때 `PromptComposer`만 사용하세요.
-외부 녹취록 전체를 소유하고 있으며 Agent-Native의 작곡가만 원합니다
+외부 녹취록 전체를 소유하고 있으며 Jami Studio의 작곡가만 원합니다
 필드.
 
 OpenAI, AG-UI, Claude 에이전트 SDK 및 Vercel AI SDK 스트림은 표준을 사용할 수 있습니다.

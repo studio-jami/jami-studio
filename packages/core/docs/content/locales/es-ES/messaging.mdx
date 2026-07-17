@@ -130,7 +130,7 @@ y `link_shared` al controlador de despliegue de clips.
 - **Mensajes directos**: los mensajes directos personales aceptados son conversaciones privadas y requieren un miembro verificado de la organización o una identidad de Slack vinculada.
 - **Identidad**: los mensajes directos pueden vincular un correo de Slack verificado al mismo usuario de la aplicación; los canales administrados usan su identidad de servicio y política.
 - **Listas permitidas de producción**: configure `SLACK_ALLOWED_TEAM_IDS` y, para aplicaciones Slack compartidas, `SLACK_ALLOWED_API_APP_IDS` para que un espacio de trabajo inesperado no pueda reutilizar un secreto de firma válido.
-- **La aplicación Clips se despliega**: los clips Agent-Native instalables para Slack utilizan `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` y `/api/slack/oauth/callback`. Cada espacio de trabajo Slack conectado obtiene su propio token de bot cifrado en `app_secrets`; `SLACK_BOT_TOKEN` es solo un respaldo heredado de un único espacio de trabajo.
+- **La aplicación Clips se despliega**: los clips Jami Studio instalables para Slack utilizan `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` y `/api/slack/oauth/callback`. Cada espacio de trabajo Slack conectado obtiene su propio token de bot cifrado en `app_secrets`; `SLACK_BOT_TOKEN` es solo un respaldo heredado de un único espacio de trabajo.
 
 ### Add to Slack administrado
 
@@ -141,7 +141,7 @@ Slack. El manifiesto activa la experiencia actual `agent_view` y una pestaña
 **Messages** editable para mensajes directos. Verifique estos alcances de bot:
 
 El icono de la aplicación no forma parte del manifiesto. En **Basic Information
-→ Display Information**, cargue el icono de Agent Native para que el selector de
+→ Display Information**, cargue el icono de Jami Studio para que el selector de
 Agents coincida con la marca del producto. Puede usar el `icon-512.svg` público
 de la aplicación como origen y convertirlo a un formato de carga admitido por
 Slack si es necesario.
@@ -187,7 +187,7 @@ ocultarlos de su propia barra superior. Si la instalación funciona pero el agen
 no aparece, revise esos controles o ábralo desde **Tools → Apps**.
 
 Los mensajes directos personales de Slack solo se aceptan de un miembro
-verificado de la organización de Agent Native o de una identidad de Slack ya
+verificado de la organización de Jami Studio o de una identidad de Slack ya
 vinculada. Las políticas y los presupuestos del principal de servicio del canal
 son independientes.
 

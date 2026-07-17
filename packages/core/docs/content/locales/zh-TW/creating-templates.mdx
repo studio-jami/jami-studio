@@ -1,11 +1,11 @@
 ---
 title: "建立範本"
-description: "如何建立和發布您自己的 Agent-Native 應用範本。"
+description: "如何建立和發布您自己的 Jami Studio 應用範本。"
 ---
 
 # 建立範本
 
-範本是完整的、可分叉的 Agent-Native 應用程式，可解決實際工作流程。第一方範本使用您使用的相同框架表面建置：用於 UI 的 React 路由、用於資料的 Drizzle SQL、用於操作的 actions、用於代理行為的工作區資源以及輪詢同步，以便代理和 UI 保持一致。
+範本是完整的、可分叉的 Jami Studio 應用程式，可解決實際工作流程。第一方範本使用您使用的相同框架表面建置：用於 UI 的 React 路由、用於資料的 Drizzle SQL、用於操作的 actions、用於代理行為的工作區資源以及輪詢同步，以便代理和 UI 保持一致。
 
 將 `@agent-native/core` 用於執行階段合約：actions、server plugins、database helpers、app state、routing helpers 和 agent chat。將 `@agent-native/toolkit` 用於可重用的應用程式建構 UI 和 helpers，例如共享 primitives、toast/mobile hooks、date pickers 和簡單 app shell slots。當變體承載產品行為或視覺識別時，請保留在範本本地。
 
@@ -297,7 +297,7 @@ export function AppSync() {
 }
 ```
 
-**Agent-Native 承諾：代理寫入顯示在 UI 中，無需手動重新整理。** `useActionQuery` 是簡單路徑 - 當變異操作發出 `source: "action"` 時，每個鉤子都會重新取得。如果您使用自訂金鑰（例如，讀取整合狀態的低階用戶端幫助程式）取得原始 `useQuery`，請將每個來源計數器折疊到 queryKey 中以進行有針對性的重新整理：
+**Jami Studio 承諾：代理寫入顯示在 UI 中，無需手動重新整理。** `useActionQuery` 是簡單路徑 - 當變異操作發出 `source: "action"` 時，每個鉤子都會重新取得。如果您使用自訂金鑰（例如，讀取整合狀態的低階用戶端幫助程式）取得原始 `useQuery`，請將每個來源計數器折疊到 queryKey 中以進行有針對性的重新整理：
 
 ```tsx
 import { useChangeVersions } from "@agent-native/core/client";

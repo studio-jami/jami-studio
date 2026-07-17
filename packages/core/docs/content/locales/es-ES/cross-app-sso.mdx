@@ -90,7 +90,7 @@ El flujo es una autorización estándar → token firmado → redireccionamiento
 
 </Diagram>
 
-1. **Aplicación → Dispatch (autorización).** La ruta `GET /_agent-native/identity/login` de la aplicación (a la que enlaza el botón «Iniciar sesión con Agent-Native») crea la redirección y envía al usuario a la autoridad de identidad:
+1. **Aplicación → Dispatch (autorización).** La ruta `GET /_agent-native/identity/login` de la aplicación (a la que enlaza el botón «Iniciar sesión con Jami Studio») crea la redirección y envía al usuario a la autoridad de identidad:
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ Una aplicación participa **solo** cuando esta variable de entorno está configu
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **Establecer** → la aplicación muestra una opción **"Iniciar sesión con Agent-Native"** que ejecuta el flujo anterior. El inicio de sesión local directo (correo electrónico/contraseña, Google) todavía funciona junto con él.
+- **Establecer** → la aplicación muestra una opción **"Iniciar sesión con Jami Studio"** que ejecuta el flujo anterior. El inicio de sesión local directo (correo electrónico/contraseña, Google) todavía funciona junto con él.
 - **Desarmado (predeterminado)** → **cero cambio de comportamiento.** La aplicación se autentica exactamente como lo hacía antes; la ruta del código de federación está inactiva. No hay ningún cambio de esquema ni nada que migrar, por lo que activar o desactivar la variable es totalmente reversible en cualquier momento.
 
 ## Seguridad {#security}
@@ -282,7 +282,7 @@ Deje el entorno de todas las demás aplicaciones sin configurar. Vuelva a implem
 **3. Verificar el canario (lista de verificación).**
 
 - Cerrar sesión\*\* en la aplicación.
-- La pantalla de inicio de sesión ahora muestra **"Iniciar sesión con Agent-Native"**. Haz clic en él.
+- La pantalla de inicio de sesión ahora muestra **"Iniciar sesión con Jami Studio"**. Haz clic en él.
 - Se le dirigirá a **Dispatch** y completará su inicio de sesión (o pasará directamente si ya inició sesión allí).
 - Se le redirige **de nuevo a la aplicación, inicia sesión** y es la **misma cuenta preexistente** (mismo correo electrónico) que tenía antes, no una nueva.
 - **Los datos de la aplicación están intactos**: sus registros, configuraciones y alcance de la organización existentes son exactamente como estaban.

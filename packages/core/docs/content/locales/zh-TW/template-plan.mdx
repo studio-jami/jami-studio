@@ -1,13 +1,13 @@
 ---
 title: "視覺計畫"
-description: "Agent-Native 計畫將您的編碼代理的計畫轉變為結構化的、可審閱的檔案 - 圖表、線框圖、帶註解的程式碼、註解和共用連結。從 CLI 安裝一次；您與之共用的審閱者以訪客身分進行編輯，登入後僅可儲存或共用。"
+description: "Jami Studio 計畫將您的編碼代理的計畫轉變為結構化的、可審閱的檔案 - 圖表、線框圖、帶註解的程式碼、註解和共用連結。從 CLI 安裝一次；您與之共用的審閱者以訪客身分進行編輯，登入後僅可儲存或共用。"
 ---
 
 # 視覺計畫
 
 > **大多數人會把 Plan 作為 skill 安裝，而不是 scaffolded app。** 一個 CLI 指令會把 `/visual-plan`、`/visual-recap`、`/visualize-repo` skills 和託管的 Plan 連線器新增到你的 coding agent — plugin 和 marketplace 路徑請參閱 [Plan plugin & marketplace](/docs/plan-plugin)。Fork Plan template（見 [For developers](#for-developers)）是用於自託管或基於 Plan 本身建置的次要路徑。
 
-Agent-Native 計畫是編碼代理的視覺化計畫模式。它變成了普通
+Jami Studio 計畫是編碼代理的視覺化計畫模式。它變成了普通
 Codex、Claude 程式碼、Markdown 或將實施計畫貼上到結構化中
 使用富文字、圖表、線框圖、帶註解的程式碼演練檢視表面
 以及檔案樹、註解、評論和可共用連結。
@@ -97,7 +97,7 @@ Codex、Claude 程式碼、Markdown 或將實施計畫貼上到結構化中
 
 ## 安裝技能 {#install}
 
-使用 Agent-Native CLI。這是推薦的設定，因為它安裝了
+使用 Jami Studio CLI。這是推薦的設定，因為它安裝了
 計畫技能說明，註冊託管計畫 MCP 連線器，**和**執行
 一步完成特定於用戶端的驗證/設定流程，因此您的第一個工具呼叫不會
 撞到 OAuth 牆：
@@ -159,7 +159,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ```
 
 這僅安裝技能說明。它不註冊託管的 MCP
-連線器，因此當您需要單指令設定時請使用 Agent-Native CLI 路徑。
+連線器，因此當您需要單指令設定時請使用 Jami Studio CLI 路徑。
 
 > **更喜歡一次性安裝外掛？** Claude 程式碼和 Codex 可以新增
 > `Jami Studio/agent-native` 直接作為外掛市場，捆綁了
@@ -169,7 +169,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ### 在 VS Code 中開啟計畫 {#vscode-extension}
 
 如果您使用 VS Code，請安裝
-[Agent-Native Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 在側面板中開啟相同的計畫審核介面，而不是讓您進入
 單獨的瀏覽器分頁。計畫工具仍然返回正常的 Web 連結，並且 MCP
 中繼資料還包括 VS Code 切換 URL：
@@ -179,7 +179,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 ```
 
 擴充功能處理 URI，在 VS Code Web 檢視中開啟解碼後的計畫 URL，
-並包含一個指令來執行 VS 的現有 Agent Native MCP 連線流程
+並包含一個指令來執行 VS 的現有 Jami Studio MCP 連線流程
 程式碼 / GitHub 副駕駛。這對於 Claude 程式碼或其他程式碼特別有用
 編碼代理工作流程，其中計畫應位於正在編輯的檔案旁邊。
 
@@ -244,7 +244,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 
 - **檢視**公開或共用計畫適用於知道連結的任何人 - 無需帳戶
   必需。
-- **對共用計畫發表評論**需要 Agent-Native 帳戶。
+- **對共用計畫發表評論**需要 Jami Studio 帳戶。
 - **共用**計畫（將其發布到連結、私人共用、審閱者存取權限，
   跨設備或團隊審核）需要登入。Google 登入會在以下情況出現
   標準 Google OAuth 環境變數已設定。
@@ -340,7 +340,7 @@ http://localhost:<port>/local-plans/<slug>?path=plans%2F<slug>
 進入該儲存庫位置。升級後，頁面重新開啟，顯示 `?path=...` 和
 繼續將 MDX 編輯自動儲存到儲存庫資料夾。
 
-本機檔案模式可防止計畫或回顧內容進入 Agent-Native
+本機檔案模式可防止計畫或回顧內容進入 Jami Studio
 計畫資料庫。它還停用託管共用、瀏覽器評論、計畫歷史紀錄，
 並發布/匯出收據，直到您明確選取發布。行動
 本機規劃到託管資料庫中，用本機呼叫`publish-visual-plan`
@@ -370,12 +370,12 @@ npx @agent-native/core@latest visualize-repo \
 
 ## 桌面本機檔案同步 {#desktop-local-sync}
 
-Agent Native Desktop 還為託管計畫提供了本機本機資料夾橋。這個
+Jami Studio Desktop 還為託管計畫提供了本機本機資料夾橋。這個
 與本機檔案隱私模式不同：託管計畫資料庫仍然是
 共用、評論、歷史紀錄和即時評論的真實來源，而桌面
 可以將目前計畫的來源檔案鏡像到您選取的資料夾。
 
-在 Agent Native 桌面中開啟計畫，使用計畫選單的**本機檔案** actions，
+在 Jami Studio 桌面中開啟計畫，使用計畫選單的**本機檔案** actions，
 然後：
 
 - **連結本機資料夾** — 選取該計畫的 MDX 來源的資料夾。
@@ -1091,6 +1091,6 @@ Include the plan path so the agent can navigate directly to it.
 - [**PR Visual Recap**](/docs/pr-visual-recap) - 在每個 pull request 上自動執行 `/visual-recap`
 - [**Automations**](/docs/automations) — 事件觸發和計畫的自動化
 - [**Plan plugin & marketplace**](/docs/plan-plugin) — 將計畫 skills 安裝為 Claude 程式碼或 Codex 外掛
-- [**Skills**](/docs/skills-guide) — Agent-Native 如何安裝 skills
+- [**Skills**](/docs/skills-guide) — Jami Studio 如何安裝 skills
 - [**MCP Clients**](/docs/mcp-clients) — 設定託管 MCP 連線器
 - [**Templates**](/docs/cloneable-saas) — 克隆自有模型

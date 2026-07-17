@@ -413,7 +413,7 @@ Tasks persist in the `a2a_tasks` SQL table and can be retrieved later via `tasks
 
 ## Security {#security}
 
-Set `A2A_SECRET` on every production app that calls or receives A2A traffic. Agent-native callers sign JWT bearer tokens with this secret so receivers can verify the caller identity before the agent loop starts.
+Set `A2A_SECRET` on every production app that calls or receives A2A traffic. Jami Studio callers sign JWT bearer tokens with this secret so receivers can verify the caller identity before the agent loop starts.
 
 For external peers that still use a shared static token, set `apiKeyEnv` in your config to the name of an environment variable containing the expected bearer token:
 

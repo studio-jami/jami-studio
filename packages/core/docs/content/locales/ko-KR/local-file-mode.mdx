@@ -13,7 +13,7 @@ SQL 지원 앱 기록 대신
 첫 번째 구현은 콘텐츠 템플릿에 있습니다. 왼쪽 사이드바는 다음과 같습니다.
 로컬 `.md` 및 `.mdx` 파일로 채워지며, 페이지를 선택하면 표준이 열립니다.
 컨텐츠 편집기 및 저장하면 선택한 파일에 다시 기록됩니다. 동일한 파일은 다음과 같습니다.
-Codex, Claude 코드, Agent-Native 사이드바 에이전트 또는 일반 사용자로도 편집 가능
+Codex, Claude 코드, Jami Studio 사이드바 에이전트 또는 일반 사용자로도 편집 가능
 편집자.
 
 콘텐츠의 경우 제품이 MDX용 오픈 소스 Obsidian처럼 느껴집니다.
@@ -198,7 +198,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 설치된 스킬은 코딩 에이전트에게 콘텐츠 actions를 사용하도록 지시합니다
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document` 및 구성 요소 파일 actions)(로컬 콘텐츠 앱인 경우)
-또는 Agent Native 데스크탑 브리지가 이를 노출합니다. 다리가 달리고 있지 않으면 스킬
+또는 Jami Studio 데스크탑 브리지가 이를 노출합니다. 다리가 달리고 있지 않으면 스킬
 머리말, 가져오기, JSX를 보존하면서 안전한 직접 저장소 편집으로 대체
 그리고 알 수 없는 MDX.
 
@@ -357,7 +357,7 @@ title: "출시 노트"
 `.md` 및 `.mdx` 파일은 브라우저 파일 시스템 액세스 API를 통해 이루어지지만
 Chrome은 컴파일할 Vite의 절대 폴더 경로를 노출하지 않습니다.
 `components/*.tsx`. 사용자 정의 React 구성 요소를 미리 보고 핫 리로드하려면 다음을 실행하세요.
-신뢰할 수 있는 로컬 브리지에서 콘텐츠를 로컬로 전송하거나 Agent Native 데스크탑을 사용하여
+신뢰할 수 있는 로컬 브리지에서 콘텐츠를 로컬로 전송하거나 Jami Studio 데스크탑을 사용하여
 선택한 작업공간을 로컬 컨텐츠 개발 서버에 등록합니다. 해당 모드에서는
 Vite를 통해 기존 구성 요소 파일 핫 리로드를 편집하고 또는 추가
 구성요소 파일을 제거하면 구성요소 레지스트리와 슬래시 메뉴가 다시 로드됩니다.

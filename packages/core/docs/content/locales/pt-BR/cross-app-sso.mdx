@@ -90,7 +90,7 @@ O fluxo é um redirecionamento padrão de autorização → token assinado → r
 
 </Diagram>
 
-1. **Aplicativo → Dispatch (autorização).** A rota `GET /_agent-native/identity/login` do aplicativo (à qual o botão “Entrar com Agent-Native” aponta) cria o redirecionamento e envia o usuário à autoridade de identidade:
+1. **Aplicativo → Dispatch (autorização).** A rota `GET /_agent-native/identity/login` do aplicativo (à qual o botão “Entrar com Jami Studio” aponta) cria o redirecionamento e envia o usuário à autoridade de identidade:
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ Um aplicativo participa **somente** quando esta variável de ambiente é definid
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **Set** → o aplicativo mostra uma opção **"Entrar com Agent-Native"** que executa o fluxo acima. O login local direto (e-mail/senha, Google) ainda funciona junto com ele.
+- **Set** → o aplicativo mostra uma opção **"Entrar com Jami Studio"** que executa o fluxo acima. O login local direto (e-mail/senha, Google) ainda funciona junto com ele.
 - **Desativado (padrão)** → **nenhuma mudança de comportamento.** O aplicativo é autenticado exatamente como antes; o caminho do código de federação está inativo. Não há alteração de esquema e nada para migrar, portanto, ativar ou desativar a variável é totalmente reversível a qualquer momento.
 
 ## Segurança {#security}
@@ -282,7 +282,7 @@ Deixe o ambiente de todos os outros aplicativos indefinido. Reimplante/reinicie 
 **3. Verifique o canário (lista de verificação).**
 
 - **Saia** do aplicativo.
-- A tela de login agora mostra **"Entrar com Agent-Native"**. Clique nele.
+- A tela de login agora mostra **"Entrar com Jami Studio"**. Clique nele.
 - Você será direcionado ao **Dispatch** e completará seu login (ou passará diretamente se já estiver conectado lá).
 - Você será redirecionado **de volta ao aplicativo, conectado** — e é a **mesma conta pré-existente** (mesmo e-mail) que você tinha antes, e não uma nova.
 - **Os dados do aplicativo estão intactos** — seus registros, configurações e escopo organizacional existentes são exatamente como eram.

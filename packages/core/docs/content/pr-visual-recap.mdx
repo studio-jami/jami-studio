@@ -7,7 +7,7 @@ description: "A GitHub Action that runs your repo's visual-recap skill on every 
 
 PR Visual Recap is a GitHub Action that turns every pull request into a **visual code review**. On each push, an LLM coding agent runs the latest bundled [`visual-recap`](/docs/template-plan) skill (or your repo's committed copy when `VISUAL_RECAP_SKILL_SOURCE=repo`) against the PR diff, publishes a structured recap plan to the hosted Plans app, shows an informational `Visual Recap` check while it runs, and upserts **one sticky PR comment** that links to the interactive plan with an **inline screenshot** embedded right in the comment.
 
-This is not a deterministic diff renderer. The action invokes a real coding agent (Claude Code CLI by default, OpenAI Codex CLI, or Agent-Native Code with an OpenAI-compatible provider) that reads the change, decides what matters, and authors the recap by calling the Plans MCP tool `create-visual-recap` — the same tool the `/visual-recap` slash command uses. You get a high-altitude, schema/API/before-after view of the change instead of a wall of raw diff.
+This is not a deterministic diff renderer. The action invokes a real coding agent (Claude Code CLI by default, OpenAI Codex CLI, or Jami Studio Code with an OpenAI-compatible provider) that reads the change, decides what matters, and authors the recap by calling the Plans MCP tool `create-visual-recap` — the same tool the `/visual-recap` slash command uses. You get a high-altitude, schema/API/before-after view of the change instead of a wall of raw diff.
 
 The recap is **informational and non-blocking**. It creates a check row so reviewers can see that generation is in progress, but it is not a required check, it never blocks the PR, and it never replaces reading the actual diff. The sticky comment is a review aid, not a sign-off.
 
@@ -94,7 +94,7 @@ A re-push updates the same plan and the same sticky comment in place — no orph
 
 ## Installing it
 
-When you install Plans interactively, the Agent-Native CLI asks whether to add
+When you install Plans interactively, the Jami Studio CLI asks whether to add
 automatic PR Visual Recaps. Say yes to write the GitHub Action, or add it
 explicitly at any time:
 
@@ -158,7 +158,7 @@ unscheduled rather than touching a self-hosted machine.
 `recap doctor` rejects malformed or unsupported JSON and reports when GitHub
 does not expose an online runner matching every configured label. Runner
 registration, installation, upgrades, capacity, and maintenance remain your
-responsibility; Agent Native selects the labels but does not provide or operate
+responsibility; Jami Studio selects the labels but does not provide or operate
 the runner.
 
 **Security:** Prefer dedicated, ephemeral self-hosted runners. A custom gate
@@ -178,7 +178,7 @@ Choose which coding agent runs the skill with the `VISUAL_RECAP_AGENT` repositor
 | -------------------- | --------------------------------------- | ---------------------- | --------------------------------------------- |
 | `claude` _(default)_ | Claude Code CLI                         | `ANTHROPIC_API_KEY`    | —                                             |
 | `codex`              | OpenAI Codex CLI                        | `OPENAI_API_KEY`       | —                                             |
-| `openai-compatible`  | Agent-Native Code + compatible provider | `VISUAL_RECAP_API_KEY` | `VISUAL_RECAP_BASE_URL`, `VISUAL_RECAP_MODEL` |
+| `openai-compatible`  | Jami Studio Code + compatible provider | `VISUAL_RECAP_API_KEY` | `VISUAL_RECAP_BASE_URL`, `VISUAL_RECAP_MODEL` |
 
 If the variable is unset, the action uses `claude`.
 
@@ -386,7 +386,7 @@ In the `Jami Studio/agent-native` monorepo, the workflow runs the recap CLI from
 ## Local-files privacy mode
 
 The GitHub Action is designed for hosted, shareable PR review. If you want a
-recap without sending recap content to the Agent-Native Plan database, run the
+recap without sending recap content to the Jami Studio Plan database, run the
 same helper flow locally in local-files mode instead:
 
 ```bash

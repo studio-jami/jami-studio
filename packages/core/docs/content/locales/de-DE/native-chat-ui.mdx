@@ -1,6 +1,6 @@
 ---
 title: "Nativer Chat-Oberfläche"
-description: "Aktionsdeklarierte native Chat-Renderer, wiederverwendbare DataTable-/DataChart-Ausgaben und wie BYO-Agentenlaufzeiten eine Verbindung zum Agent-Native-Chat herstellen sollten."
+description: "Aktionsdeklarierte native Chat-Renderer, wiederverwendbare DataTable-/DataChart-Ausgaben und wie BYO-Agentenlaufzeiten eine Verbindung zum Jami Studio-Chat herstellen sollten."
 ---
 
 # Nativer Chat-Oberfläche
@@ -253,14 +253,14 @@ willkürliche Abfrageausführung hinter eingegebenem Lese-actions anstelle von r
 
 `AgentChatRuntime` ist der Bring-Your-Own-Agent-Vertrag für die Chat-Shell und
 Dieser Abschnitt ist seine kanonische Referenz. Es ermöglicht einen Agenten, den Sie woanders erstellt haben
-normalisierte Ereignisse in die Konversation UI von Agent-Native streamen und dabei die beibehalten
+normalisierte Ereignisse in die Konversation UI von Jami Studio streamen und dabei die beibehalten
 Gemeinsamer Verfassenr, Transkript-Rendering, Toolkarten, Genehmigungen, native Widgets,
 und das umgebende App-Layout. Der [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 Tutorial-Punkte hier für die Laufzeitgeschichte und [Component API](/docs/components#agent-chat-ui)
 listet jeden Connector und Adapter mit seinem Importpfad auf; Der Vertrag selbst ist
 unten beschrieben.
 
-<Diagram id="doc-block-1z0kwg9" title={"Die BYO-Laufzeit behält die Agent-Native-Chat-Shell bei"} summary={"Ihr externer Agent streamt normalisierte Ereignisse über einen Connector; Agent-Native behält den Komponisten, das Transkript, die Werkzeugkarten, Genehmigungen und native Widgets."}>
+<Diagram id="doc-block-1z0kwg9" title={"Die BYO-Laufzeit behält die Jami Studio-Chat-Shell bei"} summary={"Ihr externer Agent streamt normalisierte Ereignisse über einen Connector; Jami Studio behält den Komponisten, das Transkript, die Werkzeugkarten, Genehmigungen und native Widgets."}>
 
 ```html
 <div class="diagram-byo">
@@ -389,7 +389,7 @@ in eine einzelne Assistentennachricht umgewandelt. Für umfangreichere Agenten s
 `chatUI`-Metadaten, sodass aktionsdeklarierte native Widgets immer noch ohne gerendert werden
 iframes.
 
-Wenn Sie den integrierten Agent-Native-Transport als Laufzeitobjekt verwenden möchten, verwenden Sie:
+Wenn Sie den integrierten Jami Studio-Transport als Laufzeitobjekt verwenden möchten, verwenden Sie:
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -402,7 +402,7 @@ const runtime = createAgentNativeChatRuntime({
 
 Verwenden Sie `<AssistantChat createAdapter={...} />` nur, wenn Sie die volle Kapazität benötigen
 Assistent-UI-Adaptersteuerung. Verwenden Sie `PromptComposer` allein für Ihr Produkt
-besitzt das gesamte externe Transkript und möchte nur den Komponisten von Agent-Native
+besitzt das gesamte externe Transkript und möchte nur den Komponisten von Jami Studio
 Feld.
 
 OpenAI-, AG-UI-, Claude Agent SDK- und Vercel AI SDK-Streams können den Standard verwenden

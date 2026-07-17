@@ -5,7 +5,7 @@ description: "Blocs de construction publics React pour l'agent personnalisé UI,
 
 # Composant API
 
-Agent-Native fournit une barre latérale complète, mais la barre latérale ne constitue pas le contrat. Le
+Jami Studio fournit une barre latérale complète, mais la barre latérale ne constitue pas le contrat. Le
 le contrat est le moteur d'exécution : streaming de chat, état du thread, actions, contexte,
 pièces jointes, sélection de modèles, exécutions et synchronisation basée sur SQL. Utiliser le stock
 composants lorsque vous le pouvez, et déposez un calque lorsque vous avez besoin d'un produit personnalisé UI.
@@ -126,13 +126,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client` ou `/client/chat` | Vous disposez d'un flux Claude Agent SDK et souhaitez qu'il soit normalisé dans le chat UI.                                |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` ou `/client/chat` | Vous disposez d'un flux Vercel AI SDK et souhaitez qu'il soit normalisé dans le chat UI.                                   |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` ou `/client/chat` | Vous devez adapter vous-même un `AgentChatRuntime` en assistant-ui.                                                        |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` ou `/client/chat` | Vous avez besoin du transport Agent-Native SSE intégré comme adaptateur d'interface utilisateur d'assistant de bas niveau. |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` ou `/client/chat` | Vous avez besoin du transport Jami Studio SSE intégré comme adaptateur d'interface utilisateur d'assistant de bas niveau. |
 | `useChatThreads()`                   | `@agent-native/core/client` ou `/client/chat` | Vous avez besoin d'une liste de fils de discussion personnalisée, d'un sélecteur d'historique ou d'un chat limité UI.      |
 | `sendToAgentChat()`                  | `@agent-native/core/client` ou `/client/chat` | Une action produit doit confier le travail au chat de l'agent.                                                             |
 
 `AgentChatRuntime` est le contrat d'agent BYO pour le shell de discussion standard. Passer
 `runtime` à `<AssistantChat>` lorsqu'un agent externe doit alimenter le
-conversation pendant que Agent-Native conserve le compositeur, la transcription, les fiches outils et
+conversation pendant que Jami Studio conserve le compositeur, la transcription, les fiches outils et
 rendu natif des widgets. Les connecteurs ci-dessus sont la surface API ; le moteur d'exécution
 Les formes de contrats et d'événements sont enseignées
 [Native Interface de chat — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

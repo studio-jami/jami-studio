@@ -90,7 +90,7 @@ Le flux est une redirection standard d'autorisation → jeton signé → rappel,
 
 </Diagram>
 
-1. **Application → Dispatch (autorisation).** La route `GET /_agent-native/identity/login` de l’application (celle du bouton « Se connecter avec Agent-Native ») construit la redirection et envoie l’utilisateur à l’autorité d’identité :
+1. **Application → Dispatch (autorisation).** La route `GET /_agent-native/identity/login` de l’application (celle du bouton « Se connecter avec Jami Studio ») construit la redirection et envoie l’utilisateur à l’autorité d’identité :
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ Une application participe **uniquement** lorsque cette variable d'environnement 
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **Set** → l'application affiche une option **"Connectez-vous avec Agent-Native"** qui exécute le flux ci-dessus. La connexion locale directe (e-mail/mot de passe, Google) fonctionne toujours en parallèle.
+- **Set** → l'application affiche une option **"Connectez-vous avec Jami Studio"** qui exécute le flux ci-dessus. La connexion locale directe (e-mail/mot de passe, Google) fonctionne toujours en parallèle.
 - **Désactivé (par défaut)** → **zéro changement de comportement.** L'application s'authentifie exactement comme avant ; le chemin du code de la fédération est inactif. Il n'y a aucun changement de schéma et rien à migrer, donc l'activation ou la désactivation de la variable est entièrement réversible à tout moment.
 
 ## Sécurité {#security}
@@ -282,7 +282,7 @@ Laissez l'environnement de toutes les autres applications non défini. Redéploy
 **3. Vérifiez le canari (liste de contrôle).**
 
 - Déconnectez-vous\*\* de l'application.
-- L'écran de connexion affiche désormais **"Connectez-vous avec Agent-Native"**. Cliquez dessus.
+- L'écran de connexion affiche désormais **"Connectez-vous avec Jami Studio"**. Cliquez dessus.
 - Vous êtes redirigé vers **Dispatch** et complétez sa connexion (ou passez directement si vous y êtes déjà connecté).
 - Vous êtes redirigé **vers l'application, connecté** — et il s'agit du **même compte préexistant** (même e-mail) que vous aviez auparavant, pas un nouveau.
 - **Les données de l'application sont intactes** : vos enregistrements, paramètres et portée de l'organisation existants sont exactement tels qu'ils étaient.

@@ -189,11 +189,11 @@ Principais diferenças em relação ao [server `track()`](#track):
 - **Dispare e esqueça.** Ele nunca bloqueia o UI, nunca lança e engole erros de rede.
 - **Autenticado, somente primário.** A rota requer uma sessão e um marcador de mesma origem/CSRF (definido automaticamente pelo auxiliar), portanto, não pode ser usada como uma retransmissão de análise aberta. `name` tem um limite de 200 caracteres e `properties` de aproximadamente 16 KB; cargas superdimensionadas ou malformadas são rejeitadas.
 
-Isso é diferente da telemetria interna do navegador da estrutura (`trackEvent()`/visualizações automáticas de página — veja [Browser defaults](#browser-defaults) abaixo), que alimenta a análise de produto do próprio Agent Native. Use `track()` para os eventos de análise do seu aplicativo que devem chegar aos provedores configurados.
+Isso é diferente da telemetria interna do navegador da estrutura (`trackEvent()`/visualizações automáticas de página — veja [Browser defaults](#browser-defaults) abaixo), que alimenta a análise de produto do próprio Jami Studio. Use `track()` para os eventos de análise do seu aplicativo que devem chegar aos provedores configurados.
 
 ## Replay de sessão {#session-replay}
 
-Aplicativos Agent Native podem optar por um replay de sessão do navegador nativo sem adicionar um segundo SDK de análise. Chame `configureTracking()` uma vez na raiz do navegador e passe a chave pública do Analytics mais o endpoint do coletor:
+Aplicativos Jami Studio podem optar por um replay de sessão do navegador nativo sem adicionar um segundo SDK de análise. Chame `configureTracking()` uma vez na raiz do navegador e passe a chave pública do Analytics mais o endpoint do coletor:
 
 ```ts
 import { configureTracking } from "@agent-native/core/client";
@@ -215,7 +215,7 @@ configureTracking({
 
 Quando `sessionReplay.enabled` é verdadeiro, o cliente importa dinamicamente `@rrweb/record` após a inicialização e envia os blocos de replay para o endpoint de replay. Se `endpoint` terminar em `/api/analytics/track` ou `/track`, o endpoint de replay é derivado automaticamente como `/api/analytics/replay`. Substitua-o explicitamente com `sessionReplay.endpoint` quando o coletor de replay estiver em outro lugar.
 
-As raízes dos modelos do Agent Native já chamam `configureTracking()`. As implantações hospedadas de modelos podem ativar o replay com variáveis de ambiente do Vite/Netlify, enquanto os consumidores de biblioteca devem preferir a forma explícita `configureTracking({ key, endpoint, sessionReplay })` acima:
+As raízes dos modelos do Jami Studio já chamam `configureTracking()`. As implantações hospedadas de modelos podem ativar o replay com variáveis de ambiente do Vite/Netlify, enquanto os consumidores de biblioteca devem preferir a forma explícita `configureTracking({ key, endpoint, sessionReplay })` acima:
 
 ```bash
 VITE_AGENT_NATIVE_ANALYTICS_PUBLIC_KEY=anpk_...
@@ -224,7 +224,7 @@ VITE_AGENT_NATIVE_SESSION_REPLAY_ENABLED=true
 VITE_AGENT_NATIVE_SESSION_REPLAY_SAMPLE_RATE=1
 ```
 
-O auxiliar do navegador também realiza uma leitura best-effort e não bloqueante da sessão de autenticação atual do Agent Native. O replay é, por padrão, exclusivo para usuários conectados: quando `sessionReplay` está habilitado, a gravação não começa a menos que a sessão seja resolvida para um endereço de e-mail de usuário. Replays de usuários conectados incluem `userId`/`userEmail` baseados em e-mail, além de `orgId`.
+O auxiliar do navegador também realiza uma leitura best-effort e não bloqueante da sessão de autenticação atual do Jami Studio. O replay é, por padrão, exclusivo para usuários conectados: quando `sessionReplay` está habilitado, a gravação não começa a menos que a sessão seja resolvida para um endereço de e-mail de usuário. Replays de usuários conectados incluem `userId`/`userEmail` baseados em e-mail, além de `orgId`.
 
 Defina `sessionReplay.requireSignedInUser: false` ou `VITE_AGENT_NATIVE_SESSION_REPLAY_REQUIRE_AUTH=false` apenas para uma implantação de replay anônimo intencional. Quando o controle de autenticação está desabilitado, as gravações anônimas permanecem consultáveis por visitante anônimo, sessão, aplicativo/modelo, hostname e caminho.
 

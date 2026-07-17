@@ -160,7 +160,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 Le programme d'installation copie la compétence `content` pour votre agent de codage et écrit ou
 met à jour `agent-native.json` avec les racines de contenu pour `docs/`, `blog/`, `content/`,
-et `resources/`. Lorsqu'une application de contenu locale, un bureau Agent Native ou une application approuvée
+et `resources/`. Lorsqu'une application de contenu locale, un bureau Jami Studio ou une application approuvée
 le pont local est en cours d'exécution, les agents doivent utiliser le contenu actions tel que
 `list-documents`, `get-document`, `edit-document`, `update-document` et
 `share-local-file-document` au lieu d'écritures brutes sur le système de fichiers. Sans ce local
@@ -199,14 +199,14 @@ Ouvrez `http://localhost:8083` et créez votre première page. Demandez ensuite 
 ### Synchronisation de fichiers locaux
 
 La route protégée `/local-files` utilise le navigateur File System Access API, ou un
-pont de dossiers natifs protégés dans Agent Native Desktop, pour lire et écrire
+pont de dossiers natifs protégés dans Jami Studio Desktop, pour lire et écrire
 Fichiers Markdown/MDX à partir d’un dossier choisi par l’utilisateur. Une fois le dossier lié et
 importé, le fichier sélectionné est traité comme l'autorité : l'ouverture de la page lit
 le fichier et l'éditeur normal enregistre d'abord le fichier. SQL est ensuite mis à jour en tant que
 Couche de cache/historique pour le document existant UI, le panneau de recherche et de version, pas
 comme source de vérité. Le menu de la page en haut à droite expose le chemin de la source locale :
 Le chemin relatif est toujours disponible, le chemin absolu est disponible dans le vrai fichier local
-et le bureau Agent Native, et Révéler dans le Finder sont disponibles via le
+et le bureau Jami Studio, et Révéler dans le Finder sont disponibles via le
 mode pont de bureau ou fichier local basé sur un serveur.
 
 La route de synchronisation groupée appelle :
@@ -261,7 +261,7 @@ dans le fichier local.
 
 Le sélecteur de **Fichiers locaux** du navigateur peut lire et écrire les fichiers `.md` et `.mdx` sur
 se propre, mais les aperçus des composants React exécutables nécessitent un compilateur local. Exécuter
-Contenu localement ou utilisez Agent Native Desktop pour que le chemin de l'espace de travail sélectionné puisse
+Contenu localement ou utilisez Jami Studio Desktop pour que le chemin de l'espace de travail sélectionné puisse
 être enregistré auprès du serveur de développement de contenu local. Vite importe ensuite
 `components/*.tsx`, rechargements à chaud, modifications des fichiers de composants existants et rechargements
 le registre des composants lorsque des fichiers sont ajoutés ou supprimés. Les agents peuvent utiliser

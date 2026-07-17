@@ -225,7 +225,7 @@ export default defineAction({
 
 For a `GET` action, `leadId` is passed as a query param: `/_agent-native/actions/get-lead?leadId=abc`.
 
-<Endpoint id="doc-block-uhuudd" title="The auto-mounted action endpoint" method="GET" path="/_agent-native/actions/get-lead" summary={"Every action is mounted here automatically — the filename is the action name."} auth={"Session cookie; frontend calls carry `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-uhuudd" title="The auto-mounted action endpoint" method="GET" path="/_agent-native/actions/get-lead" summary={"Every action is mounted here automatically — the filename is the action name."} auth={"Session cookie; frontend calls carry `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -353,7 +353,7 @@ export default defineAction({
 | `caller`     | Set when…                                                                                                                            |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `"tool"`     | The in-app agent loop, a sub-agent / agent team, or an A2A request (A2A drives the same agent loop, so its tool calls are `"tool"`). |
-| `"frontend"` | A browser call via `useActionMutation` / `useActionQuery` / `callAction` (tagged with the `X-Agent-Native-Frontend: 1` header).      |
+| `"frontend"` | A browser call via `useActionMutation` / `useActionQuery` / `callAction` (tagged with the `X-Jami Studio-Frontend: 1` header).      |
 | `"http"`     | A bare programmatic `POST` / `GET` to `/_agent-native/actions/<name>` without the frontend marker.                                   |
 | `"cli"`      | `pnpm action <name>` (the CLI runner).                                                                                               |
 | `"mcp"`      | An external agent over the MCP `tools/call` endpoint.                                                                                |

@@ -86,14 +86,14 @@ La règle d'identité est la charnière de sécurité : le lien est simplement 
 ## De quel chemin d'agent avez-vous besoin ? {#which-agent-path}
 
 - **Hôte MCP externe :** utilisez cette page lorsque Claude, ChatGPT, Codex, Cursor, OpenCode, GitHub Copilot / VS Code ou un autre hôte compatible MCP doit appeler votre application native d'agent hébergée.
-- **Votre propre environnement d'exécution derrière le chat Agent-Native :** consultez [Agent Surfaces](/docs/agent-surfaces#byo-agent) et [Native Interface de chat](/docs/native-chat-ui#byo-agent-runtimes) lorsqu'un agent créé avec un autre framework devrait alimenter `<AssistantChat runtime={...}>`.
+- **Votre propre environnement d'exécution derrière le chat Jami Studio :** consultez [Agent Surfaces](/docs/agent-surfaces#byo-agent) et [Native Interface de chat](/docs/native-chat-ui#byo-agent-runtimes) lorsqu'un agent créé avec un autre framework devrait alimenter `<AssistantChat runtime={...}>`.
 - **Votre application utilisant les outils MCP :** consultez [MCP Clients](/docs/mcp-clients) lorsqu'une application native d'agent doit appeler des outils exposés par un autre serveur MCP.
 - **Une autre application ou un autre agent via A2A :** utilisez [Agent Mentions](/docs/agent-mentions) et [A2A](/docs/a2a-protocol) lorsque les applications natives d'agent doivent se découvrir et se déléguer mutuellement.
 - **Sous-agents personnalisés locaux :** utilisez [Workspace](/docs/workspace) lorsque vous souhaitez des profils d'agent personnalisés dans l'espace de travail natif de l'agent lui-même.
 
 ## Configuration facile {#easy-setup}
 
-Ajoutez un connecteur MCP distant à l'hôte sur lequel vous souhaitez utiliser Agent-Native.
+Ajoutez un connecteur MCP distant à l'hôte sur lequel vous souhaitez utiliser Jami Studio.
 
 Pour le travail dans un espace de travail ou entre applications, utilisez Dispatch :
 
@@ -120,13 +120,13 @@ Onglets spécifiques à l'hôte pour Claude, ChatGPT, Cursor, Claude Code, Codex
 ### Claude et ChatGPT OAuth {#oauth}
 
 Claude / Claude Desktop : ajoutez un connecteur personnalisé, collez le MCP URL, cliquez
-**Connectez-vous**, connectez-vous avec votre compte Agent-Native, approuvez les scopes MCP,
+**Connectez-vous**, connectez-vous avec votre compte Jami Studio, approuvez les scopes MCP,
 et activez le connecteur dans un chat. Le code Claude utilise le même URL : ajoutez-le en tant que
 Serveur HTTP MCP distant, exécutez `/mcp`, puis choisissez **Authentifier**.
 
 ChatGPT : utilisez un espace de travail où se trouvent des connecteurs MCP personnalisés ou des applications en mode développeur
 activé, créez un connecteur/une application personnalisé, collez le même MCP URL, choisissez OAuth,
-analysez/découvrez les outils, connectez-vous avec Agent-Native, approuvez les étendues et activez
+analysez/découvrez les outils, connectez-vous avec Jami Studio, approuvez les étendues et activez
 le connecteur dans une discussion.
 
 Les subventions OAuth sont par hôte et par utilisateur. L'hôte stocke les jetons et
@@ -149,11 +149,11 @@ Serveurs MCP.
 Une fois connecté, essayez l'une des solutions suivantes :
 
 ```text
-Use Agent-Native Analytics to generate a weekly conversion-rate bar chart and show it inline.
+Use Jami Studio Analytics to generate a weekly conversion-rate bar chart and show it inline.
 ```
 
 ```text
-Use Agent-Native Mail to draft a short follow-up email to me, but do not send it.
+Use Jami Studio Mail to draft a short follow-up email to me, but do not send it.
 ```
 
 Dans les hôtes qui prennent en charge les applications MCP, Analytics peut afficher en ligne le tableau de bord réel et les itinéraires d'analyse, et Mail peut afficher en ligne le véritable tableau de bord UI pour révision du brouillon. Sur les hôtes qui n'affichent pas les applications MCP, le même appel d'outil renvoie toujours un lien profond tel que **Ouvrir le brouillon dans Mail →** ou **Ouvrir le tableau de bord dans Analytics →**.
@@ -196,7 +196,7 @@ client si le nouveau serveur n'est pas encore visible.
 
 Utilisez `--client codex` (ou `--client claude-code`, `--client claude-code-cli`, `--client cursor`, `--client opencode`, `--client github-copilot`, `--client cowork`, `--client all`) pour ignorer le sélecteur de scripts ou d'installations ponctuelles.
 
-L'application propriétaire skills installe les instructions et le connecteur MCP hébergé avec le Agent Native CLI :
+L'application propriétaire skills installe les instructions et le connecteur MCP hébergé avec le Jami Studio CLI :
 
 ```bash
 npx @agent-native/core@latest skills add assets              # alias: image-generation
@@ -410,7 +410,7 @@ Il s'agit d'une exclusion stricte basée sur le nom, et non d'une simple omissio
 
 Une application qui fournit `resolveExecutionContext` remplace explicitement cette chaîne d'identité par défaut. Son résolveur doit refuser indépendamment les appelants non vérifiés, les invités, les membres externes et les espaces de travail non liés avant de renvoyer un principal.
 
-Avant l'exécution de l'agent, un message direct Slack vérifié est associé à un membre existant de l'organisation Agent Native et le lien d'identité entre l'espace de travail et l'utilisateur est enregistré. Le contexte utilisateur/organisation qui en résulte charge les ressources, les instructions et les compétences de cet utilisateur. Par défaut, les membres de l'espace de travail dont le profil a bien été chargé, mais dont l'adresse e-mail est absente ou qui ne sont pas encore membres de l'organisation, sont refusés. Les applications peuvent définir explicitement `allowAnonymousOrgScopedSlackDm: true` pour exécuter ces membres comme principal de service anonyme limité à l'organisation : le même niveau de visibilité à l'échelle de l'organisation que celui des canaux partagés, sans jamais accéder aux données privées de l'utilisateur. L'agent reçoit une note visible et Slack explique une fois comment obtenir un accès personnel. Cette option n'admet jamais les échecs de chargement du profil, les appelants non vérifiés, les invités, les membres externes (Slack Connect) ni les espaces de travail non liés à une organisation ; ces cas reçoivent une réponse de refus polie. Les canaux Slack partagés utilisent un principal de service et n'empruntent pas les autorisations privées d'un participant. OAuth géré et le manifeste d'application Slack généré demandent la portée de bot `users:read.email`. Les installations existantes doivent être reconnectées ou réinstallées pour accorder une portée nouvellement ajoutée ; les anciennes installations par jeton de bot doivent l'ajouter manuellement dans Slack. Sans cette portée, les messages directs sont refusés sauf si l'application active explicitement `allowAnonymousOrgScopedSlackDm`.
+Avant l'exécution de l'agent, un message direct Slack vérifié est associé à un membre existant de l'organisation Jami Studio et le lien d'identité entre l'espace de travail et l'utilisateur est enregistré. Le contexte utilisateur/organisation qui en résulte charge les ressources, les instructions et les compétences de cet utilisateur. Par défaut, les membres de l'espace de travail dont le profil a bien été chargé, mais dont l'adresse e-mail est absente ou qui ne sont pas encore membres de l'organisation, sont refusés. Les applications peuvent définir explicitement `allowAnonymousOrgScopedSlackDm: true` pour exécuter ces membres comme principal de service anonyme limité à l'organisation : le même niveau de visibilité à l'échelle de l'organisation que celui des canaux partagés, sans jamais accéder aux données privées de l'utilisateur. L'agent reçoit une note visible et Slack explique une fois comment obtenir un accès personnel. Cette option n'admet jamais les échecs de chargement du profil, les appelants non vérifiés, les invités, les membres externes (Slack Connect) ni les espaces de travail non liés à une organisation ; ces cas reçoivent une réponse de refus polie. Les canaux Slack partagés utilisent un principal de service et n'empruntent pas les autorisations privées d'un participant. OAuth géré et le manifeste d'application Slack généré demandent la portée de bot `users:read.email`. Les installations existantes doivent être reconnectées ou réinstallées pour accorder une portée nouvellement ajoutée ; les anciennes installations par jeton de bot doivent l'ajouter manuellement dans Slack. Sans cette portée, les messages directs sont refusés sauf si l'application active explicitement `allowAnonymousOrgScopedSlackDm`.
 
 ### Niveau complet (adhésion explicite uniquement) {#full-tier}
 

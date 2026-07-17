@@ -1,12 +1,12 @@
 ---
 title: "Surfaces d'agent"
-description: "Utilisez Agent-Native sans tête, en tant que chat enrichi, dans une application existante ou en tant qu'application native d'agent complète."
+description: "Utilisez Jami Studio sans tête, en tant que chat enrichi, dans une application existante ou en tant qu'application native d'agent complète."
 search: "Application complète de chat enrichi d'agent sans tête BYO runtime d'agent AgentChatRuntime intégré actions MCP A2A HTTP CLI"
 ---
 
 # Surfaces des agents
 
-Agent-Native est délibérément composable. Vous pouvez utiliser l'agent sans trop dépenser UI,
+Jami Studio est délibérément composable. Vous pouvez utiliser l'agent sans trop dépenser UI,
 utilisez le UI sans le runtime d'agent intégré, ou utilisez les deux ensemble comme un ensemble complet
 application.
 
@@ -16,8 +16,8 @@ vous voulez, puis utilisez la primitive correspondante.
 | Surface                           | Utilisez-le quand                                                                                                                       | Commencer par                                                                               |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | **Agent sans tête**               | Le code, les tâches, les scripts, une autre application ou un autre agent doivent appeler le travail directement.                       | `agent-native create --headless`, `defineAction`, `agent-native agent`, HTTP, CLI, MCP, A2A |
-| **Chat enrichi sur Agent-Native** | Vous souhaitez un chat autonome ou intégré soutenu par la boucle d'agent intégrée.                                                      | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
-| **Chat enrichi sur votre agent**  | Vous avez créé l'agent ailleurs et souhaitez le compositeur, la transcription, les fiches outils et les widgets natifs de Agent-Native. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
+| **Chat enrichi sur Jami Studio** | Vous souhaitez un chat autonome ou intégré soutenu par la boucle d'agent intégrée.                                                      | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
+| **Chat enrichi sur votre agent**  | Vous avez créé l'agent ailleurs et souhaitez le compositeur, la transcription, les fiches outils et les widgets natifs de Jami Studio. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
 | **Side-car intégré**              | Vous disposez déjà d'une application SaaS et souhaitez un agent à côté avec le contexte de la page et les commandes d'hôte.             | `createAgentNativeEmbeddedPlugin()`, `AgentNativeEmbedded`                                  |
 | **Application complète**          | Les humains et les agents doivent partager des écrans, des données, une navigation et une collaboration durables.                       | Modèles, état actions, SQL, connaissance du contexte                                        |
 
@@ -94,7 +94,7 @@ plein écran dans une application sans modifier l'opération appelée par l'agen
 
 Utilisez le chemin sans tête lorsque personne n'a besoin de regarder l'écran d'une application personnalisée pendant
 le travail s'exécute : tâches planifiées, intégrations, workflows backend, boucles CLI,
-un autre agent ou un produit existant appelant Agent-Native.
+un autre agent ou un produit existant appelant Jami Studio.
 
 C'est aussi la forme à atteindre lorsque **l'agent _est_ le produit** — le
 la boucle app-agent est la porte d'entrée, pas un tableau de bord. Vous envoyez une demande depuis le
@@ -224,7 +224,7 @@ boucle dans ce dossier : échafaudez l'application sans tête, ajoutez actions/
 contrat que l'application utilisera en production.
 
 Les faisceaux de codage externes constituent une surface de produit distincte pour l'intégration de Claude
-Code, Codex, Pi, Cursor, Mastra ou environnements d'exécution similaires dans une application Agent-Native.
+Code, Codex, Pi, Cursor, Mastra ou environnements d'exécution similaires dans une application Jami Studio.
 Utilisez-les lorsque vous créez un produit d'agent de codage, et non comme méthode par défaut
 démarrez un workflow natif d'agent local.
 
@@ -252,7 +252,7 @@ et état d'exécution ; collaboration en écriture autorisée plus tard, donc p
 l'approbation de actions, la modification des horaires ou la modification de la configuration sont effectuées
 vérifications d'accès explicites.
 
-## Chat enrichi sur Agent-Native {#rich-chat}
+## Chat enrichi sur Jami Studio {#rich-chat}
 
 Utilisez le chat intégré lorsque l'utilisateur doit parler à l'agent, voir les appels d'outils,
 approuvez le travail, inspectez les résultats natifs et conservez un historique de thread durable.
@@ -332,8 +332,8 @@ composants dans le chat, sans iframes. Voir [Native Interface de chat](/docs/nat
 ## Chat enrichi sur votre agent {#byo-agent}
 
 Utilisez ce chemin lorsque votre agent est déjà construit avec un autre framework ou
-runtime et vous voulez que le chat UI de Agent-Native l'entoure. `AgentChatRuntime` est le
-limite : votre runtime diffuse les événements normalisés et Agent-Native restitue le
+runtime et vous voulez que le chat UI de Jami Studio l'entoure. `AgentChatRuntime` est le
+limite : votre runtime diffuse les événements normalisés et Jami Studio restitue le
 compositeur, transcription, appels d'outils, approbations, widgets natifs et mise en page de l'application.
 
 ```tsx
@@ -354,7 +354,7 @@ export function SupportAgentChat() {
 Des assistants d'exécution prêts à l'emploi existent pour les agents OpenAI, les réponses OpenAI et le Claude
 Agent SDK, Vercel AI SDK et AG-UI, ainsi que le moteur d'exécution normalisé HTTP ci-dessus
 pour tout autre agent (Mastra, Flue, Eve, LangGraph ou un service personnalisé). ACP est
-pas le chat de l'application utilisateur final ni le transport A2A, et Agent-Native ne le fait pas actuellement
+pas le chat de l'application utilisateur final ni le transport A2A, et Jami Studio ne le fait pas actuellement
 réclamez la prise en charge de A2UI. ACP est pris en charge à un endroit spécifique : conduire un local
 Agent de codage (Gemini CLI, Claude Code, …) via le
 [harness layer](/docs/harness-agents#acp), pas comme environnement d'exécution de chat ici.
@@ -368,7 +368,7 @@ métadonnées des résultats de l'outil. Commencez par là lorsque vous connecte
 Utilisez le side-car intégré lorsque le produit principal existe déjà et que vous souhaitez un
 agent à côté.
 
-Le plugin serveur monte les routes Agent-Native dans votre application hôte et résout
+Le plugin serveur monte les routes Jami Studio dans votre application hôte et résout
 Identité de l'hôte côté serveur :
 
 ```ts
@@ -404,7 +404,7 @@ export function AppShell({ children }) {
 }
 ```
 
-<Diagram id="doc-block-b2ci7x" title={"Comment le side-car relie-t-il à une application hôte"} summary={"Le plugin monte les routes Agent-Native côté serveur ; le side-car React diffuse le contexte de la page et les commandes de l'hôte."}>
+<Diagram id="doc-block-b2ci7x" title={"Comment le side-car relie-t-il à une application hôte"} summary={"Le plugin monte les routes Jami Studio côté serveur ; le side-car React diffuse le contexte de la page et les commandes de l'hôte."}>
 
 ```html
 <div class="diagram-sidecar">
@@ -428,7 +428,7 @@ export function AppShell({ children }) {
     <span class="diagram-pill accent">AgentNativeEmbedded</span
     ><small class="diagram-muted">agent + workspace</small>
     <div class="diagram-box" data-rough>
-      routes Agent-Native<br /><small class="diagram-muted"
+      routes Jami Studio<br /><small class="diagram-muted"
         >mounted by the server plugin</small
       >
     </div>
@@ -488,7 +488,7 @@ vous voulez une forme complète du produit.
 | Si vous pensez...                                                          | Choisir                       |
 | -------------------------------------------------------------------------- | ----------------------------- |
 | "J'ai juste besoin d'un outil ou d'un workflow appelable."                 | Agent sans tête               |
-| "Je veux l'agent du framework, mais le chat devrait être le UI principal." | Chat enrichi sur Agent-Native |
+| "Je veux l'agent du framework, mais le chat devrait être le UI principal." | Chat enrichi sur Jami Studio |
 | "J'ai déjà un agent ; j'ai besoin d'un chat UI soigné pour cela."          | Chat enrichi sur votre agent  |
 | "J'ai déjà une application SaaS ; ajoutez un agent à côté."                | Side-car intégré              |
 | "L'agent et UI devraient évoluer ensemble en tant que produit."            | Application complète          |
@@ -504,4 +504,4 @@ besoin de parcourir, comparer, configurer ou collaborer sur des objets persistan
 - [**Generative UI**](/docs/generative-ui) — générez une UI en bac à sable, temporaire ou persistante, dans le chat
 - [**Automation-First Apps**](/docs/pure-agent-apps) — le modèle complet sans navigateur pour les tâches, files d’attente, scripts et agents externes
 - [**External Agents**](/docs/external-agents) — connectez des hôtes compatibles MCP à une application
-- [**A2A Protocol**](/docs/a2a-protocol) — appelez des agents depuis d’autres applications Agent-Native
+- [**A2A Protocol**](/docs/a2a-protocol) — appelez des agents depuis d’autres applications Jami Studio

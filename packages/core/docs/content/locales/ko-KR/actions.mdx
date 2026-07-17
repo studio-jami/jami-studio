@@ -223,7 +223,7 @@ export default defineAction({
 
 `GET` 작업의 경우 `leadId`는 쿼리 매개변수 `/_agent-native/actions/get-lead?leadId=abc`로 전달됩니다.
 
-<Endpoint id="doc-block-268kyf" title={"자동 마운트된 action 엔드포인트"} method="GET" path="/_agent-native/actions/get-lead" summary={"모든 action은 여기에 자동으로 마운트됩니다. 파일 이름이 action 이름입니다."} auth={"세션 쿠키; 프론트엔드 호출에는 `X-Agent-Native-Frontend: 1`이 포함됩니다"} params={[
+<Endpoint id="doc-block-268kyf" title={"자동 마운트된 action 엔드포인트"} method="GET" path="/_agent-native/actions/get-lead" summary={"모든 action은 여기에 자동으로 마운트됩니다. 파일 이름이 action 이름입니다."} auth={"세션 쿠키; 프론트엔드 호출에는 `X-Jami Studio-Frontend: 1`이 포함됩니다"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -351,7 +351,7 @@ export default defineAction({
 | `caller`     | 설정 시기…                                                                                                                       |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | 인앱 에이전트 루프, 하위 에이전트/에이전트 팀 또는 A2A 요청(A2A는 동일한 에이전트 루프를 구동하므로 도구 호출은 `"tool"`입니다.) |
-| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction`를 통한 브라우저 호출(`X-Agent-Native-Frontend: 1` 헤더 태그가 지정됨)      |
+| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction`를 통한 브라우저 호출(`X-Jami Studio-Frontend: 1` 헤더 태그가 지정됨)      |
 | `"http"`     | 프런트엔드 마커가 없는 순수 프로그래밍 방식의 `POST` / `GET` ~ `/_agent-native/actions/<name>`.                                  |
 | `"cli"`      | `pnpm action <name>`(CLI 러너).                                                                                                  |
 | `"mcp"`      | MCP `tools/call` 엔드포인트를 통한 외부 에이전트.                                                                                |

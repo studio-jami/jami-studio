@@ -5,7 +5,7 @@ description: "사용자 지정 에이전트 UI, 채팅 필드, 대화 렌더링,
 
 # 구성요소 API
 
-Agent-Native는 전체 사이드바를 제공하지만 사이드바는 계약이 아닙니다.
+Jami Studio는 전체 사이드바를 제공하지만 사이드바는 계약이 아닙니다.
 계약은 런타임입니다: 채팅 스트리밍, 스레드 상태, actions, 컨텍스트
 첨부 파일, 모델 선택, 실행 및 SQL 지원 동기화. 주식을 활용하세요
 가능한 경우 구성요소를 선택하고 맞춤형 제품 UI가 필요할 경우 레이어를 드롭다운하세요.
@@ -120,13 +120,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client` 또는 `/client/chat` | Claude 에이전트 SDK 스트림이 있고 이를 채팅 UI로 정규화하려고 합니다.              |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` 또는 `/client/chat` | Vercel AI SDK 스트림이 있고 이를 채팅 UI로 정규화하려고 합니다.                    |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` 또는 `/client/chat` | `AgentChatRuntime`를 어시스턴트 UI에 직접 적용해야 합니다.                         |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` 또는 `/client/chat` | 저수준 보조 UI 어댑터로 내장된 Agent-Native SSE 전송이 필요합니다.                 |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` 또는 `/client/chat` | 저수준 보조 UI 어댑터로 내장된 Jami Studio SSE 전송이 필요합니다.                 |
 | `useChatThreads()`                   | `@agent-native/core/client` 또는 `/client/chat` | 맞춤 스레드 목록, 기록 선택기 또는 범위 지정 채팅 UI가 필요합니다.                 |
 | `sendToAgentChat()`                  | `@agent-native/core/client` 또는 `/client/chat` | 제품 작업은 상담원 채팅에서 직접 수행해야 합니다.                                  |
 
 `AgentChatRuntime`는 표준 채팅 셸에 대한 BYO 에이전트 계약입니다. 패스
 외부 에이전트가 전원을 공급해야 하는 경우 `runtime`에서 `<AssistantChat>`까지
-Agent-Native가 작곡가, 대본, 도구 카드를 보관하는 동안 대화
+Jami Studio가 작곡가, 대본, 도구 카드를 보관하는 동안 대화
 기본 위젯 렌더링. 위의 커넥터는 API 표면입니다. 런타임
 계약 및 이벤트 형태에 대해 배웁니다
 [Native 채팅 UI — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

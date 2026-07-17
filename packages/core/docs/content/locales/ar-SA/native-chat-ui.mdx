@@ -1,6 +1,6 @@
 ---
 title: "الدردشة الأصلية UI"
-description: "برامج عرض الدردشة الأصلية المعلنة عن إجراء، ومخرجات DataTable/DataChart القابلة لإعادة الاستخدام، وكيف يجب أن تتصل أوقات تشغيل وكيل BYO بدردشة Agent-Native."
+description: "برامج عرض الدردشة الأصلية المعلنة عن إجراء، ومخرجات DataTable/DataChart القابلة لإعادة الاستخدام، وكيف يجب أن تتصل أوقات تشغيل وكيل BYO بدردشة Jami Studio."
 ---
 
 # الدردشة الأصلية UI
@@ -251,14 +251,14 @@ export default defineAction({
 
 `AgentChatRuntime` هو عقد إحضار الوكيل الخاص بك لقشرة الدردشة، و
 هذا القسم هو مرجعه الأساسي. فهو يتيح للوكيل الذي أنشأته في مكان آخر
-بث الأحداث التي تمت تسويتها في محادثة Agent-Native UI مع الاحتفاظ بـ
+بث الأحداث التي تمت تسويتها في محادثة Jami Studio UI مع الاحتفاظ بـ
 المؤلف المشترك، وعرض النص، وبطاقات الأدوات، والموافقات، والأدوات الأصلية،
 وتخطيط التطبيق المحيط. [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 نقاط تعليمية هنا لقصة وقت التشغيل، و[Component API](/docs/components#agent-chat-ui)
 يسرد كل موصل ومحول مع مسار الاستيراد الخاص به؛ العقد نفسه هو
 موضح أدناه.
 
-<Diagram id="doc-block-1qei37v" title={"يحتفظ وقت تشغيل BYO بقشرة الدردشة Agent-Native"} summary={"يقوم وكيلك الخارجي ببث الأحداث التي تمت تسويتها من خلال موصل؛ Agent-Native يحتفظ بالمؤلف والنص وبطاقات الأدوات والموافقات والأدوات الأصلية."}>
+<Diagram id="doc-block-1qei37v" title={"يحتفظ وقت تشغيل BYO بقشرة الدردشة Jami Studio"} summary={"يقوم وكيلك الخارجي ببث الأحداث التي تمت تسويتها من خلال موصل؛ Jami Studio يحتفظ بالمؤلف والنص وبطاقات الأدوات والموافقات والأدوات الأصلية."}>
 
 ```html
 <div class="diagram-byo">
@@ -385,7 +385,7 @@ data: {"type":"done","reason":"complete"}
 البيانات التعريفية `chatUI`، لذلك لا تزال عناصر واجهة المستخدم الأصلية المعلنة عن الإجراء يتم عرضها بدون
 إطارات iframe.
 
-عندما تريد نقل Agent-Native المدمج ككائن وقت التشغيل، استخدم:
+عندما تريد نقل Jami Studio المدمج ككائن وقت التشغيل، استخدم:
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -398,7 +398,7 @@ const runtime = createAgentNativeChatRuntime({
 
 استخدم `<AssistantChat createAdapter={...} />` فقط عندما تحتاج إلى استخدام كامل
 التحكم في محول واجهة المستخدم المساعد. استخدم `PromptComposer` بمفرده عندما يكون منتجك
-يمتلك النص الخارجي بالكامل ويريد فقط مؤلف Agent-Native
+يمتلك النص الخارجي بالكامل ويريد فقط مؤلف Jami Studio
 الحقل.
 
 يمكن لتدفقات OpenAI وAG-UI وClaude Agent SDK وVercel AI SDK استخدام المعيار

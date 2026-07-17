@@ -5,7 +5,7 @@ description: "Nitro 伺服器路由、外掛、框架安裝的路由、請求脈
 
 # 伺服器
 
-Agent-Native 應用程式使用 [Nitro](https://nitro.build) 作為伺服器路由和外掛。大多數產品行為應該存在於 [Actions](/docs/actions) 中；自訂路由適用於 actions 不適合的協議表面：上傳、流式傳輸、公開頁面、webhooks、OAuth 回呼和特定於提供者的 API。
+Jami Studio 應用程式使用 [Nitro](https://nitro.build) 作為伺服器路由和外掛。大多數產品行為應該存在於 [Actions](/docs/actions) 中；自訂路由適用於 actions 不適合的協議表面：上傳、流式傳輸、公開頁面、webhooks、OAuth 回呼和特定於提供者的 API。
 
 <Diagram id="doc-block-1gk1inb" title={"伺服器上執行什麼"} summary={"操作是預設的。自訂檔案路由和框架安裝的路由共用相同的 Nitro 應用程式和相同的 SQL 資料庫。"}>
 
@@ -126,7 +126,7 @@ export default defineEventHandler(() => ({
 
 ### 僅 API 應用程式 {#api-only-apps}
 
-應用程式僅提供 API 並不表示需要 Express 伺服器。Agent Native 應用程式已經內建 Nitro/H3 伺服器，`defineAction()` 是預設的 API 表面。將操作定義在 `actions/` 中；框架會將每個 action 掛載到 `/_agent-native/actions/<name>`，並包含 schema 驗證和請求脈絡。
+應用程式僅提供 API 並不表示需要 Express 伺服器。Jami Studio 應用程式已經內建 Nitro/H3 伺服器，`defineAction()` 是預設的 API 表面。將操作定義在 `actions/` 中；框架會將每個 action 掛載到 `/_agent-native/actions/<name>`，並包含 schema 驗證和請求脈絡。
 
 使用 action 的 `http` 選項來調整直接 HTTP 存取方式：actions 預設是 `POST`，`http: { method: "GET" | "PUT" | "DELETE" }` 會變更動詞，`http: false` 會關閉該 action 的 HTTP 端點。只有在處理路由形狀或協議問題時才使用 `server/routes/api/*`：檔案上傳、串流/SSE、webhooks、OAuth 回呼、公開頁面，或無法乾淨表示為 action 的外部 REST 形狀。不要建立主要只是包裝或重新匯出 actions 的 `/api/*` 路由。
 
@@ -274,7 +274,7 @@ export default runMigrations(
 
 ## SQL 支援的同步 {#sync}
 
-Agent-Native 不依賴於檔案系統觀察程式或置頂記憶狀態。當 actions 或框架助手更改資料時，資料庫同步版本會遞增。用戶端 `useDbSync()` 掛鉤輪詢 `/_agent-native/poll` 並使 React 查詢快取無效。
+Jami Studio 不依賴於檔案系統觀察程式或置頂記憶狀態。當 actions 或框架助手更改資料時，資料庫同步版本會遞增。用戶端 `useDbSync()` 掛鉤輪詢 `/_agent-native/poll` 並使 React 查詢快取無效。
 
 這適用於無伺服器和多執行個體部署，因為資料庫是協調點。如果您在 actions 之外編寫自訂突變，請使用框架助手或發出適當的同步失效，以便開啟 UI 重新整理。
 

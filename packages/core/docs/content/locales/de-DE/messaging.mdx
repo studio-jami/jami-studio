@@ -130,7 +130,7 @@ und `link_shared`-Ereignisse an den Clips-Unfurl-Handler.
 - **DMs** – akzeptierte persönliche DMs sind private Unterhaltungen und erfordern ein verifiziertes Organisationsmitglied oder eine verknüpfte Slack-Identität.
 - **Identität** – DMs können eine verifizierte Slack-E-Mail demselben App-Benutzer zuordnen; verwaltete Kanäle verwenden ihre Dienstidentität und Richtlinie.
 - **Produktionszulassungslisten** – Legen Sie `SLACK_ALLOWED_TEAM_IDS` und für freigegebene Slack-Apps `SLACK_ALLOWED_API_APP_IDS` fest, damit ein gültiges Signaturgeheimnis nicht von einem unerwarteten Arbeitsbereich wiederverwendet werden kann.
-- **Clips-App entfaltet sich** – installierbare Agent-Native-Clips für Slack verwenden `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` und `/api/slack/oauth/callback`. Jeder verbundene Slack-Arbeitsbereich erhält seinen eigenen verschlüsselten Bot-Token in `app_secrets`; `SLACK_BOT_TOKEN` ist nur ein Legacy-Fallback für einen einzelnen Arbeitsbereich.
+- **Clips-App entfaltet sich** – installierbare Jami Studio-Clips für Slack verwenden `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` und `/api/slack/oauth/callback`. Jeder verbundene Slack-Arbeitsbereich erhält seinen eigenen verschlüsselten Bot-Token in `app_secrets`; `SLACK_BOT_TOKEN` ist nur ein Legacy-Fallback für einen einzelnen Arbeitsbereich.
 
 ### Verwaltetes Add to Slack
 
@@ -142,7 +142,7 @@ Sie sie in Slack unter **App Manifest**. Das Manifest aktiviert die aktuelle
 Prüfen Sie anschließend diese Bot-Bereiche:
 
 App-Symbole sind nicht Bestandteil des Manifests. Laden Sie unter **Basic
-Information → Display Information** das Agent-Native-Symbol hoch, damit die
+Information → Display Information** das Jami Studio-Symbol hoch, damit die
 Agents-Auswahl zur Produktmarke passt. Sie können das öffentliche
 `icon-512.svg` der App als Quelle verwenden und es bei Bedarf in ein von Slack
 unterstütztes Uploadformat konvertieren.
@@ -189,7 +189,7 @@ aber unsichtbaren Installation diese Anzeigeeinstellungen oder öffnen Sie die A
 unter **Tools → Apps**.
 
 Persönliche Slack-DMs werden nur von verifizierten Mitgliedern der
-Agent-Native-Organisation oder von bereits verknüpften Slack-Identitäten
+Jami Studio-Organisation oder von bereits verknüpften Slack-Identitäten
 angenommen. Richtlinien und Budgets des Dienstprinzipals eines Kanals sind davon
 getrennt.
 

@@ -13,7 +13,7 @@ en lugar de registros de aplicaciones respaldados por SQL.
 La primera implementación está en la plantilla de Contenido: la barra lateral izquierda es
 rellenado a partir de archivos locales `.md` y `.mdx`; al seleccionar una página se abre el estándar
 Editor de contenido y guardar escrituras en el archivo seleccionado. Los mismos archivos pueden
-También puede ser editado por Codex, Código Claude, el agente de la barra lateral Agent-Native o un normal
+También puede ser editado por Codex, Código Claude, el agente de la barra lateral Jami Studio o un normal
 editor.
 
 En cuanto al contenido, esto hace que el producto parezca Obsidian de código abierto para MDX:
@@ -202,7 +202,7 @@ o actualiza `agent-native.json` con los valores predeterminados de contenido:
 La habilidad instalada indica a los agentes de codificación que utilicen Content actions
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document` y archivo de componente actions) cuando se trata de una aplicación de contenido local
-o Agent Native Desktop Bridge los expone. Si no hay ningún puente en funcionamiento, la habilidad
+o Jami Studio Desktop Bridge los expone. Si no hay ningún puente en funcionamiento, la habilidad
 recurre a ediciones directas seguras del repositorio mientras conserva el frontmatter, las importaciones, JSX,
 y desconocido MDX.
 
@@ -361,7 +361,7 @@ elija **Archivos locales** y elija una carpeta en Chrome, la aplicación puede l
 los archivos `.md` y `.mdx` a través del navegador File System Access API, pero
 Chrome no expone una ruta de carpeta absoluta para que Vite pueda compilar
 `components/*.tsx`. Para obtener una vista previa y recargar en caliente componentes React personalizados, ejecute
-Contenido local o use Agent Native Desktop para que el puente local confiable pueda
+Contenido local o use Jami Studio Desktop para que el puente local confiable pueda
 registre el espacio de trabajo elegido con el servidor de desarrollo de contenido local. En ese modo,
 ediciones en archivos de componentes existentes, recarga en caliente a través de Vite y adición o
 Al eliminar los archivos de componentes se vuelve a cargar el registro de componentes y el menú diagonal.

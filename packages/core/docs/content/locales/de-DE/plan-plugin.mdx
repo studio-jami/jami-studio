@@ -1,11 +1,11 @@
 ---
 title: "Plugin und Marktplatz planen"
-description: "Installieren Sie die Agent-Native-Plan-Skills (/visual-plan, /visual-recap, /visualize-repo) sowie den gehosteten Plan-MCP-Connector als Claude-Code- oder Codex-Plugin oder mit der universellen CLI. Wie Updates funktionieren und ob Sie etwas einreichen müssen."
+description: "Installieren Sie die Jami Studio-Plan-Skills (/visual-plan, /visual-recap, /visualize-repo) sowie den gehosteten Plan-MCP-Connector als Claude-Code- oder Codex-Plugin oder mit der universellen CLI. Wie Updates funktionieren und ob Sie etwas einreichen müssen."
 ---
 
 # Plugin und Marktplatz planen
 
-Die Agent-Native **Plan**-App wird als ein installierbares Paket geliefert. Eine einzige Installation fügt die Plan-Slash-Command-Skills hinzu **und** verbindet den gehosteten Plan-MCP-Connector, sodass der Agent Pläne generieren und die Skills sie direkt in der Plan-App veröffentlichen können.
+Die Jami Studio **Plan**-App wird als ein installierbares Paket geliefert. Eine einzige Installation fügt die Plan-Slash-Command-Skills hinzu **und** verbindet den gehosteten Plan-MCP-Connector, sodass der Agent Pläne generieren und die Skills sie direkt in der Plan-App veröffentlichen können.
 
 ## Was Sie bekommen {#what-you-get}
 
@@ -136,7 +136,7 @@ Die lokale Plan-App kann Browser-Änderungen im Repo-Ordner speichern. Der Plan
 App verwendet `apps.plan.roots[0].path` in `agent-native.json` als Standardort
 Um beworbene lokale Pläne zu speichern, greifen Sie auf `plans/` zurück.
 
-Dadurch werden Planinhalte aus der Agent-Native-Plandatenbank ferngehalten. Gehostete Freigabe,
+Dadurch werden Planinhalte aus der Jami Studio-Plandatenbank ferngehalten. Gehostete Freigabe,
 Kommentare, Screenshots und der Planverlauf sind erst verfügbar, wenn Sie dies ausdrücklich tun
 später veröffentlichen.
 
@@ -181,13 +181,13 @@ später veröffentlichen.
 
 </Diagram>
 
-Agent Native Desktop verfügt über einen separaten Synchronisierungspfad für lokale Dateien für gehostete Pläne: den
+Jami Studio Desktop verfügt über einen separaten Synchronisierungspfad für lokale Dateien für gehostete Pläne: den
 Desktop-App kann einen gehosteten Plan in lokale MDX-Dateien spiegeln und Änderungen wieder importieren
 ohne die Plan-App zu klonen oder ein CLI auszuführen. Dieser Workflow behält das gehostete
 Plandatenbank als Quelle der Wahrheit; Verwenden Sie beim Ziel den Datenschutzmodus für lokale Dateien
 Es gibt keine Plan-DB-Schreibvorgänge.
 
-> Das Plugin (`agent-native-visual-plans`) trägt die App-ID `visual-plans`, weshalb der Claude-Code-Plugin-Name und der Codex-Plugin-Name beide `agent-native-visual-plans` lauten. Der Anzeigename der Plan-App lautet „Agent-Native Plan“.
+> Das Plugin (`agent-native-visual-plans`) trägt die App-ID `visual-plans`, weshalb der Claude-Code-Plugin-Name und der Codex-Plugin-Name beide `agent-native-visual-plans` lauten. Der Anzeigename der Plan-App lautet „Jami Studio Plan“.
 
 ## Routen installieren {#install}
 
@@ -195,7 +195,7 @@ Es gibt drei Möglichkeiten. Die **universelle CLI-Route** ist diejenige, die wi
 
 ### Universelle Skill-Route (jeder MCP-Host) {#universal}
 
-Funktioniert für jeden Host – Claude Code, Codex, Cursor, Cline, Goose, benutzerdefinierte MCP-Apps von ChatGPT, Claude Cowork und alles andere, was mit MCP kompatibel ist. Die Agent-Native CLI installiert die Plan-Skills, registriert den gehosteten Plan-MCP-Connector **und führt im selben Schritt die Authentifizierung für die ausgewählten lokalen Clients aus**, sodass Ihr erster Tool-Aufruf nicht auf eine OAuth-Wand stößt:
+Funktioniert für jeden Host – Claude Code, Codex, Cursor, Cline, Goose, benutzerdefinierte MCP-Apps von ChatGPT, Claude Cowork und alles andere, was mit MCP kompatibel ist. Die Jami Studio CLI installiert die Plan-Skills, registriert den gehosteten Plan-MCP-Connector **und führt im selben Schritt die Authentifizierung für die ausgewählten lokalen Clients aus**, sodass Ihr erster Tool-Aufruf nicht auf eine OAuth-Wand stößt:
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -224,7 +224,7 @@ und `recap doctor` überprüft den Workflow, das lokale Veröffentlichungstoken 
 Laden Sie den Agent-Client neu, damit das neue skills und die neuen Tools geladen werden, und führen Sie ihn dann aus
 `/visual-plan`.
 
-> Hinweis: Der nackte `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) installiert **nur Anweisungen** – der MCP-Anschluss wird nicht registriert. Verwenden Sie den oben genannten Agent-Native CLI, wenn auch der Stecker verkabelt sein soll.
+> Hinweis: Der nackte `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) installiert **nur Anweisungen** – der MCP-Anschluss wird nicht registriert. Verwenden Sie den oben genannten Jami Studio CLI, wenn auch der Stecker verkabelt sein soll.
 
 ### Claude-Code (Plugin) {#claude-code}
 

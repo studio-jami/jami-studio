@@ -227,7 +227,7 @@ export default defineAction({
 
 Für eine `GET`-Aktion wird `leadId` als Abfrageparameter übergeben: `/_agent-native/actions/get-lead?leadId=abc`.
 
-<Endpoint id="doc-block-23t11k" title="Automatisch gemounteter Action-Endpunkt" method="GET" path="/_agent-native/actions/get-lead" summary="Jede Action wird hier automatisch gemountet - der Dateiname ist der Action-Name." auth={"Session-Cookie; Frontend-Aufrufe tragen `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-23t11k" title="Automatisch gemounteter Action-Endpunkt" method="GET" path="/_agent-native/actions/get-lead" summary="Jede Action wird hier automatisch gemountet - der Dateiname ist der Action-Name." auth={"Session-Cookie; Frontend-Aufrufe tragen `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -355,7 +355,7 @@ export default defineAction({
 | `caller`     | Festlegen, wann…                                                                                                                                           |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | Die In-App-Agentenschleife, ein Subagent/Agenten-Team oder eine A2A-Anfrage (A2A steuert dieselbe Agentenschleife, daher lauten die Toolaufrufe `"tool"`). |
-| `"frontend"` | Ein Browseraufruf über `useActionMutation` / `useActionQuery` / `callAction` (getaggt mit dem `X-Agent-Native-Frontend: 1`-Header).                        |
+| `"frontend"` | Ein Browseraufruf über `useActionMutation` / `useActionQuery` / `callAction` (getaggt mit dem `X-Jami Studio-Frontend: 1`-Header).                        |
 | `"http"`     | Ein reines programmatisches `POST` / `GET` bis `/_agent-native/actions/<name>` ohne den Frontend-Marker.                                                   |
 | `"cli"`      | `pnpm action <name>` (der CLI-Läufer).                                                                                                                     |
 | `"mcp"`      | Ein externer Agent über den MCP `tools/call`-Endpunkt.                                                                                                     |

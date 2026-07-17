@@ -13,7 +13,7 @@ em vez de registros de aplicativos baseados em SQL.
 A primeira implementação está no modelo Conteúdo: a barra lateral esquerda está
 preenchido a partir de arquivos locais `.md` e `.mdx`, selecionar uma página abre o padrão
 Editor de conteúdo e gravação de gravação no arquivo selecionado. Os mesmos arquivos podem
-também pode ser editado por Codex, Claude Code, agente da barra lateral Agent-Native ou um normal
+também pode ser editado por Codex, Claude Code, agente da barra lateral Jami Studio ou um normal
 editor.
 
 Para conteúdo, isso faz com que o produto pareça Obsidian de código aberto para MDX:
@@ -202,7 +202,7 @@ ou atualiza `agent-native.json` com padrões de conteúdo:
 A habilidade instalada informa aos agentes de codificação para usarem o Conteúdo actions
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document` e arquivo de componente actions) quando um aplicativo de conteúdo local
-ou Agent Native Desktop bridge os expõe. Se nenhuma ponte estiver funcionando, a habilidade
+ou Jami Studio Desktop bridge os expõe. Se nenhuma ponte estiver funcionando, a habilidade
 volta para edições de repositório diretas e seguras, preservando o frontmatter, as importações, JSX,
 e MDX desconhecido.
 
@@ -361,7 +361,7 @@ escolha **Arquivos locais** e escolha uma pasta no Chrome, o app pode ler e grav
 os arquivos `.md` e `.mdx` através do navegador Sistema de Arquivos Acesse API, mas
 O Chrome não expõe um caminho de pasta absoluto para Vite compilar
 `components/*.tsx`. Para visualizar e recarregar componentes React personalizados, execute
-Conteúdo localmente ou use o Agent Native Desktop para que a ponte local confiável possa
+Conteúdo localmente ou use o Jami Studio Desktop para que a ponte local confiável possa
 registre o espaço de trabalho escolhido no servidor de desenvolvimento de conteúdo local. Nesse modo,
 edições em arquivos de componentes existentes, recarregamento a quente por meio de Vite e adição de ou
 a remoção de arquivos de componentes recarrega o registro do componente e o menu de barras.

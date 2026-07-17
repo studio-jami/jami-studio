@@ -1,18 +1,18 @@
 ---
 title: "Agentes de aproveitamento"
-description: "Execute código Claude, Codex, Pi e outros equipamentos de codificação completos como agentes incorporados dentro do Agent-Native, com seu próprio loop, sandbox, ferramentas nativas e sessões recuperáveis apoiadas por SQL."
+description: "Execute código Claude, Codex, Pi e outros equipamentos de codificação completos como agentes incorporados dentro do Jami Studio, com seu próprio loop, sandbox, ferramentas nativas e sessões recuperáveis apoiadas por SQL."
 search: "agentes de aproveitamento AgentHarness ai-sdk HarnessAgent Código Claude Codex Pi Cursor Mastra agente de codificação incorporado resolveAgentHarness startAgentHarnessRun ferramentas de host de sandbox de sessão recuperável"
 ---
 
 # Agentes de aproveitamento
 
 > **Para quem se destina:** autores de host conectando um tempo de execução de codificação completo (Código Claude,
-> Codex, Pi) em Agent-Native como agente. Construindo um aplicativo? Comece com
+> Codex, Pi) em Jami Studio como agente. Construindo um aplicativo? Comece com
 > [Creating Templates](/docs/creating-templates).
 
 Um agente de aproveitamento é um tempo de execução de agente completo — Código Claude, Codex, Pi e similares —
 que possui seu próprio loop, espaço de trabalho, ferramentas de arquivo nativas, estado de sessão, compactação,
-modelo de aprovação e comportamento do sandbox. Agent-Native executa isso através do
+modelo de aprovação e comportamento do sandbox. Jami Studio executa isso através do
 **`AgentHarness`** substrato em `@agent-native/core/agent/harness`, transmite seu
 eventos na transcrição normal e persiste sua sessão nativa em um thread
 pode pausar e retomar.
@@ -20,10 +20,10 @@ pode pausar e retomar.
 Isso é diferente do agente de bate-papo integrado e de trazer seu próprio bate-papo
 tempo de execução. O agente integrado e `AgentEngine` são para um modelo de ida e volta
 abaixo de `runAgentLoop`. Um chicote não é um provedor `AgentEngine` — ele executa seu
-próprio loop de ponta a ponta, então Agent-Native o conduz como uma sessão, não como uma única
+próprio loop de ponta a ponta, então Jami Studio o conduz como uma sessão, não como uma única
 chamada de modelo.
 
-<Diagram id="doc-block-1r2cc85" title={"Um arnês possui seu laço; Agent-Native conduz a sessão"} summary={"O AgentHarness substrato creates/resumes a sessão nativa, transmite seus eventos para a transcrição normal e persiste resumeState em SQL entre os turnos."}>
+<Diagram id="doc-block-1r2cc85" title={"Um arnês possui seu laço; Jami Studio conduz a sessão"} summary={"O AgentHarness substrato creates/resumes a sessão nativa, transmite seus eventos para a transcrição normal e persiste resumeState em SQL entre os turnos."}>
 
 ```html
 <div class="diagram-harness">
@@ -76,11 +76,11 @@ chamada de modelo.
 | Você quer…                                                                               | Usar                                         |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Execute o código Claude / Codex / Pi **como agente**, com seu próprio loop + ferramentas | **Agentes de aproveitamento** (esta página)  |
-| Renderizar um espaço de trabalho de codificação estilo Claude/Codex **UI**               | [Agent-Native Code UI](/docs/code-agents-ui) |
+| Renderizar um espaço de trabalho de codificação estilo Claude/Codex **UI**               | [Jami Studio Code UI](/docs/code-agents-ui) |
 | Troque o back-end que executa a **ferramenta `run-code`** do agente                      | [Adapters](/docs/sandbox-adapters)           |
 | Prepare uma ferramenta CLI (`gh`, `ffmpeg`) para o agente ligar                          | [Adapters](/docs/sandbox-adapters)           |
 
-Superfícies adjacentes: coloque um agente que você construiu em outro lugar atrás do bate-papo de Agent-Native
+Superfícies adjacentes: coloque um agente que você construiu em outro lugar atrás do bate-papo de Jami Studio
 UI com [`AgentChatRuntime`](/docs/native-chat-ui#byo-agent-runtimes); deixe um
 chamada de host MCP externa em seu aplicativo via [External Agents](/docs/external-agents);
 gerar execução de segundo plano/subagente com [Custom Agents & Teams](/docs/agent-teams).
@@ -108,7 +108,7 @@ permite verificar primeiro.
 
 ## Agentes ACP {#acp}
 
-Agent-Native pode atuar como um [ACP](https://agentclientprotocol.com) (Agente Cliente
+Jami Studio pode atuar como um [ACP](https://agentclientprotocol.com) (Agente Cliente
 Protocolo) **cliente** e acione um agente de codificação local — Gemini CLI, Claude Code,
 ou qualquer agente compatível com ACP — através deste mesmo substrato. O agente é executado como um
 subprocesso local que fala JSON-RPC delimitado por nova linha sobre stdio; Editor do ACP
@@ -166,7 +166,7 @@ portanto, o agente usa seu próprio shell.
 
 Existem duas superfícies Codex e elas autenticam de maneira diferente:
 
-- **Agent-Native Code / Desktop** executa `codex exec` na máquina do usuário. Se
+- **Jami Studio Code / Desktop** executa `codex exec` na máquina do usuário. Se
   o usuário executou `codex login`, esta execução local reutiliza qualquer ChatGPT
   assinatura ou chave API autentica os relatórios Codex CLI instalados por meio de
   `codex login status`.
@@ -174,7 +174,7 @@ Existem duas superfícies Codex e elas autenticam de maneira diferente:
   dentro da caixa de proteção do chicote através de `@openai/codex-sdk`. Não acontece silenciosamente
   herdar o login do usuário Desktop `~/.codex` porque o sandbox pode ser remoto
   ou isolado. Para sandboxes confiáveis/privadas, opte por `codexCliAuth: true`;
-  Agent-Native copia o arquivo de autenticação local Codex CLI para o sandbox antes do
+  Jami Studio copia o arquivo de autenticação local Codex CLI para o sandbox antes do
   arnês começa. Para sandboxes hospedados ou compartilhados, configure API-key/gateway
   autenticação.
 
@@ -249,9 +249,9 @@ para continuar uma sessão que você está mantendo na memória.
 
 ## Sessões e currículo {#sessions}
 
-Um chicote possui um estado de sessão nativo de longa duração. Agent-Native persiste em SQL
+Um chicote possui um estado de sessão nativo de longa duração. Jami Studio persiste em SQL
 para que um thread possa sobreviver entre turnos, processos e implantações. O `resumeState`
-é **opaco** — Agent-Native armazena e devolve, mas nunca inspeciona ou
+é **opaco** — Jami Studio armazena e devolve, mas nunca inspeciona ou
 interpreta.
 
 <Diagram id="doc-block-1gmpipb" title={"Retome entre turnos, processos e implantações"} summary={"Cada turno separa um resumeState opaco em SQL; no próximo turno, ele retorna para createSession em vez de reproduzir o histórico do bate-papo."}>
@@ -311,7 +311,7 @@ diretamente apenas em um host personalizado.
 
 Um chicote traz suas próprias ferramentas nativas (leitura, edição, gravação, shell e assim por diante), então
 você **não** expõe novamente a edição de arquivos como ferramentas de host. Passe apenas por **estreito,
-conjunto intencional** de Agent-Native actions até `createSession.tools` quando você
+conjunto intencional** de Jami Studio actions até `createSession.tools` quando você
 deseja que o equipamento atinja operações específicas do aplicativo e mantenha `defineAction`
 autenticação, contexto de solicitação, tempos limite, truncamento e metadados somente leitura intactos quando
 você faz.
@@ -331,7 +331,7 @@ dê-lo à tona e retome a decisão do usuário. Veja
 
 ## Eventos {#events}
 
-Uma sessão de aproveitamento transmite valores `AgentHarnessEvent`, que Agent-Native
+Uma sessão de aproveitamento transmite valores `AgentHarnessEvent`, que Jami Studio
 traduz-se para o fluxo `AgentChatEvent` padrão com
 `agentHarnessEventToAgentChatEvents`. A união de eventos cobre `text-delta`,
 `thinking-delta`, `activity`, `tool-start`, `tool-done` (que pode carregar um
@@ -403,7 +403,7 @@ uma implementação deste contrato, não a abstração pública.
 - Não adicione código Claude, Codex, Cursor, Mastra ou Pi como um `AgentEngine`. Eles
   possuem seu loop; executar um em `AgentEngine.stream()` executa o loop duas vezes
   e perde a semântica do ciclo de vida da sessão.
-- Não reproduza todo o histórico de bate-papo do Agent-Native em um chicote a cada turno. Currículo
+- Não reproduza todo o histórico de bate-papo do Jami Studio em um chicote a cada turno. Currículo
   a sessão de aproveitamento com seu `resumeState`.
 - Não armazene `resumeState` em `application_state`. Pertence ao arnês
   tabela da sessão SQL.
@@ -414,7 +414,7 @@ uma implementação deste contrato, não a abstração pública.
 
 - [Native Interface de chat](/docs/native-chat-ui) — coloque seu próprio agente por trás do bate-papo UI com `AgentChatRuntime`.
 - [Agent Surfaces](/docs/agent-surfaces) — escolha headless, chat, sidecar ou aplicativo completo.
-- [Agent-Native Code UI](/docs/code-agents-ui) — a superfície reutilizável do espaço de trabalho de codificação.
+- [Jami Studio Code UI](/docs/code-agents-ui) — a superfície reutilizável do espaço de trabalho de codificação.
 - [Custom Agents & Teams](/docs/agent-teams) — execuções em segundo plano e delegação de subagentes.
 - [Sandbox Adapters](/docs/sandbox-adapters) — back-ends de execução conectáveis para chicotes de codificação.
 - [Human Approval](/docs/human-approval) — o chicote de superfície aprovado é usado.

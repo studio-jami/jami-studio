@@ -13,7 +13,7 @@ instead of SQL-backed app records.
 The first implementation is in the Content template: the left sidebar is
 populated from local `.md` and `.mdx` files, selecting a page opens the standard
 Content editor, and saving writes back to the selected file. The same files can
-also be edited by Codex, Claude Code, the Agent-Native sidebar agent, or a normal
+also be edited by Codex, Claude Code, the Jami Studio sidebar agent, or a normal
 editor.
 
 For Content, this makes the product feel like open-source Obsidian for MDX:
@@ -200,7 +200,7 @@ or updates `agent-native.json` with Content defaults:
 The installed skill tells coding agents to use Content actions
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document`, and component-file actions) when a local Content app
-or Agent Native Desktop bridge exposes them. If no bridge is running, the skill
+or Jami Studio Desktop bridge exposes them. If no bridge is running, the skill
 falls back to safe direct repo edits while preserving frontmatter, imports, JSX,
 and unknown MDX.
 
@@ -358,7 +358,7 @@ choose **Local files**, and pick a folder in Chrome, the app can read and write
 the `.md` and `.mdx` files through the browser File System Access API, but
 Chrome does not expose an absolute folder path for Vite to compile
 `components/*.tsx`. To preview and hot reload custom React components, run
-Content locally or use Agent Native Desktop so the trusted local bridge can
+Content locally or use Jami Studio Desktop so the trusted local bridge can
 register the picked workspace with the local Content dev server. In that mode,
 edits to existing component files hot reload through Vite, and adding or
 removing component files reloads the component registry and slash menu.

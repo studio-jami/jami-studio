@@ -5,7 +5,7 @@ description: "Public React building blocks for custom agent UI, chat fields, con
 
 # Component API
 
-Agent-Native ships a full sidebar, but the sidebar is not the contract. The
+Jami Studio ships a full sidebar, but the sidebar is not the contract. The
 contract is the runtime: chat streaming, thread state, actions, context,
 attachments, model selection, runs, and SQL-backed sync. Use the stock
 components when you can, and drop down a layer when you need custom product UI.
@@ -130,13 +130,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client` or `/client/chat` | You have a Claude Agent SDK stream and want it normalized into the chat UI.                      |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` or `/client/chat` | You have a Vercel AI SDK stream and want it normalized into the chat UI.                         |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` or `/client/chat` | You need to adapt an `AgentChatRuntime` into assistant-ui yourself.                              |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` or `/client/chat` | You need the built-in Agent-Native SSE transport as a low-level assistant-ui adapter.            |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` or `/client/chat` | You need the built-in Jami Studio SSE transport as a low-level assistant-ui adapter.            |
 | `useChatThreads()`                   | `@agent-native/core/client` or `/client/chat` | You need a custom thread list, history picker, or scoped chat UI.                                |
 | `sendToAgentChat()`                  | `@agent-native/core/client` or `/client/chat` | A product action should hand work to the agent chat.                                             |
 
 `AgentChatRuntime` is the BYO-agent contract for the standard chat shell. Pass
 `runtime` to `<AssistantChat>` when an external agent should power the
-conversation while Agent-Native keeps the composer, transcript, tool cards, and
+conversation while Jami Studio keeps the composer, transcript, tool cards, and
 native widget rendering. The connectors above are the API surface; the runtime
 contract and event shapes are taught in
 [Native Chat UI — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

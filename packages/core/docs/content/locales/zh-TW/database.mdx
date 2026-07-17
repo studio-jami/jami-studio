@@ -1,11 +1,11 @@
 ---
 title: "資料庫"
-description: "將便攜式 SQL 資料庫連線到您的 Agent-Native 應用，並編寫與提供者無關的 Drizzle 程式碼。"
+description: "將便攜式 SQL 資料庫連線到您的 Jami Studio 應用，並編寫與提供者無關的 Drizzle 程式碼。"
 ---
 
 # 資料庫
 
-Agent-Native 應用程式使用 [Drizzle ORM](https://orm.drizzle.team) 並支援便攜式 SQL 後端。對於本機開發之外的任何內容，請透過設定 `DATABASE_URL` 連線持久性 SQL 資料庫 - Postgres、libSQL/Turso 或另一個 Drizzle 相容後端。取消設定該變數後，應用程式將回退到零設定本機 SQLite 檔案，以便您可以立即開始開發。
+Jami Studio 應用程式使用 [Drizzle ORM](https://orm.drizzle.team) 並支援便攜式 SQL 後端。對於本機開發之外的任何內容，請透過設定 `DATABASE_URL` 連線持久性 SQL 資料庫 - Postgres、libSQL/Turso 或另一個 Drizzle 相容後端。取消設定該變數後，應用程式將回退到零設定本機 SQLite 檔案，以便您可以立即開始開發。
 
 <Diagram id="doc-block-b22d2j" title={"一個模式，多個後端"} summary={"應用程式的程式碼使用框架的與方言無關的幫助程式。執行時從 DATABASE_URL 自動偵測方言； 未設定表示本機 SQLite 檔案。"}>
 

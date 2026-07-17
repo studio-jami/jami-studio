@@ -13,7 +13,7 @@ anstelle von SQL-gestützten App-Datensätzen.
 Die erste Implementierung befindet sich in der Inhaltsvorlage: Die linke Seitenleiste ist
 wird aus lokalen `.md`- und `.mdx`-Dateien gefüllt. Wenn Sie eine Seite auswählen, wird der Standard geöffnet
 Inhaltseditor und Speichern schreibt zurück in die ausgewählte Datei. Dieselben Dateien können
-kann auch von Codex, Claude Code, dem Agent-Native-Sidebar-Agenten oder einem normalen bearbeitet werden
+kann auch von Codex, Claude Code, dem Jami Studio-Sidebar-Agenten oder einem normalen bearbeitet werden
 Herausgeber.
 
 Was den Inhalt angeht, fühlt sich das Produkt dadurch wie Open-Source-Obsidian für MDX an:
@@ -200,7 +200,7 @@ oder aktualisiert `agent-native.json` mit den Inhaltsstandards:
 Der installierte Skill weist Programmieragenten an, Content actions zu verwenden
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document` und Komponentendatei actions) bei einer lokalen Content-App
-oder Agent Native Desktop Bridge macht sie verfügbar. Wenn keine Bridge läuft, wird der Skill
+oder Jami Studio Desktop Bridge macht sie verfügbar. Wenn keine Bridge läuft, wird der Skill
 greift auf sichere direkte Repo-Bearbeitungen zurück und behält dabei Frontmatter, Importe, JSX,
 und unbekanntes MDX.
 
@@ -359,7 +359,7 @@ Wählen Sie **Lokale Dateien** und einen Ordner in Chrome, den die App lesen und
 die Dateien `.md` und `.mdx` über den Browser-Dateisystemzugriff auf API, aber
 Chrome stellt keinen absoluten Ordnerpfad für die Kompilierung durch Vite bereit
 `components/*.tsx`. Um benutzerdefinierte React-Komponenten in der Vorschau anzuzeigen und im laufenden Betrieb neu zu laden, führen Sie
-Inhalte lokal oder verwenden Sie Agent Native Desktop, damit die vertrauenswürdige lokale Bridge dies tun kann
+Inhalte lokal oder verwenden Sie Jami Studio Desktop, damit die vertrauenswürdige lokale Bridge dies tun kann
 registrieren Sie den ausgewählten Arbeitsbereich beim lokalen Content-Entwicklungsserver. In diesem Modus
 Änderungen an vorhandenen Komponentendateien, Hot-Reload über Vite und Hinzufügen von oder
 Durch das Entfernen von Komponentendateien werden die Komponentenregistrierung und das Slash-Menü neu geladen.

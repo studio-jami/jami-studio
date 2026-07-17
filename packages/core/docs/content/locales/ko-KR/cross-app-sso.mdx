@@ -90,7 +90,7 @@ description: "Dispatch를 ID 기관으로 사용하여 ID 페더레이션을 통
 
 </Diagram>
 
-1. **앱 → Dispatch(승인).** 앱의 `GET /_agent-native/identity/login` 경로(“Agent-Native로 로그인” 버튼이 연결되는 경로)가 리디렉션을 구성하고 사용자를 ID 기관으로 보냅니다.
+1. **앱 → Dispatch(승인).** 앱의 `GET /_agent-native/identity/login` 경로(“Jami Studio로 로그인” 버튼이 연결되는 경로)가 리디렉션을 구성하고 사용자를 ID 기관으로 보냅니다.
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ description: "Dispatch를 ID 기관으로 사용하여 ID 페더레이션을 통
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **설정** → 앱에 위의 흐름을 실행하는 **"Agent-Native로 로그인"** 옵션이 표시됩니다. 직접 로컬 로그인(이메일/비밀번호, Google)은 여전히 함께 작동합니다.
+- **설정** → 앱에 위의 흐름을 실행하는 **"Jami Studio로 로그인"** 옵션이 표시됩니다. 직접 로컬 로그인(이메일/비밀번호, Google)은 여전히 함께 작동합니다.
 - **설정 해제(기본값)** → **동작 변경 없음.** 앱은 이전과 동일하게 인증합니다. 페더레이션 코드 경로가 휴면 상태입니다. 스키마 변경이나 마이그레이션할 사항이 없으므로 변수를 켜거나 끄는 것은 언제든지 완전히 되돌릴 수 있습니다.
 
 ## 보안 {#security}
@@ -284,7 +284,7 @@ AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 **3. 카나리아(체크리스트)를 확인하세요.**
 
 - 앱에서 로그아웃\*\*하세요.
-- 이제 로그인 화면에 **"Agent-Native로 로그인"**이 표시됩니다. 클릭하세요.
+- 이제 로그인 화면에 **"Jami Studio로 로그인"**이 표시됩니다. 클릭하세요.
 - **Dispatch**로 이동하여 로그인을 완료합니다(또는 이미 로그인한 경우 바로 통과).
 - **다시 앱으로 리디렉션되어 로그인**됩니다. 이 계정은 새 계정이 아니라 이전에 사용했던 **동일한 기존 계정**(동일한 이메일)입니다.
 - **앱 데이터는 그대로 유지됩니다**. 기존 기록, 설정, 조직 범위 지정은 그대로 유지됩니다.

@@ -1,18 +1,18 @@
 ---
 title: "Harness-Agenten"
-description: "Führen Sie Claude Code, Codex, Pi und andere vollständige Codierungssysteme als eingebettete Agenten in Agent-Native aus, mit eigener Schleife, Sandbox, nativen Tools und wiederaufnehmbaren, von SQL unterstützten Sitzungen."
+description: "Führen Sie Claude Code, Codex, Pi und andere vollständige Codierungssysteme als eingebettete Agenten in Jami Studio aus, mit eigener Schleife, Sandbox, nativen Tools und wiederaufnehmbaren, von SQL unterstützten Sitzungen."
 search: "Harness Agents AgentHarness ai-sdk HarnessAgent Claude Code Codex Pi Cursor Mastra eingebetteter Codierungsagent discoverAgentHarness startAgentHarnessRun fortsetzbare Sitzungs-Sandbox-Host-Tools"
 ---
 
 # Harness-Agenten
 
 > **Für wen ist das gedacht:** Host-Autoren, die eine vollständige Coding-Laufzeit verkabeln (Claude-Code,
-> Codex, Pi) als Agent in Agent-Native ein. Eine App erstellen? Beginnen Sie mit
+> Codex, Pi) als Agent in Jami Studio ein. Eine App erstellen? Beginnen Sie mit
 > [Creating Templates](/docs/creating-templates).
 
 Ein Harness-Agent ist eine vollständige Agentenlaufzeit – Claude-Code, Codex, Pi und ähnliches –
 das über eine eigene Schleife, einen eigenen Arbeitsbereich, native Dateitools, einen eigenen Sitzungsstatus und eine eigene Komprimierung verfügt
-Genehmigungsmodell und Sandbox-Verhalten. Agent-Native führt diese über den
+Genehmigungsmodell und Sandbox-Verhalten. Jami Studio führt diese über den
 **`AgentHarness`** Substrat in `@agent-native/core/agent/harness`, streamt ihre
 Ereignisse in das normale Transkript und behält ihre native Sitzung als Thread bei
 kann pausieren und fortsetzen.
@@ -20,10 +20,10 @@ kann pausieren und fortsetzen.
 Dies unterscheidet sich vom integrierten Chat-Agenten und vom Mitbringen Ihres eigenen Chats
 Laufzeit. Der integrierte Agent und `AgentEngine` sind für einen Modell-Roundtrip
 unter `runAgentLoop`. Ein Kabelbaum ist kein `AgentEngine`-Anbieter – er betreibt seinen
-Eigene End-to-End-Schleife, daher fährt Agent-Native sie als Sitzung und nicht als einzelne
+Eigene End-to-End-Schleife, daher fährt Jami Studio sie als Sitzung und nicht als einzelne
 Modellaufruf.
 
-<Diagram id="doc-block-q2hd5a" title={"Ein Geschirr besitzt seine Schlaufe; Agent-Native steuert die Sitzung"} summary={"Das AgentHarness-Substrat creates/resumes der nativen Sitzung, streamt seine Ereignisse in das normale Transkript und behält zwischen den Runden den resumeState in SQL bei."}>
+<Diagram id="doc-block-q2hd5a" title={"Ein Geschirr besitzt seine Schlaufe; Jami Studio steuert die Sitzung"} summary={"Das AgentHarness-Substrat creates/resumes der nativen Sitzung, streamt seine Ereignisse in das normale Transkript und behält zwischen den Runden den resumeState in SQL bei."}>
 
 ```html
 <div class="diagram-harness">
@@ -76,11 +76,11 @@ Modellaufruf.
 | Sie möchten…                                                                       | Verwenden                                    |
 | ---------------------------------------------------------------------------------- | -------------------------------------------- |
 | Führen Sie Claude Code / Codex / Pi **als Agent** mit eigener Schleife + Tools aus | **Harness-Agenten** (diese Seite)            |
-| Rendern Sie einen **Codierungsarbeitsbereich UI** im Claude-Code/Codex-Stil        | [Agent-Native Code UI](/docs/code-agents-ui) |
+| Rendern Sie einen **Codierungsarbeitsbereich UI** im Claude-Code/Codex-Stil        | [Jami Studio Code UI](/docs/code-agents-ui) |
 | Tausch das Backend, das das **`run-code`-Tool** des Agenten ausführt               | [Adapters](/docs/sandbox-adapters)           |
 | Verpacken Sie ein CLI-Tool (`gh`, `ffmpeg`), damit der Agent anrufen kann          | [Adapters](/docs/sandbox-adapters)           |
 
-Angrenzende Oberflächen: Platzieren Sie einen Agenten, den Sie an anderer Stelle erstellt haben, hinter dem Chat von Agent-Native
+Angrenzende Oberflächen: Platzieren Sie einen Agenten, den Sie an anderer Stelle erstellt haben, hinter dem Chat von Jami Studio
 UI mit [`AgentChatRuntime`](/docs/native-chat-ui#byo-agent-runtimes); lass ein
 externer MCP-Hostaufruf in Ihre App über [External Agents](/docs/external-agents);
 Spawn-Hintergrund/Subagent läuft mit [Custom Agents & Teams](/docs/agent-teams).
@@ -108,7 +108,7 @@ ermöglicht es Ihnen, zuerst zu prüfen.
 
 ## ACP-Agenten {#acp}
 
-Agent-Native kann als [ACP](https://agentclientprotocol.com) (Agent Client) fungieren
+Jami Studio kann als [ACP](https://agentclientprotocol.com) (Agent Client) fungieren
 Protokoll) **Client** und steuern Sie einen lokalen Codierungsagenten – Gemini CLI, Claude Code,
 oder ein beliebiger ACP-kompatibler Agent – über dasselbe Substrat. Der Agent wird als
 lokaler Unterprozess, der durch Zeilenumbrüche getrennte JSON-RPC über stdio spricht; Editor von ACP
@@ -166,7 +166,7 @@ daher verwendet der Agent seine eigene Shell.
 
 Es gibt zwei Codex-Oberflächen, die sich unterschiedlich authentifizieren:
 
-- **Agent-Native Code / Desktop** führt `codex exec` auf dem Computer des Benutzers aus. Wenn
+- **Jami Studio Code / Desktop** führt `codex exec` auf dem Computer des Benutzers aus. Wenn
   Der Benutzer hat `codex login` ausgeführt. Bei dieser lokalen Ausführung wird alles ChatGPT wiederverwendet
   Abonnement oder API-Schlüsselauthentifizierung der installierten Codex CLI-Berichte über
   `codex login status`.
@@ -174,7 +174,7 @@ Es gibt zwei Codex-Oberflächen, die sich unterschiedlich authentifizieren:
   in der Kabelbaum-Sandbox durch `@openai/codex-sdk`. Es geschieht nicht lautlos
   übernimmt die Desktop-`~/.codex`-Anmeldung des Benutzers, da die Sandbox möglicherweise remote ist
   oder isoliert. Für vertrauenswürdige/private Sandboxen aktivieren Sie die Option `codexCliAuth: true`;
-  Agent-Native kopiert die lokale Codex CLI-Authentifizierungsdatei vor dem
+  Jami Studio kopiert die lokale Codex CLI-Authentifizierungsdatei vor dem
   Kabelbaum startet. Konfigurieren Sie für gehostete oder gemeinsam genutzte Sandboxes API-key/gateway
   auth stattdessen.
 
@@ -249,9 +249,9 @@ um eine Sitzung fortzusetzen, die Sie im Speicher halten.
 
 ## Sitzungen und Lebenslauf {#sessions}
 
-Ein Harness besitzt einen langlebigen nativen Sitzungsstatus. Agent-Native behält es in SQL
+Ein Harness besitzt einen langlebigen nativen Sitzungsstatus. Jami Studio behält es in SQL
 damit ein Thread über Runden, Prozesse und Bereitstellungen hinweg überleben kann. Der `resumeState`
-ist **undurchsichtig** – Agent-Native speichert es und gibt es zurück, inspiziert es jedoch nie oder
+ist **undurchsichtig** – Jami Studio speichert es und gibt es zurück, inspiziert es jedoch nie oder
 interpretiert es.
 
 <Diagram id="doc-block-u53lmj" title={"Fortsetzen über Runden, Prozesse und Bereitstellungen hinweg"} summary={"Bei jeder Runde wird ein undurchsichtiger „resumeState“ in SQL abgetrennt; In der nächsten Runde wird es wieder in createSession eingespeist, anstatt den Chatverlauf erneut abzuspielen."}>
@@ -311,7 +311,7 @@ direkt nur in einem benutzerdefinierten Host.
 
 Ein Harness bringt seine eigenen nativen Tools mit (Lesen, Bearbeiten, Schreiben, Shell usw.), also
 Sie stellen die Dateibearbeitung **nicht** erneut als Host-Tools zur Verfügung. Passieren Sie nur eine **schmale,
-absichtliche Festlegung** von Agent-Native actions bis `createSession.tools`, wenn Sie
+absichtliche Festlegung** von Jami Studio actions bis `createSession.tools`, wenn Sie
 Sie möchten, dass der Kabelbaum bestimmte App-Vorgänge erreicht – und `defineAction` beibehalten
 Authentifizierung, Anforderungskontext, Zeitüberschreitungen, Kürzung und schreibgeschützte Metadaten intakt, wenn
 Das tun Sie.
@@ -331,7 +331,7 @@ Auftauchen und nach der Entscheidung des Benutzers fortfahren. Siehe
 
 ## Ereignisse {#events}
 
-Eine Harness-Sitzung streamt `AgentHarnessEvent`-Werte, die Agent-Native
+Eine Harness-Sitzung streamt `AgentHarnessEvent`-Werte, die Jami Studio
 übersetzt in den Standard-`AgentChatEvent`-Stream mit
 `agentHarnessEventToAgentChatEvents`. Die Ereignisunion umfasst `text-delta`,
 `thinking-delta`, `activity`, `tool-start`, `tool-done` (die einen tragen können
@@ -403,7 +403,7 @@ Eine Implementierung dieses Vertrags, nicht die öffentliche Abstraktion.
 - Fügen Sie Claude-Code, Codex, Cursor, Mastra oder Pi nicht als `AgentEngine` hinzu. Sie
   eigene Schleife; Wenn Sie einen unter `AgentEngine.stream()` ausführen, wird die Schleife doppelt ausgeführt
   und die Semantik des Sitzungslebenszyklus geht verloren.
-- Spielen Sie nicht jede Runde den gesamten Agent-Native-Chatverlauf in einem Geschirr ab. Fortsetzen
+- Spielen Sie nicht jede Runde den gesamten Jami Studio-Chatverlauf in einem Geschirr ab. Fortsetzen
   Stattdessen die Harness-Sitzung mit ihrem `resumeState`.
 - Don't store `resumeState` in `application_state`. It belongs in the harness
   Sitzungs-SQL-Tabelle.
@@ -414,7 +414,7 @@ Eine Implementierung dieses Vertrags, nicht die öffentliche Abstraktion.
 
 - [Native Chat-Oberfläche](/docs/native-chat-ui) – Stellen Sie Ihren eigenen Agenten hinter den Chat-Oberfläche mit `AgentChatRuntime`.
 - [Agent Surfaces](/docs/agent-surfaces) – wählen Sie Headless, Chat, Sidecar oder Voll-App.
-- [Agent-Native Code UI](/docs/code-agents-ui) – die wiederverwendbare Codierungsarbeitsbereichsoberfläche.
+- [Jami Studio Code UI](/docs/code-agents-ui) – die wiederverwendbare Codierungsarbeitsbereichsoberfläche.
 - [Custom Agents & Teams](/docs/agent-teams) – Hintergrundausführungen und Subagentendelegierung.
 - [Sandbox Adapters](/docs/sandbox-adapters) – steckbare Ausführungs-Backends für Codierungskabelbäume.
 - [Human Approval](/docs/human-approval) – der zugelassene Oberflächenkabelbaum läuft.

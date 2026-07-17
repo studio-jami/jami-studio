@@ -13,7 +13,7 @@ search: "Claude ChatGPT Claude Code Codex Cursor Claude Cowork MCP Apps agent-na
 | Connect an external agent/host to your app                   | **This page** — External Agents      |
 | Give your agent more tools (consume other MCP servers)       | [MCP Clients](/docs/mcp-clients)     |
 | Build inline UIs that render in Claude/ChatGPT               | [MCP Apps](/docs/mcp-apps)           |
-| Build generated inline UI inside Agent-Native chat           | [Generative UI](/docs/generative-ui) |
+| Build generated inline UI inside Jami Studio chat           | [Generative UI](/docs/generative-ui) |
 | Lower-level MCP server reference (auth, tools, custom mount) | [MCP Server](/docs/mcp-protocol)     |
 
 An agent-native app is reachable by any MCP-compatible host — Claude, Claude Desktop, Claude Code, ChatGPT custom MCP apps, Codex, Cursor, Claude Cowork, VS Code GitHub Copilot, Goose, Postman, MCPJam, and future clients that implement the standard. External agents are great at producing artifacts (a draft, an event, a dashboard) but they often live in a terminal or another app. Without a bridge, the user gets a wall of JSON and has to go find the thing.
@@ -87,14 +87,14 @@ The identity rule is the safety hinge: the link is just `view` + record ids + fi
 ## Which agent path do you need? {#which-agent-path}
 
 - **External MCP host:** use this page when Claude, ChatGPT, Codex, Cursor, OpenCode, GitHub Copilot / VS Code, or another MCP-compatible host should call your hosted agent-native app.
-- **Your own runtime behind Agent-Native chat:** see [Agent Surfaces](/docs/agent-surfaces#byo-agent) and [Native Chat UI](/docs/native-chat-ui#byo-agent-runtimes) when an agent built with another framework should power `<AssistantChat runtime={...}>`.
+- **Your own runtime behind Jami Studio chat:** see [Agent Surfaces](/docs/agent-surfaces#byo-agent) and [Native Chat UI](/docs/native-chat-ui#byo-agent-runtimes) when an agent built with another framework should power `<AssistantChat runtime={...}>`.
 - **Your app consuming MCP tools:** see [MCP Clients](/docs/mcp-clients) when an agent-native app needs to call tools exposed by another MCP server.
 - **Another app or agent via A2A:** use [Agent Mentions](/docs/agent-mentions) and [A2A](/docs/a2a-protocol) when agent-native apps should discover and delegate to each other.
 - **Local custom sub-agents:** use [Workspace](/docs/workspace) when you want custom agent profiles inside the agent-native workspace itself.
 
 ## Easy setup {#easy-setup}
 
-Add one remote MCP connector to the host where you want to use Agent-Native.
+Add one remote MCP connector to the host where you want to use Jami Studio.
 
 For workspace or cross-app work, use Dispatch:
 
@@ -121,13 +121,13 @@ host-specific tabs for Claude, ChatGPT, Cursor, Claude Code, Codex, and Other.
 ### Claude and ChatGPT OAuth {#oauth}
 
 Claude / Claude Desktop: add a custom connector, paste the MCP URL, click
-**Connect**, sign in with your Agent-Native account, approve the MCP scopes,
+**Connect**, sign in with your Jami Studio account, approve the MCP scopes,
 and enable the connector in a chat. Claude Code uses the same URL: add it as a
 remote HTTP MCP server, run `/mcp`, then choose **Authenticate**.
 
 ChatGPT: use a workspace where custom MCP connectors or developer-mode apps are
 enabled, create a custom connector/app, paste the same MCP URL, choose OAuth,
-scan/discover tools, sign in with Agent-Native, approve the scopes, and enable
+scan/discover tools, sign in with Jami Studio, approve the scopes, and enable
 the connector in a chat.
 
 OAuth grants are per host and per user. The host stores the tokens and
@@ -149,11 +149,11 @@ MCP servers.
 After connecting, try one of these:
 
 ```text
-Use Agent-Native Analytics to generate a weekly conversion-rate bar chart and show it inline.
+Use Jami Studio Analytics to generate a weekly conversion-rate bar chart and show it inline.
 ```
 
 ```text
-Use Agent-Native Mail to draft a short follow-up email to me, but do not send it.
+Use Jami Studio Mail to draft a short follow-up email to me, but do not send it.
 ```
 
 In hosts that support MCP Apps, Analytics can render real dashboard and analysis routes inline, and Mail can render the real compose UI inline for draft review. In hosts that do not render MCP Apps, the same tool call still returns a deep link such as **Open draft in Mail →** or **Open dashboard in Analytics →**.
@@ -196,7 +196,7 @@ client if the new server is not visible yet.
 
 Use `--client codex` (or `--client claude-code`, `--client claude-code-cli`, `--client cursor`, `--client opencode`, `--client github-copilot`, `--client cowork`, `--client all`) to skip the picker for scripts or one-off installs.
 
-First-party app skills install the instructions and the hosted MCP connector together with the Agent Native CLI:
+First-party app skills install the instructions and the hosted MCP connector together with the Jami Studio CLI:
 
 ```bash
 npx @agent-native/core@latest skills add assets              # alias: image-generation
@@ -420,7 +420,7 @@ rejected.
 An app that supplies `resolveExecutionContext` explicitly replaces this default identity ladder. Its resolver must independently reject unverified callers, guests, external members, and unlinked workspaces before returning a principal.
 
 The default Slack integration follows the same rule. A verified Slack DM is
-matched to an existing Agent Native organization member and persisted as a
+matched to an existing Jami Studio organization member and persisted as a
 workspace/user identity link before the agent runs, and the resulting user/org
 context loads that user's resources, instructions, and skills. By default, a
 hydrated workspace member whose email is missing or is not yet an organization

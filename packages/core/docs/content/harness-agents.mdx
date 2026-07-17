@@ -1,6 +1,6 @@
 ---
 title: "Harness Agents"
-description: "Run Claude Code, Codex, Pi, and other full coding harnesses as embedded agents inside Agent-Native, with their own loop, sandbox, native tools, and resumable SQL-backed sessions."
+description: "Run Claude Code, Codex, Pi, and other full coding harnesses as embedded agents inside Jami Studio, with their own loop, sandbox, native tools, and resumable SQL-backed sessions."
 search: "harness agents AgentHarness ai-sdk HarnessAgent Claude Code Codex Pi Cursor Mastra embedded coding agent resolveAgentHarness startAgentHarnessRun resumable session sandbox host tools"
 ---
 
@@ -9,14 +9,14 @@ search: "harness agents AgentHarness ai-sdk HarnessAgent Claude Code Codex Pi Cu
 <Callout id="doc-block-harn1who" tone="info">
 
 **Who is this for:** host authors wiring a full coding runtime (Claude Code,
-Codex, Pi) into Agent-Native as the agent. Building an app? Start with
+Codex, Pi) into Jami Studio as the agent. Building an app? Start with
 [Creating Templates](/docs/creating-templates).
 
 </Callout>
 
 A harness agent is a full agent runtime — Claude Code, Codex, Pi, and similar —
 that owns its own loop, workspace, native file tools, session state, compaction,
-approval model, and sandbox behavior. Agent-Native runs these through the
+approval model, and sandbox behavior. Jami Studio runs these through the
 **`AgentHarness`** substrate in `@agent-native/core/agent/harness`, streams their
 events into the normal transcript, and persists their native session so a thread
 can pause and resume.
@@ -24,10 +24,10 @@ can pause and resume.
 This is different from the built-in chat agent and from bringing your own chat
 runtime. The built-in agent and `AgentEngine` are for one model round trip
 beneath `runAgentLoop`. A harness is not an `AgentEngine` provider — it runs its
-own loop end to end, so Agent-Native drives it as a session, not as a single
+own loop end to end, so Jami Studio drives it as a session, not as a single
 model call.
 
-<Diagram id="doc-block-ulh6ba" title={"A harness owns its loop; Agent-Native drives the session"} summary={"The AgentHarness substrate creates/resumes the native session, streams its events into the normal transcript, and persists resumeState in SQL between turns."}>
+<Diagram id="doc-block-ulh6ba" title={"A harness owns its loop; Jami Studio drives the session"} summary={"The AgentHarness substrate creates/resumes the native session, streams its events into the normal transcript, and persists resumeState in SQL between turns."}>
 
 ```html
 <div class="diagram-harness">
@@ -80,11 +80,11 @@ model call.
 | You want to…                                                               | Use                                          |
 | -------------------------------------------------------------------------- | -------------------------------------------- |
 | Run Claude Code / Codex / Pi **as the agent**, with their own loop + tools | **Harness agents** (this page)               |
-| Render a Claude-Code/Codex-style **coding workspace UI**                   | [Agent-Native Code UI](/docs/code-agents-ui) |
+| Render a Claude-Code/Codex-style **coding workspace UI**                   | [Jami Studio Code UI](/docs/code-agents-ui) |
 | Swap the backend that runs the agent's **`run-code` tool**                 | [Adapters](/docs/sandbox-adapters)           |
 | Wrap a CLI tool (`gh`, `ffmpeg`) for the agent to call                     | [Adapters](/docs/sandbox-adapters)           |
 
-Adjacent surfaces: put an agent you built elsewhere behind Agent-Native's chat
+Adjacent surfaces: put an agent you built elsewhere behind Jami Studio's chat
 UI with [`AgentChatRuntime`](/docs/native-chat-ui#byo-agent-runtimes); let an
 external MCP host call into your app via [External Agents](/docs/external-agents);
 spawn background / sub-agent runs with [Custom Agents & Teams](/docs/agent-teams).
@@ -112,7 +112,7 @@ lets you check first.
 
 ## ACP agents {#acp}
 
-Agent-Native can act as an [ACP](https://agentclientprotocol.com) (Agent Client
+Jami Studio can act as an [ACP](https://agentclientprotocol.com) (Agent Client
 Protocol) **client** and drive a local coding agent — Gemini CLI, Claude Code,
 or any ACP-compliant agent — through this same substrate. The agent runs as a
 local subprocess that speaks newline-delimited JSON-RPC over stdio; ACP's editor
@@ -170,7 +170,7 @@ so the agent uses its own shell.
 
 There are two Codex surfaces, and they authenticate differently:
 
-- **Agent-Native Code / Desktop** runs `codex exec` on the user's machine. If
+- **Jami Studio Code / Desktop** runs `codex exec` on the user's machine. If
   the user has run `codex login`, this local run reuses whatever ChatGPT
   subscription or API-key auth the installed Codex CLI reports through
   `codex login status`.
@@ -178,7 +178,7 @@ There are two Codex surfaces, and they authenticate differently:
   inside the harness sandbox through `@openai/codex-sdk`. It does not silently
   inherit the user's Desktop `~/.codex` login because the sandbox may be remote
   or isolated. For trusted/private sandboxes, opt in with `codexCliAuth: true`;
-  Agent-Native copies the local Codex CLI auth file into the sandbox before the
+  Jami Studio copies the local Codex CLI auth file into the sandbox before the
   harness starts. For hosted or shared sandboxes, configure API-key / gateway
   auth instead.
 
@@ -253,9 +253,9 @@ to continue a session you are holding in memory.
 
 ## Sessions and resume {#sessions}
 
-A harness owns long-lived native session state. Agent-Native persists it in SQL
+A harness owns long-lived native session state. Jami Studio persists it in SQL
 so a thread can survive across turns, processes, and deploys. The `resumeState`
-is **opaque** — Agent-Native stores it and hands it back, but never inspects or
+is **opaque** — Jami Studio stores it and hands it back, but never inspects or
 interprets it.
 
 <Diagram id="doc-block-1ih9tqz" title="Resume across turns, processes, and deploys" summary={"Each turn detaches an opaque resumeState into SQL; the next turn feeds it back into createSession instead of replaying chat history."}>
@@ -313,7 +313,7 @@ directly only in a custom host.
 
 A harness brings its own native tools (read, edit, write, shell, and so on), so
 you do **not** re-expose file editing as host tools. Pass only a **narrow,
-intentional set** of Agent-Native actions through `createSession.tools` when you
+intentional set** of Jami Studio actions through `createSession.tools` when you
 want the harness to reach specific app operations — and keep `defineAction`
 auth, request context, timeouts, truncation, and read-only metadata intact when
 you do.
@@ -333,7 +333,7 @@ surface it and resume on the user's decision. See
 
 ## Events {#events}
 
-A harness session streams `AgentHarnessEvent` values, which Agent-Native
+A harness session streams `AgentHarnessEvent` values, which Jami Studio
 translates to the standard `AgentChatEvent` stream with
 `agentHarnessEventToAgentChatEvents`. The event union covers `text-delta`,
 `thinking-delta`, `activity`, `tool-start`, `tool-done` (which can carry an
@@ -405,7 +405,7 @@ one implementation of this contract, not the public abstraction.
 - Don't add Claude Code, Codex, Cursor, Mastra, or Pi as an `AgentEngine`. They
   own their loop; running one under `AgentEngine.stream()` double-runs the loop
   and loses session lifecycle semantics.
-- Don't replay full Agent-Native chat history into a harness each turn. Resume
+- Don't replay full Jami Studio chat history into a harness each turn. Resume
   the harness session with its `resumeState` instead.
 - Don't store `resumeState` in `application_state`. It belongs in the harness
   session SQL table.
@@ -416,7 +416,7 @@ one implementation of this contract, not the public abstraction.
 
 - [Native Chat UI](/docs/native-chat-ui) — put your own agent behind the chat UI with `AgentChatRuntime`.
 - [Agent Surfaces](/docs/agent-surfaces) — choose headless, chat, sidecar, or full-app.
-- [Agent-Native Code UI](/docs/code-agents-ui) — the reusable coding workspace surface.
+- [Jami Studio Code UI](/docs/code-agents-ui) — the reusable coding workspace surface.
 - [Custom Agents & Teams](/docs/agent-teams) — background runs and sub-agent delegation.
 - [Sandbox Adapters](/docs/sandbox-adapters) — pluggable execution backends for coding harnesses.
 - [Human Approval](/docs/human-approval) — the approval surface harness runs use.

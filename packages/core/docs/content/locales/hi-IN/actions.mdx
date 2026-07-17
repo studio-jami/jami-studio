@@ -223,7 +223,7 @@ export default defineAction({
 
 `GET` कार्रवाई के लिए, `leadId` को क्वेरी पैरामीटर के रूप में पारित किया जाता है: `/_agent-native/actions/get-lead?leadId=abc`।
 
-<Endpoint id="doc-block-1msf0yi" title={"अपने आप mount हुआ action endpoint"} method="GET" path="/_agent-native/actions/get-lead" summary={"हर action यहां अपने आप mount होता है - filename ही action name है।"} auth={"Session cookie; frontend calls `X-Agent-Native-Frontend: 1` लेकर चलते हैं"} params={[
+<Endpoint id="doc-block-1msf0yi" title={"अपने आप mount हुआ action endpoint"} method="GET" path="/_agent-native/actions/get-lead" summary={"हर action यहां अपने आप mount होता है - filename ही action name है।"} auth={"Session cookie; frontend calls `X-Jami Studio-Frontend: 1` लेकर चलते हैं"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -351,7 +351,7 @@ export default defineAction({
 | `caller`     | सेट करें जब...                                                                                                                              |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | इन-ऐप एजेंट लूप, एक उप-एजेंट / एजेंट टीम, या एक A2A अनुरोध (A2A एक ही एजेंट लूप चलाता है, इसलिए इसके टूल कॉल `"tool"` हैं)।                 |
-| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction` के माध्यम से एक ब्राउज़र कॉल (`X-Agent-Native-Frontend: 1` हेडर के साथ टैग किया गया)। |
+| `"frontend"` | `useActionMutation` / `useActionQuery` / `callAction` के माध्यम से एक ब्राउज़र कॉल (`X-Jami Studio-Frontend: 1` हेडर के साथ टैग किया गया)। |
 | `"http"`     | फ्रंटएंड मार्कर के बिना एक नंगे प्रोग्रामेटिक `POST` / `GET` से `/_agent-native/actions/<name>` तक।                                         |
 | `"cli"`      | `pnpm action <name>` (CLI धावक)।                                                                                                            |
 | `"mcp"`      | MCP `tools/call` समापन बिंदु पर एक बाहरी एजेंट।                                                                                             |

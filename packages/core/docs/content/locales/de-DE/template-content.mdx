@@ -156,7 +156,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 Das Installationsprogramm kopiert den `content`-Skill für Ihren Coding-Agent und schreibt oder
 aktualisiert `agent-native.json` mit Inhaltswurzeln für `docs/`, `blog/`, `content/`
-und `resources/`. Wenn eine lokale Content-App, Agent Native Desktop oder vertrauenswürdig
+und `resources/`. Wenn eine lokale Content-App, Jami Studio Desktop oder vertrauenswürdig
 Lokale Bridge läuft, Agenten sollten Content actions wie
 `list-documents`, `get-document`, `edit-document`, `update-document` und
 `share-local-file-document` anstelle von unformatierten Dateisystem-Schreibvorgängen. Ohne dieses lokale
@@ -195,14 +195,14 @@ pnpm dev
 ### Lokale Dateisynchronisierung
 
 Die geschützte `/local-files`-Route verwendet den Browser-Dateisystemzugriff API oder einen
-Geschützte native Ordnerbrücke im Agent Native Desktop zum Lesen und Schreiben
+Geschützte native Ordnerbrücke im Jami Studio Desktop zum Lesen und Schreiben
 Markdown/MDX-Dateien aus einem vom Benutzer ausgewählten Ordner. Nachdem der Ordner verknüpft wurde und
 Importiert wird die ausgewählte Datei als Autorität behandelt: Beim Öffnen der Seite wird Folgendes angezeigt:
 die Datei, und der normale Editor speichert zuerst die Datei. SQL wird dann als
 Cache-/Verlaufsebene für das vorhandene Dokument UI, Such- und Versionsfenster, nicht
 als Quelle der Wahrheit. Das Seitenmenü oben rechts zeigt den lokalen Quellpfad an:
 Der relative Pfad ist immer verfügbar, der absolute Pfad ist in der echten lokalen Datei verfügbar
--Modus und Agent Native Desktop, und „Im Finder anzeigen“ ist über den
+-Modus und Jami Studio Desktop, und „Im Finder anzeigen“ ist über den
 Desktop Bridge oder servergestützter lokaler Dateimodus.
 
 Die Massensynchronisierungsroutenaufrufe:
@@ -257,7 +257,7 @@ in der lokalen Datei.
 
 Die **Lokale Dateien**-Auswahl des Browsers kann `.md`- und `.mdx`-Dateien lesen und schreiben
 seine eigenen, aber ausführbaren React-Komponentenvorschauen erfordern einen lokalen Compiler. Ausführen
-Inhalt lokal oder verwenden Sie Agent Native Desktop, damit der ausgewählte Arbeitsbereichspfad möglich ist
+Inhalt lokal oder verwenden Sie Jami Studio Desktop, damit der ausgewählte Arbeitsbereichspfad möglich ist
 müssen beim lokalen Content-Entwicklungsserver registriert sein. Vite importiert dann
 `components/*.tsx`, lädt Änderungen an vorhandenen Komponentendateien im laufenden Betrieb neu und lädt
 die Komponentenregistrierung, wenn Dateien hinzugefügt oder entfernt werden. Agenten können

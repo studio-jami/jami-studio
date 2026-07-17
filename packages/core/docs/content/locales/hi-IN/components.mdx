@@ -5,7 +5,7 @@ description: "कस्टम एजेंट UI, चैट फ़ील्ड, 
 
 # घटक API
 
-Agent-Native एक पूर्ण साइडबार शिप करता है, लेकिन साइडबार अनुबंध नहीं है। द
+Jami Studio एक पूर्ण साइडबार शिप करता है, लेकिन साइडबार अनुबंध नहीं है। द
 अनुबंध रनटाइम है: चैट स्ट्रीमिंग, थ्रेड स्थिति, actions, संदर्भ,
 अटैचमेंट, मॉडल चयन, रन, और SQL-समर्थित सिंक। स्टॉक का उपयोग करें
 जब आप कर सकते हैं तो घटक, और जब आपको कस्टम उत्पाद UI की आवश्यकता हो तो एक परत नीचे गिरा दें।
@@ -122,13 +122,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client` या `/client/chat` | आपके पास एक Claude एजेंट SDK स्ट्रीम है और आप इसे चैट UI में सामान्यीकृत करना चाहते हैं।                |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` या `/client/chat` | आपके पास Vercel AI SDK स्ट्रीम है और आप इसे चैट UI में सामान्यीकृत करना चाहते हैं।                      |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` या `/client/chat` | आपको स्वयं एक `AgentChatRuntime` को Assistant-ui में अनुकूलित करना होगा।                                |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` या `/client/chat` | आपको निम्न-स्तरीय सहायक-यूआई एडाप्टर के रूप में अंतर्निहित Agent-Native SSE ट्रांसपोर्ट की आवश्यकता है। |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` या `/client/chat` | आपको निम्न-स्तरीय सहायक-यूआई एडाप्टर के रूप में अंतर्निहित Jami Studio SSE ट्रांसपोर्ट की आवश्यकता है। |
 | `useChatThreads()`                   | `@agent-native/core/client` या `/client/chat` | आपको एक कस्टम थ्रेड सूची, इतिहास पिकर, या स्कोप्ड चैट UI की आवश्यकता है।                                |
 | `sendToAgentChat()`                  | `@agent-native/core/client` या `/client/chat` | उत्पाद कार्रवाई का काम एजेंट चैट के हाथ में होना चाहिए।                                                 |
 
 `AgentChatRuntime` मानक चैट शेल के लिए BYO-एजेंट अनुबंध है। उत्तीर्ण
 `runtime` से `<AssistantChat>` जब किसी बाहरी एजेंट को पावर देनी चाहिए
-बातचीत जबकि Agent-Native कंपोजर, ट्रांसक्रिप्ट, टूल कार्ड और रखता है
+बातचीत जबकि Jami Studio कंपोजर, ट्रांसक्रिप्ट, टूल कार्ड और रखता है
 देशी विजेट प्रतिपादन। उपरोक्त कनेक्टर API सतह हैं; रनटाइम
 अनुबंध और घटना के आकार
 [Native चैट UI — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

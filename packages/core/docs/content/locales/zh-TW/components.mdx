@@ -5,7 +5,7 @@ description: "用於自訂代理 UI、聊天欄位、對話呈現、即時狀態
 
 # 元件 API
 
-Agent-Native 附帶了完整的側邊欄，但側邊欄不是合同。
+Jami Studio 附帶了完整的側邊欄，但側邊欄不是合同。
 合約是執行時：聊天流、對話串狀態、actions、脈絡，
 附件、模型選取、執行和 SQL 支援的同步。使用庫存
 當你需要定制產品 UI 時，可以選取元件，並下拉一層。
@@ -120,13 +120,13 @@ import { useToast } from "@/hooks/use-toast";
 | `createClaudeAgentChatRuntime()`     | `@agent-native/core/client`或`/client/chat`   | 您有一個 Claude 代理 SDK 流，並希望將其規範化到聊天 UI 中。 |
 | `createVercelAiChatRuntime()`        | `@agent-native/core/client` 或 `/client/chat` | 您有一個 Vercel AI SDK 流，並希望將其規範化到聊天 UI 中。   |
 | `createAgentChatRuntimeAdapter()`    | `@agent-native/core/client` 或 `/client/chat` | 需要自己將一個`AgentChatRuntime`適配成assistant-ui。        |
-| `createAgentChatAdapter()`           | `@agent-native/core/client` 或 `/client/chat` | 您需要內建 Agent-Native SSE 傳輸作為低階助手 UI 轉接器。    |
+| `createAgentChatAdapter()`           | `@agent-native/core/client` 或 `/client/chat` | 您需要內建 Jami Studio SSE 傳輸作為低階助手 UI 轉接器。    |
 | `useChatThreads()`                   | `@agent-native/core/client`或`/client/chat`   | 您需要自訂話題清單、歷史紀錄選取器或範圍聊天 UI。           |
 | `sendToAgentChat()`                  | `@agent-native/core/client` 或 `/client/chat` | 產品操作應該將工作交給代理聊天。                            |
 
 `AgentChatRuntime` 是標準聊天 shell 的 BYO 代理合約。透過
 當外部代理應該為 `runtime` 到 `<AssistantChat>` 供電時
-Agent-Native 保留撰寫器、文字紀錄、工具卡和
+Jami Studio 保留撰寫器、文字紀錄、工具卡和
 本機小工具渲染。上面的連線器是 API 面；執行時
 合同和事件形狀在中教授
 [Native 聊天介面 — BYO agent runtimes](/docs/native-chat-ui#byo-agent-runtimes).

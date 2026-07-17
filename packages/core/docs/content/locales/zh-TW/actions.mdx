@@ -12,7 +12,7 @@ Actions 是您的應用所做的任何事情的唯一事實來源。使用 `defi
 - **指令式用戶端呼叫** — 當鉤子不適合時 `callAction("name", params)`。
 - **框架傳輸** — 由這些鉤子後面的框架自動安裝，並可供外部 HTTP 用戶端使用。
 - **MCP 工具** - 暴露給 Claude、ChatGPT 自訂 MCP 應用、Claude 桌面/程式碼、游標、Codex 和任何其他 MCP 主機。
-- **A2A 工具** — 由其他 Agent-Native 應用透過 A2A 呼叫。
+- **A2A 工具** — 由其他 Jami Studio 應用透過 A2A 呼叫。
 - **CLI 指令** - `pnpm action <name>` 用於指令碼和開發迴圈。
 
 一個定義，七個消費者。這是 [ladder](/docs/what-is-agent-native#the-ladder) 的第 3 級。
@@ -223,7 +223,7 @@ export default defineAction({
 
 對於 `GET` 操作，`leadId` 作為查詢參數傳遞：`/_agent-native/actions/get-lead?leadId=abc`。
 
-<Endpoint id="doc-block-1ftdvj5" title={"自動掛載的 action 端點"} method="GET" path="/_agent-native/actions/get-lead" summary={"每個 action 都會自動掛載在這裡 - 檔名就是 action 名稱。"} auth={"工作階段 cookie；前端呼叫會攜帶 `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-1ftdvj5" title={"自動掛載的 action 端點"} method="GET" path="/_agent-native/actions/get-lead" summary={"每個 action 都會自動掛載在這裡 - 檔名就是 action 名稱。"} auth={"工作階段 cookie；前端呼叫會攜帶 `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -351,7 +351,7 @@ export default defineAction({
 | `caller`     | 設定當...                                                                                                             |
 | ------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | 應用內代理迴圈、子代理/代理團隊或 A2A 請求（A2A 驅動相同的代理迴圈，因此其工具呼叫為 `"tool"`）。                     |
-| `"frontend"` | 透過 `useActionMutation` / `useActionQuery` / `callAction` 的瀏覽器呼叫（用 `X-Agent-Native-Frontend: 1` 標頭標記）。 |
+| `"frontend"` | 透過 `useActionMutation` / `useActionQuery` / `callAction` 的瀏覽器呼叫（用 `X-Jami Studio-Frontend: 1` 標頭標記）。 |
 | `"http"`     | 沒有前端標記的裸程式化 `POST` / `GET` 到 `/_agent-native/actions/<name>`。                                            |
 | `"cli"`      | `pnpm action <name>`（CLI 跑步者）。                                                                                  |
 | `"mcp"`      | MCP `tools/call` 端點上的外部代理。                                                                                   |
@@ -532,7 +532,7 @@ JSON 輸入是代理和複雜物件的首選形狀。標誌是
 
 ## 從另一個代理呼叫它（A2A） {#a2a}
 
-如果您的應用程式是 [A2A](/docs/a2a-protocol) 對等點，則其他 Agent-Native 應用程式會自動發現您的 actions 並可以透過名稱呼叫它們。同來源部署跳過 JWT 簽名；跨域使用共用的`A2A_SECRET`。
+如果您的應用程式是 [A2A](/docs/a2a-protocol) 對等點，則其他 Jami Studio 應用程式會自動發現您的 actions 並可以透過名稱呼叫它們。同來源部署跳過 JWT 簽名；跨域使用共用的`A2A_SECRET`。
 
 ## 透過 MCP 公開它 {#mcp}
 

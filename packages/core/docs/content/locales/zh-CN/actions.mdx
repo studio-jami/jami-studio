@@ -225,7 +225,7 @@ export default defineAction({
 
 对于 `GET` 操作，`leadId` 作为查询参数传递：`/_agent-native/actions/get-lead?leadId=abc`。
 
-<Endpoint id="doc-block-gkhn14" title={"自动挂载的 action 端点"} method="GET" path="/_agent-native/actions/get-lead" summary={"每个 action 都会自动挂载在这里 - 文件名就是 action 名称。"} auth={"会话 cookie；前端调用会携带 `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-gkhn14" title={"自动挂载的 action 端点"} method="GET" path="/_agent-native/actions/get-lead" summary={"每个 action 都会自动挂载在这里 - 文件名就是 action 名称。"} auth={"会话 cookie；前端调用会携带 `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -353,7 +353,7 @@ export default defineAction({
 | `caller`     | 设置当...                                                                                                             |
 | ------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `"tool"`     | 应用内代理循环、子代理/代理团队或 A2A 请求（A2A 驱动相同的代理循环，因此其工具调用为 `"tool"`）。                     |
-| `"frontend"` | 通过 `useActionMutation` / `useActionQuery` / `callAction` 的浏览器调用（用 `X-Agent-Native-Frontend: 1` 标头标记）。 |
+| `"frontend"` | 通过 `useActionMutation` / `useActionQuery` / `callAction` 的浏览器调用（用 `X-Jami Studio-Frontend: 1` 标头标记）。 |
 | `"http"`     | 没有前端标记的裸编程 `POST` / `GET` 到 `/_agent-native/actions/<name>`。                                              |
 | `"cli"`      | `pnpm action <name>`（CLI 跑步者）。                                                                                  |
 | `"mcp"`      | MCP `tools/call` 端点上的外部代理。                                                                                   |

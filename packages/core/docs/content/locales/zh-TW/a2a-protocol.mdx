@@ -16,7 +16,7 @@ A2A 是此框架中跨應用程式委派的基礎 - 最顯著的是 [Dispatch](/
 關鍵概念：
 
 - **代理卡** — `/.well-known/agent-card.json` 上描述 skills 和功能的公開中繼資料
-- **JSON-RPC** — Agent-Native 應用程式使用 `POST /_agent-native/a2a`；外部/遺留節點可以使用 `POST /a2a`
+- **JSON-RPC** — Jami Studio 應用程式使用 `POST /_agent-native/a2a`；外部/遺留節點可以使用 `POST /a2a`
 - **工作** - 每條訊息都會建立一個具有生命週期的工作（已提交、正在工作、已完成、失敗、已取消）
 - **JWT 承載驗證** - 正式環境 A2A 需要 `A2A_SECRET` 或顯式遺留 `apiKeyEnv`
 
@@ -99,10 +99,10 @@ export default defineNitroPlugin((nitro) => {
 此安裝座：
 
 - `GET /.well-known/agent-card.json` — 公開發現中繼資料。
-- `POST /_agent-native/a2a` — 主要 Agent-Native JSON-RPC 端點。
+- `POST /_agent-native/a2a` — 主要 Jami Studio JSON-RPC 端點。
 - `POST /_agent-native/a2a/_process-task` — 內部非同步處理器路由，使用 `A2A_SECRET` 簽名。
 
-對於公開傳統/簡單路徑的外部代理，用戶端還回退到 `/a2a`。正式環境 Agent-Native 部署應設定 `A2A_SECRET`；如果沒有它，託管執行時將無法關閉，而不是接受未經驗證的遠端工作。
+對於公開傳統/簡單路徑的外部代理，用戶端還回退到 `/a2a`。正式環境 Jami Studio 部署應設定 `A2A_SECRET`；如果沒有它，託管執行時將無法關閉，而不是接受未經驗證的遠端工作。
 
 ## 代理卡 {#agent-card}
 
@@ -358,7 +358,7 @@ console.log(response); // "There were 1,247 signups last week..."
 
 ## 程式化工作區呼叫 {#programmatic-invoke}
 
-對於 Agent-Native 工作區，在程式碼或 a 時更喜歡 `agentNative` 幫助器
+對於 Jami Studio 工作區，在程式碼或 a 時更喜歡 `agentNative` 幫助器
 無頭應用程式需要發現同級應用程式並透過 ID、名稱或呼叫它們
 URL。它使用與
 `agent-native agents` 和 `agent-native invoke` CLI 指令。
@@ -379,7 +379,7 @@ console.log(`Called ${result.target.name}: ${result.responseText}`);
 
 將此用於可組合的迷你應用程式：調度或協調器應用程式發現
 工作空間同級，然後呼叫擁有提供者的專業應用程式，
-資料集或工作流程。在正式環境 Agent-Native 應用程式中，在每個中設定 `A2A_SECRET`
+資料集或工作流程。在正式環境 Jami Studio 應用程式中，在每個中設定 `A2A_SECRET`
 應用程式環境並傳遞呼叫者身分（`userEmail`），因此出站呼叫
 簽名為 JWT 不記名代幣。僅將 `apiKeyEnv` 用於舊版外部對等點
 需要靜態不記名權杖。使用本機actions而不是自己呼叫。
@@ -405,7 +405,7 @@ console.log(`Called ${result.target.name}: ${result.responseText}`);
 
 ## 安全 {#security}
 
-在每個呼叫或接收 A2A 流量的正式環境應用上設定 `A2A_SECRET`。Agent-Native 呼叫者使用此秘密簽署 JWT 不記名權杖，以便接收者可以在代理迴圈開始之前驗證呼叫者身分。
+在每個呼叫或接收 A2A 流量的正式環境應用上設定 `A2A_SECRET`。Jami Studio 呼叫者使用此秘密簽署 JWT 不記名權杖，以便接收者可以在代理迴圈開始之前驗證呼叫者身分。
 
 對於仍然使用共用靜態權杖的外部對等點，請將設定中的 `apiKeyEnv` 設定為包含預期持有者權杖的環境變數的名稱：
 

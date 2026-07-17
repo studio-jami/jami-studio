@@ -189,11 +189,11 @@ Hauptunterschiede zum [server `track()`](#track):
 - **Fire-and-forget.** Es blockiert niemals den UI, löst niemals Netzwerkfehler aus und verschluckt sie.
 - **Authentifiziert, nur Erstanbieter.** Die Route erfordert eine Sitzung und einen Same-Origin/CSRF-Marker (vom Helfer automatisch festgelegt), sodass sie nicht als offenes Analyse-Relay verwendet werden kann. `name` ist auf 200 Zeichen und `properties` auf ~16 KB begrenzt; Übergroße oder fehlerhafte Nutzlasten werden abgelehnt.
 
-Dies unterscheidet sich von der internen Browser-Telemetrie des Frameworks (`trackEvent()` / automatische Seitenaufrufe – siehe [Browser defaults](#browser-defaults) unten), die die eigene Produktanalyse von Agent Native unterstützt. Verwenden Sie `track()` für die eigenen Analyseereignisse Ihrer App, die Ihre konfigurierten Anbieter erreichen sollen.
+Dies unterscheidet sich von der internen Browser-Telemetrie des Frameworks (`trackEvent()` / automatische Seitenaufrufe – siehe [Browser defaults](#browser-defaults) unten), die die eigene Produktanalyse von Jami Studio unterstützt. Verwenden Sie `track()` für die eigenen Analyseereignisse Ihrer App, die Ihre konfigurierten Anbieter erreichen sollen.
 
 ## Session Replay {#session-replay}
 
-Agent-Native-Apps können sich für erstklassiges browserseitiges Session Replay entscheiden, ohne ein zweites Analytics-SDK hinzuzufügen. Rufen Sie `configureTracking()` einmal im Browser-Root auf und übergeben Sie den öffentlichen Analytics-Schlüssel sowie den Collector-Endpunkt:
+Jami Studio-Apps können sich für erstklassiges browserseitiges Session Replay entscheiden, ohne ein zweites Analytics-SDK hinzuzufügen. Rufen Sie `configureTracking()` einmal im Browser-Root auf und übergeben Sie den öffentlichen Analytics-Schlüssel sowie den Collector-Endpunkt:
 
 ```ts
 import { configureTracking } from "@agent-native/core/client";
@@ -215,7 +215,7 @@ configureTracking({
 
 Wenn `sessionReplay.enabled` einen truthy Wert hat, importiert der Client nach dem Start dynamisch `@rrweb/record` und sendet Replay-Chunks an den Replay-Endpunkt. Wenn `endpoint` auf `/api/analytics/track` oder `/track` endet, wird der Replay-Endpunkt automatisch als `/api/analytics/replay` abgeleitet. Überschreiben Sie ihn explizit mit `sessionReplay.endpoint`, wenn der Replay-Collector an anderer Stelle liegt.
 
-Agent-Native-Template-Roots rufen `configureTracking()` bereits auf. Gehostete Template-Deployments können Replay über Vite-/Netlify-Umgebungsvariablen aktivieren, während Bibliotheks-Konsumenten die explizite Form `configureTracking({ key, endpoint, sessionReplay })` von oben bevorzugen sollten:
+Jami Studio-Template-Roots rufen `configureTracking()` bereits auf. Gehostete Template-Deployments können Replay über Vite-/Netlify-Umgebungsvariablen aktivieren, während Bibliotheks-Konsumenten die explizite Form `configureTracking({ key, endpoint, sessionReplay })` von oben bevorzugen sollten:
 
 ```bash
 VITE_AGENT_NATIVE_ANALYTICS_PUBLIC_KEY=anpk_...
@@ -224,7 +224,7 @@ VITE_AGENT_NATIVE_SESSION_REPLAY_ENABLED=true
 VITE_AGENT_NATIVE_SESSION_REPLAY_SAMPLE_RATE=1
 ```
 
-Der Browser-Helfer führt außerdem einen nach bestem Bemühen erfolgenden, nicht blockierenden Lesevorgang der aktuellen Agent-Native-Auth-Sitzung durch. Replay ist standardmäßig nur für angemeldete Benutzer verfügbar: Wenn `sessionReplay` aktiviert ist, startet die Aufzeichnung nur, wenn die Sitzung zu einer Benutzer-E-Mail-Adresse aufgelöst werden kann. Replays angemeldeter Benutzer enthalten E-Mail-basierte `userId`/`userEmail` sowie `orgId`.
+Der Browser-Helfer führt außerdem einen nach bestem Bemühen erfolgenden, nicht blockierenden Lesevorgang der aktuellen Jami Studio-Auth-Sitzung durch. Replay ist standardmäßig nur für angemeldete Benutzer verfügbar: Wenn `sessionReplay` aktiviert ist, startet die Aufzeichnung nur, wenn die Sitzung zu einer Benutzer-E-Mail-Adresse aufgelöst werden kann. Replays angemeldeter Benutzer enthalten E-Mail-basierte `userId`/`userEmail` sowie `orgId`.
 
 Setzen Sie `sessionReplay.requireSignedInUser: false` oder `VITE_AGENT_NATIVE_SESSION_REPLAY_REQUIRE_AUTH=false` nur für ein absichtlich anonymes Replay-Deployment. Wenn die Auth-Prüfung deaktiviert ist, bleiben anonyme Aufzeichnungen nach anonymem Besucher, Sitzung, App/Template, Hostname und Pfad abfragbar.
 

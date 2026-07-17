@@ -1,9 +1,9 @@
 ---
-title: "Agent-Native Code UI"
-description: "Erstellen und passen Sie Agent-Native-Codeoberflächen mit dem gemeinsam genutzten UI-Paket, der Desktop-Host-Bridge und dem CLI-Run-Store an."
+title: "Jami Studio Code UI"
+description: "Erstellen und passen Sie Jami Studio-Codeoberflächen mit dem gemeinsam genutzten UI-Paket, der Desktop-Host-Bridge und dem CLI-Run-Store an."
 ---
 
-# Agent-Native Code UI
+# Jami Studio Code UI
 
 > **Für wen ist das gedacht:** Host-Autoren, die einen Coding-Workspace erstellen oder anpassen
 > -Oberfläche (CLI, Desktop oder eine Browservorlage) auf dem freigegebenen Code-UI-Paket.
@@ -12,12 +12,12 @@ description: "Erstellen und passen Sie Agent-Native-Codeoberflächen mit dem gem
 
 | Sie möchten…                                                                       | Verwenden                              |
 | ---------------------------------------------------------------------------------- | -------------------------------------- |
-| Rendern Sie einen **Codierungsarbeitsbereich UI** im Claude-Code/Codex-Stil        | **Agent-Native Code UI** (diese Seite) |
+| Rendern Sie einen **Codierungsarbeitsbereich UI** im Claude-Code/Codex-Stil        | **Jami Studio Code UI** (diese Seite) |
 | Führen Sie Claude Code / Codex / Pi **als Agent** mit eigener Schleife + Tools aus | [Harness Agents](/docs/harness-agents) |
 | Tausch das Backend, das das **`run-code`-Tool** des Agenten ausführt               | [Adapters](/docs/sandbox-adapters)     |
 | Verpacken Sie ein CLI-Tool (`gh`, `ffmpeg`), damit der Agent anrufen kann          | [Adapters](/docs/sandbox-adapters)     |
 
-Agent-Native Code ist die Agent-Native-Codierungsoberfläche: ein lokaler Arbeitsbereich im Claude Code/Codex-Stil für Codierungssitzungen, Slash-Befehle, Migrationen, Audits, Transkripte, Laufkontrollen und Nachverfolgungen. Ein einfacher `npx @agent-native/core@latest`-Befehl öffnet diesen Arbeitsbereich; `npx @agent-native/core@latest code` ist der explizite Unterbefehl für dasselbe Erlebnis.
+Jami Studio Code ist die Jami Studio-Codierungsoberfläche: ein lokaler Arbeitsbereich im Claude Code/Codex-Stil für Codierungssitzungen, Slash-Befehle, Migrationen, Audits, Transkripte, Laufkontrollen und Nachverfolgungen. Ein einfacher `npx @agent-native/core@latest`-Befehl öffnet diesen Arbeitsbereich; `npx @agent-native/core@latest code` ist der explizite Unterbefehl für dasselbe Erlebnis.
 
 Es gibt drei Ebenen:
 
@@ -94,7 +94,7 @@ Es gibt drei Ebenen:
 
 </Diagram>
 
-Die aktuelle Aufteilung ist absichtlich konvergierend: Die Standard-Agenten-Seitenleiste und die Agenten-Teams werden im zentralen `run-manager`-Lebenszyklus ausgeführt, während Agent-Native-Code lokale, lang laufende Sitzungen verwendet, die durch den dateibasierten Code-Ausführungsspeicher und das gemeinsame Controller-Vokabular für die Hintergrundausführung unterstützt werden.
+Die aktuelle Aufteilung ist absichtlich konvergierend: Die Standard-Agenten-Seitenleiste und die Agenten-Teams werden im zentralen `run-manager`-Lebenszyklus ausgeführt, während Jami Studio-Code lokale, lang laufende Sitzungen verwendet, die durch den dateibasierten Code-Ausführungsspeicher und das gemeinsame Controller-Vokabular für die Hintergrundausführung unterstützt werden.
 
 Das gemeinsam genutzte UI ist hostgesteuert. Es weiß nicht, ob es in Electron, einer Browservorlage oder einer künftig gehosteten Shell ausgeführt wird. Hosts stellen eine `CodeAgentsHost`-Implementierung bereit.
 
@@ -122,7 +122,7 @@ export function CodeSurface() {
 }
 ```
 
-Hosts können Ausführungsquellen in derselben Liste mischen. Lokale Agent-Native-Codesitzungen
+Hosts können Ausführungsquellen in derselben Liste mischen. Lokale Jami Studio-Codesitzungen
 kann neben Agent Teams oder anderen im Hintergrund ausgeführten Adaptern angezeigt werden, solange jeder
 normalisiert sich zu `CodeAgentRun`. Wenn ein Host `sourceLabel` bereitstellt,
 `source` oder `kind`, der Hub rendert eine kleine Quellbezeichnung wie „Lokaler Code“
@@ -145,7 +145,7 @@ Diese Trennung ist wichtig. Der UI kann von Vorlagen wiederverwendet werden, die
 
 ## Codex CLI Auth {#codex-cli-auth}
 
-Agent-Native-Code kann ein lokales Codex CLI-Login anstelle eines OpenAI API-Schlüssels verwenden.
+Jami Studio-Code kann ein lokales Codex CLI-Login anstelle eines OpenAI API-Schlüssels verwenden.
 Installieren Sie Codex CLI auf Ihrem `PATH`, melden Sie sich einmal an und starten Sie dann Desktop oder
 Code UI, wenn es bereits geöffnet war:
 
@@ -239,7 +239,7 @@ Ausführungsmodi machen die Bearbeitungsrichtlinie pro Sitzung explizit:
 | **Planmodus**           | `--plan` | Inspizieren, planen und erklären, ohne Dateien zu schreiben oder Mutationen auszuführen.                                                                 |
 | **Automatischer Modus** | `--auto` | Bearbeiten Sie Dateien, führen Sie Prüfungen durch und pausieren Sie nur bei wirklich destruktiven Datei-, Git-, Veröffentlichungs- oder Datenvorgängen. |
 
-Der automatische Modus ist die Standardeinstellung für lokale Agent-Native Code-Sitzungen. Verwenden Sie den Planmodus für
+Der automatische Modus ist die Standardeinstellung für lokale Jami Studio Code-Sitzungen. Verwenden Sie den Planmodus für
 Bewertung, Architektur, Überprüfung oder jede Aufgabe, bei der Sie vorher einen Vorschlag wünschen
 Änderungen.
 
@@ -275,7 +275,7 @@ Adaptergestützte Hosts können auch Quellmetadaten anhängen:
 
 ## Store ausführen
 
-Lokale Agent-Native-Codeausführungen werden gespeichert unter:
+Lokale Jami Studio-Codeausführungen werden gespeichert unter:
 
 ```text
 ~/.agent-native/code-agents
@@ -309,7 +309,7 @@ Browser-Hosts sollten einen ordnungsgemäßen `openTerminal`-Fehler zurückgeben
 
 ## Gemeinsamer Komponist
 
-Agent-Native-Code verwendet dasselbe `AgentComposerFrame` + `PromptComposer` /
+Jami Studio-Code verwendet dasselbe `AgentComposerFrame` + `PromptComposer` /
 `TiptapComposer`-Stack wurde aus `@agent-native/core/client/composer` als
 Framework-Agent-Seitenleiste. Verzweigen Sie kein separates
 Textbereich, Codierungstool-Auswahl, Upload-Auswahl, Sprachschaltfläche, Modellauswahl oder Enter-to-Submit
@@ -323,7 +323,7 @@ ist für die Lauferstellung, die Transkripte und die Nachbereitung verantwortlic
 
 ## Gemeinsame Codierungstools
 
-Der Sidebar-Entwicklungsagent und der Agent-Native-Code verwenden beide dasselbe Minimum
+Der Sidebar-Entwicklungsagent und der Jami Studio-Code verwenden beide dasselbe Minimum
 Coding-Tool-Profil: `bash`, `read`, `edit` und `write`. `bash` ist die Standardeinstellung
 zum Auflisten/Durchsuchen von Dateien, Ausführen von Tests und Aufrufen von Projekt-CLIs; `read`
 zeigt zeilennummerierte Dateiabschnitte; `edit` wendet exakte Textersetzungen an; und
@@ -350,11 +350,11 @@ bei Bedarf verfügbar.
 
 ## Slash-Befehle
 
-Agent-Native Code behandelt Migration als eine Funktion, nicht als separate App-Kategorie. `/migrate` kann ein integriertes Ziel, ein Projektbefehl oder ein benutzerdefiniertes Anweisungspaket auf demselben Hostvertrag sein.
+Jami Studio Code behandelt Migration als eine Funktion, nicht als separate App-Kategorie. `/migrate` kann ein integriertes Ziel, ein Projektbefehl oder ein benutzerdefiniertes Anweisungspaket auf demselben Hostvertrag sein.
 
-### Migration zu Agent-Native mit `/migrate` {#migrate}
+### Migration zu Jami Studio mit `/migrate` {#migrate}
 
-`/migrate` ist das integrierte Ziel für die Verschiebung einer vorhandenen App, URL, oder eines beschriebenen Produkts nach Agent-Native. Es handelt sich um ein Slash-Ziel im Code-Arbeitsbereich – keine separate Vorlage zum Gerüstbauen und kein einmaliges Produkt – es nutzt also den gleichen Sitzungsspeicher, die gleiche Transkription, die gleichen Ausführungssteuerungen und den gleichen Desktop-Hub wie jede andere Code-Sitzung, und Sie können sie auf die gleiche Weise fortsetzen, anhängen, prüfen und stoppen.
+`/migrate` ist das integrierte Ziel für die Verschiebung einer vorhandenen App, URL, oder eines beschriebenen Produkts nach Jami Studio. Es handelt sich um ein Slash-Ziel im Code-Arbeitsbereich – keine separate Vorlage zum Gerüstbauen und kein einmaliges Produkt – es nutzt also den gleichen Sitzungsspeicher, die gleiche Transkription, die gleichen Ausführungssteuerungen und den gleichen Desktop-Hub wie jede andere Code-Sitzung, und Sie können sie auf die gleiche Weise fortsetzen, anhängen, prüfen und stoppen.
 
 ```bash
 npx @agent-native/core@latest code /migrate ./my-next-app --out ../migrated-app
@@ -379,7 +379,7 @@ Projekt skills live in:
 .agents/skills/*/SKILL.md
 ```
 
-Wenn der Host `listCodePacks` implementiert, zeigt der gemeinsam genutzte UI Projektbefehle und skills in der Schiene an. Befehlszeilen fügen `/<command>` ein, und Fertigkeitszeilen fügen eine fokussierte Eingabeaufforderung „Verwenden Sie die Fertigkeit `<skill>`…“ ein, damit die Schiene umsetzbar bleibt. Die integrierten Slash-Ziele `/migrate` und `/audit` bleiben für die globalen Agent-Native-Codesteuerelemente reserviert, ebenso wie Run-Control-Namen wie `status` und `resume` – das sind Unterbefehle, die ohne Schrägstrich aufgerufen werden (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), keine Slash-Ziele.
+Wenn der Host `listCodePacks` implementiert, zeigt der gemeinsam genutzte UI Projektbefehle und skills in der Schiene an. Befehlszeilen fügen `/<command>` ein, und Fertigkeitszeilen fügen eine fokussierte Eingabeaufforderung „Verwenden Sie die Fertigkeit `<skill>`…“ ein, damit die Schiene umsetzbar bleibt. Die integrierten Slash-Ziele `/migrate` und `/audit` bleiben für die globalen Jami Studio-Codesteuerelemente reserviert, ebenso wie Run-Control-Namen wie `status` und `resume` – das sind Unterbefehle, die ohne Schrägstrich aufgerufen werden (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), keine Slash-Ziele.
 
 Erstellen Sie keine separate Slash-Befehls-Registrierung für einen neuen Code-Host. Projekt
 Befehle und skills werden von `.agents/commands/*.md` und
@@ -389,7 +389,7 @@ Befehle und skills werden von `.agents/commands/*.md` und
 ## Background Agent Run-Manager
 
 Die Hintergrundarbeit des Coding-Agents sollte die gleiche Run-Manager-Grundlage wie die
-Rest von Agent-Native:
+Rest von Jami Studio:
 
 - Verwenden Sie den Code Run Store/Executor für lokale Codesitzungen.
 - Verwenden Sie den gemeinsam genutzten Hintergrundlaufadapter/die gemeinsame Grundlage, wenn eine Oberfläche aufgelistet werden muss

@@ -130,7 +130,7 @@ Slack 앱에는 하나의 이벤트 API 요청 URL가 있습니다. 동일한 Sl
 - **DM** — 허용되는 개인 DM은 비공개 대화이며 확인된 조직 구성원 또는 연결된 Slack 신원이 필요합니다.
 - **신원** — DM은 확인된 Slack 이메일을 같은 앱 사용자에 연결할 수 있으며 관리 채널은 자체 서비스 신원과 정책을 사용합니다.
 - **프로덕션 허용 목록** — `SLACK_ALLOWED_TEAM_IDS`를 설정하고 공유 Slack 앱의 경우 `SLACK_ALLOWED_API_APP_IDS`를 설정하여 예상치 못한 작업 공간에서 유효한 서명 비밀을 재사용할 수 없도록 합니다.
-- **Clips 앱이 펼쳐집니다** — 설치 가능한 Agent-Native Slack용 클립은 `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` 및 `/api/slack/oauth/callback`를 사용합니다. 연결된 각 Slack 작업 공간은 `app_secrets`에서 자체 암호화된 봇 토큰을 얻습니다. `SLACK_BOT_TOKEN`는 레거시 단일 작업공간 대체일 뿐입니다.
+- **Clips 앱이 펼쳐집니다** — 설치 가능한 Jami Studio Slack용 클립은 `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` 및 `/api/slack/oauth/callback`를 사용합니다. 연결된 각 Slack 작업 공간은 `app_secrets`에서 자체 암호화된 봇 토큰을 얻습니다. `SLACK_BOT_TOKEN`는 레거시 단일 작업공간 대체일 뿐입니다.
 
 ### 관리형 Add to Slack
 
@@ -140,7 +140,7 @@ Slack 앱에는 하나의 이벤트 API 요청 URL가 있습니다. 동일한 Sl
 탭을 활성화합니다. 다음 Bot Token Scopes가 포함되었는지 확인하세요.
 
 앱 아이콘은 매니페스트에 포함되지 않습니다. Agents 선택 화면이 제품 브랜딩과 일치하도록
-**Basic Information → Display Information**에서 Agent Native 아이콘을 업로드하세요. 앱의 공개
+**Basic Information → Display Information**에서 Jami Studio 아이콘을 업로드하세요. 앱의 공개
 `icon-512.svg`를 원본으로 사용하고 필요하면 Slack이 지원하는 업로드 형식으로 변환할 수 있습니다.
 
 ```text
@@ -180,7 +180,7 @@ Slack 컨텍스트를 제공하며, `message.im`은 DM을 전달합니다. Slack
 조직 전체에서 숨길 수 있고, 각 사용자는 자신의 상단 바에서 숨길 수 있습니다. 설치에 성공했지만
 에이전트가 보이지 않으면 이 표시 설정을 확인하거나 **Tools → Apps**에서 여세요.
 
-개인 Slack DM은 확인된 Agent Native 조직 구성원이나 이미 연결된 Slack 신원에서만
+개인 Slack DM은 확인된 Jami Studio 조직 구성원이나 이미 연결된 Slack 신원에서만
 허용됩니다. 채널 서비스 주체의 정책과 예산은 이 개인 신원과 별도로 적용됩니다.
 
 멘션 없는 답글은 실행 중인 같은 스레드만 이어가며 일반 채널 대화는 에이전트를

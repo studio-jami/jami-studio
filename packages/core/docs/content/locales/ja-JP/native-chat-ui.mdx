@@ -1,6 +1,6 @@
 ---
 title: "ネイティブ チャット UI"
-description: "アクション宣言されたネイティブ チャット レンダラー、再利用可能な DataTable/DataChart 出力、および BYO エージェント ランタイムが Agent-Native チャットに接続する方法。"
+description: "アクション宣言されたネイティブ チャット レンダラー、再利用可能な DataTable/DataChart 出力、および BYO エージェント ランタイムが Jami Studio チャットに接続する方法。"
 ---
 
 # ネイティブ チャット UI
@@ -251,14 +251,14 @@ export default defineAction({
 
 `AgentChatRuntime` は、チャット シェルの持ち込みエージェント コントラクトです。
 このセクションはその正規の参照です。他の場所で構築したエージェントを使用できる
-正規化されたイベントを Agent-Native の会話 UI にストリーミングし、
+正規化されたイベントを Jami Studio の会話 UI にストリーミングし、
 共有コンポーザー、トランスクリプト レンダリング、ツール カード、承認、ネイティブ ウィジェット
 とその周囲のアプリのレイアウト。 [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 ランタイム ストーリーのチュートリアル ポイントと [Component API](/docs/components#agent-chat-ui)
 各コネクタとアダプタとそのインポート パスをリストします。契約自体は
 以下で説明します。
 
-<Diagram id="doc-block-nv1xto" title={"BYO ランタイムは Agent-Native チャット シェルを保持します"} summary={"外部エージェントは、コネクタを介して正規化されたイベントをストリーミングします。 Agent-Native は、コンポーザー、トランスクリプト、ツール カード、承認、およびネイティブ ウィジェットを保持します。"}>
+<Diagram id="doc-block-nv1xto" title={"BYO ランタイムは Jami Studio チャット シェルを保持します"} summary={"外部エージェントは、コネクタを介して正規化されたイベントをストリーミングします。 Jami Studio は、コンポーザー、トランスクリプト、ツール カード、承認、およびネイティブ ウィジェットを保持します。"}>
 
 ```html
 <div class="diagram-byo">
@@ -385,7 +385,7 @@ data: {"type":"done","reason":"complete"}
 `chatUI` メタデータなので、アクション宣言されたネイティブ ウィジェットは引き続きレンダリングされます。
 iframe。
 
-組み込みの Agent-Native トランスポートをランタイム オブジェクトとして使用する場合は、次を使用します。
+組み込みの Jami Studio トランスポートをランタイム オブジェクトとして使用する場合は、次を使用します。
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -398,7 +398,7 @@ const runtime = createAgentNativeChatRuntime({
 
 完全に必要な場合にのみ `<AssistantChat createAdapter={...} />` を使用してください
 assistant-ui adapter control. Use `PromptComposer` by itself when your product
-外部トランスクリプト全体を所有しており、Agent-Native の作曲者のみを必要としています
+外部トランスクリプト全体を所有しており、Jami Studio の作曲者のみを必要としています
 フィールド。
 
 OpenAI、AG-UI、Claude エージェント SDK、および Vercel AI SDK ストリームは標準を使用できます

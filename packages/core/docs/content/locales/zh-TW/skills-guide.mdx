@@ -1,6 +1,6 @@
 ---
 title: "Skills指南"
-description: "skills 如何在 Agent-Native 中工作：框架 skills、域 skills 以及建立自訂 skills。"
+description: "skills 如何在 Jami Studio 中工作：框架 skills、域 skills 以及建立自訂 skills。"
 ---
 
 # Skills指南
@@ -208,7 +208,7 @@ scope: dev
 
 ### 向您的編碼代理公開僅限開發的技能 {#dev-only-skills}
 
-Agent-Native 執行時從 `.agents/skills/` 讀取 skills。 Claude 程式碼獨立從 `.claude/skills/` 讀取 skills。要使編碼代理可用但對執行時代理隱藏的技能：
+Jami Studio 執行時從 `.agents/skills/` 讀取 skills。 Claude 程式碼獨立從 `.claude/skills/` 讀取 skills。要使編碼代理可用但對執行時代理隱藏的技能：
 
 - 將其標記為 `.agents/skills/<name>/SKILL.md` 中的 `scope: dev`，以便執行時代理永遠不會載入它，和/或
 - 將技能放置或鏡像到 `.claude/skills/<name>/SKILL.md` 下，以便 Claude 程式碼拾取它。
@@ -375,7 +375,7 @@ claude plugin install agent-native-assets@agent-native-apps
 Vercel Labs `skills` 轉接器是便攜式 `skills/<name>/SKILL.md` 捆綁包
 適用於 `npx skills@latest add ...`，但原始 `skills` CLI 僅安裝說明。
 它不執行儲存庫定義的安裝後指令碼或註冊 MCP 連線器。
-將 Agent Native CLI 保留為本機代理的預設檔案路徑，因為它
+將 Jami Studio CLI 保留為本機代理的預設檔案路徑，因為它
 還註冊 MCP 連線器。 `Jami Studio/agent-native`是真正的GitHub
 Vercel/open Skills CLI 的儲存庫來源； `skills.sh` 是一個發現，並且
 排行榜目錄，而不是npm風格的包命名空間。
@@ -404,10 +404,10 @@ npx @agent-native/core@latest skills update visual-plan
 
 `skills update` 掃描已知的 Codex/Claude 專案和使用者技能資料夾，進行比較
 將資料夾哈希複製到最新的捆綁技能，並重寫舊資料夾
-地點。新複製的 Agent Native skills 包括 `agent-native-skill.json`
+地點。新複製的 Jami Studio skills 包括 `agent-native-skill.json`
 標記，以便將來的狀態輸出可以識別來源和雜湊值。
 
-產生的 Agent-Native 應用程式和工作區還包括框架提供的
+產生的 Jami Studio 應用程式和工作區還包括框架提供的
 `.agents/skills` 下的 skills（或 `packages/shared/.agents/skills` 中的
 工作區）。使用以下指令從目前/最新的 CLI 重新整理那些支架 skills：
 

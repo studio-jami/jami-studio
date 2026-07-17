@@ -225,7 +225,7 @@ export default defineAction({
 
 بالنسبة لإجراء `GET`، يتم تمرير `leadId` كمعلمة استعلام: `/_agent-native/actions/get-lead?leadId=abc`.
 
-<Endpoint id="doc-block-hmmg3a" title={"نقطة نهاية action المثبتة تلقائيا"} method="GET" path="/_agent-native/actions/get-lead" summary={"كل action يثبت هنا تلقائيا - اسم الملف هو اسم action."} auth={"ملف تعريف ارتباط للجلسة؛ تحمل استدعاءات الواجهة `X-Agent-Native-Frontend: 1`"} params={[
+<Endpoint id="doc-block-hmmg3a" title={"نقطة نهاية action المثبتة تلقائيا"} method="GET" path="/_agent-native/actions/get-lead" summary={"كل action يثبت هنا تلقائيا - اسم الملف هو اسم action."} auth={"ملف تعريف ارتباط للجلسة؛ تحمل استدعاءات الواجهة `X-Jami Studio-Frontend: 1`"} params={[
   {
     "name": "leadId",
     "in": "query",
@@ -353,7 +353,7 @@ export default defineAction({
 | `caller`     | اضبط متى…                                                                                                                            |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `"tool"`     | حلقة الوكيل داخل التطبيق، أو فريق الوكيل الفرعي/الوكيل، أو طلب A2A (A2A يقود نفس حلقة الوكيل، لذا فإن استدعاءات الأداة هي `"tool"`). |
-| `"frontend"` | استدعاء متصفح عبر `useActionMutation` / `useActionQuery` / `callAction` (تم وضع علامة عليها برأس `X-Agent-Native-Frontend: 1`).      |
+| `"frontend"` | استدعاء متصفح عبر `useActionMutation` / `useActionQuery` / `callAction` (تم وضع علامة عليها برأس `X-Jami Studio-Frontend: 1`).      |
 | `"http"`     | من `POST` / `GET` برمجي إلى `/_agent-native/actions/<name>` بدون علامة الواجهة الأمامية.                                             |
 | `"cli"`      | `pnpm action <name>` (عداء CLI).                                                                                                     |
 | `"mcp"`      | وكيل خارجي عبر نقطة نهاية MCP `tools/call`.                                                                                          |

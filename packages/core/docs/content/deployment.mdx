@@ -11,7 +11,7 @@ Agent-native apps use [Nitro](https://nitro.build) under the hood, which means y
 
 Every deployed app needs a persistent SQL database. In local development, agent-native falls back to a SQLite file at `data/app.db`; that is convenient on your machine, but it is not durable in containers, previews, or serverless environments where the filesystem can be reset.
 
-Set `DATABASE_URL` in your deploy provider before promoting an app to production. Agent-native uses Drizzle for schema and queries, so the data layer is portable across Drizzle-compatible SQL backends and the framework auto-detects the dialect from the URL. See [Database](/docs/database#production) for the adapter list and dialect details.
+Set `DATABASE_URL` in your deploy provider before promoting an app to production. Jami Studio uses Drizzle for schema and queries, so the data layer is portable across Drizzle-compatible SQL backends and the framework auto-detects the dialect from the URL. See [Database](/docs/database#production) for the adapter list and dialect details.
 
 Use `DATABASE_AUTH_TOKEN` only when your database provider requires a separate token, such as Turso/libSQL. For workspaces, all apps inherit the root `DATABASE_URL` by default; set `<APP_NAME>_DATABASE_URL` when one app should use a different database.
 

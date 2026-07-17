@@ -1,9 +1,9 @@
 ---
-title: "Agent-Native Código UI"
-description: "Crie e personalize superfícies de código Agent-Native com o pacote UI compartilhado, ponte de host de desktop e armazenamento de execução CLI."
+title: "Jami Studio Código UI"
+description: "Crie e personalize superfícies de código Jami Studio com o pacote UI compartilhado, ponte de host de desktop e armazenamento de execução CLI."
 ---
 
-# Agent-Native Código UI
+# Jami Studio Código UI
 
 > **A quem se destina:** autores de hospedagem que criam ou personalizam um espaço de trabalho de codificação
 > superfície (CLI, Desktop ou um modelo de navegador) no pacote de código UI compartilhado.
@@ -12,12 +12,12 @@ description: "Crie e personalize superfícies de código Agent-Native com o paco
 
 | Você quer…                                                                               | Usar                                     |
 | ---------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Renderizar um espaço de trabalho de codificação estilo Claude/Codex **UI**               | **Agent-Native Código UI** (esta página) |
+| Renderizar um espaço de trabalho de codificação estilo Claude/Codex **UI**               | **Jami Studio Código UI** (esta página) |
 | Execute o código Claude / Codex / Pi **como agente**, com seu próprio loop + ferramentas | [Harness Agents](/docs/harness-agents)   |
 | Troque o back-end que executa a **ferramenta `run-code`** do agente                      | [Adapters](/docs/sandbox-adapters)       |
 | Prepare uma ferramenta CLI (`gh`, `ffmpeg`) para o agente ligar                          | [Adapters](/docs/sandbox-adapters)       |
 
-Agent-Native Code é a superfície de codificação Agent-Native: um espaço de trabalho local no estilo Claude Code/Codex para sessões de codificação, comandos de barra, migrações, auditorias, transcrições, controles de execução e acompanhamentos. Um comando `npx @agent-native/core@latest` simples abre este espaço de trabalho; `npx @agent-native/core@latest code` é o subcomando explícito para a mesma experiência.
+Jami Studio Code é a superfície de codificação Jami Studio: um espaço de trabalho local no estilo Claude Code/Codex para sessões de codificação, comandos de barra, migrações, auditorias, transcrições, controles de execução e acompanhamentos. Um comando `npx @agent-native/core@latest` simples abre este espaço de trabalho; `npx @agent-native/core@latest code` é o subcomando explícito para a mesma experiência.
 
 Existem três camadas:
 
@@ -92,7 +92,7 @@ Existem três camadas:
 
 </Diagram>
 
-A divisão atual está convergindo intencionalmente: a barra lateral padrão do agente e as equipes de agentes são executadas no ciclo de vida principal do `run-manager`, enquanto o código Agent-Native usa sessões locais de longa execução apoiadas pelo armazenamento de execução de código baseado em arquivo e pelo vocabulário compartilhado do controlador de execução em segundo plano.
+A divisão atual está convergindo intencionalmente: a barra lateral padrão do agente e as equipes de agentes são executadas no ciclo de vida principal do `run-manager`, enquanto o código Jami Studio usa sessões locais de longa execução apoiadas pelo armazenamento de execução de código baseado em arquivo e pelo vocabulário compartilhado do controlador de execução em segundo plano.
 
 O UI compartilhado é controlado por host. Ele não sabe se está sendo executado no Electron, em um modelo de navegador ou em um futuro shell hospedado. Os hosts fornecem uma implementação `CodeAgentsHost`.
 
@@ -120,7 +120,7 @@ export function CodeSurface() {
 }
 ```
 
-Os hosts podem misturar fontes de execução na mesma lista. Sessões locais do código Agent-Native
+Os hosts podem misturar fontes de execução na mesma lista. Sessões locais do código Jami Studio
 pode aparecer ao lado de equipes de agentes ou outros adaptadores executados em segundo plano, desde que cada um
 normaliza para `CodeAgentRun`. Quando um host fornece `sourceLabel`,
 `source` ou `kind`, o hub renderiza um pequeno rótulo de origem, como "Código Local"
@@ -143,7 +143,7 @@ Essa separação é importante. O UI pode ser reutilizado por templates, mas o c
 
 ## Autenticação Codex CLI {#codex-cli-auth}
 
-O código Agent-Native pode usar um login Codex CLI local em vez de uma chave OpenAI API.
+O código Jami Studio pode usar um login Codex CLI local em vez de uma chave OpenAI API.
 Instale o Codex CLI em seu `PATH`, faça login uma vez e reinicie o Desktop ou o
 Código UI se já estiver aberto:
 
@@ -237,7 +237,7 @@ Os modos de execução tornam a política de edição explícita por sessão:
 | **Modo de planejamento** | `--plan`        | Inspecione, planeje e explique sem gravar arquivos ou executar mutações.                                                           |
 | **Modo automático**      | `--auto`        | Edite arquivos, execute verificações e pause apenas para operações genuinamente destrutivas de arquivos, git, publicação ou dados. |
 
-O modo automático é o padrão para sessões locais do código Agent-Native. Use o modo Plano para
+O modo automático é o padrão para sessões locais do código Jami Studio. Use o modo Plano para
 avaliação, arquitetura, revisão ou qualquer tarefa onde você queira uma proposta antes
 edições.
 
@@ -273,7 +273,7 @@ Hosts apoiados por adaptador também podem anexar metadados de origem:
 
 ## Executar loja
 
-As execuções locais do código Agent-Native são armazenadas em:
+As execuções locais do código Jami Studio são armazenadas em:
 
 ```text
 ~/.agent-native/code-agents
@@ -307,7 +307,7 @@ Os hosts do navegador devem retornar um erro `openTerminal` normal em vez de ten
 
 ## Compositor Compartilhado
 
-O código Agent-Native usa o mesmo `AgentComposerFrame` + `PromptComposer` /
+O código Jami Studio usa o mesmo `AgentComposerFrame` + `PromptComposer` /
 Pilha `TiptapComposer` exportada de `@agent-native/core/client/composer` como
 barra lateral do agente de estrutura. Não bifurque um separado
 área de texto, seletor de ferramenta de codificação, seletor de upload, botão de voz, seletor de modelo ou Enter-to-submit
@@ -321,7 +321,7 @@ compositor padrão da barra lateral. O código usa `PromptComposer` diretamente 
 
 ## Ferramentas de codificação compartilhadas
 
-O agente de desenvolvimento da barra lateral e o código Agent-Native usam o mesmo mínimo
+O agente de desenvolvimento da barra lateral e o código Jami Studio usam o mesmo mínimo
 perfil da ferramenta de codificação: `bash`, `read`, `edit` e `write`. `bash` é o padrão
 para listar/pesquisar arquivos, executar testes e invocar projetos CLIs; `read`
 mostra fatias de arquivo numeradas em linha; `edit` aplica substituições exatas de texto; e
@@ -348,11 +348,11 @@ disponível quando necessário.
 
 ## Comandos de barra
 
-O código Agent-Native trata a migração como um recurso, não como uma categoria de aplicativo separada. `/migrate` pode ser um objetivo integrado, um comando de projeto ou um pacote de instruções personalizado no mesmo contrato de host.
+O código Jami Studio trata a migração como um recurso, não como uma categoria de aplicativo separada. `/migrate` pode ser um objetivo integrado, um comando de projeto ou um pacote de instruções personalizado no mesmo contrato de host.
 
-### Migrando para Agent-Native com `/migrate` {#migrate}
+### Migrando para Jami Studio com `/migrate` {#migrate}
 
-`/migrate` é o objetivo integrado para mover um aplicativo existente, URL, ou produto descrito para Agent-Native. É uma meta de corte no espaço de trabalho do Code - não um modelo separado para scaffold e nem um produto único - então ele compartilha o mesmo armazenamento de sessão, transcrição, controles de execução e hub de desktop como qualquer outra sessão do Code, e você pode retomar, anexar, inspecionar e interrompê-lo da mesma maneira.
+`/migrate` é o objetivo integrado para mover um aplicativo existente, URL, ou produto descrito para Jami Studio. É uma meta de corte no espaço de trabalho do Code - não um modelo separado para scaffold e nem um produto único - então ele compartilha o mesmo armazenamento de sessão, transcrição, controles de execução e hub de desktop como qualquer outra sessão do Code, e você pode retomar, anexar, inspecionar e interrompê-lo da mesma maneira.
 
 ```bash
 npx @agent-native/core@latest code /migrate ./my-next-app --out ../migrated-app
@@ -377,7 +377,7 @@ Projeto skills ativo em:
 .agents/skills/*/SKILL.md
 ```
 
-Quando o host implementa `listCodePacks`, o UI compartilhado mostra comandos de projeto e skills no trilho. As linhas de comando inserem `/<command>` e as linhas de habilidade inserem um prompt focado “Use a habilidade `<skill>`…” para que o trilho permaneça acionável. As metas de barra integradas `/migrate` e `/audit` permanecem reservadas para os controles de código Agent-Native globais, assim como os nomes de controle de execução, como `status` e `resume` — esses são subcomandos invocados sem barra (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), e não metas de barra.
+Quando o host implementa `listCodePacks`, o UI compartilhado mostra comandos de projeto e skills no trilho. As linhas de comando inserem `/<command>` e as linhas de habilidade inserem um prompt focado “Use a habilidade `<skill>`…” para que o trilho permaneça acionável. As metas de barra integradas `/migrate` e `/audit` permanecem reservadas para os controles de código Jami Studio globais, assim como os nomes de controle de execução, como `status` e `resume` — esses são subcomandos invocados sem barra (`npx @agent-native/core@latest code status`, `npx @agent-native/core@latest code resume`), e não metas de barra.
 
 Não crie um registro de comando de barra separado para um novo host de código. Projeto
 comandos e skills são descobertos em `.agents/commands/*.md` e
@@ -387,7 +387,7 @@ por meio do compositor compartilhado.
 ## Gerenciador de execução do agente em segundo plano
 
 O trabalho do agente de codificação em segundo plano deve reutilizar a mesma base do run-manager que o
-resto de Agent-Native:
+resto de Jami Studio:
 
 - Use o armazenamento/executor de execução de código para sessões de código locais.
 - Use o adaptador/fundação de execução em segundo plano compartilhado quando uma superfície precisar ser listada,

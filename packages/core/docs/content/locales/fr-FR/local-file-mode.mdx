@@ -13,7 +13,7 @@ au lieu des enregistrements d'application basés sur SQL.
 La première implémentation se trouve dans le modèle de contenu : la barre latérale gauche est
 rempli à partir des fichiers `.md` et `.mdx` locaux, la sélection d'une page ouvre la norme
 Éditeur de contenu et enregistrement des écritures dans le fichier sélectionné. Les mêmes fichiers peuvent
-être également modifié par Codex, Claude Code, l'agent de la barre latérale Agent-Native ou un utilisateur normal
+être également modifié par Codex, Claude Code, l'agent de la barre latérale Jami Studio ou un utilisateur normal
 éditeur.
 
 Pour le contenu, cela donne au produit l'impression d'être Obsidian open source pour MDX :
@@ -200,7 +200,7 @@ ou met à jour `agent-native.json` avec les valeurs par défaut du contenu :
 La compétence installée indique aux agents de codage d'utiliser le contenu actions
 (`list-documents`, `get-document`, `edit-document`, `update-document`,
 `share-local-file-document` et fichier de composant actions) lorsqu'une application de contenu locale
-ou le pont Agent Native Desktop les expose. Si aucun pont ne fonctionne, la compétence
+ou le pont Jami Studio Desktop les expose. Si aucun pont ne fonctionne, la compétence
 revient à des modifications de dépôt directes sécurisées tout en préservant le contenu, les importations, JSX,
 et MDX inconnu.
 
@@ -359,7 +359,7 @@ choisissez **Fichiers locaux** et choisissez un dossier dans Chrome, l'applicati
 les fichiers `.md` et `.mdx` via le système de fichiers du navigateur Accédez à API, mais
 Chrome n'expose pas de chemin de dossier absolu à compiler par Vite
 `components/*.tsx`. Pour prévisualiser et recharger à chaud les composants React personnalisés, exécutez
-Contenu localement ou utilisez Agent Native Desktop pour que le pont local de confiance puisse
+Contenu localement ou utilisez Jami Studio Desktop pour que le pont local de confiance puisse
 enregistrez l'espace de travail sélectionné auprès du serveur de développement de contenu local. Dans ce mode,
 modifications des fichiers de composants existants, rechargement à chaud via Vite et ajout de ou
 la suppression des fichiers de composants recharge le registre des composants et le menu barre oblique.

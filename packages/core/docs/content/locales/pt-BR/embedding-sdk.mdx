@@ -1,17 +1,17 @@
 ---
 title: "Incorporando SDK"
-description: "Incorpore um arquivo secundário Agent-Native em um aplicativo SaaS existente com contexto de página e comandos de host."
+description: "Incorpore um arquivo secundário Jami Studio em um aplicativo SaaS existente com contexto de página e comandos de host."
 ---
 
 # Incorporando SDK
 
-Incorpore Agent-Native em um produto existente: mantenha seu aplicativo SaaS, adicione um durável
+Incorpore Jami Studio em um produto existente: mantenha seu aplicativo SaaS, adicione um durável
 arquivo secundário do agente e permitir que esse agente veja e opere na página em que o usuário está
 já estou usando. Se você ainda está decidindo entre agentes sem cabeça, chat avançado e
 arquivo secundário incorporado ou um aplicativo completo, comece com
 [Agent Surfaces](/docs/agent-surfaces).
 
-<Diagram id="doc-block-93byob" title={"A membrana de incorporação"} summary={"O aplicativo host fornece autenticação do lado do servidor e contexto de página ativa; Agent-Native executa o sidecar durável e acessa a guia aberta por meio de ações do cliente e comandos do host."}>
+<Diagram id="doc-block-93byob" title={"A membrana de incorporação"} summary={"O aplicativo host fornece autenticação do lado do servidor e contexto de página ativa; Jami Studio executa o sidecar durável e acessa a guia aberta por meio de ações do cliente e comandos do host."}>
 
 ```html
 <div class="diagram-embed">
@@ -25,7 +25,7 @@ arquivo secundário incorporado ou um aplicativo completo, comece com
     <div class="diagram-pill">&larr; comandos do host</div>
   </div>
   <div class="diagram-panel center" data-rough>
-    <strong>Agent-Native sidecar</strong
+    <strong>Jami Studio sidecar</strong
     ><small class="diagram-muted"
       >chat durável · estado do app · extensões</small
     >
@@ -71,9 +71,9 @@ componente. Este é o padrão recomendado: reutiliza todo o framework
 (actions, estado do aplicativo compatível com SQL, extensões, ferramentas de sessão do navegador) e fornece o
 agente a capacidade de ver e operar na página que o usuário já está usando.
 
-O host monta rotas do servidor Agent-Native em seu aplicativo existente e passa seu
-usuário logado em Agent-Native e renderiza a barra lateral React no produto UI.
-Agent-Native usa a implantação do host, a sessão do host e o configurado
+O host monta rotas do servidor Jami Studio em seu aplicativo existente e passa seu
+usuário logado em Jami Studio e renderiza a barra lateral React no produto UI.
+Jami Studio usa a implantação do host, a sessão do host e o configurado
 `DATABASE_URL` para gerenciar suas próprias tabelas de estrutura: tópicos de bate-papo, configurações,
 estado do aplicativo, extensões, dados de extensão, segredos, sessões do navegador e
 rotas de ação.
@@ -168,11 +168,11 @@ export function BuilderAppShell({ children, content, editor }) {
 
 Este modo é o padrão recomendado porque reutiliza a estrutura completa: o back-end actions é montado em `/_agent-native/actions`, o agente pode chamar o mesmo actions que o UI, as extensões criadas pelo usuário são armazenadas em SQL, o `extensionData` é durável e tem escopo de usuário/org, e as ferramentas de sessão do navegador permitem que o agente de back-end inspecione ou opere o atualmente aberto guia.
 
-A autenticação do host é do lado do servidor. Não passe a identidade do navegador como fonte da verdade; use o objeto de solicitação/sessão do host ou um token verificado pelo servidor de curta duração. Se o host não expor e-mails, retorne um `userId` estável e Agent-Native o usará como chave do proprietário.
+A autenticação do host é do lado do servidor. Não passe a identidade do navegador como fonte da verdade; use o objeto de solicitação/sessão do host ou um token verificado pelo servidor de curta duração. Se o host não expor e-mails, retorne um `userId` estável e Jami Studio o usará como chave do proprietário.
 
 ### Isolamento de banco de dados
 
-O modo incorporado gerencia tabelas Agent-Native em SQL. Para um produto SaaS maduro, o padrão mais seguro é **mesma hospedagem e autenticação, banco de dados/esquema Agent-Native dedicado**:
+O modo incorporado gerencia tabelas Jami Studio em SQL. Para um produto SaaS maduro, o padrão mais seguro é **mesma hospedagem e autenticação, banco de dados/esquema Jami Studio dedicado**:
 
 ```ts
 export default createAgentNativeEmbeddedPlugin({
@@ -182,7 +182,7 @@ export default createAgentNativeEmbeddedPlugin({
 });
 ```
 
-O uso do `DATABASE_URL` principal do produto host é suportado, mas faça disso uma escolha explícita. Agent-Native cria tabelas de estrutura como `settings`, `application_state`, `tools`, `tool_data`, tabelas de sessão do navegador, segredos, threads de bate-papo e índices relacionados. Um banco de dados/esquema dedicado evita colisões de nomes de tabelas, mantém clara a propriedade das tabelas gerenciadas e torna a política de backup/retenção mais fácil de raciocinar. Se você compartilhar intencionalmente o banco de dados host, revise primeiro os nomes das tabelas existentes e trate as tabelas Agent-Native como pertencentes à estrutura.
+O uso do `DATABASE_URL` principal do produto host é suportado, mas faça disso uma escolha explícita. Jami Studio cria tabelas de estrutura como `settings`, `application_state`, `tools`, `tool_data`, tabelas de sessão do navegador, segredos, threads de bate-papo e índices relacionados. Um banco de dados/esquema dedicado evita colisões de nomes de tabelas, mantém clara a propriedade das tabelas gerenciadas e torna a política de backup/retenção mais fácil de raciocinar. Se você compartilhar intencionalmente o banco de dados host, revise primeiro os nomes das tabelas existentes e trate as tabelas Jami Studio como pertencentes à estrutura.
 
 ## Outros modos {#other-modes}
 
@@ -191,7 +191,7 @@ somente quando for melhor para sua situação:
 
 | Modo                                    | Use quando                                                                                                                                | Pacote                                       |
 | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| **Seletor de aplicativos incorporados** | Lançamento de um aplicativo Agent-Native completo como um iframe focado (seletor de ativos, criador de formulários, painel de aprovação). | `@agent-native/embedding`                    |
+| **Seletor de aplicativos incorporados** | Lançamento de um aplicativo Jami Studio completo como um iframe focado (seletor de ativos, criador de formulários, painel de aprovação). | `@agent-native/embedding`                    |
 | **ponte de host `<AgentNative>`**       | Aplicativos secundários independentes ou iframes de origem cruzada que conectam o contexto da página e o cliente actions manualmente.     | `@agent-native/core/client`                  |
 | **Extensões portáteis**                 | Permitir que usuários host criem miniaplicativos em sandbox quando o SaaS já possui armazenamento/aprovação de extensão.                  | Slot de extensão `@agent-native/core/client` |
 
@@ -212,7 +212,7 @@ pnpm add @agent-native/embedding
 ### Aplicativo incorporado e modo seletor
 
 Use `@agent-native/embedding` quando o produto host quiser lançar um
-Aplicativo Agent-Native como uma superfície iframe focada: um seletor de ativos, gerador de ativos,
+Aplicativo Jami Studio como uma superfície iframe focada: um seletor de ativos, gerador de ativos,
 criador de formulários, seletor de espaço de calendário, painel de aprovação ou qualquer outra tarefa específica
 fluxo de trabalho. Isto é intencionalmente menor que a ponte host sidecar abaixo: o
 iframe anuncia prontidão, o host pode enviar mensagens nomeadas e as incorporadas
@@ -375,7 +375,7 @@ Para hosts não React, chame `createAgentNativeHostBridge()` diretamente e passe
 
 ### Lado do iframe
 
-Dentro do arquivo secundário Agent-Native, use os auxiliares de quadro para solicitar o contexto do host, descobrir a sessão do navegador ao vivo actions, executá-los ou pedir ao host para fazer o trabalho do UI. Sempre passe o `hostOrigin` esperado em produção:
+Dentro do arquivo secundário Jami Studio, use os auxiliares de quadro para solicitar o contexto do host, descobrir a sessão do navegador ao vivo actions, executá-los ou pedir ao host para fazer o trabalho do UI. Sempre passe o `hostOrigin` esperado em produção:
 
 ```ts
 import {
@@ -499,13 +499,13 @@ Existem duas classes de ação:
 | Ação de back-end | Aplicativo sidecar, backend API, MCP ou adaptador de integração     | Sim                                       | Trabalho durável como criar, atualizar, publicar, sincronizar, enviar, importar.                                             |
 | Ação do cliente  | Guia atual do navegador por meio de `<AgentNative actions={...} />` | Não                                       | UI efêmero funciona como selecionar um elemento, ler o estado do editor, rolar até uma linha, copiar o estado atual da tela. |
 
-Backend actions deve ser o padrão para qualquer coisa que deva sobreviver a atualizações, navegadores fechados, novas tentativas ou execuções acionadas por integração. Eles pertencem à camada normal de ação/ferramenta Agent-Native do aplicativo secundário, onde o agente pode chamá-los por chat, automações, integrações Slack/Telegrama/e-mail e trabalhos em segundo plano.
+Backend actions deve ser o padrão para qualquer coisa que deva sobreviver a atualizações, navegadores fechados, novas tentativas ou execuções acionadas por integração. Eles pertencem à camada normal de ação/ferramenta Jami Studio do aplicativo secundário, onde o agente pode chamá-los por chat, automações, integrações Slack/Telegrama/e-mail e trabalhos em segundo plano.
 
 O cliente actions é uma ponte ativa para uma guia do navegador. O host os anuncia com `source: "client"` e `availability: "browser-session"`, e o sidecar deve tratar esse manifesto como temporário. Liste novamente actions quando a rota ou seleção for alterada e retorne ao back-end actions quando a guia desaparecer.
 
 ### Extensões Portáteis
 
-> Prefira o plugin com baterias incluídas quando quiser que o Agent-Native gerencie
+> Prefira o plugin com baterias incluídas quando quiser que o Jami Studio gerencie
 > definições de extensão, aprovação, armazenamento e extensões criadas por agentes. Usar
 > o slot portátil abaixo somente quando o SaaS já possui essas preocupações.
 
@@ -616,7 +616,7 @@ Globais disponíveis dentro do iframe:
 
 Por padrão, `extensionData` usa o navegador `localStorage`, que é útil para protótipos e widgets locais. Os hosts SaaS de produção devem passar um adaptador `storage` apoiado por back-end para que os dados de extensão com escopo do usuário e da organização sejam duráveis, auditáveis ​​e controlados pelas permissões do aplicativo. O adaptador HTTP genérico envia corpos POST como `{ operation, extensionId, slotId, collection, id, data, options, context }` e espera `{ result }` ou o resultado JSON diretamente.
 
-Esta camada SDK portátil é separada do armazenamento de extensão integrado com suporte de SQL da estrutura. Em um aplicativo Agent-Native, use os componentes `ExtensionSlot`/`EmbeddedExtension` existentes e a ação `create-extension`. Em um cenário de incorporação de SaaS hospedado, prefira `createAgentNativeEmbeddedPlugin()` mais `AgentNativeEmbedded` quando desejar que Agent-Native gerencie definições de extensão, aprovação, armazenamento e extensões criadas por agente imediatamente. Use `AgentNativeExtensionSlot` somente quando o SaaS já possuir definições de extensão, aprovação, mercado, armazenamento e cobrança.
+Esta camada SDK portátil é separada do armazenamento de extensão integrado com suporte de SQL da estrutura. Em um aplicativo Jami Studio, use os componentes `ExtensionSlot`/`EmbeddedExtension` existentes e a ação `create-extension`. Em um cenário de incorporação de SaaS hospedado, prefira `createAgentNativeEmbeddedPlugin()` mais `AgentNativeEmbedded` quando desejar que Jami Studio gerencie definições de extensão, aprovação, armazenamento e extensões criadas por agente imediatamente. Use `AgentNativeExtensionSlot` somente quando o SaaS já possuir definições de extensão, aprovação, mercado, armazenamento e cobrança.
 
 Modelo de segurança:
 
@@ -667,10 +667,10 @@ Use `createAgentNativeHostTools()` dentro do iframe secundário quando o tempo d
 | `run-host-action`   | Execute uma ação de cliente ativa por nome.                           |
 | `send-host-command` | Envie comandos de host, como atualizar, navegar, remontar ou aprovar. |
 
-O auxiliar retorna intencionalmente objetos `{ name, description, parameters, execute }` simples para que os sidecars possam adaptá-los à chamada de função AI SDK, Anthropic, OpenAI ou forma Agent-Native `ActionEntry` sem acoplar este SDK a um tempo de execução.
+O auxiliar retorna intencionalmente objetos `{ name, description, parameters, execute }` simples para que os sidecars possam adaptá-los à chamada de função AI SDK, Anthropic, OpenAI ou forma Jami Studio `ActionEntry` sem acoplar este SDK a um tempo de execução.
 
 ## Formato de produto recomendado
 
 Inicie o iframe primeiro. Ele funciona para Jami Studio, aplicativos SaaS do cliente e ferramentas de administração interna sem acoplamento de ciclos de lançamento ou suposições de CSS/tempo de execução.
 
-O sidecar em si ainda deve ser um aplicativo/modelo Agent-Native: actions é a superfície de backend API, o estado do aplicativo apoiado por SQL é a memória do agente e integrações como Slack ou Telegram podem ser roteadas para o mesmo chat durável. A incorporação SDK fornece a membrana ativa entre esse arquivo secundário e a página host atual.
+O sidecar em si ainda deve ser um aplicativo/modelo Jami Studio: actions é a superfície de backend API, o estado do aplicativo apoiado por SQL é a memória do agente e integrações como Slack ou Telegram podem ser roteadas para o mesmo chat durável. A incorporação SDK fornece a membrana ativa entre esse arquivo secundário e a página host atual.

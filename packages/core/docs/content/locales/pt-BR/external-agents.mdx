@@ -86,14 +86,14 @@ A regra de identidade é a dobradiça de segurança: o link é apenas `view` + i
 ## Qual caminho de agente você precisa? {#which-agent-path}
 
 - **Host MCP externo:** use esta página quando Claude, ChatGPT, Codex, Cursor, OpenCode, GitHub Copilot / VS Code ou outro host compatível com MCP precisar chamar seu aplicativo nativo do agente hospedado.
-- **Seu próprio tempo de execução por trás do bate-papo Agent-Native:** veja [Agent Surfaces](/docs/agent-surfaces#byo-agent) e [Native Interface de chat](/docs/native-chat-ui#byo-agent-runtimes) quando um agente criado com outra estrutura deve alimentar o `<AssistantChat runtime={...}>`.
+- **Seu próprio tempo de execução por trás do bate-papo Jami Studio:** veja [Agent Surfaces](/docs/agent-surfaces#byo-agent) e [Native Interface de chat](/docs/native-chat-ui#byo-agent-runtimes) quando um agente criado com outra estrutura deve alimentar o `<AssistantChat runtime={...}>`.
 - **Seu aplicativo consome ferramentas MCP:** consulte [MCP Clients](/docs/mcp-clients) quando um aplicativo nativo do agente precisa chamar ferramentas expostas por outro servidor MCP.
 - **Outro aplicativo ou agente via A2A:** use [Agent Mentions](/docs/agent-mentions) e [A2A](/docs/a2a-protocol) quando aplicativos nativos de agente precisarem descobrir e delegar uns aos outros.
 - **Subagentes personalizados locais:** use [Workspace](/docs/workspace) quando desejar perfis de agentes personalizados dentro do próprio espaço de trabalho nativo do agente.
 
 ## Configuração fácil {#easy-setup}
 
-Adicione um conector MCP remoto ao host onde você deseja usar Agent-Native.
+Adicione um conector MCP remoto ao host onde você deseja usar Jami Studio.
 
 Para trabalho em espaço de trabalho ou entre aplicativos, use Dispatch:
 
@@ -120,13 +120,13 @@ guias específicas do host para Claude, ChatGPT, Cursor, Código Claude, Codex e
 ### Claude e ChatGPT OAuth {#oauth}
 
 Claude / Claude Desktop: adicione um conector personalizado, cole o MCP URL, clique em
-**Conecte**, faça login com sua conta Agent-Native, aprove os escopos MCP,
+**Conecte**, faça login com sua conta Jami Studio, aprove os escopos MCP,
 e habilite o conector em um chat. O código Claude usa o mesmo URL: adicione-o como
 servidor HTTP MCP remoto, execute `/mcp` e escolha **Autenticar**.
 
 ChatGPT: use um espaço de trabalho onde estejam conectores MCP personalizados ou aplicativos em modo de desenvolvedor
 ativado, crie um conector/aplicativo personalizado, cole o mesmo MCP URL, escolha OAuth,
-ferramentas de verificação/descoberta, login com Agent-Native, aprovação dos escopos e ativação
+ferramentas de verificação/descoberta, login com Jami Studio, aprovação dos escopos e ativação
 o conector em um bate-papo.
 
 As concessões OAuth são por host e por usuário. O host armazena os tokens e
@@ -149,11 +149,11 @@ Servidores MCP.
 Depois de conectar, tente um destes:
 
 ```text
-Use Agent-Native Analytics to generate a weekly conversion-rate bar chart and show it inline.
+Use Jami Studio Analytics to generate a weekly conversion-rate bar chart and show it inline.
 ```
 
 ```text
-Use Agent-Native Mail to draft a short follow-up email to me, but do not send it.
+Use Jami Studio Mail to draft a short follow-up email to me, but do not send it.
 ```
 
 Em hosts que suportam aplicativos MCP, o Analytics pode renderizar painéis reais e rotas de análise inline, e o Mail pode renderizar a composição real UI inline para revisão de rascunho. Em hosts que não renderizam aplicativos MCP, a mesma chamada de ferramenta ainda retorna um link direto, como **Abrir rascunho no Mail →** ou **Abrir painel no Analytics →**.
@@ -196,7 +196,7 @@ cliente se o novo servidor ainda não estiver visível.
 
 Use `--client codex` (ou `--client claude-code`, `--client claude-code-cli`, `--client cursor`, `--client opencode`, `--client github-copilot`, `--client cowork`, `--client all`) para ignorar o seletor de scripts ou instalações únicas.
 
-O aplicativo original skills instala as instruções e o conector MCP hospedado junto com o Agent Native CLI:
+O aplicativo original skills instala as instruções e o conector MCP hospedado junto com o Jami Studio CLI:
 
 ```bash
 npx @agent-native/core@latest skills add assets              # alias: image-generation
@@ -410,7 +410,7 @@ Trata-se de uma exclusão rígida baseada em nome, não apenas uma omissão de m
 
 Um aplicativo que fornece `resolveExecutionContext` substitui explicitamente essa cadeia de identidade padrão. O resolver deve rejeitar de forma independente autores não verificados, convidados, membros externos e workspaces não vinculados antes de retornar um principal.
 
-Antes de o agente ser executado, uma DM verificada do Slack é associada a um membro existente da organização Agent Native e o vínculo de identidade entre workspace e usuário é salvo. O contexto resultante de usuário/organização carrega os recursos, as instruções e as skills desse usuário. Por padrão, membros do workspace cujo perfil foi carregado, mas cujo e-mail está ausente ou que ainda não pertencem à organização, são recusados. Os aplicativos podem definir explicitamente `allowAnonymousOrgScopedSlackDm: true` para executar esses membros como um principal de serviço anônimo com escopo da organização — o mesmo nível de visibilidade para toda a organização usado pelos canais compartilhados, mas nunca acesso privado do usuário — com uma observação visível ao agente e um aviso único no Slack explicando como obter acesso pessoal. Essa opção nunca admite falhas no carregamento do perfil, autores não verificados, convidados, membros externos (Slack Connect) ou workspaces não conectados a uma organização; esses casos recebem uma resposta educada de recusa. Canais compartilhados do Slack usam um principal de serviço e não herdam as permissões privadas de um participante. O OAuth gerenciado e o manifesto gerado do aplicativo Slack solicitam o escopo de bot `users:read.email`. Instalações existentes precisam ser reconectadas/reinstaladas para conceder um escopo recém-adicionado; instalações antigas com token de bot precisam adicioná-lo manualmente no Slack. Sem ele, as DMs são recusadas, a menos que o aplicativo habilite explicitamente `allowAnonymousOrgScopedSlackDm`.
+Antes de o agente ser executado, uma DM verificada do Slack é associada a um membro existente da organização Jami Studio e o vínculo de identidade entre workspace e usuário é salvo. O contexto resultante de usuário/organização carrega os recursos, as instruções e as skills desse usuário. Por padrão, membros do workspace cujo perfil foi carregado, mas cujo e-mail está ausente ou que ainda não pertencem à organização, são recusados. Os aplicativos podem definir explicitamente `allowAnonymousOrgScopedSlackDm: true` para executar esses membros como um principal de serviço anônimo com escopo da organização — o mesmo nível de visibilidade para toda a organização usado pelos canais compartilhados, mas nunca acesso privado do usuário — com uma observação visível ao agente e um aviso único no Slack explicando como obter acesso pessoal. Essa opção nunca admite falhas no carregamento do perfil, autores não verificados, convidados, membros externos (Slack Connect) ou workspaces não conectados a uma organização; esses casos recebem uma resposta educada de recusa. Canais compartilhados do Slack usam um principal de serviço e não herdam as permissões privadas de um participante. O OAuth gerenciado e o manifesto gerado do aplicativo Slack solicitam o escopo de bot `users:read.email`. Instalações existentes precisam ser reconectadas/reinstaladas para conceder um escopo recém-adicionado; instalações antigas com token de bot precisam adicioná-lo manualmente no Slack. Sem ele, as DMs são recusadas, a menos que o aplicativo habilite explicitamente `allowAnonymousOrgScopedSlackDm`.
 
 ### Nível completo (somente aceitação explícita) {#full-tier}
 

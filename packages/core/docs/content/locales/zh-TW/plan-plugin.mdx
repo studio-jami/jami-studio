@@ -1,11 +1,11 @@
 ---
 title: "規劃外掛和市場"
-description: "安裝 Agent-Native Plan skills（/visual-plan、/visual-recap、/visualize-repo）以及託管 Plan MCP 連線器，可作為 Claude Code 或 Codex 外掛安裝，也可使用通用 CLI。了解更新如何運作以及是否需要提交任何內容。"
+description: "安裝 Jami Studio Plan skills（/visual-plan、/visual-recap、/visualize-repo）以及託管 Plan MCP 連線器，可作為 Claude Code 或 Codex 外掛安裝，也可使用通用 CLI。了解更新如何運作以及是否需要提交任何內容。"
 ---
 
 # 規劃外掛和市場
 
-Agent-Native **Plan** 應用程式以一個可安裝的 bundle 提供。一次安裝會新增 Plan 斜線指令 skills，**並**連線託管的 Plan MCP 連線器，讓 agent 可以產生 plans，並讓 skills 直接發布到 Plan 應用程式中。
+Jami Studio **Plan** 應用程式以一個可安裝的 bundle 提供。一次安裝會新增 Plan 斜線指令 skills，**並**連線託管的 Plan MCP 連線器，讓 agent 可以產生 plans，並讓 skills 直接發布到 Plan 應用程式中。
 
 ## 你得到什麼 {#what-you-get}
 
@@ -134,7 +134,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 應用程式使用`agent-native.json`中的`apps.plan.roots[0].path`作為預設位置
 儲存升級的本機計畫，回退到 `plans/`。
 
-這會將計畫內容排除在 Agent-Native 計畫資料庫之外。託管共用，
+這會將計畫內容排除在 Jami Studio 計畫資料庫之外。託管共用，
 除非您明確表示，評論、螢幕截圖和計畫歷史紀錄均不可用
 稍後發布。
 
@@ -179,13 +179,13 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 
 </Diagram>
 
-Agent Native 桌面有一個單獨的託管計畫本機檔案同步路徑：
+Jami Studio 桌面有一個單獨的託管計畫本機檔案同步路徑：
 桌面應用程式可以將託管計畫鏡像到本機 MDX 檔案並將編輯內容匯入回來
 無需克隆 Plan 應用程式或執行 CLI。該工作流程保持託管
 計畫資料庫作為事實來源；當目標達到時使用本機檔案隱私模式
 沒有計畫資料庫寫入。
 
-> 外掛（`agent-native-visual-plans`）帶有app id `visual-plans`，這就是為什麼 Claude 程式碼外掛名稱和Codex外掛名稱都是`agent-native-visual-plans`。計畫應用的顯示名稱為“Agent-Native 計畫”。
+> 外掛（`agent-native-visual-plans`）帶有app id `visual-plans`，這就是為什麼 Claude 程式碼外掛名稱和Codex外掛名稱都是`agent-native-visual-plans`。計畫應用的顯示名稱為“Jami Studio 計畫”。
 
 ## 安裝路由 {#install}
 
@@ -193,7 +193,7 @@ Agent Native 桌面有一個單獨的託管計畫本機檔案同步路徑：
 
 ### 通用技能路由（任意 MCP 主機） {#universal}
 
-適用於任何 host — Claude Code、Codex、Cursor、Cline、Goose、ChatGPT 自訂 MCP apps、Claude Cowork 以及任何其他 MCP-compatible host。Agent-Native CLI 會安裝 Plan skills，註冊託管的 Plan MCP 連線器，**並在同一步驟中為選定的本機用戶端執行驗證**，因此你的第一次工具呼叫不會遇到 OAuth 牆：
+適用於任何 host — Claude Code、Codex、Cursor、Cline、Goose、ChatGPT 自訂 MCP apps、Claude Cowork 以及任何其他 MCP-compatible host。Jami Studio CLI 會安裝 Plan skills，註冊託管的 Plan MCP 連線器，**並在同一步驟中為選定的本機用戶端執行驗證**，因此你的第一次工具呼叫不會遇到 OAuth 牆：
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -222,7 +222,7 @@ npx @agent-native/core@latest recap doctor
 重新載入代理用戶端，以便載入新的 skills 和工具，然後執行
 `/visual-plan`.
 
-> 注意：裸機 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安裝**僅說明** - 它不註冊 MCP 連線器。當您也想連線連線器時，請使用上面的 Agent-Native CLI。
+> 注意：裸機 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安裝**僅說明** - 它不註冊 MCP 連線器。當您也想連線連線器時，請使用上面的 Jami Studio CLI。
 
 ### Claude 程式碼（外掛） {#claude-code}
 

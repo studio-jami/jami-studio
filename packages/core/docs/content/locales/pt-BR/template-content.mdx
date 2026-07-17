@@ -160,7 +160,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 O instalador copia a habilidade `content` para seu agente de codificação e grava ou
 atualiza `agent-native.json` com raízes de conteúdo para `docs/`, `blog/`, `content/`,
-e `resources/`. Quando um aplicativo de conteúdo local, Agent Native Desktop ou confiável
+e `resources/`. Quando um aplicativo de conteúdo local, Jami Studio Desktop ou confiável
 a ponte local está em execução, os agentes devem usar o Conteúdo actions como
 `list-documents`, `get-document`, `edit-document`, `update-document` e
 `share-local-file-document` em vez de gravações brutas no sistema de arquivos. Sem aquele local
@@ -199,14 +199,14 @@ Abra `http://localhost:8083` e crie sua primeira página. Em seguida, peça ao a
 ### Sincronização de arquivos locais
 
 A rota `/local-files` protegida usa o navegador File System Access API ou um
-ponte de pasta nativa protegida dentro do Agent Native Desktop, para leitura e gravação
+ponte de pasta nativa protegida dentro do Jami Studio Desktop, para leitura e gravação
 Arquivos Markdown/MDX de uma pasta escolhida pelo usuário. Depois que a pasta estiver vinculada e
 importado, o arquivo selecionado é tratado como autoridade: abrindo a página lê
 o arquivo, e o editor normal salva, escreve o arquivo primeiro. SQL é então atualizado como um
 camada de cache/histórico para o documento existente UI, pesquisa e painel de versão, não
 como fonte da verdade. O menu da página no canto superior direito expõe o caminho de origem local:
 o caminho relativo está sempre disponível, o caminho absoluto está disponível no arquivo local verdadeiro
-modo e Agent Native Desktop, e Reveal no Finder estão disponíveis através do
+modo e Jami Studio Desktop, e Reveal no Finder estão disponíveis através do
 ponte de desktop ou modo de arquivo local apoiado por servidor.
 
 As chamadas de rota de sincronização em massa:
@@ -261,7 +261,7 @@ no arquivo local.
 
 O seletor de **Arquivos locais** do navegador pode ler e gravar arquivos `.md` e `.mdx` em
 próprio, mas as visualizações do componente React executável requerem um compilador local. Corre
-Conteúdo localmente ou use o Agent Native Desktop para que o caminho do espaço de trabalho selecionado possa
+Conteúdo localmente ou use o Jami Studio Desktop para que o caminho do espaço de trabalho selecionado possa
 ser registrado no servidor de desenvolvimento de conteúdo local. Vite então importa
 `components/*.tsx`, recarrega a quente, edita em arquivos de componentes existentes e recarrega
 o registro do componente quando arquivos são adicionados ou removidos. Os agentes podem usar

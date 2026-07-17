@@ -1,6 +1,6 @@
 ---
 title: "Visual Plans"
-description: "Agent-Native Plans turns your coding agent's plan into a structured, reviewable document — diagrams, wireframes, annotated code, comments, and share links. Install once from the CLI; reviewers you share with edit as a guest and sign in only to save or share."
+description: "Jami Studio Plans turns your coding agent's plan into a structured, reviewable document — diagrams, wireframes, annotated code, comments, and share links. Install once from the CLI; reviewers you share with edit as a guest and sign in only to save or share."
 ---
 
 # Visual Plans
@@ -16,7 +16,7 @@ is the secondary path, for self-hosting or building on Plan itself.
 
 </Callout>
 
-Agent-Native Plans is visual plan mode for coding agents. It turns an ordinary
+Jami Studio Plans is visual plan mode for coding agents. It turns an ordinary
 Codex, Claude Code, Markdown, or pasted implementation plan into a structured
 review surface with rich text, diagrams, wireframes, annotated code walkthroughs
 and file trees, annotations, comments, and shareable links.
@@ -110,7 +110,7 @@ There are two ways into Plans:
 
 ## Install the skill {#install}
 
-Use the Agent-Native CLI. This is the recommended setup because it installs the
+Use the Jami Studio CLI. This is the recommended setup because it installs the
 Plans skill instructions, registers the hosted Plans MCP connector, **and** runs
 the client-specific auth/setup flow in one step, so your first tool call does not
 hit an OAuth wall:
@@ -173,7 +173,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ```
 
 That installs the skill instructions only. It does not register the hosted MCP
-connector, so use the Agent-Native CLI path when you want the one-command setup.
+connector, so use the Jami Studio CLI path when you want the one-command setup.
 
 <Callout tone="info">
 
@@ -187,7 +187,7 @@ improve — see [Plan plugin & marketplace](/docs/plan-plugin).
 ### Open Plans inside VS Code {#vscode-extension}
 
 If you live in VS Code, install the
-[Agent-Native Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 to open the same Plan review surface in a side panel instead of sending you to a
 separate browser tab. Plans tools still return the normal web link, and the MCP
 metadata also includes a VS Code handoff URL:
@@ -197,7 +197,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 ```
 
 The extension handles that URI, opens the decoded Plan URL in a VS Code webview,
-and includes a command to run the existing Agent Native MCP connect flow for VS
+and includes a command to run the existing Jami Studio MCP connect flow for VS
 Code / GitHub Copilot. This is especially useful from Claude Code or another
 coding-agent workflow where the plan should stay next to the files being edited.
 
@@ -358,7 +358,7 @@ Direct local Plan routes include a menu action to save a temporary local folder
 into that repo location. After promotion, the page reopens with `?path=...` and
 continues autosaving MDX edits to the repo folder.
 
-Local-files mode prevents plan or recap content from going to the Agent-Native
+Local-files mode prevents plan or recap content from going to the Jami Studio
 Plan database. It also disables hosted sharing, browser comments, plan history,
 and publish/export receipts until you explicitly opt into publishing. To move a
 local plan into the hosted database, call `publish-visual-plan` with the local
@@ -398,12 +398,12 @@ when you want the Plan renderer schema to validate the MDX.
 
 ## Desktop local file sync {#desktop-local-sync}
 
-Agent Native Desktop also gives hosted Plans a native local-folder bridge. This
+Jami Studio Desktop also gives hosted Plans a native local-folder bridge. This
 is different from local-files privacy mode: the hosted Plan database remains the
 source of truth for sharing, comments, history, and live review, while Desktop
 can mirror the current plan's source files to a folder you choose.
 
-Open a plan in Agent Native Desktop, use the plan menu's **Local files** actions,
+Open a plan in Jami Studio Desktop, use the plan menu's **Local files** actions,
 then:
 
 - **Link local folder** — choose the folder for that plan's MDX source.
@@ -1118,6 +1118,6 @@ configured — the agent picks the best available one.
 - [**PR Visual Recap**](/docs/pr-visual-recap) — run `/visual-recap` automatically on every pull request
 - [**Automations**](/docs/automations) — event-triggered and scheduled automations
 - [**Plan plugin & marketplace**](/docs/plan-plugin) — install the Plan skills as a Claude Code or Codex plugin
-- [**Skills**](/docs/skills-guide) — how Agent-Native installs skills
+- [**Skills**](/docs/skills-guide) — how Jami Studio installs skills
 - [**MCP Clients**](/docs/mcp-clients) — configuring hosted MCP connectors
 - [**Templates**](/docs/cloneable-saas) — the clone-and-own model

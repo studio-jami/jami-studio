@@ -1,12 +1,12 @@
 ---
 title: "Agentenoberflächen"
-description: "Verwenden Sie Agent-Native kopflos, als Rich-Chat, in einer vorhandenen App oder als vollständig agentennative Anwendung."
+description: "Verwenden Sie Jami Studio kopflos, als Rich-Chat, in einer vorhandenen App oder als vollständig agentennative Anwendung."
 search: "Headless Agent Rich Chat, vollständige App BYO Agent Runtime AgentChatRuntime Embed actions MCP A2A HTTP CLI"
 ---
 
 # Agentenoberflächen
 
-Agent-Native ist bewusst zusammensetzbar. Sie können den Agenten ohne großen Aufwand verwenden UI,
+Jami Studio ist bewusst zusammensetzbar. Sie können den Agenten ohne großen Aufwand verwenden UI,
 Verwenden Sie UI ohne die integrierte Agent-Laufzeit oder verwenden Sie beide zusammen als Vollversion
 Anwendung.
 
@@ -16,8 +16,8 @@ Sie möchten, dann verwenden Sie das passende Grundelement.
 | Oberfläche                      | Verwenden Sie es, wenn                                                                                                                     | Beginnen Sie mit                                                                            |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
 | **Kopfloser Agent**             | Code, Jobs, Skripte, eine andere App oder ein anderer Agent sollten die Arbeit direkt aufrufen.                                            | `agent-native create --headless`, `defineAction`, `agent-native agent`, HTTP, CLI, MCP, A2A |
-| **Rich-Chat auf Agent-Native**  | Sie möchten einen eigenständigen oder eingebetteten Chat, der durch die integrierte Agentenschleife unterstützt wird.                      | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
-| **Rich-Chat auf Ihrem Agenten** | Sie haben den Agent woanders erstellt und möchten den Verfassenr, das Transkript, die Toolkarten und die nativen Widgets von Agent-Native. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
+| **Rich-Chat auf Jami Studio**  | Sie möchten einen eigenständigen oder eingebetteten Chat, der durch die integrierte Agentenschleife unterstützt wird.                      | [Chat template](/docs/template-chat), `<AgentChatSurface>`, `<AssistantChat>`               |
+| **Rich-Chat auf Ihrem Agenten** | Sie haben den Agent woanders erstellt und möchten den Verfassenr, das Transkript, die Toolkarten und die nativen Widgets von Jami Studio. | `AgentChatRuntime`, `<AssistantChat runtime={runtime}>`                                     |
 | **Eingebetteter Sidecar**       | Sie haben bereits eine SaaS-App und möchten daneben einen Agenten mit Seitenkontext und Hostbefehlen.                                      | `createAgentNativeEmbeddedPlugin()`, `AgentNativeEmbedded`                                  |
 | **Vollständige Bewerbung**      | Menschen und Agenten sollten robuste Bildschirme, Daten, Navigation und Zusammenarbeit gemeinsam nutzen.                                   | Vorlagen, actions, SQL-Status, Kontextbewusstsein                                           |
 
@@ -92,7 +92,7 @@ Vollbild in einer App, ohne den vom Agenten aufgerufenen Vorgang zu ändern.
 
 Verwenden Sie den Headless-Pfad, wenn niemand dabei auf den Bildschirm einer benutzerdefinierten App starren muss
 die Arbeit läuft: geplante Jobs, Integrationen, Backend-Workflows, CLI-Schleifen,
-ein anderer Agent oder ein vorhandenes Produkt, das Agent-Native aufruft.
+ein anderer Agent oder ein vorhandenes Produkt, das Jami Studio aufruft.
 
 Dies ist auch die Form, nach der man greifen sollte, wenn **der Agent _das Produkt_ ist** – das
 App-Agent-Schleife ist die Haustür, kein Dashboard. Sie senden eine Anfrage vom
@@ -222,7 +222,7 @@ Schleife in diesem Ordner: Erstellen Sie ein Gerüst für die Headless-App, füg
 Vertrag, den die App in der Produktion verwenden wird.
 
 Externe Codierkabelbäume sind eine separate Produktoberfläche zum Einbetten von Claude
-Code, Codex, Pi, Cursor, Mastra oder ähnliche Laufzeiten innerhalb einer Agent-Native-App.
+Code, Codex, Pi, Cursor, Mastra oder ähnliche Laufzeiten innerhalb einer Jami Studio-App.
 Verwenden Sie sie, wenn Sie ein Coding-Agent-Produkt erstellen, und nicht als Standardmethode
 Starten Sie einen lokalen Agent-nativen Workflow.
 
@@ -250,7 +250,7 @@ und Laufstatus; Berechtigte beschreibbare Zusammenarbeit später, also Fortsetzu
 Das Genehmigen von actions, das Bearbeiten von Zeitplänen oder das Ändern der Konfiguration erfolgt durch
 Explizite Zugriffsprüfungen.
 
-## Rich-Chat auf Agent-Native {#rich-chat}
+## Rich-Chat auf Jami Studio {#rich-chat}
 
 Verwenden Sie den integrierten Chat, wenn der Benutzer mit dem Agenten sprechen soll, siehe Tool-Aufrufe
 Arbeiten genehmigen, native Ergebnisse überprüfen und einen dauerhaften Thread-Verlauf führen.
@@ -330,8 +330,8 @@ Komponenten im Chat, ohne Iframes. Siehe [Native Chat-Oberfläche](/docs/native-
 ## Rich-Chat auf Ihrem Agenten {#byo-agent}
 
 Verwenden Sie diesen Pfad, wenn Ihr Agent bereits mit einem anderen Framework erstellt wurde oder
-Laufzeit und Sie möchten Agent-Natives Chat-Oberfläche darum herum. `AgentChatRuntime` ist der
-Grenze: Ihre Laufzeit streamt normalisierte Ereignisse und Agent-Native rendert die
+Laufzeit und Sie möchten Jami Studios Chat-Oberfläche darum herum. `AgentChatRuntime` ist der
+Grenze: Ihre Laufzeit streamt normalisierte Ereignisse und Jami Studio rendert die
 Komponist, Transkript, Toolaufrufe, Genehmigungen, native Widgets und App-Layout.
 
 ```tsx
@@ -352,7 +352,7 @@ export function SupportAgentChat() {
 Für OpenAI Agents, OpenAI Responses und Claude gibt es vorgefertigte Laufzeithelfer
 Agent SDK, Vercel AI SDK und AG-UI sowie die normalisierte HTTP-Laufzeit oben
 für jeden anderen Agenten (Mastra, Flue, Eve, LangGraph oder ein benutzerdefinierter Dienst). ACP ist
-nicht der Endbenutzer-App-Chat oder A2A-Transport, und Agent-Native derzeit nicht
+nicht der Endbenutzer-App-Chat oder A2A-Transport, und Jami Studio derzeit nicht
 Beanspruchen Sie A2UI-Unterstützung. ACP wird an einer bestimmten Stelle unterstützt – beim Fahren eines lokalen
 Kodierungsagent (Gemini CLI, Claude Code, …) über den
 [harness layer](/docs/harness-agents#acp), nicht als Chat-Laufzeit hier.
@@ -366,7 +366,7 @@ Tool-Ergebnis-Metadaten. Beginnen Sie dort, wenn Sie einen externen Agenten in d
 Verwenden Sie den eingebetteten Sidecar, wenn das Hauptprodukt bereits vorhanden ist und Sie ein möchten
 Agent daneben.
 
-Das Server-Plugin stellt Agent-Native-Routen in Ihre Host-App ein und löst sie auf
+Das Server-Plugin stellt Jami Studio-Routen in Ihre Host-App ein und löst sie auf
 Hostidentität serverseitig:
 
 ```ts
@@ -402,7 +402,7 @@ export function AppShell({ children }) {
 }
 ```
 
-<Diagram id="doc-block-9hoj3n" title={"Wie der Sidecar eine Brücke zu einer Host-App herstellt"} summary={"Das Plugin mountet Agent-Native-Routen serverseitig; Der Sidecar React streamt den Seitenkontext ein und Hostbefehle aus."}>
+<Diagram id="doc-block-9hoj3n" title={"Wie der Sidecar eine Brücke zu einer Host-App herstellt"} summary={"Das Plugin mountet Jami Studio-Routen serverseitig; Der Sidecar React streamt den Seitenkontext ein und Hostbefehle aus."}>
 
 ```html
 <div class="diagram-sidecar">
@@ -426,7 +426,7 @@ export function AppShell({ children }) {
     <span class="diagram-pill accent">AgentNativeEmbedded</span
     ><small class="diagram-muted">agent + workspace</small>
     <div class="diagram-box" data-rough>
-      Agent-Native-Routen<br /><small class="diagram-muted"
+      Jami Studio-Routen<br /><small class="diagram-muted"
         >mounted by the server plugin</small
       >
     </div>
@@ -486,7 +486,7 @@ Sie möchten eine vollständige Produktform.
 | Wenn Sie denken...                                                                      | Auswählen                    |
 | --------------------------------------------------------------------------------------- | ---------------------------- |
 | „Ich brauche nur ein aufrufbares Tool oder einen Workflow.“                             | Kopfloser Agent              |
-| „Ich möchte den Agenten des Frameworks, aber Chat sollte der Haupt-UI sein.“            | Rich-Chat auf Agent-Native   |
+| „Ich möchte den Agenten des Frameworks, aber Chat sollte der Haupt-UI sein.“            | Rich-Chat auf Jami Studio   |
 | „Ich habe bereits einen Agenten; dafür brauche ich einen ausgefeilten Chat-Oberfläche.“ | Rich-Chat über Ihren Agenten |
 | „Ich habe bereits eine SaaS-App. Fügen Sie daneben einen Agenten hinzu.“                | Eingebetteter Sidecar        |
 | „Der Agent und UI sollten sich gemeinsam als Produkt weiterentwickeln.“                 | Vollständige Bewerbung       |
@@ -502,4 +502,4 @@ müssen persistente Objekte durchsuchen, vergleichen, konfigurieren oder zusamme
 - [**Generative UI**](/docs/generative-ui) – Temporäre oder persistierte Sandbox-UI direkt im Chat generieren
 - [**Automation-First Apps**](/docs/pure-agent-apps) – Das vollständige browserlose Muster für Jobs, Warteschlangen, Skripte und externe Agenten
 - [**External Agents**](/docs/external-agents) – MCP-kompatible Hosts mit einer App verbinden
-- [**A2A Protocol**](/docs/a2a-protocol) – Agenten aus anderen Agent-Native-Apps aufrufen
+- [**A2A Protocol**](/docs/a2a-protocol) – Agenten aus anderen Jami Studio-Apps aufrufen

@@ -16,7 +16,7 @@ description: "Erstellen und betten Sie interaktive MCP-Apps UIs in Claude, ChatG
 
 MCP Apps sind die offizielle `io.modelcontextprotocol/ui`-Erweiterung, mit der kompatible Hosts – Claude, Claude Desktop, ChatGPT, VS Code GitHub Copilot, Goose, Postman, MCPJam und Cursor – interaktive UIs inline im Chat rendern können. In agentennativen Apps ist jede MCP-App eine **echte React-Route** und kein separates einfaches HTML-Widget.
 
-Im eigenen Chat einer Agent-Native-App bevorzugen Sie [native chat renderers](/docs/native-chat-ui) für Erstanbieter-Widgets wie Tabellen, Diagramme, eingegebene Ergebnisse und Genehmigungsangebote. Verwenden Sie MCP-Apps für externe/hostübergreifende Inline-UI in Claude, ChatGPT, Copilot, Cursor und anderen kompatiblen Hosts mit der Aktion `link` als universellem Deep-Link-Fallback.
+Im eigenen Chat einer Jami Studio-App bevorzugen Sie [native chat renderers](/docs/native-chat-ui) für Erstanbieter-Widgets wie Tabellen, Diagramme, eingegebene Ergebnisse und Genehmigungsangebote. Verwenden Sie MCP-Apps für externe/hostübergreifende Inline-UI in Claude, ChatGPT, Copilot, Cursor und anderen kompatiblen Hosts mit der Aktion `link` als universellem Deep-Link-Fallback.
 
 ## Erstellung: optionale MCP Apps UI {#mcp-apps}
 
@@ -103,7 +103,7 @@ export default defineAction({
     resource: embedApp({
       title: "Review draft",
       description: "Open the generated draft in the real Mail compose UI.",
-      iframeTitle: "Agent-Native Mail",
+      iframeTitle: "Jami Studio Mail",
       openLabel: "Open in Mail",
     }),
   },
@@ -116,7 +116,7 @@ export default defineAction({
   filename="actions/review-draft.ts"
   language="ts"
   code={
-    'import { embedApp } from "@agent-native/core";\n\nexport default defineAction({\n  // ...description, schema, run, link...\n  mcpApp: {\n    resource: embedApp({\n      title: "Review draft",\n      description: "Open the generated draft in the real Mail compose UI.",\n      iframeTitle: "Agent-Native Mail",\n      openLabel: "Open in Mail",\n    }),\n  },\n});'
+    'import { embedApp } from "@agent-native/core";\n\nexport default defineAction({\n  // ...description, schema, run, link...\n  mcpApp: {\n    resource: embedApp({\n      title: "Review draft",\n      description: "Open the generated draft in the real Mail compose UI.",\n      iframeTitle: "Jami Studio Mail",\n      openLabel: "Open in Mail",\n    }),\n  },\n});'
   }
   annotations={[
     {

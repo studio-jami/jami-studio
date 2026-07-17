@@ -154,7 +154,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 安装程序会复制您的编码代理的 `content` 技能并写入或
 使用 `docs/`、`blog/`、`content/` 的内容根更新 `agent-native.json`
-和`resources/`。当本地内容应用、Agent Native 桌面或受信任
+和`resources/`。当本地内容应用、Jami Studio 桌面或受信任
 本地网桥正在运行，代理应使用内容actions，例如
 `list-documents`、`get-document`、`edit-document`、`update-document` 和
 `share-local-file-document` 而不是原始文件系统写入。没有那个本地
@@ -193,14 +193,14 @@ pnpm dev
 ### 本地文件同步
 
 受保护的 `/local-files` 路由使用浏览器文件系统访问 API，或
-保护Agent Native桌面内的本机文件夹桥，以进行读写
+保护Jami Studio桌面内的本机文件夹桥，以进行读写
 用户选择的文件夹中的 Markdown/MDX 文件。链接文件夹后
 导入后，选择的文件被视为权限：打开页面读取
 文件，普通编辑器先保存写入文件。 SQL 然后更新为
 现有文档UI、搜索和版本面板的缓存/历史层，不
 作为真相的来源。右上角页面菜单公开本地源路径：
 相对路径始终可用，绝对路径在真正的本地文件中可用
-模式和 Agent Native 桌面，以及在 Finder 中显示可通过
+模式和 Jami Studio 桌面，以及在 Finder 中显示可通过
 桌面桥或服务器支持的本地文件模式。
 
 批量同步路由调用：
@@ -255,7 +255,7 @@ export const ImpactCounterInputs = {
 
 The browser **Local files** picker can read and write `.md` and `.mdx` files on
 其自己的可执行 React 组件预览需要本地编译器。运行
-本地内容或使用 Agent Native Desktop，以便选定的工作空间路径可以
+本地内容或使用 Jami Studio Desktop，以便选定的工作空间路径可以
 已注册到本地内容开发服务器。 Vite 然后导入
 `components/*.tsx`，热重载编辑现有组件文件，并重新加载
 添加或删除文件时的组件注册表。代理可以使用

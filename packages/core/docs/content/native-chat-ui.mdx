@@ -1,6 +1,6 @@
 ---
 title: "Native Chat UI"
-description: "Action-declared native chat renderers, reusable DataTable/DataChart outputs, and how BYO agent runtimes should connect to Agent-Native chat."
+description: "Action-declared native chat renderers, reusable DataTable/DataChart outputs, and how BYO agent runtimes should connect to Jami Studio chat."
 ---
 
 # Native Chat UI
@@ -242,14 +242,14 @@ arbitrary query execution behind typed read actions rather than raw SQL in chat.
 
 `AgentChatRuntime` is the bring-your-own-agent contract for the chat shell, and
 this section is its canonical reference. It lets an agent you built elsewhere
-stream normalized events into Agent-Native's conversation UI while keeping the
+stream normalized events into Jami Studio's conversation UI while keeping the
 shared composer, transcript rendering, tool cards, approvals, native widgets,
 and surrounding app layout. The [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 tutorial points here for the runtime story, and [Component API](/docs/components#agent-chat-ui)
 lists each connector and adapter with its import path; the contract itself is
 described below.
 
-<Diagram id="doc-block-784bg9" title="BYO runtime keeps the Agent-Native chat shell" summary={"Your external agent streams normalized events through a connector; Agent-Native keeps the composer, transcript, tool cards, approvals, and native widgets."}>
+<Diagram id="doc-block-784bg9" title="BYO runtime keeps the Jami Studio chat shell" summary={"Your external agent streams normalized events through a connector; Jami Studio keeps the composer, transcript, tool cards, approvals, and native widgets."}>
 
 ```html
 <div class="diagram-byo">
@@ -376,7 +376,7 @@ converted into a single assistant message. For richer agents, stream
 `chatUI` metadata, so action-declared native widgets still render without
 iframes.
 
-When you want the built-in Agent-Native transport as a runtime object, use:
+When you want the built-in Jami Studio transport as a runtime object, use:
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -389,7 +389,7 @@ const runtime = createAgentNativeChatRuntime({
 
 Use `<AssistantChat createAdapter={...} />` only when you need full
 assistant-ui adapter control. Use `PromptComposer` by itself when your product
-owns the entire external transcript and only wants Agent-Native's composer
+owns the entire external transcript and only wants Jami Studio's composer
 field.
 
 OpenAI, AG-UI, Claude Agent SDK, and Vercel AI SDK streams can use the standard

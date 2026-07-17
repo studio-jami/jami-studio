@@ -12,7 +12,7 @@ description: "Connect your agent-native app to local MCP servers (claude-in-chro
 | Connect an external agent/host to your app                   | [External Agents](/docs/external-agents) |
 | Give your agent more tools (consume other MCP servers)       | **This page** — MCP Clients              |
 | Build inline UIs that render in Claude/ChatGPT               | [MCP Apps](/docs/mcp-apps)               |
-| Build generated inline UI inside Agent-Native chat           | [Generative UI](/docs/generative-ui)     |
+| Build generated inline UI inside Jami Studio chat           | [Generative UI](/docs/generative-ui)     |
 | Lower-level MCP server reference (auth, tools, custom mount) | [MCP Server](/docs/mcp-protocol)         |
 
 With one config file, every agent-native app in your workspace gains access to tools provided by MCP servers on your machine: `claude-in-chrome` for browser automation, `@modelcontextprotocol/server-filesystem` for reading files, `@playwright/mcp` for browser testing, and anything else that speaks MCP.
@@ -101,7 +101,7 @@ Every source resolves into one runtime **MCP manager**, and every tool it learns
 
 ## Built-in browser and computer-use capabilities {#built-in-capabilities}
 
-Agent-native includes local-development toggles for common stdio MCP servers.
+Jami Studio includes local-development toggles for common stdio MCP servers.
 They are off by default and can be enabled per user or per organization only
 when the app is running locally. Production and hosted serverless runtimes skip
 these built-ins even if old settings rows exist, and the Workspace Resources
@@ -473,7 +473,7 @@ Individual MCP server failures never take down the agent:
 - The MCP SDK is missing from `node_modules` → all MCP functionality is skipped with a warning; agent chat keeps working with zero MCP tools.
 - Running in an edge runtime → MCP client is a no-op.
 
-Agent-native will always boot; broken MCP configuration just means fewer tools.
+Jami Studio will always boot; broken MCP configuration just means fewer tools.
 
 ## Security {#security}
 

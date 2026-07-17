@@ -16,7 +16,7 @@ description: "실제 앱 경로, 포함 브리지 및 호스트 브리지 API를
 
 MCP 앱은 호환 호스트(Claude, Claude Desktop, ChatGPT, VS Code GitHub Copilot, Goose, Postman, MCPJam 및 Cursor)가 채팅에서 대화형 UI를 인라인으로 렌더링할 수 있게 해주는 공식 `io.modelcontextprotocol/ui` 확장입니다. 에이전트 기반 앱에서 모든 MCP 앱은 별도의 일반 HTML 위젯이 아닌 **실제 React 경로**입니다.
 
-Agent-Native 앱의 자체 채팅 내에서 표, 차트, 입력된 결과 및 승인 어포던스와 같은 자사 위젯에 대해 [native chat renderers](/docs/native-chat-ui)를 선호합니다. Claude, ChatGPT, Copilot, Cursor 및 기타 호환 호스트의 외부/교차 호스트 인라인 UI용 MCP 앱을 범용 딥 링크 폴백으로 `link` 작업과 함께 사용하세요.
+Jami Studio 앱의 자체 채팅 내에서 표, 차트, 입력된 결과 및 승인 어포던스와 같은 자사 위젯에 대해 [native chat renderers](/docs/native-chat-ui)를 선호합니다. Claude, ChatGPT, Copilot, Cursor 및 기타 호환 호스트의 외부/교차 호스트 인라인 UI용 MCP 앱을 범용 딥 링크 폴백으로 `link` 작업과 함께 사용하세요.
 
 ## 작성: 선택적 MCP 앱 UI {#mcp-apps}
 
@@ -103,7 +103,7 @@ export default defineAction({
     resource: embedApp({
       title: "Review draft",
       description: "Open the generated draft in the real Mail compose UI.",
-      iframeTitle: "Agent-Native Mail",
+      iframeTitle: "Jami Studio Mail",
       openLabel: "Open in Mail",
     }),
   },
@@ -116,7 +116,7 @@ export default defineAction({
   filename="actions/review-draft.ts"
   language="ts"
   code={
-    'import { embedApp } from "@agent-native/core";\n\nexport default defineAction({\n  // ...description, schema, run, link...\n  mcpApp: {\n    resource: embedApp({\n      title: "Review draft",\n      description: "Open the generated draft in the real Mail compose UI.",\n      iframeTitle: "Agent-Native Mail",\n      openLabel: "Open in Mail",\n    }),\n  },\n});'
+    'import { embedApp } from "@agent-native/core";\n\nexport default defineAction({\n  // ...description, schema, run, link...\n  mcpApp: {\n    resource: embedApp({\n      title: "Review draft",\n      description: "Open the generated draft in the real Mail compose UI.",\n      iframeTitle: "Jami Studio Mail",\n      openLabel: "Open in Mail",\n    }),\n  },\n});'
   }
   annotations={[
     {

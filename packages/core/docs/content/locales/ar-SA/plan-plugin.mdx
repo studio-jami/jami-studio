@@ -1,11 +1,11 @@
 ---
 title: "المكون الإضافي للخطة والسوق"
-description: "قم بتثبيت مهارات Agent-Native Plan (/visual-plan، /visual-recap، /visualize-repo) بالإضافة إلى موصل Plan MCP المستضاف كمكوّن Claude Code أو Codex، أو باستخدام CLI العام. كيفية عمل التحديثات وما إذا كنت بحاجة إلى إرسال أي شيء."
+description: "قم بتثبيت مهارات Jami Studio Plan (/visual-plan، /visual-recap، /visualize-repo) بالإضافة إلى موصل Plan MCP المستضاف كمكوّن Claude Code أو Codex، أو باستخدام CLI العام. كيفية عمل التحديثات وما إذا كنت بحاجة إلى إرسال أي شيء."
 ---
 
 # المكون الإضافي للخطة والسوق
 
-يأتي تطبيق Agent-Native **Plan** كحزمة واحدة قابلة للتثبيت. يضيف التثبيت الواحد مهارات أوامر Plan المائلة **و** يوصّل موصل Plan MCP المستضاف، حتى يتمكن الوكيل من إنشاء الخطط ويمكن للمهارات نشرها مباشرة في تطبيق Plan.
+يأتي تطبيق Jami Studio **Plan** كحزمة واحدة قابلة للتثبيت. يضيف التثبيت الواحد مهارات أوامر Plan المائلة **و** يوصّل موصل Plan MCP المستضاف، حتى يتمكن الوكيل من إنشاء الخطط ويمكن للمهارات نشرها مباشرة في تطبيق Plan.
 
 ## ما تحصل عليه {#what-you-get}
 
@@ -136,7 +136,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 يستخدم التطبيق `apps.plan.roots[0].path` في `agent-native.json` كمكان افتراضي
 لحفظ الخطط المحلية التي تم الترويج لها، والرجوع إلى `plans/`.
 
-يؤدي هذا إلى إبقاء محتوى الخطة خارج قاعدة بيانات خطة Agent-Native. المشاركة المستضافة،
+يؤدي هذا إلى إبقاء محتوى الخطة خارج قاعدة بيانات خطة Jami Studio. المشاركة المستضافة،
 لن تكون التعليقات ولقطات الشاشة وسجل الخطة متاحة إلا إذا قمت بذلك صراحةً
 النشر لاحقًا.
 
@@ -181,13 +181,13 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 
 </Diagram>
 
-يحتوي Agent Native Desktop على مسار مزامنة ملف محلي منفصل للخطط المستضافة:
+يحتوي Jami Studio Desktop على مسار مزامنة ملف محلي منفصل للخطط المستضافة:
 يمكن لتطبيق سطح المكتب عكس خطة مستضافة لملفات MDX المحلية واستيراد التعديلات مرة أخرى
 بدون استنساخ تطبيق الخطة أو تشغيل CLI. يحافظ سير العمل هذا على الاستضافة
 تخطيط قاعدة البيانات كمصدر للحقيقة؛ استخدم وضع خصوصية الملفات المحلية عند الهدف
 لا تتم كتابة خطة قاعدة بيانات.
 
-> يحمل المكون الإضافي (`agent-native-visual-plans`) معرف التطبيق `visual-plans`، ولهذا السبب فإن اسم المكون الإضافي Claude Code واسم المكون الإضافي Codex كلاهما `agent-native-visual-plans`. اسم العرض لتطبيق الخطة هو "Agent-Native Plan".
+> يحمل المكون الإضافي (`agent-native-visual-plans`) معرف التطبيق `visual-plans`، ولهذا السبب فإن اسم المكون الإضافي Claude Code واسم المكون الإضافي Codex كلاهما `agent-native-visual-plans`. اسم العرض لتطبيق الخطة هو "Jami Studio Plan".
 
 ## تثبيت المسارات {#install}
 
@@ -195,7 +195,7 @@ npx @agent-native/core@latest plan local serve --dir plans/<slug> --kind plan --
 
 ### مسار المهارة العالمي (أي مضيف MCP) {#universal}
 
-يعمل مع أي مضيف — Claude Code وCodex وCursor وCline وGoose وتطبيقات ChatGPT المخصصة MCP وClaude Cowork وأي شيء آخر متوافق مع MCP. يثبت Agent-Native CLI مهارات Plan، ويسجل موصل Plan MCP المستضاف، **ويشغل المصادقة للعميل (العملاء) المحليين المحددين في نفس الخطوة**، حتى لا يصطدم أول استدعاء للأداة بجدار OAuth:
+يعمل مع أي مضيف — Claude Code وCodex وCursor وCline وGoose وتطبيقات ChatGPT المخصصة MCP وClaude Cowork وأي شيء آخر متوافق مع MCP. يثبت Jami Studio CLI مهارات Plan، ويسجل موصل Plan MCP المستضاف، **ويشغل المصادقة للعميل (العملاء) المحليين المحددين في نفس الخطوة**، حتى لا يصطدم أول استدعاء للأداة بجدار OAuth:
 
 ```bash
 npx @agent-native/core@latest skills add visual-plan
@@ -224,7 +224,7 @@ npx @agent-native/core@latest recap doctor
 أعد تحميل العميل الوكيل حتى يتم تحميل skills الجديد والأدوات، ثم قم بتشغيله
 `/visual-plan`.
 
-> ملاحظة: يقوم `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) بتثبيت **التعليمات فقط** - ولا يسجل موصل MCP. استخدم Agent-Native CLI أعلاه عندما تريد توصيل الموصل أيضًا.
+> ملاحظة: يقوم `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) بتثبيت **التعليمات فقط** - ولا يسجل موصل MCP. استخدم Jami Studio CLI أعلاه عندما تريد توصيل الموصل أيضًا.
 
 ### رمز Claude (مكون إضافي) {#claude-code}
 

@@ -278,7 +278,7 @@ Custom app routes should use `/api/*`, public app paths, or provider-specific ca
 
 ## SQL-Backed Sync {#sync}
 
-Agent-native does not rely on filesystem watchers or sticky in-memory state. When actions or framework helpers mutate data, the database sync version increments. The client `useDbSync()` hook polls `/_agent-native/poll` and invalidates React Query caches.
+Jami Studio does not rely on filesystem watchers or sticky in-memory state. When actions or framework helpers mutate data, the database sync version increments. The client `useDbSync()` hook polls `/_agent-native/poll` and invalidates React Query caches.
 
 This works across serverless and multi-instance deployments because the database is the coordination point. If you write custom mutations outside actions, use framework helpers or emit the appropriate sync invalidation so open UIs refresh.
 

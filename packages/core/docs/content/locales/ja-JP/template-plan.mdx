@@ -1,13 +1,13 @@
 ---
 title: "ビジュアルプラン"
-description: "Agent-Native Plans は、コーディング エージェントの計画を、図、ワイヤーフレーム、注釈付きコード、コメント、共有リンクなど、構造化されたレビュー可能なドキュメントに変換します。 CLI から 1 回インストールします。共有しているレビュー担当者はゲストとして編集し、保存または共有する場合にのみログインします。"
+description: "Jami Studio Plans は、コーディング エージェントの計画を、図、ワイヤーフレーム、注釈付きコード、コメント、共有リンクなど、構造化されたレビュー可能なドキュメントに変換します。 CLI から 1 回インストールします。共有しているレビュー担当者はゲストとして編集し、保存または共有する場合にのみログインします。"
 ---
 
 # ビジュアルプラン
 
 > **ほとんどの人は、scaffolded app ではなく skill として Plan をインストールします。** 1 つの CLI コマンドで、`/visual-plan`、`/visual-recap`、`/visualize-repo` skills とホスト型 Plan コネクタが coding agent に追加されます。plugin と marketplace のルートは [Plan plugin & marketplace](/docs/plan-plugin) を参照してください。Plan template の fork（[For developers](#for-developers) で説明）は、self-hosting または Plan 自体の上に構築するための secondary path です。
 
-Agent-Native Plans は、コーディング エージェント用のビジュアル プラン モードです。普通に変わる
+Jami Studio Plans は、コーディング エージェント用のビジュアル プラン モードです。普通に変わる
 Codex、Claude コード、Markdown、または構造化された実装計画に貼り付けられた
 リッチ テキスト、図、ワイヤーフレーム、注釈付きコードのチュートリアルを含むレビュー画面
 ファイル ツリー、注釈、コメント、共有可能なリンク。
@@ -103,7 +103,7 @@ Codex、Claude コード、Markdown、または構造化された実装計画に
 
 ## スキルをインストール {#install}
 
-Agent-Native CLI を使用します。これは、
+Jami Studio CLI を使用します。これは、
 スキルの指示を計画し、ホストされた Plans MCP コネクタを登録し、**そして** 実行します
 クライアント固有の認証/セットアップ フローを 1 ステップで実行できるため、最初のツール呼び出しは不要です
 OAuth の壁にぶつかる:
@@ -165,7 +165,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ```
 
 これにより、スキルの説明のみがインストールされます。ホストされた MCP は登録されません
-コネクタなので、1 つのコマンドでセットアップする場合は、Agent-Native CLI パスを使用します。
+コネクタなので、1 つのコマンドでセットアップする場合は、Jami Studio CLI パスを使用します。
 
 > **1 回インストールできるプラグインをお好みですか?** Claude コードと Codex を追加できます
 > `Jami Studio/agent-native` をプラグイン マーケットプレイスとして直接提供し、
@@ -175,7 +175,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ### VS Code 内でプランを開く {#vscode-extension}
 
 VS Code を使用している場合は、
-[Agent-Native Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 次の画面に移動する代わりに、サイド パネルで同じ計画レビュー画面を開きます
 別のブラウザタブ。プラン ツールは引き続き通常の Web リンクと MCP
 メタデータには、VS Code ハンドオフ URL も含まれています:
@@ -185,7 +185,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 ```
 
 拡張機能は URI を処理し、デコードされたプラン URL を VS Code Web ビューで開きます。
-VS の既存の Agent Native MCP 接続フローを実行するコマンドが含まれています
+VS の既存の Jami Studio MCP 接続フローを実行するコマンドが含まれています
 コード / GitHub 副操縦士。これは、Claude コードまたは別のコードから特に便利です
 編集中のファイルの隣にプランを配置するコーディング エージェント ワークフロー。
 
@@ -346,7 +346,7 @@ http://localhost:<port>/local-plans/<slug>?path=plans%2F<slug>
 そのリポジトリの場所に移動します。昇格後、ページは `?path=...` と
 MDX の編集内容をリポジトリ フォルダーに自動保存し続けます。
 
-ローカル ファイル モードにより、コンテンツの計画や要約が Agent-Native に移動することが防止されます
+ローカル ファイル モードにより、コンテンツの計画や要約が Jami Studio に移動することが防止されます
 計画データベース。また、ホストされた共有、ブラウザのコメント、プラン履歴も無効になります。
 明示的に公開を選択するまで、領収書を公開/エクスポートします。
 ホストされたデータベースにローカル プランを追加し、ローカルで `publish-visual-plan` を呼び出します
@@ -376,12 +376,12 @@ npx @agent-native/core@latest visualize-repo \
 
 ## デスクトップのローカル ファイル同期 {#desktop-local-sync}
 
-Agent Native デスクトップは、ホストされたプランにネイティブのローカル フォルダー ブリッジも提供します。これ
+Jami Studio デスクトップは、ホストされたプランにネイティブのローカル フォルダー ブリッジも提供します。これ
 ローカル ファイル プライバシー モードとは異なります。ホストされたプラン データベースはそのまま残ります。
 共有、コメント、履歴、ライブレビューのための信頼できる情報源、デスクトップ
 現在のプランのソース ファイルを選択したフォルダーにミラーリングできます。
 
-Agent Native デスクトップでプランを開き、プラン メニューの **ローカル ファイル** actions を使用します。
+Jami Studio デスクトップでプランを開き、プラン メニューの **ローカル ファイル** actions を使用します。
 その後:
 
 - **ローカル フォルダーをリンク** — そのプランの MDX ソースのフォルダーを選択します。
@@ -1099,6 +1099,6 @@ Include the plan path so the agent can navigate directly to it.
 - [**PR Visual Recap**](/docs/pr-visual-recap) — すべてのプル リクエストで `/visual-recap` を自動的に実行します
 - [**Automations**](/docs/automations) — イベントトリガーおよびスケジュールされた自動化
 - [**Plan plugin & marketplace**](/docs/plan-plugin) — プラン skills を Claude コードまたは Codex プラグインとしてインストールします
-- [**Skills**](/docs/skills-guide) — Agent-Native が skills をインストールする方法
+- [**Skills**](/docs/skills-guide) — Jami Studio が skills をインストールする方法
 - [**MCP Clients**](/docs/mcp-clients) — ホスト型 MCP コネクタの構成
 - [**Templates**](/docs/cloneable-saas) — クローンと独自のモデル

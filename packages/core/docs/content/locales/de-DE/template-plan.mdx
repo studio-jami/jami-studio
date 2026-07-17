@@ -1,13 +1,13 @@
 ---
 title: "Visuelle Pläne"
-description: "Agent-Native Plans verwandelt den Plan Ihres Programmieragenten in ein strukturiertes, überprüfbares Dokument – Diagramme, Wireframes, kommentierten Code, Kommentare und Freigabelinks. Einmal von CLI installieren; Rezensenten, mit denen Sie sie teilen, bearbeiten sie als Gast und melden sich nur zum Speichern oder Teilen an."
+description: "Jami Studio Plans verwandelt den Plan Ihres Programmieragenten in ein strukturiertes, überprüfbares Dokument – Diagramme, Wireframes, kommentierten Code, Kommentare und Freigabelinks. Einmal von CLI installieren; Rezensenten, mit denen Sie sie teilen, bearbeiten sie als Gast und melden sich nur zum Speichern oder Teilen an."
 ---
 
 # Visuelle Pläne
 
 > **Die meisten Leute installieren Plan als Skill und nicht als Gerüst-App.** Ein CLI-Befehl fügt die Skills `/visual-plan`, `/visual-recap` und `/visualize-repo` sowie den gehosteten Plan-Connector zu Ihrem Codierungsagenten hinzu — siehe [Plan plugin & marketplace](/docs/plan-plugin) für die Plugin- und Marktplatzrouten. Das Forken der Planvorlage (unter [For developers](#for-developers)) ist der sekundäre Pfad für Selbsthosting oder das Bauen auf Plan selbst.
 
-Agent-Native Plans ist ein visueller Planmodus für Codierungsagenten. Es wird zu einem gewöhnlichen
+Jami Studio Plans ist ein visueller Planmodus für Codierungsagenten. Es wird zu einem gewöhnlichen
 Codex-, Claude-Code, Markdown oder eingefügter Implementierungsplan in eine strukturierte Datei
 Überprüfungsoberfläche mit Rich Text, Diagrammen, Wireframes und kommentierten Code-Komplettlösungen
 und Dateibäume, Anmerkungen, Kommentare und gemeinsam nutzbare Links.
@@ -103,7 +103,7 @@ Es gibt zwei Möglichkeiten, in Pläne einzusteigen:
 
 ## Installieren Sie den Skill {#install}
 
-Verwenden Sie Agent-Native CLI. Dies ist das empfohlene Setup, da es das
+Verwenden Sie Jami Studio CLI. Dies ist das empfohlene Setup, da es das
 Plant-Skill-Anweisungen, registriert den gehosteten Plans-MCP-Connector, **und** führt ihn aus
 Der clientspezifische Authentifizierungs-/Setup-Ablauf erfolgt in einem Schritt, Ihr erster Tool-Aufruf also nicht
 gegen eine OAuth-Wand stoßen:
@@ -165,7 +165,7 @@ npx skills@latest add Jami Studio/agent-native --skill visual-plan
 ```
 
 Dadurch werden nur die Skill-Anweisungen installiert. Das gehostete MCP
--Anschluss, verwenden Sie also den Pfad Agent-Native CLI, wenn Sie die Ein-Befehl-Einrichtung wünschen.
+-Anschluss, verwenden Sie also den Pfad Jami Studio CLI, wenn Sie die Ein-Befehl-Einrichtung wünschen.
 
 > **Bevorzugen Sie ein One-Install-Plugin?** Claude-Code und Codex können hinzugefügt werden
 > `Jami Studio/agent-native` direkt als Plugin-Marktplatz, der die
@@ -175,7 +175,7 @@ Dadurch werden nur die Skill-Anweisungen installiert. Das gehostete MCP
 ### Öffnen Sie Pläne in VS Code {#vscode-extension}
 
 Wenn Sie in VS Code leben, installieren Sie
-[Agent-Native Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
+[Jami Studio Plans extension](https://marketplace.visualstudio.com/items?itemName=Builder.agent-native)
 um dieselbe Planüberprüfungsoberfläche in einem Seitenbereich zu öffnen, anstatt Sie zu einem weiterzuleiten
 separater Browser-Tab. Pläne-Tools geben weiterhin den normalen Weblink und den MCP
 Metadaten umfassen auch eine VS-Code-Übergabe URL:
@@ -185,7 +185,7 @@ vscode://builder.agent-native/open?url=<encoded-plan-url>
 ```
 
 Die Erweiterung verarbeitet URI und öffnet den dekodierten Plan URL in einer VS-Code-Webansicht.
-und enthält einen Befehl zum Ausführen des vorhandenen Agent Native MCP-Verbindungsablaufs für VS
+und enthält einen Befehl zum Ausführen des vorhandenen Jami Studio MCP-Verbindungsablaufs für VS
 Code / GitHub Copilot. Dies ist besonders nützlich bei Claude-Code oder einem anderen
 Coding-Agent-Workflow, bei dem der Plan neben den zu bearbeitenden Dateien bleiben sollte.
 
@@ -346,7 +346,7 @@ Direkte lokale Planrouten umfassen eine Menüaktion zum Speichern eines temporä
 in diesen Repo-Speicherort. Nach der Heraufstufung wird die Seite mit `?path=...` und
 ZxQ0QXZ-Änderungen werden weiterhin automatisch im Repo-Ordner gespeichert.
 
-Der Modus „Lokale Dateien“ verhindert, dass Plan- oder Zusammenfassungsinhalte an den Agent-Native gesendet werden.
+Der Modus „Lokale Dateien“ verhindert, dass Plan- oder Zusammenfassungsinhalte an den Jami Studio gesendet werden.
 Plandatenbank. Außerdem werden die gehostete Freigabe, Browserkommentare und der Planverlauf deaktiviert.
 und veröffentlichen/exportieren Sie Belege, bis Sie sich ausdrücklich für die Veröffentlichung entscheiden. Um ein
 Lokaler Plan in die gehostete Datenbank, rufen Sie `publish-visual-plan` mit dem lokalen auf
@@ -376,12 +376,12 @@ Der Starter-Ordner liegt standardmäßig unter `.agent-native/visual-docs/repo-o
 
 ## Lokale Desktop-Dateisynchronisierung {#desktop-local-sync}
 
-Agent Native Desktop bietet gehosteten Plänen außerdem eine native lokale Ordnerbrücke. Dies
+Jami Studio Desktop bietet gehosteten Plänen außerdem eine native lokale Ordnerbrücke. Dies
 unterscheidet sich vom Datenschutzmodus für lokale Dateien: Die gehostete Plan-Datenbank bleibt die
 Quelle der Wahrheit für Teilen, Kommentare, Verlauf und Live-Überprüfung auf dem Desktop
 kann die Quelldateien des aktuellen Plans in einen von Ihnen ausgewählten Ordner spiegeln.
 
-Öffnen Sie einen Plan in Agent Native Desktop und verwenden Sie im Planmenü **Lokale Dateien** actions
+Öffnen Sie einen Plan in Jami Studio Desktop und verwenden Sie im Planmenü **Lokale Dateien** actions
 dann:
 
 - **Lokalen Ordner verknüpfen** – Wählen Sie den Ordner für die MDX-Quelle dieses Plans.
@@ -1101,6 +1101,6 @@ konfiguriert – der Agent wählt das beste verfügbare aus.
 - [**PR Visual Recap**](/docs/pr-visual-recap) – `/visual-recap` automatisch bei jeder Pull-Anfrage ausführen
 - [**Automations**](/docs/automations) – ereignisgesteuerte und geplante Automatisierungen
 - [**Plan plugin & marketplace**](/docs/plan-plugin) – Installieren Sie den Plan skills als Claude-Code oder Codex-Plugin
-- [**Skills**](/docs/skills-guide) – wie Agent-Native skills installiert
+- [**Skills**](/docs/skills-guide) – wie Jami Studio skills installiert
 - [**MCP Clients**](/docs/mcp-clients) – Konfigurieren gehosteter MCP-Konnektoren
 - [**Templates**](/docs/cloneable-saas) – das Modell zum Klonen und Besitzen

@@ -1,6 +1,6 @@
 ---
 title: "原生聊天 UI"
-description: "操作声明的本机聊天渲染器、可重用的 DataTable/DataChart 输出，以及 BYO 代理运行时应如何连接到 Agent-Native 聊天。"
+description: "操作声明的本机聊天渲染器、可重用的 DataTable/DataChart 输出，以及 BYO 代理运行时应如何连接到 Jami Studio 聊天。"
 ---
 
 # 原生聊天 UI
@@ -251,14 +251,14 @@ export default defineAction({
 
 `AgentChatRuntime` 是聊天 shell 的自带代理合约，并且
 本节是其规范参考。它允许您在其他地方构建代理
-将标准化事件流式传输到 Agent-Native 的对话 UI 中，同时保持
+将标准化事件流式传输到 Jami Studio 的对话 UI 中，同时保持
 共享作曲家、脚本渲染、工具卡、批准、本机小部件，
 和周围的应用程序布局。 [Drop-in Agent](/docs/drop-in-agent#custom-chat-ui)
 此处为运行时故事的教程点，以及 [Component API](/docs/components#agent-chat-ui)
 列出每个连接器和适配器及其导入路径；合约本身是
 如下所述。
 
-<Diagram id="doc-block-zv5z9u" title={"BYO 运行时保留 Agent-Native 聊天 shell"} summary={"您的外部代理通过连接器传输标准化事件； Agent-Native 保留作曲家、成绩单、工具卡、批准和本机小部件。"}>
+<Diagram id="doc-block-zv5z9u" title={"BYO 运行时保留 Jami Studio 聊天 shell"} summary={"您的外部代理通过连接器传输标准化事件； Jami Studio 保留作曲家、成绩单、工具卡、批准和本机小部件。"}>
 
 ```html
 <div class="diagram-byo">
@@ -385,7 +385,7 @@ data: {"type":"done","reason":"complete"}
 `chatUI` 元数据，因此操作声明的本机小部件仍然会在没有
 iframe。
 
-当您希望内置 Agent-Native 传输作为运行时对象时，请使用：
+当您希望内置 Jami Studio 传输作为运行时对象时，请使用：
 
 ```ts
 import { createAgentNativeChatRuntime } from "@agent-native/core/client/chat";
@@ -398,7 +398,7 @@ const runtime = createAgentNativeChatRuntime({
 
 仅在需要完整时才使用`<AssistantChat createAdapter={...} />`
 assist-ui 适配器控件。当您的产品时单独使用`PromptComposer`
-拥有整个外部转录本并且只想要 Agent-Native 的作曲家
+拥有整个外部转录本并且只想要 Jami Studio 的作曲家
 字段。
 
 OpenAI、AG-UI、Claude Agent SDK 和 Vercel AI SDK 流可以使用标准

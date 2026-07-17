@@ -119,7 +119,7 @@ description: "MDX 的開放原始碼 Obsidian：編輯本機 Markdown/MDX 檔案
 內容可以透過本機檔案往返檔案，無需克隆或執行
 本機內容應用程式。感覺就像 MDX 的黑曜石：檔案保持可檢查
 並且可編輯，同時該應用程式為您提供豐富的編輯器、代理 actions、共用和
-自訂塊。開啟 `/local-files`，在瀏覽器或 Agent Native Desktop 中選取一個資料夾，並將目前檔案樹匯出為 Markdown/MDX
+自訂塊。開啟 `/local-files`，在瀏覽器或 Jami Studio Desktop 中選取一個資料夾，並將目前檔案樹匯出為 Markdown/MDX
 `content/`。
 
 每個匯出的檔案都包含檔案中繼資料的 frontmatter（`id`、`title`、
@@ -153,7 +153,7 @@ npx @agent-native/core@latest skills add content --mode local-files --scope proj
 
 安裝程式會複製您的編碼代理的 `content` 技能並寫入或
 使用 `docs/`、`blog/`、`content/` 的內容根更新 `agent-native.json`
-和`resources/`。當本機內容應用、Agent Native 桌面或受信任
+和`resources/`。當本機內容應用、Jami Studio 桌面或受信任
 本機網橋正在執行，代理應使用內容actions，例如
 `list-documents`、`get-document`、`edit-document`、`update-document` 和
 `share-local-file-document` 而不是原始檔案系統寫入。沒有那個本機
@@ -192,14 +192,14 @@ pnpm dev
 ### 本機檔案同步
 
 受保護的 `/local-files` 路由使用瀏覽器檔案系統存取 API，或
-保護 Agent Native 桌面內的本機資料夾橋，以進行讀寫
+保護 Jami Studio 桌面內的本機資料夾橋，以進行讀寫
 使用者選取的資料夾中的 Markdown/MDX 檔案。連結資料夾後
 匯入後，選取的檔案被視為權限：開啟頁面讀取
 檔案，普通編輯器先儲存寫入檔案。 SQL 然後更新為
 現有檔案 UI、搜尋和版本面板的快取/歷史層，不
 作為真相的來源。右上角頁面選單公開本機來源路徑：
 相對路徑始終可用，絕對路徑在真正的本機檔案中可用
-模式和 Agent Native 桌面，以及在 Finder 中顯示可透過
+模式和 Jami Studio 桌面，以及在 Finder 中顯示可透過
 桌面橋或伺服器支援的本機檔案模式。
 
 批量同步路由呼叫：
@@ -254,7 +254,7 @@ export const ImpactCounterInputs = {
 
 The browser **Local files** picker can read and write `.md` and `.mdx` files on
 其自己的可執行 React 元件預覽需要本機編譯器。執行
-本機內容或使用 Agent Native Desktop，以便選定的工作空間路徑可以
+本機內容或使用 Jami Studio Desktop，以便選定的工作空間路徑可以
 已註冊到本機內容開發伺服器。 Vite 然後匯入
 `components/*.tsx`，熱重載編輯現有元件檔案，並重新載入
 新增或刪除檔案時的元件註冊表。代理可以使用

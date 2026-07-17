@@ -90,7 +90,7 @@ Der Ablauf ist eine standardmäßige Autorisierung → Signiertes Token → Rüc
 
 </Diagram>
 
-1. **App → Dispatch (Autorisierung).** Die app-seitige Route `GET /_agent-native/identity/login` (auf die die Schaltfläche „Mit Agent-Native anmelden“ verweist) erstellt die Weiterleitung und sendet den Benutzer an die Identitätsautorität:
+1. **App → Dispatch (Autorisierung).** Die app-seitige Route `GET /_agent-native/identity/login` (auf die die Schaltfläche „Mit Jami Studio anmelden“ verweist) erstellt die Weiterleitung und sendet den Benutzer an die Identitätsautorität:
 
    ```http
    GET https://dispatch.jami.studio/_agent-native/identity/authorize
@@ -163,7 +163,7 @@ Eine App nimmt **nur** teil, wenn diese Umgebungsvariable bei ihrer Bereitstellu
 AGENT_NATIVE_IDENTITY_HUB_URL=https://dispatch.jami.studio
 ```
 
-- **Set** → Die App zeigt die Option **„Mit Agent-Native anmelden“** an, die den obigen Ablauf ausführt. Daneben funktioniert weiterhin die direkte lokale Anmeldung (E-Mail/Passwort, Google).
+- **Set** → Die App zeigt die Option **„Mit Jami Studio anmelden“** an, die den obigen Ablauf ausführt. Daneben funktioniert weiterhin die direkte lokale Anmeldung (E-Mail/Passwort, Google).
 - **Deaktiviert (Standard)** → **Keine Verhaltensänderung.** Die App authentifiziert sich genau wie zuvor; Der Verbundcodepfad ist inaktiv. Es gibt keine Schemaänderung und es muss nichts migriert werden, sodass das Ein- oder Ausschalten der Variablen jederzeit vollständig rückgängig gemacht werden kann.
 
 ## Sicherheit {#security}
@@ -282,7 +282,7 @@ Lassen Sie die Umgebung aller anderen Apps deaktiviert. Erneut bereitstellen/neu
 **3. Überprüfen Sie den Kanarienvogel (Checkliste).**
 
 - Melden Sie sich von der App **ab** ab.
-- Der Anmeldebildschirm zeigt jetzt **„Mit Agent-Native anmelden“** an. Klicken Sie darauf.
+- Der Anmeldebildschirm zeigt jetzt **„Mit Jami Studio anmelden“** an. Klicken Sie darauf.
 - Sie werden zu **Versand** weitergeleitet und vervollständigen die Anmeldung (oder gehen direkt durch, wenn Sie dort bereits angemeldet sind).
 - Sie werden **zurück zur App weitergeleitet, angemeldet** – und es ist dasselbe **bereits bestehende Konto** (dieselbe E-Mail-Adresse), das Sie zuvor hatten, kein neues.
 - **App-Daten sind intakt** – Ihre vorhandenen Datensätze, Einstellungen und Organisationsbereiche sind genau so, wie sie waren.
