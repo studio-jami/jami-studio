@@ -2,15 +2,10 @@ import { useLocale, useT } from "@agent-native/core/client";
 import { useState } from "react";
 import { Link } from "react-router";
 
-import { BuildFromScratchCta } from "../components/BuildFromScratchCta";
 import CodeBlock from "../components/CodeBlock";
 import { sitePathForLocale } from "../components/docs-locale";
 import Seascape from "../components/Seascape";
-import {
-  featuredTemplates,
-  TemplateCard,
-  trackEvent,
-} from "../components/TemplateCard";
+import { trackEvent } from "../components/TemplateCard";
 
 function TerminalCommand({ command }: { command: string }) {
   const [copied, setCopied] = useState(false);
@@ -64,20 +59,6 @@ function TerminalCommand({ command }: { command: string }) {
     </button>
   );
 }
-
-const homepageTemplateSlugs = [
-  "clips",
-  "plan",
-  "design",
-  "content",
-  "slides",
-  "analytics",
-  "chat",
-];
-
-const homepageTemplates = homepageTemplateSlugs.flatMap((slug) =>
-  featuredTemplates.filter((template) => template.slug === slug),
-);
 
 const featureCloudRows = [
   {
@@ -614,75 +595,6 @@ function ComparisonSection() {
   );
 }
 
-function AppsSection({
-  localizedPath,
-}: {
-  localizedPath: (path: string) => string;
-}) {
-  const t = useT();
-
-  return (
-    <section
-      id="apps"
-      className="border-t border-[var(--docs-border)] py-20 px-6"
-    >
-      <div className="mb-12 text-center">
-        <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-          {t("home.templates.title")}
-        </h2>
-        <p className="mx-auto max-w-2xl text-base leading-relaxed text-[var(--fg-secondary)]">
-          {t("templatesPage.eyebrow")}
-          <span className="font-semibold text-[var(--docs-accent)]">
-            {" "}
-            {t("templatesPage.body")}
-          </span>
-        </p>
-      </div>
-
-      <div className="templates-side-scroll -mx-6 flex gap-5 overflow-x-auto overflow-y-hidden px-8 pb-3 pl-10">
-        {homepageTemplates.map((template) => (
-          <div
-            key={template.name}
-            className="template-rail-card w-[320px] shrink-0 sm:w-[360px]"
-          >
-            <TemplateCard template={template} />
-          </div>
-        ))}
-        <BuildFromScratchCta location="homepage_rail" />
-      </div>
-
-      <div className="mt-10 text-center">
-        <Link
-          data-an-prefetch="render"
-          to={localizedPath("/apps")}
-          className="primary-button"
-          onClick={() =>
-            trackEvent("click cta", {
-              label: "view_all_apps",
-              location: "apps_section_footer",
-            })
-          }
-        >
-          {t("home.templates.cta")}
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   const t = useT();
   const { locale } = useLocale();
@@ -790,8 +702,6 @@ export default defineAction({
         </section>
 
         <ComparisonSection />
-
-        <AppsSection localizedPath={localizedPath} />
 
         <ActionSurfaceSection
           frameworkCode={frameworkCode}

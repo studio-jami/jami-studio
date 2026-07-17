@@ -30,7 +30,7 @@ const zhCN = {
     placeholder: "告诉我们怎样能让这些文档更好。",
   },
   demoVideo: {
-    visualPlanningAria: "Agent-Native 可视化规划演示",
+    visualPlanningAria: "Jami Studio 可视化规划演示",
   },
   docBlocks: {
     blockLabel: "{{alias}} 区块",
@@ -61,8 +61,8 @@ const zhCN = {
     close: "关闭",
   },
   agent: {
-    emptyState: "向我询问任何有关 Agent-Native 的问题",
-    suggestionGettingStarted: "如何开始使用 Agent-Native？",
+    emptyState: "向我询问任何有关 Jami Studio 的问题",
+    suggestionGettingStarted: "如何开始使用 Jami Studio？",
     suggestionActions: "actions 如何工作？",
     suggestionPolling: "解释轮询同步模型",
     suggestionDeploy: "如何部署到生产环境？",
@@ -83,20 +83,20 @@ const zhCN = {
       badge: "开源框架",
       titleLine1: "面向",
       titleAccent: "agentic apps 的框架",
-      body: "Agent-Native 是一个开源 framework，用于以 agent 为核心快速构建健壮的应用程序。",
+      body: "Jami Studio 是一个开源 framework，用于以 agent 为核心快速构建健壮的应用程序。",
       primaryCta: "试用一个 app",
       secondaryCta: "阅读文档",
     },
     code: {
       quickStartComment: "用一条命令创建 app",
-      skillInstallComment: "把 Agent-Native 规划加入你已经使用的 coding agent",
+      skillInstallComment: "把 Jami Studio 规划加入你已经使用的 coding agent",
       frameworkComment: "一个 action 驱动 agent、UI、HTTP、MCP、A2A 和 CLI。",
       frameworkDescription: "从本地 app-agent loop 打招呼。",
     },
     actionSurface: {
       eyebrow: "真正面向代理，而不是外挂式 AI",
       title: "一个 action 覆盖整套应用能力面",
-      body: "只定义一次操作。Agent-Native 会把它变成 UI action、agent 工具、HTTP 端点、MCP/A2A 能力面、CLI 命令、权限检查和审计记录。",
+      body: "只定义一次操作。Jami Studio 会把它变成 UI action、agent 工具、HTTP 端点、MCP/A2A 能力面、CLI 命令、权限检查和审计记录。",
       buildAction: "构建一个 action",
       benefits: {
         oneActionDefinition: {
@@ -130,7 +130,7 @@ const zhCN = {
       title: "面向 agentic 应用的内置模块",
       body: "这些生产级部分经过人工验证，agent 不应该从零临时发明。你可以直接使用、检查源码，或在应用需要不同能力时替换模块。",
       pageBody:
-        "Agent-Native 提供经过人工验证的生产级组件，避免 agent 从零 improvisation。你可以直接使用、检查源码，或在产品需要不同能力时替换模块。",
+        "Jami Studio 提供经过人工验证的生产级组件，避免 agent 从零 improvisation。你可以直接使用、检查源码，或在产品需要不同能力时替换模块。",
       viewAll: "查看所有模块",
       browseApps: "浏览由模块构建的应用",
       items: {
@@ -195,7 +195,7 @@ const zhCN = {
     framework: {
       title: "面向 agent-native apps 的框架",
       body1:
-        "Agent-Native 是一个开源框架，用来构建 agentic applications：从 Chat 开始，定义共享 actions，再围绕同一份 state 添加 UI、jobs 和协作。",
+        "Jami Studio 是一个开源框架，用来构建 agentic applications：从 Chat 开始，定义共享 actions，再围绕同一份 state 添加 UI、jobs 和协作。",
       body2: "使用你自己的数据库、托管服务、模型栈和 app 代码。",
       cta: "阅读框架指南",
       primitives: {
@@ -221,7 +221,7 @@ const zhCN = {
       },
     },
     templates: {
-      title: "试用一个 Agent-Native app",
+      title: "试用一个 Jami Studio app",
       eyebrow: "Fork 一个可运行的 app，让 agent 继续改进它。",
       cta: "查看 apps",
     },
@@ -266,7 +266,7 @@ const zhCN = {
         saas: "SaaS 工具",
         agents: "原始 AI Agents",
         internal: "内部工具",
-        native: "Agent-Native App",
+        native: "Jami Studio App",
       },
       rows: {
         ui: "UI",
@@ -306,7 +306,7 @@ const zhCN = {
     batteries: {
       titleLine1: "内置全套能力，",
       titleLine2: "久经实战检验",
-      body: "不必从空白提示词和临时拼凑的代码开始，Agent-Native 为代理提供构建真实软件所需的可靠部件和最佳实践。",
+      body: "不必从空白提示词和临时拼凑的代码开始，Jami Studio 为代理提供构建真实软件所需的可靠部件和最佳实践。",
       browseToolkits: "浏览工具包",
     },
     featureCloud: {
@@ -418,19 +418,13 @@ const zhCN = {
   },
   buildFromScratch: {
     title: "从零开始构建",
-    description: "从框架指南开始，或使用 Builder.io 的云端编码代理在线构建。",
+    description: "从框架指南开始，或加入等候名单以在线构建。",
     readDocs: "阅读文档",
     buildOnline: "在线构建",
-    popoverTitle: "使用 Builder.io 在线构建",
+    popoverTitle: "加入等候名单",
     popoverBody:
-      "Builder.io 可以在云端启动并自定义 agent-native 应用 — 包含 actions、auth、SQL 状态和 agent chat。加入候补名单以获取早期访问权限。",
-    emailLabel: "邮箱",
-    emailPlaceholder: "you@company.com",
+      "Jami Studio 可以在云端快速创建并自定义应用——包含 actions、身份验证、SQL 状态和智能体聊天。加入等候名单以获得早期访问权限。",
     joinWaitlist: "加入候补名单",
-    joining: "正在加入…",
-    joined: "你已加入候补名单。在线构建访问开放后我们会发送邮件通知你。",
-    invalidEmail: "请输入有效的邮箱地址。",
-    submitError: "无法加入候补名单。请重试。",
   },
   templateCard: {
     pasteIntoTerminal: "粘贴到您的终端中。",
@@ -439,10 +433,10 @@ const zhCN = {
   },
   templateDetail: {
     allTemplates: "所有应用",
-    notFoundMetaTitle: "未找到应用 — Agent-Native",
+    notFoundMetaTitle: "未找到应用 — Jami Studio",
     notFoundTitle: "找不到应用",
     notFoundBody: "浏览应用目录以查找可用的应用程序。",
-    badge: "Agent-Native {{name}}",
+    badge: "Jami Studio {{name}}",
     title: "{{name}} 应用",
   },
   templates: {
@@ -955,7 +949,7 @@ const zhCN = {
       s006: "所有模板",
       s007: "Superhuman 和 Gmail 的开源替代方案",
       s008: "试用",
-      s009: "托管演示使用 Agent-Native 的共享 Google 应用程序进行 Gmail 访问，因此 Google 可能会要求您确认后再继续。在本地运行以使用您自己的 Google OAuth 客户端。",
+      s009: "托管演示使用 Jami Studio 的共享 Google 应用程序进行 Gmail 访问，因此 Google 可能会要求您确认后再继续。在本地运行以使用您自己的 Google OAuth 客户端。",
       s010: "你能做什么",
       s011: "将电子邮件客户端替换为您完全拥有的 AI 驱动的收件箱所需的一切。",
       s012: "键盘快捷键",
@@ -1149,14 +1143,14 @@ const zhCN = {
     metaTitle:
       "代理技能 - 面向编码代理的 Visual Plan、Visual Recap 和 Visual Edit",
     metaDescription:
-      "安装由 Agent-Native 应用支持的技能，让你的编码代理能进行可视化规划、PR 回顾和本地可视化编辑。",
+      "安装由 Jami Studio 应用支持的技能，让你的编码代理能进行可视化规划、PR 回顾和本地可视化编辑。",
     metaOgDescription:
-      "为你的编码代理添加由 Agent-Native 应用驱动的斜杠命令，可托管、检查并自定义。",
+      "为你的编码代理添加由 Jami Studio 应用驱动的斜杠命令，可托管、检查并自定义。",
     metaKeywords:
       "代理技能, visual plan, visual recap, visual edit, 编码代理, Claude Code, Codex, PR 审查, 规划, agent-native",
     heroTitle: "给你的编码代理新的超能力",
     heroBody:
-      "安装由 Agent-Native 应用支持、可完全自定义的应用技能：实现前做可视化规划，变更落地后做可视化 PR 回顾，并可视化编辑本地 UI 流程。",
+      "安装由 Jami Studio 应用支持、可完全自定义的应用技能：实现前做可视化规划，变更落地后做可视化 PR 回顾，并可视化编辑本地 UI 流程。",
     sectionTitle: "面向编码代理的应用支持技能",
     sectionBody:
       "使用托管的可分享应用链接、本地文件，或自托管/自定义应用；代理会获得指令，并在需要时获得匹配的 MCP 表面。",
@@ -1259,13 +1253,13 @@ const zhCN = {
     lastUpdated: "上次更新：{{date}}",
     privacy: {
       eyebrow: "隐私政策",
-      title: "Agent-Native 托管应用程序",
+      title: "Jami Studio 托管应用程序",
       intro:
-        "本政策解释了 Jami Studio 在运行 Agent-Native 托管应用程序、托管模板、演示和官方浏览器扩展时如何收集、使用、共享和保留数据。",
+        "本政策解释了 Jami Studio 在运行 Jami Studio 托管应用程序、托管模板、演示和官方浏览器扩展时如何收集、使用、共享和保留数据。",
       scopeCards: {
         hosted: {
           title: "托管应用程序",
-          body: "当 Jami Studio 为您运营 Agent-Native 服务或托管模板时涵盖。",
+          body: "当 Jami Studio 为您运营 Jami Studio 服务或托管模板时涵盖。",
         },
         openSource: {
           title: "开源",
@@ -1279,7 +1273,7 @@ const zhCN = {
       sections: {
         scope: "适用范围",
         information: "我们收集的信息",
-        clipsExtension: "Agent-Native Clips Chrome 扩展",
+        clipsExtension: "Jami Studio Clips Chrome 扩展",
         use: "我们如何使用信息",
         sharing: "共享和第三方",
         chromeLimitedUse: "Chrome Web Store 限制使用",
@@ -1289,21 +1283,21 @@ const zhCN = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是开源的，源代码可在 MIT 许可证下获得。本政策仅适用于 Jami Studio 为 Agent-Native 用户运营的托管应用程序和服务。它不适用于其他人对代码的使用，包括分叉、自定义模板、私有部署或自托管版本。如果您操作自己的部署，则您应对自己的数据实践和隐私政策负责。",
+          "Jami Studio 是开源的，源代码可在 MIT 许可证下获得。本政策仅适用于 Jami Studio 为 Jami Studio 用户运营的托管应用程序和服务。它不适用于其他人对代码的使用，包括分叉、自定义模板、私有部署或自托管版本。如果您操作自己的部署，则您应对自己的数据实践和隐私政策负责。",
         scope2Prefix: "本政策旨在补充 Jami Studio 更广泛的政策",
-        scope2Suffix: "对于 Agent-Native 托管应用程序行为。",
+        scope2Suffix: "对于 Jami Studio 托管应用程序行为。",
         clips1:
-          "Agent-Native Clips Chrome extension 可帮助您开始基于浏览器的录制，并在启用后将浏览器诊断附加到剪辑。它可能会收集所选的捕获源、您选择包含的摄像头和麦克风媒体、活动选项卡标题和 URL，以及将扩展程序连接到托管 Clips 所需的身份验证状态。",
+          "Jami Studio Clips Chrome extension 可帮助您开始基于浏览器的录制，并在启用后将浏览器诊断附加到剪辑。它可能会收集所选的捕获源、您选择包含的摄像头和麦克风媒体、活动选项卡标题和 URL，以及将扩展程序连接到托管 Clips 所需的身份验证状态。",
         clips2:
           "开发者日志是可选的。启用后，扩展程序可能会在记录处于活动状态时从所选选项卡收集经过编辑的控制台消息、JavaScript 异常和 fetch/XHR 元数据，例如方法、URL、状态、计时和失败详细信息。该扩展程序并非旨在收集请求正文、响应正文、cookie 或授权标头。",
         clipsAnchor:
           "对于 Chrome Web Store 披露，请使用此部分作为扩展隐私政策锚点：",
         sharing1:
-          "我们不会出售 Agent-Native 托管应用程序数据或将其用于第三方广告。当您使用的功能需要这些服务时，我们会与帮助运营托管服务的服务提供商共享数据，例如云基础设施、存储、身份验证、电子邮件、可观察性、AI 和转录提供商。",
+          "我们不会出售 Jami Studio 托管应用程序数据或将其用于第三方广告。当您使用的功能需要这些服务时，我们会与帮助运营托管服务的服务提供商共享数据，例如云基础设施、存储、身份验证、电子邮件、可观察性、AI 和转录提供商。",
         sharing2:
           "当您连接集成时，托管应用程序可能会根据您的配置和提供商自己的条款向该提供商发送数据或从该提供商接收数据。为了安全、防止滥用、遵守法律或保护用户和服务，我们也可能会在需要时披露信息。",
         chromeLimitedUse:
-          "对于 Agent-Native Clips Chrome extension，我们对从 Chrome extension APIs 收到的信息的使用遵守 Chrome Web Store 用户数据政策，包括限制使用要求。扩展程序收集的浏览器活动用于提供面向用户的记录和诊断工作流程，而不是用于广告、转售、信誉或不相关的分析。",
+          "对于 Jami Studio Clips Chrome extension，我们对从 Chrome extension APIs 收到的信息的使用遵守 Chrome Web Store 用户数据政策，包括限制使用要求。扩展程序收集的浏览器活动用于提供面向用户的记录和诊断工作流程，而不是用于广告、转售、信誉或不相关的分析。",
         retention1:
           "我们会根据需要保留托管应用程序数据，以提供服务、维护工作区历史记录、遵守义务、解决争议或提高可靠性和安全性。用户可以通过相关的应用程序控件（如果可用）删除剪辑、文档、资源和其他托管应用程序内容。",
         retention2:
@@ -1311,7 +1305,7 @@ const zhCN = {
         security:
           "我们使用合理的管理、技术和组织保障措施来保护托管应用程序数据，包括访问控制、传输加密、监控和操作安全实践。没有任何在线服务可以保证完美的安全性，因此用户应避免在录音或提示中包含秘密或敏感信息，除非他们打算与托管应用程序共享该信息。",
         changes1:
-          "随着 Agent-Native 托管应用程序的变化，我们可能会更新此政策。页面顶部的更新日期显示该政策上次修订的时间。",
+          "随着 Jami Studio 托管应用程序的变化，我们可能会更新此政策。页面顶部的更新日期显示该政策上次修订的时间。",
         changes2Prefix:
           "对于隐私请求或疑问，请通过以下列出的支持和隐私渠道联系 Jami Studio",
       },
@@ -1322,7 +1316,7 @@ const zhCN = {
         },
         hostedContent: {
           title: "托管应用程序内容",
-          body: "Content 您在托管 Agent-Native 模板中创建或上传，例如录音、成绩单、文档、评论、任务、提示、代理响应、文件和配置。",
+          body: "Content 您在托管 Jami Studio 模板中创建或上传，例如录音、成绩单、文档、评论、任务、提示、代理响应、文件和配置。",
         },
         integrations: {
           title: "连接的集成数据",
@@ -1335,7 +1329,7 @@ const zhCN = {
       },
       uses: {
         provide:
-          "提供、同步和操作托管的 Agent-Native 应用程序及其代理工作流程。",
+          "提供、同步和操作托管的 Jami Studio 应用程序及其代理工作流程。",
         transform:
           "当您要求托管应用程序执行此操作时，可以记录、转录、总结、搜索、共享或转换内容。",
         auth: "验证用户身份、管理组织、实施访问控制并防止滥用。",
@@ -1349,13 +1343,13 @@ const zhCN = {
     },
     terms: {
       eyebrow: "服务条款",
-      title: "Agent-Native 托管应用程序",
+      title: "Jami Studio 托管应用程序",
       intro:
-        "当 Jami Studio 为您运营 Agent-Native 托管应用程序、托管模板、演示和官方托管服务时，这些条款适用。",
+        "当 Jami Studio 为您运营 Jami Studio 托管应用程序、托管模板、演示和官方托管服务时，这些条款适用。",
       scopeCards: {
         hosted: {
           title: "托管应用程序",
-          body: "当您使用由 Jami Studio 操作的 Agent-Native 应用程序或模板时，将受到保护。",
+          body: "当您使用由 Jami Studio 操作的 Jami Studio 应用程序或模板时，将受到保护。",
         },
         openSource: {
           title: "开源",
@@ -1380,48 +1374,48 @@ const zhCN = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是开源的，其源代码可在 MIT 许可证下获得。这些条款仅适用于 Jami Studio 为 Agent-Native 用户运营的托管应用程序和服务。它们不管理在 Jami Studio 之外运行的分叉、自定义模板、私有部署或自托管版本。",
+          "Jami Studio 是开源的，其源代码可在 MIT 许可证下获得。这些条款仅适用于 Jami Studio 为 Jami Studio 用户运营的托管应用程序和服务。它们不管理在 Jami Studio 之外运行的分叉、自定义模板、私有部署或自托管版本。",
         scope2Prefix: "这些术语补充了 Jami Studio 的更广泛范围",
-        scope2Middle: "和 Agent-Native",
+        scope2Middle: "和 Jami Studio",
         scope2Suffix:
-          "如果您代表公司或组织使用托管 Agent-Native 应用程序，则表示您有权接受该组织的这些条款。",
+          "如果您代表公司或组织使用托管 Jami Studio 应用程序，则表示您有权接受该组织的这些条款。",
         hostedService:
-          "Jami Studio 可以提供托管的 Agent-Native 应用程序、模板、演示、共享工作区、浏览器扩展和相关代理工作流程。随着产品的发展，托管服务可能会更新、限制、暂停或终止。",
+          "Jami Studio 可以提供托管的 Jami Studio 应用程序、模板、演示、共享工作区、浏览器扩展和相关代理工作流程。随着产品的发展，托管服务可能会更新、限制、暂停或终止。",
         accounts1:
-          "您对帐户信息的准确性、帐户下的活动以及保证凭据的安全负责。托管 Agent-Native 应用程序可能包括组织功能、邀请、共享资源、连接集成和特定于应用程序的访问控制。仅邀请用户并连接您有权使用的服务。",
+          "您对帐户信息的准确性、帐户下的活动以及保证凭据的安全负责。托管 Jami Studio 应用程序可能包括组织功能、邀请、共享资源、连接集成和特定于应用程序的访问控制。仅邀请用户并连接您有权使用的服务。",
         accounts2:
           "如果您认为帐户、工作区、集成或共享资源已被泄露或滥用，请立即联系 Jami Studio 支持人员。",
         content1:
-          "您保留对您创建、上传、记录、导入或连接到托管 Agent-Native 应用程序的内容的所有权。您授予 Jami Studio 托管、处理、传输、显示、转换、分析和存储该内容所需的有限权限，以便托管应用程序及其代理工作流程可以运行。",
+          "您保留对您创建、上传、记录、导入或连接到托管 Jami Studio 应用程序的内容的所有权。您授予 Jami Studio 托管、处理、传输、显示、转换、分析和存储该内容所需的有限权限，以便托管应用程序及其代理工作流程可以运行。",
         content2:
           "您有责任拥有您向服务提供的内容、录音、提示、文件、凭据和连接的集成数据所需的权利和权限。",
         agents1:
-          "托管 Agent-Native 应用程序可以根据您的要求运行 AI 代理、工具、自动化和提供商集成。 AI 生成的输出可能不完整、不准确或不适合特定用途。在依赖重要的输出、操作、导出和消息之前先对其进行审查。",
+          "托管 Jami Studio 应用程序可以根据您的要求运行 AI 代理、工具、自动化和提供商集成。 AI 生成的输出可能不完整、不准确或不适合特定用途。在依赖重要的输出、操作、导出和消息之前先对其进行审查。",
         agents2:
           "当您连接第三方服务时，您对这些服务的使用仍受其自身的条款、限制、权限和隐私惯例的约束。",
         openSource:
-          "这些条款不会更改 Agent-Native 代码的开源许可。如果您下载、分叉、修改或自托管 Agent-Native，则 MIT 许可证和您为自己的部署设置的条款将管辖该使用。您负责您所操作的部署的安全性、隐私性、合规性、操作和用户支持。",
+          "这些条款不会更改 Jami Studio 代码的开源许可。如果您下载、分叉、修改或自托管 Jami Studio，则 MIT 许可证和您为自己的部署设置的条款将管辖该使用。您负责您所操作的部署的安全性、隐私性、合规性、操作和用户支持。",
         suspensionPrefix:
-          "当需要保护用户、遵守法律、防止滥用、解决安全风险或运营服务时，Jami Studio 可以暂停或限制对托管 Agent-Native 服务的访问。您可以随时停止使用托管服务。某些数据可能会在备份、日志或审核记录中保留一段有限的时间，如",
+          "当需要保护用户、遵守法律、防止滥用、解决安全风险或运营服务时，Jami Studio 可以暂停或限制对托管 Jami Studio 服务的访问。您可以随时停止使用托管服务。某些数据可能会在备份、日志或审核记录中保留一段有限的时间，如",
         disclaimers1:
-          "托管 Agent-Native 服务按原样和可用状态提供，并遵守适用法律以及您与 Jami Studio 签订的任何单独书面协议。 Jami Studio 不保证托管应用程序、集成、自动化或 AI 输出不会中断、无错误或满足所有要求。",
+          "托管 Jami Studio 服务按原样和可用状态提供，并遵守适用法律以及您与 Jami Studio 签订的任何单独书面协议。 Jami Studio 不保证托管应用程序、集成、自动化或 AI 输出不会中断、无错误或满足所有要求。",
         disclaimers2Prefix:
-          "在法律允许的最大范围内，Jami Studio 对托管 Agent-Native 服务的责任受到 Jami Studio 更广泛的条款中所述的限制。",
+          "在法律允许的最大范围内，Jami Studio 对托管 Jami Studio 服务的责任受到 Jami Studio 更广泛的条款中所述的限制。",
         disclaimers2Suffix: "或适用于您的使用的其他书面协议。",
         changes1:
-          "随着 Agent-Native 托管应用程序的变化，我们可能会更新这些条款。页面顶部的更新日期显示了条款的最新修订时间。",
+          "随着 Jami Studio 托管应用程序的变化，我们可能会更新这些条款。页面顶部的更新日期显示了条款的最新修订时间。",
         changes2Prefix:
           "如果对这些条款有疑问，请通过 Jami Studio 中列出的支持渠道联系 Jami Studio",
       },
       hostedServicePoints: {
-        create: "创建和操作托管 Agent-Native 工作区和模板应用程序。",
+        create: "创建和操作托管 Jami Studio 工作区和模板应用程序。",
         workflows: "运行您选择使用的代理工作流程、操作、自动化和集成。",
         store:
           "存储提供服务所需的托管应用程序内容、设置、组织数据和连接帐户状态。",
-        improve: "测量、保护、调试和改进托管 Agent-Native 服务。",
+        improve: "测量、保护、调试和改进托管 Jami Studio 服务。",
       },
       acceptableUse: {
-        laws: "请勿使用托管 Agent-Native 应用程序来违反法律、侵犯权利或伤害人员或系统。",
+        laws: "请勿使用托管 Jami Studio 应用程序来违反法律、侵犯权利或伤害人员或系统。",
         bypass: "不要尝试绕过访问控制、速率限制、安全边界或租户隔离。",
         malware: "请勿上传恶意软件、凭证盗窃材料或旨在破坏服务的内容。",
         spam: "请勿使用该服务发送垃圾邮件、未经授权进行抓取或滥用连接的提供商。",
@@ -1445,7 +1439,7 @@ const zhCN = {
     advancedRuntime: "高级：扩展运行时",
     templatesSection: "应用",
     gettingStarted: "入门",
-    whatIsAgentNative: "什么是 Agent-Native？",
+    whatIsAgentNative: "什么是 Jami Studio？",
     agentSurfaces: "Agent 界面",
     keyConcepts: "核心概念",
     agentNativeToolkit: "工具包",
@@ -1523,7 +1517,7 @@ const zhCN = {
     writingAgentInstructions: "编写 Agent 指令",
     embeddingSdk: "嵌入 SDK",
     frames: "Frames",
-    agentNativeCodeUi: "Agent-Native 代码 UI",
+    agentNativeCodeUi: "Jami Studio 代码 UI",
     harnessAgents: "Harness 代理",
     adapters: "适配器",
     cliAdapters: "CLI 适配器",

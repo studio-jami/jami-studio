@@ -191,15 +191,6 @@ export default function Header() {
             >
               {t("header.docs")}
             </NavLink>
-            <NavLink
-              data-an-prefetch="render"
-              to={localizedPath("/apps")}
-              className={({ isActive }) =>
-                isActive ? "header-link is-active" : "header-link"
-              }
-            >
-              {t("header.templates")}
-            </NavLink>
             <a
               href="https://github.com/studio-jami/jami-studio"
               target="_blank"
@@ -207,17 +198,6 @@ export default function Header() {
               className="header-link"
             >
               GitHub
-              <span className="text-[0.6em] align-super ms-0.5 opacity-70">
-                ↗
-              </span>
-            </a>
-            <a
-              href="https://discord.gg/qm82StQ2NC"
-              target="_blank"
-              rel="noreferrer"
-              className="header-link"
-            >
-              Discord
               <span className="text-[0.6em] align-super ms-0.5 opacity-70">
                 ↗
               </span>
@@ -286,16 +266,6 @@ export default function Header() {
             >
               {t("header.docs")}
             </NavLink>
-            <NavLink
-              data-an-prefetch="render"
-              to={localizedPath("/apps")}
-              className={({ isActive }) =>
-                isActive ? "header-link is-active" : "header-link"
-              }
-              onClick={closeMobileMenu}
-            >
-              {t("header.templates")}
-            </NavLink>
             <a
               href="https://github.com/studio-jami/jami-studio"
               target="_blank"
@@ -303,17 +273,6 @@ export default function Header() {
               className="header-link"
             >
               GitHub
-              <span className="text-[0.6em] align-super ms-0.5 opacity-70">
-                ↗
-              </span>
-            </a>
-            <a
-              href="https://discord.gg/qm82StQ2NC"
-              target="_blank"
-              rel="noreferrer"
-              className="header-link"
-            >
-              Discord
               <span className="text-[0.6em] align-super ms-0.5 opacity-70">
                 ↗
               </span>

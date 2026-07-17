@@ -42,8 +42,6 @@ describe("docs agent web generation", () => {
       expect(paths).toContain("/");
       expect(paths).toContain("/docs");
       expect(paths).toContain("/docs/agent-web-surfaces");
-      expect(paths).toContain("/brand");
-      expect(paths).toContain("/terms");
       expect(paths).toContain("/apps/calendar");
     },
     AGENT_WEB_GENERATION_TIMEOUT_MS,

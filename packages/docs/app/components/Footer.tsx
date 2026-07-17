@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-[var(--docs-border)] px-6 py-8">
       <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-4 text-sm text-[var(--fg-secondary)] sm:flex-row">
-        <p className="m-0">&copy; {year} Agent-Native</p>
+        <p className="m-0">&copy; {year} Jami Studio</p>
         <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-end">
           <Link
             to={localizedPath("/download")}
@@ -26,24 +26,28 @@ export default function Footer() {
           >
             {t("header.skills")}
           </Link>
-          <Link
-            to={localizedPath("/brand")}
+          {/* Brand/Privacy/Terms now live in @agent-native/marketing — use a
+              hard navigation (not react-router Link) so the browser lets
+              that app's own routes handle the path instead of trying to
+              client-side-match it inside this app's router. */}
+          <a
+            href="/brand"
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
           >
             {t("footer.brand")}
-          </Link>
-          <Link
-            to={localizedPath("/privacy")}
+          </a>
+          <a
+            href="/privacy"
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
           >
             {t("footer.privacy")}
-          </Link>
-          <Link
-            to={localizedPath("/terms")}
+          </a>
+          <a
+            href="/terms"
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
           >
             {t("footer.terms")}
-          </Link>
+          </a>
           <a
             href="https://github.com/studio-jami/jami-studio"
             target="_blank"
@@ -51,14 +55,6 @@ export default function Footer() {
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
           >
             GitHub <span className="text-[10px] opacity-50">↗</span>
-          </a>
-          <a
-            href="https://discord.gg/qm82StQ2NC"
-            target="_blank"
-            rel="noreferrer"
-            className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
-          >
-            Discord <span className="text-[10px] opacity-50">↗</span>
           </a>
           <a
             href="https://www.npmjs.com/package/@agent-native/core"

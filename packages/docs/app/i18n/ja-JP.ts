@@ -30,7 +30,7 @@ const jaJP = {
     placeholder: "このドキュメントをより良くする方法を教えてください。",
   },
   demoVideo: {
-    visualPlanningAria: "Agent-Native ビジュアルプランニングのデモ",
+    visualPlanningAria: "Jami Studio ビジュアルプランニングのデモ",
   },
   docBlocks: {
     blockLabel: "{{alias}} ブロック",
@@ -61,8 +61,8 @@ const jaJP = {
     close: "閉じる",
   },
   agent: {
-    emptyState: "Agent-Native について何でも聞いてください",
-    suggestionGettingStarted: "Agent-Native はどう始めますか？",
+    emptyState: "Jami Studio について何でも聞いてください",
+    suggestionGettingStarted: "Jami Studio はどう始めますか？",
     suggestionActions: "actions はどのように動きますか？",
     suggestionPolling: "ポーリング同期モデルを説明して",
     suggestionDeploy: "本番環境へデプロイするには？",
@@ -84,14 +84,14 @@ const jaJP = {
       badge: "オープンソース framework",
       titleLine1: "agentic apps のための",
       titleAccent: "framework",
-      body: "Agent-Native は、agent を中心に堅牢なアプリケーションを迅速に構築するためのオープンソース framework です。",
+      body: "Jami Studio は、agent を中心に堅牢なアプリケーションを迅速に構築するためのオープンソース framework です。",
       primaryCta: "app を試す",
       secondaryCta: "ドキュメントを読む",
     },
     code: {
       quickStartComment: "1 つのコマンドで app を作成",
       skillInstallComment:
-        "すでに使っている coding agent に Agent-Native の計画機能を追加する",
+        "すでに使っている coding agent に Jami Studio の計画機能を追加する",
       frameworkComment:
         "1 つの action が agent、UI、HTTP、MCP、A2A、CLI を動かします。",
       frameworkDescription: "ローカルの app-agent loop から hello を返します。",
@@ -99,7 +99,7 @@ const jaJP = {
     actionSurface: {
       eyebrow: "後付けAIではなく、深くエージェント指向",
       title: "ひとつのアクションでアプリ全体の面を開く",
-      body: "操作を一度だけ定義します。Agent-Native はそれを UI アクション、agent ツール、HTTP エンドポイント、MCP/A2A 面、CLI コマンド、権限チェック、監査証跡にします。",
+      body: "操作を一度だけ定義します。Jami Studio はそれを UI アクション、agent ツール、HTTP エンドポイント、MCP/A2A 面、CLI コマンド、権限チェック、監査証跡にします。",
       buildAction: "アクションを作る",
       benefits: {
         oneActionDefinition: {
@@ -133,7 +133,7 @@ const jaJP = {
       title: "agentic アプリ向けの組み込みモジュール",
       body: "本番で必要な部品のうち、agents がゼロから作るべきでないものを人が検証済みで用意しています。そのまま使い、ソースを確認し、必要ならモジュールを置き換えられます。",
       pageBody:
-        "Agent-Native は、本番作業で agents が即興するべきでない部品を人が検証済みで提供します。そのまま使い、ソースを確認し、製品に合わせて置き換えられます。",
+        "Jami Studio は、本番作業で agents が即興するべきでない部品を人が検証済みで提供します。そのまま使い、ソースを確認し、製品に合わせて置き換えられます。",
       viewAll: "すべてのモジュールを見る",
       browseApps: "モジュールで作られたアプリを見る",
       items: {
@@ -198,7 +198,7 @@ const jaJP = {
     framework: {
       title: "agent-native apps のための framework",
       body1:
-        "Agent-Native は agentic applications を構築するためのオープンソース framework です。Chat から始め、共有 actions を定義し、同じ state を中心に UI、jobs、コラボレーションを追加できます。",
+        "Jami Studio は agentic applications を構築するためのオープンソース framework です。Chat から始め、共有 actions を定義し、同じ state を中心に UI、jobs、コラボレーションを追加できます。",
       body2:
         "自分のデータベース、ホスティングプロバイダー、モデルスタック、app コードを持ち込めます。",
       cta: "framework ガイドを読む",
@@ -226,7 +226,7 @@ const jaJP = {
       },
     },
     templates: {
-      title: "Agent-Native app を試す",
+      title: "Jami Studio app を試す",
       eyebrow: "100% 無料でオープンソース",
       cta: "apps を見る",
     },
@@ -272,7 +272,7 @@ const jaJP = {
         saas: "SaaS ツール",
         agents: "生の AI Agents",
         internal: "内部ツール",
-        native: "Agent-Native App",
+        native: "Jami Studio App",
       },
       rows: {
         ui: "UI",
@@ -312,7 +312,7 @@ const jaJP = {
     batteries: {
       titleLine1: "必要なものを内蔵、",
       titleLine2: "実戦で検証済み",
-      body: "空のプロンプトや場当たり的なコードから始める代わりに、Agent-Native は実用的なソフトウェア構築に必要な実戦済みの部品とベストプラクティスをエージェントに提供します。",
+      body: "空のプロンプトや場当たり的なコードから始める代わりに、Jami Studio は実用的なソフトウェア構築に必要な実戦済みの部品とベストプラクティスをエージェントに提供します。",
       browseToolkits: "ツールキットを見る",
     },
     featureCloud: {
@@ -426,20 +426,13 @@ const jaJP = {
   buildFromScratch: {
     title: "ゼロから構築",
     description:
-      "フレームワークガイドから始めるか、Builder.io のクラウドコーディングエージェントでオンライン構築できます。",
+      "フレームワークガイドを使うか、オンライン構築のウェイトリストに参加してください。",
     readDocs: "ドキュメントを読む",
     buildOnline: "オンラインで構築",
-    popoverTitle: "Builder.io でオンライン構築",
+    popoverTitle: "ウェイトリストに参加",
     popoverBody:
-      "Builder.io はクラウドで agent-native アプリを起動してカスタマイズできます。actions、認証、SQL 状態、エージェントチャット込みです。早期アクセスの待機リストに参加してください。",
-    emailLabel: "メール",
-    emailPlaceholder: "you@company.com",
+      "Jami Studio はクラウドでアプリを素早く作成・カスタマイズできます。actions、認証、SQL 状態、エージェントチャット込みです。早期アクセスの待機リストに参加してください。",
     joinWaitlist: "待機リストに参加",
-    joining: "参加中…",
-    joined:
-      "待機リストに登録されました。オンライン構築アクセスが開いたらメールでお知らせします。",
-    invalidEmail: "有効なメールアドレスを入力してください。",
-    submitError: "待機リストに参加できませんでした。もう一度お試しください。",
   },
   templateCard: {
     pasteIntoTerminal: "端末に貼り付けます。",
@@ -448,10 +441,10 @@ const jaJP = {
   },
   templateDetail: {
     allTemplates: "すべてのアプリ",
-    notFoundMetaTitle: "アプリが見つかりません — Agent-Native",
+    notFoundMetaTitle: "アプリが見つかりません — Jami Studio",
     notFoundTitle: "アプリが見つかりません",
     notFoundBody: "アプリ カタログを参照して、利用可能なアプリを見つけます。",
-    badge: "Agent-Native {{name}}",
+    badge: "Jami Studio {{name}}",
     title: "{{name}} アプリ",
   },
   templates: {
@@ -967,7 +960,7 @@ const jaJP = {
       s006: "すべてのテンプレート",
       s007: "Superhuman および Gmail のオープンソース代替品",
       s008: "試す",
-      s009: "ホストされたデモは、Gmail アクセスに Agent-Native の共有 Google アプリを使用するため、Google は続行する前に確認を求める場合があります。ローカルで実行して、独自の Google OAuth クライアントを使用します。",
+      s009: "ホストされたデモは、Gmail アクセスに Jami Studio の共有 Google アプリを使用するため、Google は続行する前に確認を求める場合があります。ローカルで実行して、独自の Google OAuth クライアントを使用します。",
       s010: "できること",
       s011: "電子メール クライアントを完全に所有する AI を搭載した受信トレイに置き換えるのに必要なものがすべて揃っています。",
       s012: "キーボードショートカット",
@@ -1161,14 +1154,14 @@ const jaJP = {
     metaTitle:
       "Agent Skills - コーディングエージェント向け Visual Plan、Visual Recap、Visual Edit",
     metaDescription:
-      "コーディングエージェントが視覚的な計画、PR レビュー要約、ローカルの視覚編集を使えるように、Agent-Native アプリベースのスキルをインストールします。",
+      "コーディングエージェントが視覚的な計画、PR レビュー要約、ローカルの視覚編集を使えるように、Jami Studio アプリベースのスキルをインストールします。",
     metaOgDescription:
-      "ホスト、確認、カスタマイズできる Agent-Native アプリで、コーディングエージェントにスラッシュコマンドを追加します。",
+      "ホスト、確認、カスタマイズできる Jami Studio アプリで、コーディングエージェントにスラッシュコマンドを追加します。",
     metaKeywords:
       "agent skills, visual plan, visual recap, visual edit, コーディングエージェント, Claude Code, Codex, PR レビュー, 計画, agent-native",
     heroTitle: "コーディングエージェントに新しい力を追加",
     heroBody:
-      "完全にカスタマイズできる Agent-Native アプリベースのスキルをインストールします。実装前の視覚的な計画、変更後の視覚的な PR レビュー要約、ローカル UI フローの視覚編集に対応します。",
+      "完全にカスタマイズできる Jami Studio アプリベースのスキルをインストールします。実装前の視覚的な計画、変更後の視覚的な PR レビュー要約、ローカル UI フローの視覚編集に対応します。",
     sectionTitle: "コーディングエージェント向けアプリベーススキル",
     sectionBody:
       "ホストされた共有可能なアプリリンク、ローカルファイル、自分でホストまたはカスタマイズしたアプリを使えます。必要に応じて、エージェントには指示と対応する MCP サーフェスが渡されます。",
@@ -1272,13 +1265,13 @@ const jaJP = {
     lastUpdated: "最終更新日: {{date}}",
     privacy: {
       eyebrow: "プライバシーポリシー",
-      title: "Agent-Native ホスト型アプリケーション",
+      title: "Jami Studio ホスト型アプリケーション",
       intro:
-        "このポリシーでは、Jami Studio がホストされる Agent-Native アプリケーション、ホストされるテンプレート、デモ、および公式ブラウザー拡張機能を操作する際に、データを収集、使用、共有、および保持する方法について説明します。",
+        "このポリシーでは、Jami Studio がホストされる Jami Studio アプリケーション、ホストされるテンプレート、デモ、および公式ブラウザー拡張機能を操作する際に、データを収集、使用、共有、および保持する方法について説明します。",
       scopeCards: {
         hosted: {
           title: "ホストされているアプリ",
-          body: "Jami Studio が Agent-Native サービスまたはホストされたテンプレートを操作する場合に適用されます。",
+          body: "Jami Studio が Jami Studio サービスまたはホストされたテンプレートを操作する場合に適用されます。",
         },
         openSource: {
           title: "オープンソース",
@@ -1292,7 +1285,7 @@ const jaJP = {
       sections: {
         scope: "範囲",
         information: "当社が収集する情報",
-        clipsExtension: "Agent-Native Clips Chrome 拡張機能",
+        clipsExtension: "Jami Studio Clips Chrome 拡張機能",
         use: "情報の使用方法",
         sharing: "共有とサードパーティ",
         chromeLimitedUse: "Chrome Web Store 限定使用",
@@ -1302,23 +1295,23 @@ const jaJP = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native はオープン ソースであり、ソース コードは MIT ライセンスに基づいて入手できます。このポリシーは、Jami Studio が Agent-Native ユーザー向けに運用するホスト型アプリケーションおよびサービスにのみ適用されます。これは、フォーク、カスタマイズされたテンプレート、プライベート展開、自己ホスト型バージョンなど、他人によるコードの使用には適用されません。独自の展開を運用する場合は、独自のデータ慣行とプライバシー ポリシーに対して責任を負います。",
+          "Jami Studio はオープン ソースであり、ソース コードは MIT ライセンスに基づいて入手できます。このポリシーは、Jami Studio が Jami Studio ユーザー向けに運用するホスト型アプリケーションおよびサービスにのみ適用されます。これは、フォーク、カスタマイズされたテンプレート、プライベート展開、自己ホスト型バージョンなど、他人によるコードの使用には適用されません。独自の展開を運用する場合は、独自のデータ慣行とプライバシー ポリシーに対して責任を負います。",
         scope2Prefix:
           "このポリシーは、Jami Studio の広範なポリシーを補足することを目的としています。",
         scope2Suffix:
-          "Agent-Native ホストされたアプリケーションの動作について。",
+          "Jami Studio ホストされたアプリケーションの動作について。",
         clips1:
-          "Agent-Native Clips Chrome extension は、ブラウザベースの録画を開始し、有効になっている場合はブラウザ診断をクリップに添付するのに役立ちます。 It may collect the selected capture source, camera and microphone media you choose to include, the active tab title and URL, and authentication state needed to connect the extension to hosted Clips.",
+          "Jami Studio Clips Chrome extension は、ブラウザベースの録画を開始し、有効になっている場合はブラウザ診断をクリップに添付するのに役立ちます。 It may collect the selected capture source, camera and microphone media you choose to include, the active tab title and URL, and authentication state needed to connect the extension to hosted Clips.",
         clips2:
           "開発者ログはオプションです。有効にすると、拡張機能は編集されたコンソール メッセージ、JavaScript 例外、および記録がアクティブなときに選択したタブからメソッド、URL、ステータス、タイミング、失敗の詳細などのフェッチ/XHR メタデータを収集できます。この拡張機能は、リクエスト本文、応答本文、Cookie、または認証ヘッダーを収集するように設計されていません。",
         clipsAnchor:
           "Chrome Web Store の開示については、このセクションを拡張プライバシー ポリシー アンカーとして使用します。",
         sharing1:
-          "当社は、Agent-Native がホストするアプリケーション データを販売したり、サードパーティの広告に使用したりすることはありません。 We share data with service providers that help operate the hosted service, such as cloud infrastructure, storage, authentication, email, observability, AI, and transcription providers, when those services are needed for the feature you use.",
+          "当社は、Jami Studio がホストするアプリケーション データを販売したり、サードパーティの広告に使用したりすることはありません。 We share data with service providers that help operate the hosted service, such as cloud infrastructure, storage, authentication, email, observability, AI, and transcription providers, when those services are needed for the feature you use.",
         sharing2:
           "インテグレーションに接続すると、ホストされているアプリは、設定およびプロバイダー独自の条件に従って、そのプロバイダーとの間でデータを送受信することがあります。 We may also disclose information when required for security, abuse prevention, legal compliance, or to protect users and the service.",
         chromeLimitedUse:
-          "Agent-Native Clips Chrome extension については、Chrome extension APIs から受け取った情報の使用は、限定使用要件を含む Chrome Web Store ユーザー データ ポリシーに準拠します。この拡張機能によって収集されたブラウザー アクティビティは、広告、再販、信用度、または無関係のプロファイリングではなく、ユーザー向けの記録と診断ワークフローを提供するために使用されます。",
+          "Jami Studio Clips Chrome extension については、Chrome extension APIs から受け取った情報の使用は、限定使用要件を含む Chrome Web Store ユーザー データ ポリシーに準拠します。この拡張機能によって収集されたブラウザー アクティビティは、広告、再販、信用度、または無関係のプロファイリングではなく、ユーザー向けの記録と診断ワークフローを提供するために使用されます。",
         retention1:
           "当社は、サービスの提供、ワークスペースの履歴の維持、義務の遵守、紛争の解決、または信頼性とセキュリティの向上に必要な限り、ホストされたアプリケーション データを保持します。 Users can delete clips, documents, resources, and other hosted app content through the relevant application controls where available.",
         retention2:
@@ -1326,7 +1319,7 @@ const jaJP = {
         security:
           "当社は、アクセス制御、トランスポート暗号化、監視、運用上のセキュリティ慣行など、ホストされたアプリケーション データを保護するために設計された合理的な管理上、技術上、および組織上の安全対策を講じています。どのオンライン サービスも完全なセキュリティを保証することはできないため、ユーザーは、ホストされているアプリケーションと情報を共有するつもりがない限り、記録やプロンプトに秘密や機密情報を含めないようにする必要があります。",
         changes1:
-          "Agent-Native ホスト型アプリケーションの変更に応じて、このポリシーを更新する場合があります。ページの上部にある更新日は、ポリシーが最後に改訂された日を示します。",
+          "Jami Studio ホスト型アプリケーションの変更に応じて、このポリシーを更新する場合があります。ページの上部にある更新日は、ポリシーが最後に改訂された日を示します。",
         changes2Prefix:
           "プライバシーのリクエストや質問がある場合は、以下にリストされているサポートおよびプライバシー チャネルを通じて Jami Studio までお問い合わせください。",
       },
@@ -1337,7 +1330,7 @@ const jaJP = {
         },
         hostedContent: {
           title: "ホストされるアプリケーションのコンテンツ",
-          body: "Content では、録画、トランスクリプト、ドキュメント、コメント、タスク、プロンプト、エージェントの応答、ファイル、構成など、ホストされた Agent-Native テンプレートを作成またはアップロードします。",
+          body: "Content では、録画、トランスクリプト、ドキュメント、コメント、タスク、プロンプト、エージェントの応答、ファイル、構成など、ホストされた Jami Studio テンプレートを作成またはアップロードします。",
         },
         integrations: {
           title: "接続された統合データ",
@@ -1350,7 +1343,7 @@ const jaJP = {
       },
       uses: {
         provide:
-          "ホストされた Agent-Native アプリケーションとそのエージェント ワークフローを提供、同期、操作します。",
+          "ホストされた Jami Studio アプリケーションとそのエージェント ワークフローを提供、同期、操作します。",
         transform:
           "ホストされているアプリにコンテンツを記録、文字起こし、要約、検索、共有、または変換するように依頼する場合。",
         auth: "ユーザーを認証し、組織を管理し、アクセス制御を実施し、悪用を防止します。",
@@ -1366,13 +1359,13 @@ const jaJP = {
     },
     terms: {
       eyebrow: "利用規約",
-      title: "Agent-Native ホスト型アプリケーション",
+      title: "Jami Studio ホスト型アプリケーション",
       intro:
-        "これらの規約は、Jami Studio が Agent-Native ホスト型アプリケーション、ホスト型テンプレート、デモ、および公式ホスト型サービスを運用する場合に適用されます。",
+        "これらの規約は、Jami Studio が Jami Studio ホスト型アプリケーション、ホスト型テンプレート、デモ、および公式ホスト型サービスを運用する場合に適用されます。",
       scopeCards: {
         hosted: {
           title: "ホストされているアプリ",
-          body: "Jami Studio によって操作される Agent-Native アプリまたはテンプレートを使用する場合に適用されます。",
+          body: "Jami Studio によって操作される Jami Studio アプリまたはテンプレートを使用する場合に適用されます。",
         },
         openSource: {
           title: "オープンソース",
@@ -1397,53 +1390,53 @@ const jaJP = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native はオープン ソースであり、そのソース コードは MIT ライセンスの下で入手できます。 These terms apply only to hosted applications and services operated by Jami Studio for Agent-Native users. They do not govern forks, custom templates, private deployments, or self-hosted versions operated outside Jami Studio.",
+          "Jami Studio はオープン ソースであり、そのソース コードは MIT ライセンスの下で入手できます。 These terms apply only to hosted applications and services operated by Jami Studio for Jami Studio users. They do not govern forks, custom templates, private deployments, or self-hosted versions operated outside Jami Studio.",
         scope2Prefix:
           "これらの用語は、Jami Studio のより広範な内容を補足するものです",
-        scope2Middle: "そしてAgent-Native",
+        scope2Middle: "そしてJami Studio",
         scope2Suffix:
-          "企業または組織を代表してホストされた Agent-Native アプリを使用する場合、その組織に対してこれらの規約に同意する権限があることを表明することになります。",
+          "企業または組織を代表してホストされた Jami Studio アプリを使用する場合、その組織に対してこれらの規約に同意する権限があることを表明することになります。",
         hostedService:
-          "Jami Studio は、ホストされた Agent-Native アプリケーション、テンプレート、デモ、共有ワークスペース、ブラウザ拡張機能、および関連するエージェント ワークフローを提供する場合があります。 The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
+          "Jami Studio は、ホストされた Jami Studio アプリケーション、テンプレート、デモ、共有ワークスペース、ブラウザ拡張機能、および関連するエージェント ワークフローを提供する場合があります。 The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
         accounts1:
-          "あなたは、アカウント情報の正確性、アカウントでのアクティビティ、および資格情報の安全な保管について責任を負います。ホストされた Agent-Native アプリには、組織機能、招待状、共有リソース、接続された統合、およびアプリ固有のアクセス制御が含まれる場合があります。 Only invite users and connect services you are authorized to use.",
+          "あなたは、アカウント情報の正確性、アカウントでのアクティビティ、および資格情報の安全な保管について責任を負います。ホストされた Jami Studio アプリには、組織機能、招待状、共有リソース、接続された統合、およびアプリ固有のアクセス制御が含まれる場合があります。 Only invite users and connect services you are authorized to use.",
         accounts2:
           "アカウント、ワークスペース、統合、または共有リソースが侵害されているか悪用されていると思われる場合は、速やかに Jami Studio サポートにご連絡ください。",
         content1:
-          "あなたは、ホストされた Agent-Native アプリを作成、アップロード、記録、インポート、または接続するコンテンツの所有権を保持します。 You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
+          "あなたは、ホストされた Jami Studio アプリを作成、アップロード、記録、インポート、または接続するコンテンツの所有権を保持します。 You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
         content2:
           "お客様は、サービスに提供するコンテンツ、録音、プロンプト、ファイル、認証情報、および接続された統合データに必要な権利と許可を取得する責任があります。",
         agents1:
-          "Hosted Agent-Native apps can run AI agents, tools, automations, and provider integrations at your request. AI で生成された出力は、不完全、不正確、または特定の用途には不適切である可能性があります。 Review important outputs, actions, exports, and messages before relying on them.",
+          "Hosted Jami Studio apps can run AI agents, tools, automations, and provider integrations at your request. AI で生成された出力は、不完全、不正確、または特定の用途には不適切である可能性があります。 Review important outputs, actions, exports, and messages before relying on them.",
         agents2:
           "サードパーティのサービスに接続する場合、それらのサービスの使用には、引き続き独自の条件、制限、許可、およびプライバシー慣行が適用されます。",
         openSource:
-          "これらの条件は、Agent-Native コードのオープンソース ライセンスを変更するものではありません。 If you download, fork, modify, or self-host Agent-Native, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
+          "これらの条件は、Jami Studio コードのオープンソース ライセンスを変更するものではありません。 If you download, fork, modify, or self-host Jami Studio, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
         suspensionPrefix:
-          "Jami Studio は、ユーザーの保護、法律の遵守、悪用の防止、セキュリティ リスクへの対処、またはサービスの運用に必要な場合、ホストされている Agent-Native サービスへのアクセスを一時停止または制限することがあります。ホストされているサービスの使用はいつでも停止できます。一部のデータは、「」で説明されているように、限られた期間バックアップ、ログ、または監査レコードに残る場合があります。",
+          "Jami Studio は、ユーザーの保護、法律の遵守、悪用の防止、セキュリティ リスクへの対処、またはサービスの運用に必要な場合、ホストされている Jami Studio サービスへのアクセスを一時停止または制限することがあります。ホストされているサービスの使用はいつでも停止できます。一部のデータは、「」で説明されているように、限られた期間バックアップ、ログ、または監査レコードに残る場合があります。",
         disclaimers1:
-          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio は、ホストされるアプリ、統合、自動化、または AI 出力が中断されないこと、エラーがないこと、またはすべての要件を満たすことを保証しません。",
+          "Hosted Jami Studio services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio は、ホストされるアプリ、統合、自動化、または AI 出力が中断されないこと、エラーがないこと、またはすべての要件を満たすことを保証しません。",
         disclaimers2Prefix:
-          "法律で許可される最大限の範囲で、ホスト型 Agent-Native サービスに対する Jami Studio の責任は、Jami Studio の広範な規定に記載されているように制限されます。",
+          "法律で許可される最大限の範囲で、ホスト型 Jami Studio サービスに対する Jami Studio の責任は、Jami Studio の広範な規定に記載されているように制限されます。",
         disclaimers2Suffix:
           "またはお客様の使用に適用される別の書面による契約。",
         changes1:
-          "Agent-Native ホスト型アプリケーションの変更に応じて、これらの規約を更新する場合があります。ページ上部の更新日は、規約が最後に改訂された日を示します。",
+          "Jami Studio ホスト型アプリケーションの変更に応じて、これらの規約を更新する場合があります。ページ上部の更新日は、規約が最後に改訂された日を示します。",
         changes2Prefix:
           "これらの用語に関する質問については、Jami Studio のサポート チャネルを通じて Jami Studio にお問い合わせください。",
       },
       hostedServicePoints: {
         create:
-          "ホストされた Agent-Native ワークスペースとテンプレート アプリを作成して操作します。",
+          "ホストされた Jami Studio ワークスペースとテンプレート アプリを作成して操作します。",
         workflows:
           "使用することを選択したエージェントのワークフロー、アクション、自動化、および統合を実行します。",
         store:
           "サービスを提供するために必要な、ホストされているアプリのコンテンツ、設定、組織データ、接続されたアカウントの状態を保存します。",
         improve:
-          "ホストされた Agent-Native サービスを測定、保護、デバッグ、改善します。",
+          "ホストされた Jami Studio サービスを測定、保護、デバッグ、改善します。",
       },
       acceptableUse: {
-        laws: "ホストされている Agent-Native アプリを使用して、法律違反、権利侵害、または人やシステムに危害を加えないでください。",
+        laws: "ホストされている Jami Studio アプリを使用して、法律違反、権利侵害、または人やシステムに危害を加えないでください。",
         bypass:
           "アクセス制御、レート制限、セキュリティ境界、またはテナントの分離をバイパスしようとしないでください。",
         malware:
@@ -1469,7 +1462,7 @@ const jaJP = {
     advancedRuntime: "高度: ランタイムを拡張",
     templatesSection: "アプリ",
     gettingStarted: "はじめに",
-    whatIsAgentNative: "Agent-Native とは？",
+    whatIsAgentNative: "Jami Studio とは？",
     agentSurfaces: "Agent サーフェス",
     keyConcepts: "主要概念",
     agentNativeToolkit: "ツールキット",
@@ -1547,7 +1540,7 @@ const jaJP = {
     writingAgentInstructions: "Agent 指示を書く",
     embeddingSdk: "埋め込み SDK",
     frames: "Frames",
-    agentNativeCodeUi: "Agent-Native コード UI",
+    agentNativeCodeUi: "Jami Studio コード UI",
     harnessAgents: "Harness エージェント",
     adapters: "アダプター",
     cliAdapters: "CLI アダプター",

@@ -1,8 +1,8 @@
 import { trackEvent, useLocale, useT } from "@agent-native/core/client";
 import { Link } from "react-router";
 
-import { BuildOnlinePopover } from "./BuilderWaitlistPopover";
 import { sitePathForLocale } from "./docs-locale";
+import { BuildOnlinePopover } from "./WaitlistPopover";
 
 const secondaryButtonClassName =
   "inline-flex w-full items-center justify-center rounded-lg border border-[var(--docs-border)] px-4 py-2 text-sm font-medium text-[var(--fg)] no-underline transition hover:border-[var(--fg-secondary)] hover:no-underline";

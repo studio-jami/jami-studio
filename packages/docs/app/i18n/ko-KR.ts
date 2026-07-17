@@ -30,7 +30,7 @@ const koKR = {
     placeholder: "이 문서를 더 좋게 만들 방법을 알려주세요.",
   },
   demoVideo: {
-    visualPlanningAria: "Agent-Native 시각적 계획 데모",
+    visualPlanningAria: "Jami Studio 시각적 계획 데모",
   },
   docBlocks: {
     blockLabel: "{{alias}} 블록",
@@ -61,8 +61,8 @@ const koKR = {
     close: "닫기",
   },
   agent: {
-    emptyState: "Agent-Native에 대해 무엇이든 물어보세요",
-    suggestionGettingStarted: "Agent-Native는 어떻게 시작하나요?",
+    emptyState: "Jami Studio에 대해 무엇이든 물어보세요",
+    suggestionGettingStarted: "Jami Studio는 어떻게 시작하나요?",
     suggestionActions: "actions는 어떻게 동작하나요?",
     suggestionPolling: "폴링 동기화 모델을 설명해줘",
     suggestionDeploy: "프로덕션에 배포하려면?",
@@ -84,14 +84,14 @@ const koKR = {
       badge: "오픈소스 framework",
       titleLine1: "agentic apps 를 위한",
       titleAccent: "framework",
-      body: "Agent-Native 는 agent 를 핵심으로 견고한 애플리케이션을 빠르게 구축하기 위한 오픈소스 framework 입니다.",
+      body: "Jami Studio 는 agent 를 핵심으로 견고한 애플리케이션을 빠르게 구축하기 위한 오픈소스 framework 입니다.",
       primaryCta: "app 사용해 보기",
       secondaryCta: "문서 읽기",
     },
     code: {
       quickStartComment: "명령 하나로 app 만들기",
       skillInstallComment:
-        "이미 쓰는 coding agent 에 Agent-Native 계획 기능 추가",
+        "이미 쓰는 coding agent 에 Jami Studio 계획 기능 추가",
       frameworkComment:
         "하나의 action 이 agent, UI, HTTP, MCP, A2A, CLI 를 구동합니다.",
       frameworkDescription: "로컬 app-agent loop 에서 hello 를 보냅니다.",
@@ -99,7 +99,7 @@ const koKR = {
     actionSurface: {
       eyebrow: "겉에 붙인 AI가 아니라 깊이 agentic",
       title: "하나의 action이 앱 전체 표면을 엽니다",
-      body: "작업을 한 번만 정의하세요. Agent-Native는 이를 UI action, agent 도구, HTTP endpoint, MCP/A2A 표면, CLI 명령, 권한 검사, 감사 기록으로 바꿉니다.",
+      body: "작업을 한 번만 정의하세요. Jami Studio는 이를 UI action, agent 도구, HTTP endpoint, MCP/A2A 표면, CLI 명령, 권한 검사, 감사 기록으로 바꿉니다.",
       buildAction: "Action 만들기",
       benefits: {
         oneActionDefinition: {
@@ -133,7 +133,7 @@ const koKR = {
       title: "agentic 앱을 위한 내장 모듈",
       body: "Agents가 처음부터 즉흥적으로 만들면 안 되는 프로덕션 부분을 사람이 검증한 조각으로 제공합니다. 그대로 쓰거나, 소스를 확인하거나, 앱에 다른 것이 필요할 때 교체하세요.",
       pageBody:
-        "Agent-Native는 agents가 즉흥적으로 만들면 안 되는 프로덕션 작업을 위해 사람이 검증한 조각을 제공합니다. 그대로 쓰거나, 소스를 확인하거나, 제품에 맞게 교체하세요.",
+        "Jami Studio는 agents가 즉흥적으로 만들면 안 되는 프로덕션 작업을 위해 사람이 검증한 조각을 제공합니다. 그대로 쓰거나, 소스를 확인하거나, 제품에 맞게 교체하세요.",
       viewAll: "모든 모듈 보기",
       browseApps: "모듈로 만든 앱 보기",
       items: {
@@ -198,7 +198,7 @@ const koKR = {
     framework: {
       title: "agent-native apps 를 위한 framework",
       body1:
-        "Agent-Native 는 agentic applications를 만들기 위한 오픈소스 framework 입니다. Chat에서 시작하고, shared actions를 정의한 뒤, 같은 state를 중심으로 UI, jobs, 협업을 추가하세요.",
+        "Jami Studio 는 agentic applications를 만들기 위한 오픈소스 framework 입니다. Chat에서 시작하고, shared actions를 정의한 뒤, 같은 state를 중심으로 UI, jobs, 협업을 추가하세요.",
       body2:
         "자체 데이터베이스, 호스팅 제공자, 모델 스택, app 코드를 가져오세요.",
       cta: "framework 가이드 읽기",
@@ -226,7 +226,7 @@ const koKR = {
       },
     },
     templates: {
-      title: "Agent-Native app 사용해 보기",
+      title: "Jami Studio app 사용해 보기",
       eyebrow: "작동하는 app을 포크하고 agent가 발전시키게 하세요.",
       cta: "apps 보기",
     },
@@ -272,7 +272,7 @@ const koKR = {
         saas: "SaaS 도구",
         agents: "원시 AI 에이전트",
         internal: "내부 도구",
-        native: "Agent-Native App",
+        native: "Jami Studio App",
       },
       rows: {
         ui: "UI",
@@ -312,7 +312,7 @@ const koKR = {
     batteries: {
       titleLine1: "필수 기능 포함,",
       titleLine2: "실전 검증 완료",
-      body: "빈 프롬프트와 즉흥적인 코드에서 시작하는 대신, Agent-Native는 실제 소프트웨어를 만드는 데 필요한 검증된 구성 요소와 모범 사례를 에이전트에 제공합니다.",
+      body: "빈 프롬프트와 즉흥적인 코드에서 시작하는 대신, Jami Studio는 실제 소프트웨어를 만드는 데 필요한 검증된 구성 요소와 모범 사례를 에이전트에 제공합니다.",
       browseToolkits: "툴킷 둘러보기",
     },
     featureCloud: {
@@ -426,20 +426,13 @@ const koKR = {
   buildFromScratch: {
     title: "처음부터 만들기",
     description:
-      "프레임워크 가이드로 시작하거나 Builder.io의 클라우드 코딩 에이전트로 온라인에서 빌드하세요.",
+      "프레임워크 가이드를 사용하거나, 온라인 빌드를 위해 대기자 명단에 참여하세요.",
     readDocs: "문서 읽기",
     buildOnline: "온라인에서 빌드",
-    popoverTitle: "Builder.io로 온라인에서 빌드",
+    popoverTitle: "대기자 명단 참여",
     popoverBody:
-      "Builder.io는 클라우드에서 agent-native 앱을 만들고 맞춤화할 수 있습니다 — actions, auth, SQL state, agent chat 포함. 얼리 액세스 대기자 명단에 참여하세요.",
-    emailLabel: "이메일",
-    emailPlaceholder: "you@company.com",
+      "Jami Studio는 클라우드에서 앱을 빠르게 생성하고 커스터마이즈할 수 있습니다 — actions, auth, SQL state, agent chat 포함. 얼리 액세스 대기자 명단에 참여하세요.",
     joinWaitlist: "대기자 명단 참여",
-    joining: "참여 중…",
-    joined:
-      "대기자 명단에 등록되었습니다. 온라인 빌드 액세스가 열리면 이메일로 알려드릴게요.",
-    invalidEmail: "유효한 이메일 주소를 입력하세요.",
-    submitError: "대기자 명단에 참여하지 못했습니다. 다시 시도하세요.",
   },
   templateCard: {
     pasteIntoTerminal: "터미널에 붙여넣으세요.",
@@ -448,10 +441,10 @@ const koKR = {
   },
   templateDetail: {
     allTemplates: "모든 앱",
-    notFoundMetaTitle: "앱을 찾을 수 없음 — Agent-Native",
+    notFoundMetaTitle: "앱을 찾을 수 없음 — Jami Studio",
     notFoundTitle: "앱을 찾을 수 없습니다.",
     notFoundBody: "사용 가능한 앱을 찾으려면 앱 카탈로그를 탐색하세요.",
-    badge: "Agent-Native {{name}}",
+    badge: "Jami Studio {{name}}",
     title: "{{name}} 앱",
   },
   templates: {
@@ -967,7 +960,7 @@ const koKR = {
       s006: "모든 템플릿",
       s007: "Superhuman 및 Gmail에 대한 오픈 소스 대안",
       s008: "사용해 보기",
-      s009: "호스팅된 데모는 Gmail 액세스를 위해 Agent-Native의 공유 Google 앱을 사용하므로 Google은 계속하기 전에 확인을 요청할 수 있습니다. 자신의 Google OAuth 클라이언트를 사용하려면 로컬에서 실행하세요.",
+      s009: "호스팅된 데모는 Gmail 액세스를 위해 Jami Studio의 공유 Google 앱을 사용하므로 Google은 계속하기 전에 확인을 요청할 수 있습니다. 자신의 Google OAuth 클라이언트를 사용하려면 로컬에서 실행하세요.",
       s010: "당신이 할 수 있는 일",
       s011: "귀하의 이메일 클라이언트를 귀하가 완전히 소유한 AI 기반 받은 편지함으로 교체하는 데 필요한 모든 것입니다.",
       s012: "키보드 단축키",
@@ -1161,14 +1154,14 @@ const koKR = {
     metaTitle:
       "Agent Skills - 코딩 에이전트를 위한 Visual Plan, Visual Recap, Visual Edit",
     metaDescription:
-      "코딩 에이전트가 시각적 계획, PR 요약, 로컬 시각적 편집을 사용할 수 있도록 Agent-Native 앱 기반 스킬을 설치합니다.",
+      "코딩 에이전트가 시각적 계획, PR 요약, 로컬 시각적 편집을 사용할 수 있도록 Jami Studio 앱 기반 스킬을 설치합니다.",
     metaOgDescription:
-      "호스팅, 검사, 커스터마이즈가 가능한 Agent-Native 앱으로 코딩 에이전트에 슬래시 명령을 추가하세요.",
+      "호스팅, 검사, 커스터마이즈가 가능한 Jami Studio 앱으로 코딩 에이전트에 슬래시 명령을 추가하세요.",
     metaKeywords:
       "agent skills, visual plan, visual recap, visual edit, 코딩 에이전트, Claude Code, Codex, PR 리뷰, 계획, agent-native",
     heroTitle: "코딩 에이전트에 새로운 능력을 더하세요",
     heroBody:
-      "완전히 커스터마이즈할 수 있는 Agent-Native 앱 기반 스킬을 설치하세요. 구현 전 시각적 계획, 변경 후 시각적 PR 요약, 로컬 UI 흐름의 시각적 편집을 제공합니다.",
+      "완전히 커스터마이즈할 수 있는 Jami Studio 앱 기반 스킬을 설치하세요. 구현 전 시각적 계획, 변경 후 시각적 PR 요약, 로컬 UI 흐름의 시각적 편집을 제공합니다.",
     sectionTitle: "코딩 에이전트를 위한 앱 기반 스킬",
     sectionBody:
       "호스팅된 공유 앱 링크, 로컬 파일 또는 자체 호스팅/커스텀 앱을 사용할 수 있으며, 에이전트는 필요한 지침과 해당 MCP 표면을 받습니다.",
@@ -1272,13 +1265,13 @@ const koKR = {
     lastUpdated: "마지막 업데이트: {{date}}",
     privacy: {
       eyebrow: "개인 정보 보호 정책",
-      title: "Agent-Native 호스팅된 애플리케이션",
+      title: "Jami Studio 호스팅된 애플리케이션",
       intro:
-        "이 정책은 Jami Studio이 Agent-Native 호스팅 애플리케이션, 호스팅 템플릿, 데모 및 공식 브라우저 확장 프로그램을 운영할 때 데이터를 수집, 사용, 공유 및 유지하는 방법을 설명합니다.",
+        "이 정책은 Jami Studio이 Jami Studio 호스팅 애플리케이션, 호스팅 템플릿, 데모 및 공식 브라우저 확장 프로그램을 운영할 때 데이터를 수집, 사용, 공유 및 유지하는 방법을 설명합니다.",
       scopeCards: {
         hosted: {
           title: "호스팅된 앱",
-          body: "Jami Studio이(가) 귀하를 위해 Agent-Native 서비스 또는 호스팅 템플릿을 운영할 때 보장됩니다.",
+          body: "Jami Studio이(가) 귀하를 위해 Jami Studio 서비스 또는 호스팅 템플릿을 운영할 때 보장됩니다.",
         },
         openSource: {
           title: "오픈 소스",
@@ -1292,7 +1285,7 @@ const koKR = {
       sections: {
         scope: "범위",
         information: "우리가 수집하는 정보",
-        clipsExtension: "Agent-Native Clips Chrome 확장 프로그램",
+        clipsExtension: "Jami Studio Clips Chrome 확장 프로그램",
         use: "우리가 정보를 사용하는 방법",
         sharing: "공유 및 제3자",
         chromeLimitedUse: "Chrome Web Store 제한된 사용",
@@ -1302,22 +1295,22 @@ const koKR = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native은 오픈 소스이며 소스 코드는 MIT 라이선스에 따라 제공됩니다. 이 정책은 Agent-Native 사용자를 위해 Jami Studio에서 운영하는 호스팅된 애플리케이션 및 서비스에만 적용됩니다. 포크, 사용자 정의 템플릿, 개인 배포 또는 자체 호스팅 버전을 포함하여 다른 사람의 코드 사용에는 적용되지 않습니다. 자체 배포를 운영하는 경우 자체 데이터 관행 및 개인정보 보호정책에 대한 책임은 귀하에게 있습니다.",
+          "Jami Studio은 오픈 소스이며 소스 코드는 MIT 라이선스에 따라 제공됩니다. 이 정책은 Jami Studio 사용자를 위해 Jami Studio에서 운영하는 호스팅된 애플리케이션 및 서비스에만 적용됩니다. 포크, 사용자 정의 템플릿, 개인 배포 또는 자체 호스팅 버전을 포함하여 다른 사람의 코드 사용에는 적용되지 않습니다. 자체 배포를 운영하는 경우 자체 데이터 관행 및 개인정보 보호정책에 대한 책임은 귀하에게 있습니다.",
         scope2Prefix:
           "이 정책은 Jami Studio의 광범위한 정책을 보완하기 위한 것입니다.",
-        scope2Suffix: "Agent-Native 호스팅된 애플리케이션 동작에 대해.",
+        scope2Suffix: "Jami Studio 호스팅된 애플리케이션 동작에 대해.",
         clips1:
-          "Agent-Native Clips Chrome extension는 브라우저 기반 녹화를 시작하는 데 도움이 되며, 활성화되면 브라우저 진단을 클립에 첨부할 수 있습니다. 선택한 캡처 소스, 포함하도록 선택한 카메라 및 마이크 미디어, 활성 탭 제목 및 URL, 확장 프로그램을 호스팅된 Clips에 연결하는 데 필요한 인증 상태를 수집할 수 있습니다.",
+          "Jami Studio Clips Chrome extension는 브라우저 기반 녹화를 시작하는 데 도움이 되며, 활성화되면 브라우저 진단을 클립에 첨부할 수 있습니다. 선택한 캡처 소스, 포함하도록 선택한 카메라 및 마이크 미디어, 활성 탭 제목 및 URL, 확장 프로그램을 호스팅된 Clips에 연결하는 데 필요한 인증 상태를 수집할 수 있습니다.",
         clips2:
           "Developer logs are optional. 활성화되면 확장 프로그램은 수정된 콘솔 메시지, JavaScript 예외를 수집하고 기록이 활성화되는 동안 선택한 탭에서 메서드, URL, 상태, 타이밍 및 실패 세부 정보와 같은 메타데이터 가져오기/XHR을 수집할 수 있습니다. 확장은 요청 본문, 응답 본문, 쿠키 또는 인증 헤더를 수집하도록 설계되지 않았습니다.",
         clipsAnchor:
           "Chrome Web Store 공개의 경우 이 섹션을 확장 개인정보 보호 정책 앵커로 사용하세요.",
         sharing1:
-          "우리는 Agent-Native 호스팅된 애플리케이션 데이터를 판매하거나 제3자 광고에 사용하지 않습니다. 당사는 귀하가 사용하는 기능에 해당 서비스가 필요할 때 클라우드 인프라, 스토리지, 인증, 이메일, 관찰 가능성, AI 및 전사 제공업체와 같은 호스팅 서비스 운영을 돕는 서비스 제공업체와 데이터를 공유합니다.",
+          "우리는 Jami Studio 호스팅된 애플리케이션 데이터를 판매하거나 제3자 광고에 사용하지 않습니다. 당사는 귀하가 사용하는 기능에 해당 서비스가 필요할 때 클라우드 인프라, 스토리지, 인증, 이메일, 관찰 가능성, AI 및 전사 제공업체와 같은 호스팅 서비스 운영을 돕는 서비스 제공업체와 데이터를 공유합니다.",
         sharing2:
           "통합을 연결하면 호스팅된 앱은 구성 및 공급자의 자체 조건에 따라 해당 공급자와 데이터를 보내거나 해당 공급자로부터 데이터를 받을 수 있습니다. 또한 보안, 남용 방지, 법률 준수 또는 사용자와 서비스 보호를 위해 필요한 경우 정보를 공개할 수도 있습니다.",
         chromeLimitedUse:
-          "Agent-Native Clips Chrome extension의 경우 Chrome extension API에서 받은 정보의 사용은 제한된 사용 요구 사항을 포함하여 Chrome Web Store 사용자 데이터 정책을 준수합니다. 확장 프로그램에서 수집한 브라우저 활동은 광고, 재판매, 신용도 또는 관련 없는 프로파일링이 아닌 사용자 대상 기록 및 진단 워크플로를 제공하는 데 사용됩니다.",
+          "Jami Studio Clips Chrome extension의 경우 Chrome extension API에서 받은 정보의 사용은 제한된 사용 요구 사항을 포함하여 Chrome Web Store 사용자 데이터 정책을 준수합니다. 확장 프로그램에서 수집한 브라우저 활동은 광고, 재판매, 신용도 또는 관련 없는 프로파일링이 아닌 사용자 대상 기록 및 진단 워크플로를 제공하는 데 사용됩니다.",
         retention1:
           "당사는 서비스를 제공하고, 작업 공간 기록을 유지하고, 의무를 준수하고, 분쟁을 해결하거나, 신뢰성과 보안을 향상시키는 데 필요한 기간 동안 호스팅된 애플리케이션 데이터를 보관합니다. 사용자는 가능한 경우 관련 애플리케이션 컨트롤을 통해 클립, 문서, 리소스 및 기타 호스팅된 앱 콘텐츠를 삭제할 수 있습니다.",
         retention2:
@@ -1325,7 +1318,7 @@ const koKR = {
         security:
           "당사는 액세스 제어, 전송 암호화, 모니터링 및 운영 보안 관행을 포함하여 호스팅된 애플리케이션 데이터를 보호하기 위해 고안된 합리적인 관리적, 기술적, 조직적 보호 장치를 사용합니다. 어떤 온라인 서비스도 완벽한 보안을 보장할 수 없으므로 사용자는 해당 정보를 호스팅된 애플리케이션과 공유하려는 의도가 아닌 이상 녹음이나 프롬프트에 비밀이나 민감한 정보를 포함하지 않아야 합니다.",
         changes1:
-          "Agent-Native 호스팅 애플리케이션이 변경되면 이 정책을 업데이트할 수 있습니다. 페이지 상단의 업데이트 날짜는 정책이 마지막으로 개정된 날짜를 보여줍니다.",
+          "Jami Studio 호스팅 애플리케이션이 변경되면 이 정책을 업데이트할 수 있습니다. 페이지 상단의 업데이트 날짜는 정책이 마지막으로 개정된 날짜를 보여줍니다.",
         changes2Prefix:
           "개인 정보 보호 요청이나 질문이 있는 경우 다음 목록에 나열된 지원 및 개인 정보 보호 채널을 통해 Jami Studio에 문의하세요.",
       },
@@ -1336,7 +1329,7 @@ const koKR = {
         },
         hostedContent: {
           title: "호스팅된 애플리케이션 콘텐츠",
-          body: "Content 녹음, 대화 내용, 문서, 댓글, 작업, 프롬프트, 상담원 응답, 파일 및 구성과 같은 호스팅된 Agent-Native 템플릿에서 생성하거나 업로드합니다.",
+          body: "Content 녹음, 대화 내용, 문서, 댓글, 작업, 프롬프트, 상담원 응답, 파일 및 구성과 같은 호스팅된 Jami Studio 템플릿에서 생성하거나 업로드합니다.",
         },
         integrations: {
           title: "연결된 통합 데이터",
@@ -1349,7 +1342,7 @@ const koKR = {
       },
       uses: {
         provide:
-          "호스팅된 Agent-Native 애플리케이션과 해당 에이전트 워크플로를 제공, 동기화 및 운영합니다.",
+          "호스팅된 Jami Studio 애플리케이션과 해당 에이전트 워크플로를 제공, 동기화 및 운영합니다.",
         transform:
           "호스팅된 앱에 요청하면 콘텐츠를 기록, 복사, 요약, 검색, 공유 또는 변환할 수 있습니다.",
         auth: "사용자를 인증하고, 조직을 관리하고, 액세스 제어를 시행하고, 남용을 방지합니다.",
@@ -1364,13 +1357,13 @@ const koKR = {
     },
     terms: {
       eyebrow: "서비스 약관",
-      title: "Agent-Native 호스팅된 애플리케이션",
+      title: "Jami Studio 호스팅된 애플리케이션",
       intro:
-        "이 약관은 Jami Studio이(가) 귀하를 위해 Agent-Native 호스팅 애플리케이션, 호스팅 템플릿, 데모 및 공식 호스팅 서비스를 운영할 때 적용됩니다.",
+        "이 약관은 Jami Studio이(가) 귀하를 위해 Jami Studio 호스팅 애플리케이션, 호스팅 템플릿, 데모 및 공식 호스팅 서비스를 운영할 때 적용됩니다.",
       scopeCards: {
         hosted: {
           title: "호스팅된 앱",
-          body: "Jami Studio에서 운영하는 Agent-Native 앱이나 템플릿을 사용할 때 보장됩니다.",
+          body: "Jami Studio에서 운영하는 Jami Studio 앱이나 템플릿을 사용할 때 보장됩니다.",
         },
         openSource: {
           title: "오픈 소스",
@@ -1395,51 +1388,51 @@ const koKR = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native은 오픈 소스이며 해당 소스 코드는 MIT 라이선스에 따라 제공됩니다. 본 약관은 Agent-Native 사용자를 위해 Jami Studio에서 운영하는 호스팅된 애플리케이션 및 서비스에만 적용됩니다. Jami Studio 외부에서 작동하는 포크, 사용자 정의 템플릿, 개인 배포 또는 자체 호스팅 버전에는 적용되지 않습니다.",
+          "Jami Studio은 오픈 소스이며 해당 소스 코드는 MIT 라이선스에 따라 제공됩니다. 본 약관은 Jami Studio 사용자를 위해 Jami Studio에서 운영하는 호스팅된 애플리케이션 및 서비스에만 적용됩니다. Jami Studio 외부에서 작동하는 포크, 사용자 정의 템플릿, 개인 배포 또는 자체 호스팅 버전에는 적용되지 않습니다.",
         scope2Prefix: "이 용어는 Jami Studio의 더 넓은 범위를 보완합니다.",
-        scope2Middle: "그리고 Agent-Native",
+        scope2Middle: "그리고 Jami Studio",
         scope2Suffix:
-          "회사 또는 조직을 대신하여 호스팅된 Agent-Native 앱을 사용하는 경우 귀하는 해당 조직에 대해 이러한 약관을 수락할 권한이 있음을 나타냅니다.",
+          "회사 또는 조직을 대신하여 호스팅된 Jami Studio 앱을 사용하는 경우 귀하는 해당 조직에 대해 이러한 약관을 수락할 권한이 있음을 나타냅니다.",
         hostedService:
-          "Jami Studio은 호스팅된 Agent-Native 애플리케이션, 템플릿, 데모, 공유 작업 공간, 브라우저 확장 프로그램 및 관련 에이전트 워크플로를 제공할 수 있습니다. 호스팅 서비스는 제품이 발전함에 따라 업데이트, 제한, 일시 중단 또는 중단될 수 있습니다.",
+          "Jami Studio은 호스팅된 Jami Studio 애플리케이션, 템플릿, 데모, 공유 작업 공간, 브라우저 확장 프로그램 및 관련 에이전트 워크플로를 제공할 수 있습니다. 호스팅 서비스는 제품이 발전함에 따라 업데이트, 제한, 일시 중단 또는 중단될 수 있습니다.",
         accounts1:
-          "귀하는 계정 정보의 정확성, 계정 활동 및 자격 증명 보안 유지에 대한 책임이 있습니다. 호스팅된 Agent-Native 앱에는 조직 기능, 초대, 공유 리소스, 연결된 통합 및 앱별 액세스 제어가 포함될 수 있습니다. 사용자를 초대하고 사용 권한이 있는 서비스만 연결하세요.",
+          "귀하는 계정 정보의 정확성, 계정 활동 및 자격 증명 보안 유지에 대한 책임이 있습니다. 호스팅된 Jami Studio 앱에는 조직 기능, 초대, 공유 리소스, 연결된 통합 및 앱별 액세스 제어가 포함될 수 있습니다. 사용자를 초대하고 사용 권한이 있는 서비스만 연결하세요.",
         accounts2:
           "계정, 작업공간, 통합 또는 공유 리소스가 손상되거나 오용되었다고 생각되면 즉시 Jami Studio 지원팀에 문의하세요.",
         content1:
-          "귀하는 호스팅된 Agent-Native 앱을 생성, 업로드, 기록, 가져오기 또는 연결하는 콘텐츠의 소유권을 보유합니다. 호스팅된 앱과 해당 에이전트 워크플로가 작동할 수 있도록 해당 콘텐츠를 호스팅, 처리, 전송, 표시, 변환, 분석 및 저장하는 데 필요한 제한된 권한을 Jami Studio에 부여합니다.",
+          "귀하는 호스팅된 Jami Studio 앱을 생성, 업로드, 기록, 가져오기 또는 연결하는 콘텐츠의 소유권을 보유합니다. 호스팅된 앱과 해당 에이전트 워크플로가 작동할 수 있도록 해당 콘텐츠를 호스팅, 처리, 전송, 표시, 변환, 분석 및 저장하는 데 필요한 제한된 권한을 Jami Studio에 부여합니다.",
         content2:
           "귀하는 귀하가 서비스에 제공하는 콘텐츠, 녹음, 프롬프트, 파일, 자격 증명 및 연결된 통합 데이터에 필요한 권리와 권한을 보유할 책임이 있습니다.",
         agents1:
-          "호스팅된 Agent-Native 앱은 귀하의 요청에 따라 AI 에이전트, 도구, 자동화 및 공급자 통합을 실행할 수 있습니다. AI에서 생성된 출력은 불완전하거나, 부정확하거나, 특정 용도에 적합하지 않을 수 있습니다. 중요한 출력, 작업, 내보내기 및 메시지를 사용하기 전에 검토하세요.",
+          "호스팅된 Jami Studio 앱은 귀하의 요청에 따라 AI 에이전트, 도구, 자동화 및 공급자 통합을 실행할 수 있습니다. AI에서 생성된 출력은 불완전하거나, 부정확하거나, 특정 용도에 적합하지 않을 수 있습니다. 중요한 출력, 작업, 내보내기 및 메시지를 사용하기 전에 검토하세요.",
         agents2:
           "귀하가 제3자 서비스를 연결하는 경우 해당 서비스 사용에는 해당 서비스의 자체 약관, 제한, 허가 및 개인 정보 보호 관행이 적용됩니다.",
         openSource:
-          "본 약관은 Agent-Native 코드에 대한 오픈 소스 라이선스를 변경하지 않습니다. Agent-Native을 다운로드, 포크, 수정 또는 자체 호스팅하는 경우 MIT 라이선스와 자체 배포에 대해 설정한 조건이 해당 사용에 적용됩니다. 귀하는 귀하가 운영하는 배포에 대한 보안, 개인 정보 보호, 규정 준수, 운영 및 사용자 지원에 대한 책임이 있습니다.",
+          "본 약관은 Jami Studio 코드에 대한 오픈 소스 라이선스를 변경하지 않습니다. Jami Studio을 다운로드, 포크, 수정 또는 자체 호스팅하는 경우 MIT 라이선스와 자체 배포에 대해 설정한 조건이 해당 사용에 적용됩니다. 귀하는 귀하가 운영하는 배포에 대한 보안, 개인 정보 보호, 규정 준수, 운영 및 사용자 지원에 대한 책임이 있습니다.",
         suspensionPrefix:
-          "Jami Studio은(는) 사용자 보호, 법률 준수, 남용 방지, 보안 위험 해결 또는 서비스 운영을 위해 필요한 경우 호스팅된 Agent-Native 서비스에 대한 액세스를 일시 중지하거나 제한할 수 있습니다. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
+          "Jami Studio은(는) 사용자 보호, 법률 준수, 남용 방지, 보안 위험 해결 또는 서비스 운영을 위해 필요한 경우 호스팅된 Jami Studio 서비스에 대한 액세스를 일시 중지하거나 제한할 수 있습니다. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
         disclaimers1:
-          "호스팅된 Agent-Native 서비스는 해당 법률 및 Jami Studio과 체결한 별도의 서면 계약에 따라 있는 그대로, 이용 가능한 대로 제공됩니다. Jami Studio는 호스팅된 앱, 통합, 자동화 또는 AI 출력이 중단되지 않거나 오류가 없거나 모든 요구 사항을 충족한다고 보장하지 않습니다.",
+          "호스팅된 Jami Studio 서비스는 해당 법률 및 Jami Studio과 체결한 별도의 서면 계약에 따라 있는 그대로, 이용 가능한 대로 제공됩니다. Jami Studio는 호스팅된 앱, 통합, 자동화 또는 AI 출력이 중단되지 않거나 오류가 없거나 모든 요구 사항을 충족한다고 보장하지 않습니다.",
         disclaimers2Prefix:
-          "법이 허용하는 최대 한도 내에서 호스팅된 Agent-Native 서비스에 대한 Jami Studio의 책임은 Jami Studio의 더 넓은 범위에 설명된 대로 제한됩니다.",
+          "법이 허용하는 최대 한도 내에서 호스팅된 Jami Studio 서비스에 대한 Jami Studio의 책임은 Jami Studio의 더 넓은 범위에 설명된 대로 제한됩니다.",
         disclaimers2Suffix: "또는 귀하의 사용에 적용되는 다른 서면 계약.",
         changes1:
-          "Agent-Native 호스팅 애플리케이션이 변경되면 본 약관을 업데이트할 수 있습니다. 페이지 상단의 업데이트 날짜는 약관이 마지막으로 수정된 날짜를 보여줍니다.",
+          "Jami Studio 호스팅 애플리케이션이 변경되면 본 약관을 업데이트할 수 있습니다. 페이지 상단의 업데이트 날짜는 약관이 마지막으로 수정된 날짜를 보여줍니다.",
         changes2Prefix:
           "이 약관에 대한 질문이 있는 경우 Jami Studio에 나열된 지원 채널을 통해 Jami Studio에 문의하세요.",
       },
       hostedServicePoints: {
         create:
-          "호스팅된 Agent-Native 작업 공간과 템플릿 앱을 만들고 운영하세요.",
+          "호스팅된 Jami Studio 작업 공간과 템플릿 앱을 만들고 운영하세요.",
         workflows:
           "사용하기로 선택한 상담원 워크플로, 작업, 자동화 및 통합을 실행하세요.",
         store:
           "서비스 제공에 필요한 호스팅된 앱 콘텐츠, 설정, 조직 데이터 및 연결된 계정 상태를 저장합니다.",
         improve:
-          "호스팅된 Agent-Native 서비스를 측정, 보호, 디버깅 및 개선합니다.",
+          "호스팅된 Jami Studio 서비스를 측정, 보호, 디버깅 및 개선합니다.",
       },
       acceptableUse: {
-        laws: "호스팅된 Agent-Native 앱을 사용하여 법률을 위반하거나, 권리를 침해하거나, 사람이나 시스템에 해를 끼치지 마세요.",
+        laws: "호스팅된 Jami Studio 앱을 사용하여 법률을 위반하거나, 권리를 침해하거나, 사람이나 시스템에 해를 끼치지 마세요.",
         bypass:
           "액세스 제어, 속도 제한, 보안 경계 또는 테넌트 격리를 우회하려고 시도하지 마십시오.",
         malware:
@@ -1465,7 +1458,7 @@ const koKR = {
     advancedRuntime: "고급: 런타임 확장",
     templatesSection: "앱",
     gettingStarted: "시작하기",
-    whatIsAgentNative: "Agent-Native란?",
+    whatIsAgentNative: "Jami Studio란?",
     agentSurfaces: "Agent 표면",
     keyConcepts: "핵심 개념",
     agentNativeToolkit: "Toolkit",
@@ -1543,7 +1536,7 @@ const koKR = {
     writingAgentInstructions: "Agent 지침 작성",
     embeddingSdk: "임베딩 SDK",
     frames: "Frames",
-    agentNativeCodeUi: "Agent-Native 코드 UI",
+    agentNativeCodeUi: "Jami Studio 코드 UI",
     harnessAgents: "Harness 에이전트",
     adapters: "어댑터",
     cliAdapters: "CLI 어댑터",

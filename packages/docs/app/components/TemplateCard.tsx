@@ -2,10 +2,10 @@ import { trackEvent, useLocale, useT } from "@agent-native/core/client";
 import { useState } from "react";
 import { Link } from "react-router";
 
-import { BuilderWaitlistContent } from "./BuilderWaitlistPopover";
 import { sitePathForLocale } from "./docs-locale";
 import { TemplateDocsLink } from "./template-docs";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { WaitlistContent } from "./WaitlistPopover";
 
 export { trackEvent };
 
@@ -17,8 +17,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-clips-app --template clips",
     demoUrl: "https://clips.jami.studio",
     color: "#0EA5E9",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800",
+    screenshot: "/screenshots/clips.png",
   },
   {
     name: "Plans",
@@ -46,8 +45,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-content-app --template content",
     demoUrl: "https://content.jami.studio",
     color: "#7928ca",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F89bcfc6106304bfbaf8ec8a7ccd721eb?format=webp&width=800",
+    screenshot: "/screenshots/content.png",
   },
   {
     name: "Slides",
@@ -56,8 +54,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-slides-app --template slides",
     demoUrl: "https://slides.jami.studio",
     color: "#f59e0b",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F2c09b451d40c4a74a89a38d69170c2d8?format=webp&width=800",
+    screenshot: "/screenshots/slides.png",
   },
   {
     name: "Analytics",
@@ -66,8 +63,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-analytics-app --template analytics",
     demoUrl: "https://analytics.jami.studio",
     color: "var(--docs-accent)",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4933a80cc3134d7e874631f688be828a?format=webp&width=800",
+    screenshot: "/screenshots/analytics.png",
   },
   {
     name: "Mail",
@@ -76,8 +72,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-mail-app --template mail",
     demoUrl: "https://mail.jami.studio",
     color: "#0ea5e9",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6f49a81c404d4242b33317491eac7575?format=webp&width=800",
+    screenshot: "/screenshots/mail.png",
   },
   {
     name: "Forms",
@@ -86,8 +81,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-forms-app --template forms",
     demoUrl: "https://forms.jami.studio",
     color: "#06B6D4",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F190c3fabd51f4c1bba5aa4e091ad4e9b?format=webp&width=800",
+    screenshot: "/screenshots/forms.png",
   },
   {
     name: "Brain",
@@ -116,8 +110,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-calendar-app --template calendar",
     demoUrl: "https://calendar.jami.studio",
     color: "#10b981",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Ffb6c3b483ca24ab3b6c3a758aeceef4c?format=webp&width=800",
+    screenshot: "/screenshots/calendar.png",
   },
   {
     name: "Dispatch",
@@ -126,8 +119,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-dispatch-app --template dispatch",
     demoUrl: "https://dispatch.jami.studio",
     color: "#14B8A6",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F104b3ad8d1dc461aa33ab9bff37a4482?format=webp&width=800",
+    screenshot: "/screenshots/dispatch.png",
   },
   {
     name: "Chat",
@@ -136,8 +128,7 @@ export const templates = [
       "npx @agent-native/core@latest create my-chat-app --template chat",
     demoUrl: "https://chat.jami.studio",
     color: "#18181B",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F6b36dc596fca4799815fa34c31e1c406",
+    screenshot: "/screenshots/chat.png",
   },
   // ── DO NOT add new templates here directly. ──
   // The public-facing template list is the strict allow-list defined in
@@ -316,7 +307,7 @@ function TemplateLaunchButton({ template }: { template: Template }) {
             {customizeMode === "runLocally" ? (
               <CliPopoverContent template={template} />
             ) : customizeMode === "editOnline" ? (
-              <BuilderWaitlistContent
+              <WaitlistContent
                 location="card"
                 template={template.slug}
                 source="docs_template_card"

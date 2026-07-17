@@ -51,7 +51,7 @@ export function sitemapPlugin(): Plugin {
     fs.readFileSync(path.resolve(rootDir, "package.json"), "utf8"),
   );
   return createAgentWebVitePlugin({
-    siteName: "Agent-Native",
+    siteName: "Jami Studio",
     siteUrl: SITE_URL,
     description:
       "Open source framework for building apps where AI agents and UI share one state model.",
@@ -145,7 +145,7 @@ export function buildAgentWebPages(rootDir: string): AgentWebPage[] {
         `- Replaces or augments: ${copy.replaces}`,
         `- CLI: \`${template.cliCommand}\``,
         template.demoUrl ? `- Demo: ${template.demoUrl}` : undefined,
-        `- Source: https://github.com/BuilderIO/agent-native/tree/main/templates/${template.slug}`,
+        `- Source: https://github.com/studio-jami/jami-studio/tree/main/templates/${template.slug}`,
         "",
       ]
         .filter((line): line is string => typeof line === "string")
@@ -157,56 +157,29 @@ export function buildAgentWebPages(rootDir: string): AgentWebPage[] {
   return sortPages([
     {
       path: "/",
-      title: "Agent-Native",
+      title: "Jami Studio",
       description:
         "Framework for building agentic apps where AI agents and UI share the same database and state.",
-      markdown: `# Agent-Native
+      markdown: `# Jami Studio
 
-Agent-Native is an open source framework for building apps where AI agents and UI share the same database, actions, and application state.
+Jami Studio is an open source framework for building apps where AI agents and UI share the same database, actions, and application state.
 `,
       lastmod: gitLastmod(path.resolve(rootDir, "app/routes/_index.tsx")),
     },
     {
       path: "/download",
-      title: "Download Agent Native",
-      description: "Download the Agent Native desktop app.",
+      title: "Download Jami Studio",
+      description: "Download the Jami Studio desktop app.",
       markdown:
-        "# Download Agent Native\n\nDownload the Agent Native desktop app.\n",
+        "# Download Jami Studio\n\nDownload the Jami Studio desktop app.\n",
       lastmod: gitLastmod(path.resolve(rootDir, "app/routes/download.tsx")),
     },
     {
-      path: "/brand",
-      title: "Agent-Native Brand Assets",
-      description:
-        "Download official Agent-Native logos and symbols for articles, presentations, and community projects.",
-      markdown:
-        "# Agent-Native Brand Assets\n\nDownload official Agent-Native horizontal logos and symbols as SVG files for light and dark backgrounds.\n",
-      lastmod: gitLastmod(path.resolve(rootDir, "app/routes/brand.tsx")),
-    },
-    {
-      path: "/privacy",
-      title: "Agent-Native Privacy Policy",
-      description:
-        "Privacy policy for Agent-Native hosted applications, apps, and browser extensions.",
-      markdown:
-        "# Agent-Native Privacy Policy\n\nPrivacy policy for Agent-Native hosted applications, apps, and browser extensions. Chrome extension disclosures are included at `/privacy#clips-chrome-extension`.\n",
-      lastmod: gitLastmod(path.resolve(rootDir, "app/routes/privacy.tsx")),
-    },
-    {
-      path: "/terms",
-      title: "Agent-Native Terms of Service",
-      description:
-        "Terms of Service for Agent-Native hosted applications, apps, demos, and official hosted services.",
-      markdown:
-        "# Agent-Native Terms of Service\n\nTerms of Service for Agent-Native hosted applications, apps, demos, and official hosted services.\n",
-      lastmod: gitLastmod(path.resolve(rootDir, "app/routes/terms.tsx")),
-    },
-    {
       path: "/apps",
-      title: "Agent-Native Apps",
-      description: "Ready-to-fork apps built with Agent-Native.",
+      title: "Jami Studio Apps",
+      description: "Ready-to-fork apps built with Jami Studio.",
       markdown:
-        "# Agent-Native Apps\n\nReady-to-fork apps built with Agent-Native.\n",
+        "# Jami Studio Apps\n\nReady-to-fork apps built with Jami Studio.\n",
       lastmod: gitLastmod(path.resolve(rootDir, "app/routes/templates.tsx")),
     },
     {

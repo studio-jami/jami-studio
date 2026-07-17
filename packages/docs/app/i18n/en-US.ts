@@ -28,7 +28,7 @@ const enUS = {
     placeholder: "Tell us what would make these docs better.",
   },
   demoVideo: {
-    visualPlanningAria: "Agent-Native visual planning demo",
+    visualPlanningAria: "Jami Studio visual planning demo",
   },
   docBlocks: {
     blockLabel: "{{alias}} block",
@@ -71,8 +71,8 @@ const enUS = {
     close: "close",
   },
   agent: {
-    emptyState: "Ask me anything about Agent-Native",
-    suggestionGettingStarted: "How do I get started with Agent-Native?",
+    emptyState: "Ask me anything about Jami Studio",
+    suggestionGettingStarted: "How do I get started with Jami Studio?",
     suggestionActions: "How do actions work?",
     suggestionPolling: "Explain the polling sync model",
     suggestionDeploy: "How do I deploy to production?",
@@ -95,7 +95,7 @@ const enUS = {
       badge: "Open source framework",
       titleLine1: "The framework for",
       titleAccent: "agentic apps",
-      body: "Agent-Native is an open-source framework for rapidly building robust applications with agents at their core.",
+      body: "Jami Studio is an open-source framework for rapidly building robust applications with agents at their core.",
       primaryCta: "Try an app",
       secondaryCta: "Read the docs",
     },
@@ -110,7 +110,7 @@ const enUS = {
     actionSurface: {
       eyebrow: "Deeply agentic, not AI-adjacent",
       title: "One action gives you the whole app surface",
-      body: "Define an operation once. Agent-Native turns it into the UI action, agent tool, HTTP endpoint, MCP/A2A surface, CLI command, scoped permission check, and audit trail.",
+      body: "Define an operation once. Jami Studio turns it into the UI action, agent tool, HTTP endpoint, MCP/A2A surface, CLI command, scoped permission check, and audit trail.",
       buildAction: "Build an action",
       benefits: {
         oneActionDefinition: {
@@ -144,7 +144,7 @@ const enUS = {
       title: "Built-in modules for agentic apps",
       body: "Human-verified pieces for the production parts agents should not invent from scratch. Use them as-is, inspect the source, or replace the module when your app needs something different.",
       pageBody:
-        "Agent-Native ships human-verified pieces for the production work agents should not improvise from scratch. Use them as-is, inspect the source, or replace the module when your product needs something different.",
+        "Jami Studio ships human-verified pieces for the production work agents should not improvise from scratch. Use them as-is, inspect the source, or replace the module when your product needs something different.",
       viewAll: "View all modules",
       browseApps: "Browse apps built from modules",
       items: {
@@ -209,7 +209,7 @@ const enUS = {
     framework: {
       title: "The framework for agent-native apps",
       body1:
-        "Agent-Native is an open-source framework for building agentic applications: start with chat, define shared actions, then add UI, jobs, and collaboration around the same state.",
+        "Jami Studio is an open-source framework for building agentic applications: start with chat, define shared actions, then add UI, jobs, and collaboration around the same state.",
       body2:
         "Bring your own database, hosting provider, model stack, and app code.",
       cta: "Read the framework guide",
@@ -237,7 +237,7 @@ const enUS = {
       },
     },
     templates: {
-      title: "Try an Agent-Native app",
+      title: "Try a Jami Studio app",
       eyebrow: "Fork a working app and let the agent evolve it.",
       cta: "Browse apps",
     },
@@ -283,7 +283,7 @@ const enUS = {
         saas: "SaaS Tools",
         agents: "Raw AI Agents",
         internal: "Internal Tools",
-        native: "Agent-Native App",
+        native: "Jami Studio App",
       },
       rows: {
         ui: "UI",
@@ -323,7 +323,7 @@ const enUS = {
     batteries: {
       titleLine1: "Batteries included,",
       titleLine2: "battle tested",
-      body: "Instead of starting from a blank prompt and a pile of improvised code, Agent-Native gives agents the battle-tested parts and best practices they need to build real software.",
+      body: "Instead of starting from a blank prompt and a pile of improvised code, Jami Studio gives agents the battle-tested parts and best practices they need to build real software.",
       browseToolkits: "Browse toolkits",
     },
     featureCloud: {
@@ -424,20 +424,14 @@ const enUS = {
   },
   buildFromScratch: {
     title: "Build from scratch",
-    description: "Use the framework guide or build online with Builder.io.",
+    description:
+      "Use the framework guide, or join the waitlist to build online.",
     readDocs: "Read the docs",
     buildOnline: "Build online",
     popoverTitle: "Join the waitlist",
     popoverBody:
-      "Rapidly generate agent-native apps in the cloud. Join the waitlist for early access.",
-    emailLabel: "Email",
-    emailPlaceholder: "you@company.com",
+      "Rapidly generate Jami Studio apps in the cloud. Join the waitlist for early access.",
     joinWaitlist: "Join waitlist",
-    joining: "Joining…",
-    joined:
-      "You're on the waitlist. We'll email you when build-online access opens.",
-    invalidEmail: "Enter a valid email address.",
-    submitError: "Couldn't join the waitlist. Please try again.",
   },
   templateCard: {
     pasteIntoTerminal: "Paste into your terminal.",
@@ -446,15 +440,15 @@ const enUS = {
   },
   templateDetail: {
     allTemplates: "All Apps",
-    notFoundMetaTitle: "App Not Found — Agent-Native",
+    notFoundMetaTitle: "App Not Found — Jami Studio",
     notFoundTitle: "App not found",
     notFoundBody: "Browse the app catalog to find an available app.",
-    badge: "Agent-Native {{name}}",
+    badge: "Jami Studio {{name}}",
     title: "Open-Source {{name}} app",
   },
   templates: {
     clips: {
-      replaces: "Agent-Native Loom",
+      replaces: "Jami Studio Loom",
       description:
         "Screen recordings with browser debug capture, calendar-synced meeting notes, and Fn-hold voice dictation — all transcribed, summarized, and searchable, with an agent that can edit any of it.",
     },
@@ -464,22 +458,22 @@ const enUS = {
         "Install visual planning as an app-backed skill. Your coding agent can open structured plans with diagrams, wireframes, prototypes, annotations, comments, and shareable review links.",
     },
     design: {
-      replaces: "Agent-Native Figma",
+      replaces: "Jami Studio Figma",
       description:
         "Agent-native HTML prototyping studio. Generate interactive Alpine/Tailwind designs, compare variants, refine live tweak controls, and export the result.",
     },
     content: {
-      replaces: "Agent-Native Notion/Obsidian",
+      replaces: "Jami Studio Notion/Obsidian",
       description:
         "Edit local Markdown/MDX files like Obsidian, generate rich interactive custom blocks, and use an AI agent to draft, rewrite, and publish.",
     },
     slides: {
-      replaces: "Agent-Native Google Slides",
+      replaces: "Jami Studio Google Slides",
       description:
         "Generate full presentations from a prompt. Edit visually or conversationally. AI image generation, 8 layouts, and presentation mode built in.",
     },
     analytics: {
-      replaces: "Agent-Native Amplitude, Fullstory",
+      replaces: "Jami Studio Amplitude, Fullstory",
       description:
         "Connect any data source, prompt for any chart, build reusable dashboards. The agent writes SQL, generates visualizations, and evolves the app.",
     },
@@ -964,7 +958,7 @@ const enUS = {
       s006: "All Apps",
       s007: "The open-source alternative to Superhuman and Gmail",
       s008: "Try It",
-      s009: "The hosted demo uses Agent-Native's shared Google app for Gmail access, so Google may ask you to confirm before continuing. Run locally to use your own Google OAuth client.",
+      s009: "The hosted demo uses Jami Studio's shared Google app for Gmail access, so Google may ask you to confirm before continuing. Run locally to use your own Google OAuth client.",
       s010: "What you can do",
       s011: "Everything you need to replace your email client with an AI-powered inbox you fully own.",
       s012: "Keyboard Shortcuts",
@@ -1158,14 +1152,14 @@ const enUS = {
     metaTitle:
       "Agent Skills - Visual Plan, Visual Recap, and Visual Edit for coding agents",
     metaDescription:
-      "Install Agent-Native app-backed skills your coding agent can use for visual planning, PR recaps, and local visual editing.",
+      "Install Jami Studio app-backed skills your coding agent can use for visual planning, PR recaps, and local visual editing.",
     metaOgDescription:
-      "Give your coding agent slash commands powered by Agent-Native apps you can host, inspect, and customize.",
+      "Give your coding agent slash commands powered by Jami Studio apps you can host, inspect, and customize.",
     metaKeywords:
       "agent skills, visual plan, visual recap, visual edit, coding agent, Claude Code, Codex, PR review, planning, agent-native",
     heroTitle: "Give your coding agent new superpowers",
     heroBody:
-      "Install app-backed skills powered by Agent-Native apps you can fully customize: visual planning before implementation, visual PR recaps after changes land, and visual editing for local UI flows.",
+      "Install app-backed skills powered by Jami Studio apps you can fully customize: visual planning before implementation, visual PR recaps after changes land, and visual editing for local UI flows.",
     sectionTitle: "App-backed skills for coding agents",
     sectionBody:
       "Use hosted shareable app links, local files, or a self-hosted/custom app, and your agent gets instructions plus the matching MCP surface when one is required.",
@@ -1269,13 +1263,13 @@ const enUS = {
     lastUpdated: "Last updated: {{date}}",
     privacy: {
       eyebrow: "Privacy Policy",
-      title: "Agent-Native hosted applications",
+      title: "Jami Studio hosted applications",
       intro:
-        "This policy explains how Jami Studio collects, uses, shares, and retains data when it operates Agent-Native hosted applications, hosted apps, demos, and official browser extensions.",
+        "This policy explains how Jami Studio collects, uses, shares, and retains data when it operates its hosted applications, hosted apps, demos, and official browser extensions.",
       scopeCards: {
         hosted: {
           title: "Hosted apps",
-          body: "Covered when Jami Studio operates the Agent-Native service or hosted app for you.",
+          body: "Covered when Jami Studio operates a hosted service or app for you.",
         },
         openSource: {
           title: "Open source",
@@ -1289,7 +1283,7 @@ const enUS = {
       sections: {
         scope: "Scope",
         information: "Information we collect",
-        clipsExtension: "Agent-Native Clips Chrome extension",
+        clipsExtension: "Jami Studio Clips Chrome extension",
         use: "How we use information",
         sharing: "Sharing and third parties",
         chromeLimitedUse: "Chrome Web Store limited use",
@@ -1299,22 +1293,22 @@ const enUS = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native is open source, and the source code is available under the MIT license. This policy applies only to hosted applications and services operated by Jami Studio for Agent-Native users. It does not apply to someone else's use of the code, including forks, customized apps, private deployments, or self-hosted versions. If you operate your own deployment, you are responsible for your own data practices and privacy policy.",
+          "Jami Studio is open source, and the source code is available under the MIT license. This policy applies only to hosted applications and services operated by Jami Studio for its users. It does not apply to someone else's use of the code, including forks, customized apps, private deployments, or self-hosted versions. If you operate your own deployment, you are responsible for your own data practices and privacy policy.",
         scope2Prefix:
           "This policy is intended to supplement Jami Studio's broader",
-        scope2Suffix: "for Agent-Native hosted application behavior.",
+        scope2Suffix: "for Jami Studio hosted application behavior.",
         clips1:
-          "The Agent-Native Clips Chrome extension helps you start browser-based recordings and, when enabled, attach browser diagnostics to a clip. It may collect the selected capture source, camera and microphone media you choose to include, the active tab title and URL, and authentication state needed to connect the extension to hosted Clips.",
+          "The Jami Studio Clips Chrome extension helps you start browser-based recordings and, when enabled, attach browser diagnostics to a clip. It may collect the selected capture source, camera and microphone media you choose to include, the active tab title and URL, and authentication state needed to connect the extension to hosted Clips.",
         clips2:
           "Developer logs are optional. When enabled, the extension may collect redacted console messages, JavaScript exceptions, and fetch/XHR metadata such as method, URL, status, timing, and failure details from the selected tab while a recording is active. The extension is not designed to collect request bodies, response bodies, cookies, or authorization headers.",
         clipsAnchor:
           "For Chrome Web Store disclosures, use this section as the extension privacy-policy anchor:",
         sharing1:
-          "We do not sell Agent-Native hosted application data or use it for third-party advertising. We share data with service providers that help operate the hosted service, such as cloud infrastructure, storage, authentication, email, observability, AI, and transcription providers, when those services are needed for the feature you use.",
+          "We do not sell Jami Studio hosted application data or use it for third-party advertising. We share data with service providers that help operate the hosted service, such as cloud infrastructure, storage, authentication, email, observability, AI, and transcription providers, when those services are needed for the feature you use.",
         sharing2:
           "When you connect an integration, the hosted app may send data to or receive data from that provider according to your configuration and the provider's own terms. We may also disclose information when required for security, abuse prevention, legal compliance, or to protect users and the service.",
         chromeLimitedUse:
-          "For the Agent-Native Clips Chrome extension, our use of information received from Chrome extension APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements. Browser activity collected by the extension is used to provide the user-facing recording and diagnostics workflow, not for advertising, resale, credit-worthiness, or unrelated profiling.",
+          "For the Jami Studio Clips Chrome extension, our use of information received from Chrome extension APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements. Browser activity collected by the extension is used to provide the user-facing recording and diagnostics workflow, not for advertising, resale, credit-worthiness, or unrelated profiling.",
         retention1:
           "We retain hosted application data for as long as needed to provide the service, maintain workspace history, comply with obligations, resolve disputes, or improve reliability and security. Users can delete clips, documents, resources, and other hosted app content through the relevant application controls where available.",
         retention2:
@@ -1322,7 +1316,7 @@ const enUS = {
         security:
           "We use reasonable administrative, technical, and organizational safeguards designed to protect hosted application data, including access controls, transport encryption, monitoring, and operational security practices. No online service can guarantee perfect security, so users should avoid including secrets or sensitive information in recordings or prompts unless they intend to share that information with the hosted application.",
         changes1:
-          "We may update this policy as Agent-Native hosted applications change. The updated date at the top of the page shows when the policy was last revised.",
+          "We may update this policy as Jami Studio hosted applications change. The updated date at the top of the page shows when the policy was last revised.",
         changes2Prefix:
           "For privacy requests or questions, contact Jami Studio through the support and privacy channels listed in the",
       },
@@ -1333,7 +1327,7 @@ const enUS = {
         },
         hostedContent: {
           title: "Hosted application content",
-          body: "Content you create or upload in hosted Agent-Native apps, such as recordings, transcripts, documents, comments, tasks, prompts, agent responses, files, and configuration.",
+          body: "Content you create or upload in hosted Jami Studio apps, such as recordings, transcripts, documents, comments, tasks, prompts, agent responses, files, and configuration.",
         },
         integrations: {
           title: "Connected integration data",
@@ -1346,7 +1340,7 @@ const enUS = {
       },
       uses: {
         provide:
-          "Provide, sync, and operate hosted Agent-Native applications and their agent workflows.",
+          "Provide, sync, and operate hosted Jami Studio applications and their agent workflows.",
         transform:
           "Record, transcribe, summarize, search, share, or transform content when you ask the hosted app to do so.",
         auth: "Authenticate users, manage organizations, enforce access controls, and prevent abuse.",
@@ -1361,13 +1355,13 @@ const enUS = {
     },
     terms: {
       eyebrow: "Terms of Service",
-      title: "Agent-Native hosted applications",
+      title: "Jami Studio hosted applications",
       intro:
-        "These terms apply when Jami Studio operates Agent-Native hosted applications, hosted apps, demos, and official hosted services for you.",
+        "These terms apply when Jami Studio operates its hosted applications, hosted apps, demos, and official hosted services for you.",
       scopeCards: {
         hosted: {
           title: "Hosted apps",
-          body: "Covered when you use an Agent-Native app or template operated by Jami Studio.",
+          body: "Covered when you use a Jami Studio app or template operated by Jami Studio.",
         },
         openSource: {
           title: "Open source",
@@ -1392,51 +1386,51 @@ const enUS = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native is open source, and its source code is available under the MIT license. These terms apply only to hosted applications and services operated by Jami Studio for Agent-Native users. They do not govern forks, custom apps, private deployments, or self-hosted versions operated outside Jami Studio.",
+          "Jami Studio is open source, and its source code is available under the MIT license. These terms apply only to hosted applications and services operated by Jami Studio for its users. They do not govern forks, custom apps, private deployments, or self-hosted versions operated outside Jami Studio.",
         scope2Prefix: "These terms supplement Jami Studio's broader",
-        scope2Middle: "and the Agent-Native",
+        scope2Middle: "and the Jami Studio",
         scope2Suffix:
-          "If you use a hosted Agent-Native app on behalf of a company or organization, you represent that you have authority to accept these terms for that organization.",
+          "If you use a hosted Jami Studio app on behalf of a company or organization, you represent that you have authority to accept these terms for that organization.",
         hostedService:
-          "Jami Studio may provide hosted Agent-Native applications, apps, demos, shared workspaces, browser extensions, and related agent workflows. The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
+          "Jami Studio may provide hosted Jami Studio applications, apps, demos, shared workspaces, browser extensions, and related agent workflows. The hosted service may be updated, limited, suspended, or discontinued as the product evolves.",
         accounts1:
-          "You are responsible for the accuracy of account information, activity under your account, and keeping credentials secure. Hosted Agent-Native apps may include organization features, invitations, shared resources, connected integrations, and app-specific access controls. Only invite users and connect services you are authorized to use.",
+          "You are responsible for the accuracy of account information, activity under your account, and keeping credentials secure. Hosted Jami Studio apps may include organization features, invitations, shared resources, connected integrations, and app-specific access controls. Only invite users and connect services you are authorized to use.",
         accounts2:
           "If you believe an account, workspace, integration, or shared resource has been compromised or misused, contact Jami Studio support promptly.",
         content1:
-          "You retain ownership of content you create, upload, record, import, or connect to hosted Agent-Native apps. You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
+          "You retain ownership of content you create, upload, record, import, or connect to hosted Jami Studio apps. You grant Jami Studio the limited permission needed to host, process, transmit, display, transform, analyze, and store that content so the hosted app and its agent workflows can operate.",
         content2:
           "You are responsible for having the rights and permissions needed for content, recordings, prompts, files, credentials, and connected integration data you provide to the service.",
         agents1:
-          "Hosted Agent-Native apps can run AI agents, tools, automations, and provider integrations at your request. AI-generated output may be incomplete, inaccurate, or unsuitable for a particular use. Review important outputs, actions, exports, and messages before relying on them.",
+          "Hosted Jami Studio apps can run AI agents, tools, automations, and provider integrations at your request. AI-generated output may be incomplete, inaccurate, or unsuitable for a particular use. Review important outputs, actions, exports, and messages before relying on them.",
         agents2:
           "When you connect third-party services, your use of those services remains subject to their own terms, limits, permissions, and privacy practices.",
         openSource:
-          "These terms do not change the open-source license for Agent-Native code. If you download, fork, modify, or self-host Agent-Native, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
+          "These terms do not change the open-source license for Jami Studio code. If you download, fork, modify, or self-host Jami Studio, the MIT license and the terms you set for your own deployment govern that use. You are responsible for security, privacy, compliance, operations, and user support for deployments you operate.",
         suspensionPrefix:
-          "Jami Studio may suspend or restrict access to hosted Agent-Native services when needed to protect users, comply with law, prevent abuse, address security risk, or operate the service. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
+          "Jami Studio may suspend or restrict access to hosted Jami Studio services when needed to protect users, comply with law, prevent abuse, address security risk, or operate the service. You may stop using the hosted service at any time. Some data may remain in backups, logs, or audit records for a limited period as described in the",
         disclaimers1:
-          "Hosted Agent-Native services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio does not guarantee that hosted apps, integrations, automations, or AI outputs will be uninterrupted, error-free, or meet every requirement.",
+          "Hosted Jami Studio services are provided on an as-is and as-available basis, subject to applicable law and any separate written agreement you have with Jami Studio. Jami Studio does not guarantee that hosted apps, integrations, automations, or AI outputs will be uninterrupted, error-free, or meet every requirement.",
         disclaimers2Prefix:
-          "To the maximum extent permitted by law, Jami Studio's liability for hosted Agent-Native services is limited as described in Jami Studio's broader",
+          "To the maximum extent permitted by law, Jami Studio's liability for its hosted services is limited as described in Jami Studio's broader",
         disclaimers2Suffix:
           "or another written agreement that applies to your use.",
         changes1:
-          "We may update these terms as Agent-Native hosted applications change. The updated date at the top of the page shows when the terms were last revised.",
+          "We may update these terms as Jami Studio hosted applications change. The updated date at the top of the page shows when the terms were last revised.",
         changes2Prefix:
           "For questions about these terms, contact Jami Studio through the support channels listed in Jami Studio's",
       },
       hostedServicePoints: {
-        create: "Create and operate hosted Agent-Native workspaces and apps.",
+        create: "Create and operate hosted Jami Studio workspaces and apps.",
         workflows:
           "Run agent workflows, actions, automations, and integrations you choose to use.",
         store:
           "Store hosted app content, settings, organization data, and connected-account state needed to provide the service.",
         improve:
-          "Measure, secure, debug, and improve hosted Agent-Native services.",
+          "Measure, secure, debug, and improve hosted Jami Studio services.",
       },
       acceptableUse: {
-        laws: "Do not use hosted Agent-Native apps to violate laws, infringe rights, or harm people or systems.",
+        laws: "Do not use hosted Jami Studio apps to violate laws, infringe rights, or harm people or systems.",
         bypass:
           "Do not attempt to bypass access controls, rate limits, security boundaries, or tenant isolation.",
         malware:
@@ -1462,7 +1456,7 @@ const enUS = {
     advancedRuntime: "Advanced: Extend the Runtime",
     templatesSection: "Apps",
     gettingStarted: "Getting Started",
-    whatIsAgentNative: "What Is Agent-Native?",
+    whatIsAgentNative: "What Is Jami Studio?",
     agentSurfaces: "Agent Surfaces",
     keyConcepts: "Key Concepts",
     agentNativeToolkit: "Toolkit",
@@ -1540,7 +1534,7 @@ const enUS = {
     writingAgentInstructions: "Writing Agent Instructions",
     embeddingSdk: "Embedding SDK",
     frames: "Frames",
-    agentNativeCodeUi: "Agent-Native Code UI",
+    agentNativeCodeUi: "Jami Studio Code UI",
     harnessAgents: "Harness Agents",
     adapters: "Adapters",
     cliAdapters: "CLI Adapters",

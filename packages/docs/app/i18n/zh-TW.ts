@@ -28,7 +28,7 @@ const messages = {
     placeholder: "告訴我們怎樣能讓這些檔案更好。",
   },
   demoVideo: {
-    visualPlanningAria: "Agent-Native 視覺化規劃示範",
+    visualPlanningAria: "Jami Studio 視覺化規劃示範",
   },
   docBlocks: {
     blockLabel: "{{alias}} 區塊",
@@ -59,8 +59,8 @@ const messages = {
     close: "關閉",
   },
   agent: {
-    emptyState: "向我詢問任何有關 Agent-Native 的問題",
-    suggestionGettingStarted: "如何開始使用 Agent-Native？",
+    emptyState: "向我詢問任何有關 Jami Studio 的問題",
+    suggestionGettingStarted: "如何開始使用 Jami Studio？",
     suggestionActions: "actions 如何工作？",
     suggestionPolling: "解釋輪詢同步模型",
     suggestionDeploy: "如何部署到正式環境環境？",
@@ -81,20 +81,20 @@ const messages = {
       badge: "開放原始碼框架",
       titleLine1: "面向",
       titleAccent: "agentic apps 的框架",
-      body: "Agent-Native 是一個開源 framework，用於以 agent 為核心快速建構穩健的應用程式。",
+      body: "Jami Studio 是一個開源 framework，用於以 agent 為核心快速建構穩健的應用程式。",
       primaryCta: "試用一個 app",
       secondaryCta: "閱讀檔案",
     },
     code: {
       quickStartComment: "用一條指令建立 app",
-      skillInstallComment: "把 Agent-Native 規劃加入你已經使用的 coding agent",
+      skillInstallComment: "把 Jami Studio 規劃加入你已經使用的 coding agent",
       frameworkComment: "一個 action 驅動 agent、UI、HTTP、MCP、A2A 和 CLI。",
       frameworkDescription: "從本機 app-agent loop 打招呼。",
     },
     actionSurface: {
       eyebrow: "真正為代理而生，不是外掛式 AI",
       title: "一個 action 打開整個應用能力面",
-      body: "只定義一次操作。Agent-Native 會把它變成 UI action、agent 工具、HTTP 端點、MCP/A2A 能力面、CLI 指令、權限檢查和稽核紀錄。",
+      body: "只定義一次操作。Jami Studio 會把它變成 UI action、agent 工具、HTTP 端點、MCP/A2A 能力面、CLI 指令、權限檢查和稽核紀錄。",
       buildAction: "建立一個 action",
       benefits: {
         oneActionDefinition: {
@@ -128,7 +128,7 @@ const messages = {
       title: "面向 agentic 應用的內建模組",
       body: "這些生產級部分經過人工驗證，agent 不應該從零臨時發明。你可以直接使用、檢查原始碼，或在應用需要不同能力時替換模組。",
       pageBody:
-        "Agent-Native 提供經過人工驗證的生產級元件，避免 agent 從零 improvisation。你可以直接使用、檢查原始碼，或在產品需要不同能力時替換模組。",
+        "Jami Studio 提供經過人工驗證的生產級元件，避免 agent 從零 improvisation。你可以直接使用、檢查原始碼，或在產品需要不同能力時替換模組。",
       viewAll: "查看所有模組",
       browseApps: "瀏覽由模組打造的應用",
       items: {
@@ -193,7 +193,7 @@ const messages = {
     framework: {
       title: "面向 agent-native apps 的框架",
       body1:
-        "Agent-Native 是一個開放原始碼框架，用來建置 agentic applications：從 Chat 開始，定義共享 actions，再圍繞同一份 state 新增 UI、jobs 和協作。",
+        "Jami Studio 是一個開放原始碼框架，用來建置 agentic applications：從 Chat 開始，定義共享 actions，再圍繞同一份 state 新增 UI、jobs 和協作。",
       body2: "使用你自己的資料庫、託管服務、模型堆疊和 app 程式碼。",
       cta: "閱讀框架指南",
       primitives: {
@@ -219,7 +219,7 @@ const messages = {
       },
     },
     templates: {
-      title: "試用一個 Agent-Native app",
+      title: "試用一個 Jami Studio app",
       eyebrow: "Fork 一個可執行的 app，讓 agent 繼續改進它。",
       cta: "檢視 apps",
     },
@@ -264,7 +264,7 @@ const messages = {
         saas: "SaaS 工具",
         agents: "原始 AI Agents",
         internal: "內部工具",
-        native: "Agent-Native App",
+        native: "Jami Studio App",
       },
       rows: {
         ui: "UI",
@@ -304,7 +304,7 @@ const messages = {
     batteries: {
       titleLine1: "內建全套能力，",
       titleLine2: "久經實战檢驗",
-      body: "不必從空白提示詞和臨時拼湊的程式碼開始，Agent-Native 為代理提供建置真實軟體所需的可靠部件和最佳實踐。",
+      body: "不必從空白提示詞和臨時拼湊的程式碼開始，Jami Studio 為代理提供建置真實軟體所需的可靠部件和最佳實踐。",
       browseToolkits: "瀏覽工具包",
     },
     featureCloud: {
@@ -408,7 +408,7 @@ const messages = {
     readDocs: "閱讀檔案",
   },
   templatesPage: {
-    title: "您擁有的開放原始碼、Agent-Native 應用程式",
+    title: "您擁有的開放原始碼、Jami Studio 應用程式",
     eyebrow: "Fork 一個可執行的 app，讓 agent 繼續改進它。",
     body: "你可以自訂一切。",
     community: "想要空白應用？從框架指南開始從零建置。",
@@ -416,19 +416,13 @@ const messages = {
   },
   buildFromScratch: {
     title: "從零開始建置",
-    description: "從框架指南開始，或使用 Builder.io 的雲端編碼代理在線上建置。",
+    description: "從框架指南開始，或加入候補名單以線上建置。",
     readDocs: "閱讀文件",
     buildOnline: "線上建置",
-    popoverTitle: "使用 Builder.io 線上建置",
+    popoverTitle: "加入候補名單",
     popoverBody:
-      "Builder.io 可以在雲端啟動並自訂 agent-native app — 包含 actions、auth、SQL 狀態與 agent chat。加入等候名單以取得早期存取權。",
-    emailLabel: "電子郵件",
-    emailPlaceholder: "you@company.com",
+      "Jami Studio 可以在雲端快速建立並自訂應用程式——包含 actions、身分驗證、SQL 狀態和代理聊天。加入候補名單以取得搶先體驗。",
     joinWaitlist: "加入等候名單",
-    joining: "正在加入…",
-    joined: "你已在等候名單中。線上建置存取開放時，我們會寄信通知你。",
-    invalidEmail: "請輸入有效的電子郵件地址。",
-    submitError: "無法加入等候名單。請再試一次。",
   },
   templateCard: {
     pasteIntoTerminal: "貼上到您的終端中。",
@@ -437,10 +431,10 @@ const messages = {
   },
   templateDetail: {
     allTemplates: "所有應用程式",
-    notFoundMetaTitle: "未找到應用程式 — Agent-Native",
+    notFoundMetaTitle: "未找到應用程式 — Jami Studio",
     notFoundTitle: "找不到應用程式",
     notFoundBody: "瀏覽應用程式目錄以尋找可用的應用程式。",
-    badge: "Agent-Native {{name}}",
+    badge: "Jami Studio {{name}}",
     title: "{{name}} 應用程式",
   },
   templates: {
@@ -457,7 +451,7 @@ const messages = {
     design: {
       replaces: "替代或增強設計原型工具",
       description:
-        "Agent-Native HTML 原型工作室。生成互動式 Alpine/Tailwind 設計，比較變體，即時微調控制項，並匯出結果。",
+        "Jami Studio HTML 原型工作室。生成互動式 Alpine/Tailwind 設計，比較變體，即時微調控制項，並匯出結果。",
     },
     content: {
       replaces: "替換或增強 Obsidian 為 MDX、Notion、Google Docs",
@@ -482,7 +476,7 @@ const messages = {
     forms: {
       replaces: "替換或增強 Typeform、Google Forms",
       description:
-        "Agent-Native 表單生成器。根據提示生成表單，以可視方式或對話方式編輯欄位，並將提交內容傳送到 Slack、Discord、Google Sheets 或 webhooks。",
+        "Jami Studio 表單生成器。根據提示生成表單，以可視方式或對話方式編輯欄位，並將提交內容傳送到 Slack、Discord、Google Sheets 或 webhooks。",
     },
     brain: {
       replaces: "替換或增強團隊維基、Glean 式回憶和機構記憶工具",
@@ -500,7 +494,7 @@ const messages = {
         "具有 Google 同步、可用性管理和公開預訂頁面的完整行事曆。該代理會尋找空閒時段、建立活動並管理您的日程安排。",
     },
     dispatch: {
-      replaces: "Agent-Native 應用程式的工作控制",
+      replaces: "Jami Studio 應用程式的工作控制",
       description:
         "對堆堆疊中的每個代理進行集中訊息傳遞和管理。透過 Slack、Telegram 或網路與您的代理交談；透過 A2A 路由作業、保留記憶、核准操作以及跨應用程式委派。",
     },
@@ -838,9 +832,9 @@ const messages = {
       s008: "透過 Slack、Telegram 或任何訊息服務與您的代理交談，它會路由到您的其他應用程式。作業、記憶、核准和 A2A 授權 — 全部集中在一處。",
       s009: "試用",
       s010: "你能做什麼",
-      s011: "Dispatch 是整個 Agent-Native 堆堆疊的面向訊息服務的前門。",
+      s011: "Dispatch 是整個 Jami Studio 堆堆疊的面向訊息服務的前門。",
       s012: "Bidirectional messaging with thread context, Block Kit replies, and inline approvals.從任何地方通話。",
-      s013: "Dispatch 透過 A2A 協議將工作路由到其他 Agent-Native 應用程式。 Mail、幻燈片、設計——所有這些都可以透過一次聊天來實現。",
+      s013: "Dispatch 透過 A2A 協議將工作路由到其他 Jami Studio 應用程式。 Mail、幻燈片、設計——所有這些都可以透過一次聊天來實現。",
       s014: "經常性工作",
       s015: "Schedule the agent to run on a cron — daily standups, weekly digests, hourly checks.結果會出現在您的訊息服務中。",
       s016: "核准",
@@ -851,7 +845,7 @@ const messages = {
       s021: "每個使用者、每個組織和全域記憶範圍",
       s022: "檢查並編輯代理記住的內容",
       s023: "跨應用路由",
-      s024: "Dispatch 是樞紐。連線其他 Agent-Native 應用程式，每個請求都會路由到可以完成該工作的代理。",
+      s024: "Dispatch 是樞紐。連線其他 Jami Studio 應用程式，每個請求都會路由到可以完成該工作的代理。",
       s025: "“向設計團隊傳送簡報” → Slides 代理",
       s026: "“回覆最新銷售郵件”→Mail代理",
       s027: "“總結本季度的事件” → Analytics 代理",
@@ -953,7 +947,7 @@ const messages = {
       s006: "所有範本",
       s007: "Superhuman 和 Gmail 的開放原始碼替代方案",
       s008: "試用",
-      s009: "託管示範使用 Agent-Native 的共用 Google 應用程式進行 Gmail 存取，因此 Google 可能會要求您確認後再繼續。在本機執行以使用您自己的 Google OAuth 用戶端。",
+      s009: "託管示範使用 Jami Studio 的共用 Google 應用程式進行 Gmail 存取，因此 Google 可能會要求您確認後再繼續。在本機執行以使用您自己的 Google OAuth 用戶端。",
       s010: "你能做什麼",
       s011: "將電子郵件用戶端替換為您完全擁有的 AI 驅動的收件箱所需的一切。",
       s012: "鍵盤快速鍵",
@@ -1147,14 +1141,14 @@ const messages = {
     metaTitle:
       "代理技能 - 面向編碼代理的 Visual Plan、Visual Recap 和 Visual Edit",
     metaDescription:
-      "安裝由 Agent-Native 應用支援的技能，讓你的編碼代理能進行視覺化規劃、PR 回顧和本機視覺化編輯。",
+      "安裝由 Jami Studio 應用支援的技能，讓你的編碼代理能進行視覺化規劃、PR 回顧和本機視覺化編輯。",
     metaOgDescription:
-      "為你的編碼代理新增由 Agent-Native 應用驅動的斜杠指令，可託管、檢查並自訂。",
+      "為你的編碼代理新增由 Jami Studio 應用驅動的斜杠指令，可託管、檢查並自訂。",
     metaKeywords:
       "代理技能, visual plan, visual recap, visual edit, 編碼代理, Claude Code, Codex, PR 審查, 規劃, agent-native",
     heroTitle: "給你的編碼代理新的超能力",
     heroBody:
-      "安裝由 Agent-Native 應用支援、可完全自訂的應用技能：實現前做視覺化規劃，變更落地後做視覺化 PR 回顧，並視覺化編輯本機 UI 流程。",
+      "安裝由 Jami Studio 應用支援、可完全自訂的應用技能：實現前做視覺化規劃，變更落地後做視覺化 PR 回顧，並視覺化編輯本機 UI 流程。",
     sectionTitle: "面向編碼代理的應用支援技能",
     sectionBody:
       "使用託管的可分享應用連結、本機檔案，或自託管/自訂應用；代理會獲得指令，並在需要時獲得匹配的 MCP 表面。",
@@ -1257,13 +1251,13 @@ const messages = {
     lastUpdated: "上次更新：{{date}}",
     privacy: {
       eyebrow: "隱私政策",
-      title: "Agent-Native 託管應用程式",
+      title: "Jami Studio 託管應用程式",
       intro:
-        "本政策解釋了 Jami Studio 在執行 Agent-Native 託管應用程式、託管範本、示範和官方瀏覽器擴充功能時如何收集、使用、共用和保留資料。",
+        "本政策解釋了 Jami Studio 在執行 Jami Studio 託管應用程式、託管範本、示範和官方瀏覽器擴充功能時如何收集、使用、共用和保留資料。",
       scopeCards: {
         hosted: {
           title: "託管應用程式",
-          body: "當 Jami Studio 為您運營 Agent-Native 服務或託管範本時涵蓋。",
+          body: "當 Jami Studio 為您運營 Jami Studio 服務或託管範本時涵蓋。",
         },
         openSource: {
           title: "開放原始碼",
@@ -1277,7 +1271,7 @@ const messages = {
       sections: {
         scope: "適用範圍",
         information: "我們收集的資訊",
-        clipsExtension: "Agent-Native Clips Chrome 擴充功能",
+        clipsExtension: "Jami Studio Clips Chrome 擴充功能",
         use: "我們如何使用資訊",
         sharing: "共用和第三方",
         chromeLimitedUse: "Chrome Web Store 限制使用",
@@ -1287,21 +1281,21 @@ const messages = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是開放原始碼的，來源程式碼可在 MIT 授權證下獲得。本政策僅適用於 Jami Studio 為 Agent-Native 使用者運營的託管應用程式和服務。它不適用於其他人對程式碼的使用，包括分叉、自訂範本、私人部署或自託管版本。如果您操作自己的部署，則您應對自己的資料實踐和隱私政策負責。",
+          "Jami Studio 是開放原始碼的，來源程式碼可在 MIT 授權證下獲得。本政策僅適用於 Jami Studio 為 Jami Studio 使用者運營的託管應用程式和服務。它不適用於其他人對程式碼的使用，包括分叉、自訂範本、私人部署或自託管版本。如果您操作自己的部署，則您應對自己的資料實踐和隱私政策負責。",
         scope2Prefix: "本政策旨在補充 Jami Studio 更廣泛的政策",
-        scope2Suffix: "對於 Agent-Native 託管應用程式行為。",
+        scope2Suffix: "對於 Jami Studio 託管應用程式行為。",
         clips1:
-          "Agent-Native Clips Chrome extension 可幫助您開始基於瀏覽器的錄製，並在啟用後將瀏覽器診斷附加到剪輯。它可能會收集所選的捕獲來源、您選取包含的攝影機和麥克風媒體、活動分頁標題和 URL，以及將擴充功能連線到託管 Clips 所需的驗證狀態。",
+          "Jami Studio Clips Chrome extension 可幫助您開始基於瀏覽器的錄製，並在啟用後將瀏覽器診斷附加到剪輯。它可能會收集所選的捕獲來源、您選取包含的攝影機和麥克風媒體、活動分頁標題和 URL，以及將擴充功能連線到託管 Clips 所需的驗證狀態。",
         clips2:
           "開發者記錄是可選的。啟用後，擴充功能可能會在紀錄處於活動狀態時從所選分頁收集經過編輯的主控台訊息、JavaScript 異常和 fetch/XHR 中繼資料，例如方法、URL、狀態、計時和失敗詳細資訊。該擴充功能並非旨在收集請求內文、回應內文、cookie 或授權標頭。",
         clipsAnchor:
           "對於 Chrome Web Store 披露，請使用此部分作為擴充功能隱私政策錨點：",
         sharing1:
-          "我們不會出售 Agent-Native 託管應用程式資料或將其用於第三方廣告。當您使用的功能需要這些服務時，我們會與幫助運營託管服務的服務提供者共用資料，例如雲端基礎設施、儲存、驗證、電子郵件、可觀察性、AI 和轉錄提供者。",
+          "我們不會出售 Jami Studio 託管應用程式資料或將其用於第三方廣告。當您使用的功能需要這些服務時，我們會與幫助運營託管服務的服務提供者共用資料，例如雲端基礎設施、儲存、驗證、電子郵件、可觀察性、AI 和轉錄提供者。",
         sharing2:
           "當您連線整合時，託管應用程式可能會根據您的設定和提供者自己的條款向該提供者傳送資料或從該提供者接收資料。為了安全、防止濫用、遵守法律或保護使用者和服務，我們也可能會在需要時披露資訊。",
         chromeLimitedUse:
-          "對於 Agent-Native Clips Chrome extension，我們對從 Chrome extension APIs 收到的資訊的使用遵守 Chrome Web Store 使用者資料政策，包括限制使用要求。擴充功能收集的瀏覽器活動用於提供面向使用者的紀錄和診斷工作流程，而不是用於廣告、轉售、信譽或不相關的分析。",
+          "對於 Jami Studio Clips Chrome extension，我們對從 Chrome extension APIs 收到的資訊的使用遵守 Chrome Web Store 使用者資料政策，包括限制使用要求。擴充功能收集的瀏覽器活動用於提供面向使用者的紀錄和診斷工作流程，而不是用於廣告、轉售、信譽或不相關的分析。",
         retention1:
           "我們會根據需要保留託管應用程式資料，以提供服務、維護工作區歷史紀錄、遵守義務、解決爭議或提高可靠性和安全性。使用者可以透過相關的應用程式控制項（如果可用）刪除剪輯、檔案、資源和其他託管應用程式內容。",
         retention2:
@@ -1309,7 +1303,7 @@ const messages = {
         security:
           "我們使用合理的管理、技術和組織保障措施來保護託管應用程式資料，包括存取控制、傳輸加密、監控和操作安全實踐。沒有任何線上服務可以保證完美的安全性，因此使用者應避免在錄音或提示中包含秘密或敏感資訊，除非他們打算與託管應用程式共用該資訊。",
         changes1:
-          "隨著 Agent-Native 託管應用程式的變化，我們可能會更新此政策。頁面頂部的更新日期顯示該政策上次修訂的時間。",
+          "隨著 Jami Studio 託管應用程式的變化，我們可能會更新此政策。頁面頂部的更新日期顯示該政策上次修訂的時間。",
         changes2Prefix:
           "對於隱私請求或疑問，請透過以下列出的支援和隱私管道聯絡 Jami Studio",
       },
@@ -1320,7 +1314,7 @@ const messages = {
         },
         hostedContent: {
           title: "託管應用程式內容",
-          body: "Content 您在託管 Agent-Native 範本中建立或上傳，例如錄音、逐字稿、檔案、評論、工作、提示、代理回應、檔案和設定。",
+          body: "Content 您在託管 Jami Studio 範本中建立或上傳，例如錄音、逐字稿、檔案、評論、工作、提示、代理回應、檔案和設定。",
         },
         integrations: {
           title: "連線的整合資料",
@@ -1333,7 +1327,7 @@ const messages = {
       },
       uses: {
         provide:
-          "提供、同步和操作託管的 Agent-Native 應用程式及其代理工作流程。",
+          "提供、同步和操作託管的 Jami Studio 應用程式及其代理工作流程。",
         transform:
           "當您要求託管應用程式執行此操作時，可以紀錄、轉錄、總結、搜尋、共用或轉換內容。",
         auth: "驗證使用者身分、管理組織、實施存取控制並防止濫用。",
@@ -1347,13 +1341,13 @@ const messages = {
     },
     terms: {
       eyebrow: "服務條款",
-      title: "Agent-Native 託管應用程式",
+      title: "Jami Studio 託管應用程式",
       intro:
-        "當 Jami Studio 為您運營 Agent-Native 託管應用程式、託管範本、示範和官方託管服務時，這些條款適用。",
+        "當 Jami Studio 為您運營 Jami Studio 託管應用程式、託管範本、示範和官方託管服務時，這些條款適用。",
       scopeCards: {
         hosted: {
           title: "託管應用程式",
-          body: "當您使用由 Jami Studio 操作的 Agent-Native 應用程式或範本時，將受到保護。",
+          body: "當您使用由 Jami Studio 操作的 Jami Studio 應用程式或範本時，將受到保護。",
         },
         openSource: {
           title: "開放原始碼",
@@ -1378,48 +1372,48 @@ const messages = {
       },
       paragraphs: {
         scope1:
-          "Agent-Native 是開放原始碼的，其來源程式碼可在 MIT 授權證下獲得。這些條款僅適用於 Jami Studio 為 Agent-Native 使用者運營的託管應用程式和服務。它們不管理在 Jami Studio 之外執行的分叉、自訂範本、私人部署或自託管版本。",
+          "Jami Studio 是開放原始碼的，其來源程式碼可在 MIT 授權證下獲得。這些條款僅適用於 Jami Studio 為 Jami Studio 使用者運營的託管應用程式和服務。它們不管理在 Jami Studio 之外執行的分叉、自訂範本、私人部署或自託管版本。",
         scope2Prefix: "這些術語補充了 Jami Studio 的更廣泛範圍",
-        scope2Middle: "和 Agent-Native",
+        scope2Middle: "和 Jami Studio",
         scope2Suffix:
-          "如果您代表公司或組織使用託管 Agent-Native 應用程式，則表示您有權接受該組織的這些條款。",
+          "如果您代表公司或組織使用託管 Jami Studio 應用程式，則表示您有權接受該組織的這些條款。",
         hostedService:
-          "Jami Studio 可以提供託管的 Agent-Native 應用程式、範本、示範、共用工作區、瀏覽器擴充功能和相關代理工作流程。隨著產品的發展，託管服務可能會更新、限制、暫停或終止。",
+          "Jami Studio 可以提供託管的 Jami Studio 應用程式、範本、示範、共用工作區、瀏覽器擴充功能和相關代理工作流程。隨著產品的發展，託管服務可能會更新、限制、暫停或終止。",
         accounts1:
-          "您對帳戶資訊的準確性、帳戶下的活動以及保證憑證的安全負責。託管 Agent-Native 應用程式可能包括組織功能、邀請、共用資源、連線整合和特定於應用程式的存取控制。僅邀請使用者並連線您有權使用的服務。",
+          "您對帳戶資訊的準確性、帳戶下的活動以及保證憑證的安全負責。託管 Jami Studio 應用程式可能包括組織功能、邀請、共用資源、連線整合和特定於應用程式的存取控制。僅邀請使用者並連線您有權使用的服務。",
         accounts2:
           "如果您認為帳戶、工作區、整合或共用資源已被外洩或濫用，請立即聯絡 Jami Studio 支援人員。",
         content1:
-          "您保留對您建立、上傳、紀錄、匯入或連線到託管 Agent-Native 應用程式的內容的所有權。您授予 Jami Studio 託管、處理、傳輸、顯示、轉換、分析和儲存該內容所需的有限權限，以便託管應用程式及其代理工作流程可以執行。",
+          "您保留對您建立、上傳、紀錄、匯入或連線到託管 Jami Studio 應用程式的內容的所有權。您授予 Jami Studio 託管、處理、傳輸、顯示、轉換、分析和儲存該內容所需的有限權限，以便託管應用程式及其代理工作流程可以執行。",
         content2:
           "您有責任擁有您向服務提供的內容、錄音、提示、檔案、憑證和連線的整合資料所需的權利和權限。",
         agents1:
-          "託管 Agent-Native 應用程式可以根據您的要求執行 AI 代理、工具、自動化和提供者整合。 AI 產生的輸出可能不完整、不準確或不適合特定用途。在依賴重要的輸出、操作、匯出和訊息之前先對其進行審查。",
+          "託管 Jami Studio 應用程式可以根據您的要求執行 AI 代理、工具、自動化和提供者整合。 AI 產生的輸出可能不完整、不準確或不適合特定用途。在依賴重要的輸出、操作、匯出和訊息之前先對其進行審查。",
         agents2:
           "當您連線第三方服務時，您對這些服務的使用仍受其自身的條款、限制、權限和隱私慣例的約束。",
         openSource:
-          "這些條款不會更改 Agent-Native 程式碼的開放原始碼授權。如果您下載、分叉、修改或自託管 Agent-Native，則 MIT 授權證和您為自己的部署設定的條款將管轄該使用。您負責您所操作的部署的安全性、隱私性、合規性、操作和使用者支援。",
+          "這些條款不會更改 Jami Studio 程式碼的開放原始碼授權。如果您下載、分叉、修改或自託管 Jami Studio，則 MIT 授權證和您為自己的部署設定的條款將管轄該使用。您負責您所操作的部署的安全性、隱私性、合規性、操作和使用者支援。",
         suspensionPrefix:
-          "當需要保護使用者、遵守法律、防止濫用、解決安全風險或運營服務時，Jami Studio 可以暫停或限制對託管 Agent-Native 服務的存取。您可以隨時停止使用託管服務。某些資料可能會在備份、記錄或審核紀錄中保留一段有限的時間，如",
+          "當需要保護使用者、遵守法律、防止濫用、解決安全風險或運營服務時，Jami Studio 可以暫停或限制對託管 Jami Studio 服務的存取。您可以隨時停止使用託管服務。某些資料可能會在備份、記錄或審核紀錄中保留一段有限的時間，如",
         disclaimers1:
-          "託管 Agent-Native 服務按原樣和可用狀態提供，並遵守適用法律以及您與 Jami Studio 簽訂的任何單獨書面協議。 Jami Studio 不保證託管應用程式、整合、自動化或 AI 輸出不會中斷、無錯誤或滿足所有要求。",
+          "託管 Jami Studio 服務按原樣和可用狀態提供，並遵守適用法律以及您與 Jami Studio 簽訂的任何單獨書面協議。 Jami Studio 不保證託管應用程式、整合、自動化或 AI 輸出不會中斷、無錯誤或滿足所有要求。",
         disclaimers2Prefix:
-          "在法律允許的最大範圍內，Jami Studio 對託管 Agent-Native 服務的責任受到 Jami Studio 更廣泛的條款中所述的限制。",
+          "在法律允許的最大範圍內，Jami Studio 對託管 Jami Studio 服務的責任受到 Jami Studio 更廣泛的條款中所述的限制。",
         disclaimers2Suffix: "或適用於您的使用的其他書面協議。",
         changes1:
-          "隨著 Agent-Native 託管應用程式的變化，我們可能會更新這些條款。頁面頂部的更新日期顯示了條款的最新修訂時間。",
+          "隨著 Jami Studio 託管應用程式的變化，我們可能會更新這些條款。頁面頂部的更新日期顯示了條款的最新修訂時間。",
         changes2Prefix:
           "如果對這些條款有疑問，請透過 Jami Studio 中列出的支援管道聯絡 Jami Studio",
       },
       hostedServicePoints: {
-        create: "建立和操作託管 Agent-Native 工作區和範本應用程式。",
+        create: "建立和操作託管 Jami Studio 工作區和範本應用程式。",
         workflows: "執行您選取使用的代理工作流程、操作、自動化和整合。",
         store:
           "儲存提供服務所需的託管應用程式內容、設定、組織資料和連線帳戶狀態。",
-        improve: "測量、保護、偵錯和改進託管 Agent-Native 服務。",
+        improve: "測量、保護、偵錯和改進託管 Jami Studio 服務。",
       },
       acceptableUse: {
-        laws: "請勿使用託管 Agent-Native 應用程式來違反法律、侵犯權利或傷害人員或系統。",
+        laws: "請勿使用託管 Jami Studio 應用程式來違反法律、侵犯權利或傷害人員或系統。",
         bypass: "不要嘗試繞過存取控制、速率限制、安全邊界或租戶隔離。",
         malware: "請勿上傳惡意軟體、憑證盜竊材料或旨在破壞服務的內容。",
         spam: "請勿使用該服務傳送垃圾郵件、未經授權進行抓取或濫用連線的提供者。",
@@ -1443,7 +1437,7 @@ const messages = {
     advancedRuntime: "進階：擴充功能執行時",
     templatesSection: "應用程式",
     gettingStarted: "入門",
-    whatIsAgentNative: "什麼是 Agent-Native？",
+    whatIsAgentNative: "什麼是 Jami Studio？",
     agentSurfaces: "Agent 介面",
     keyConcepts: "核心概念",
     agentNativeToolkit: "工具包",
@@ -1521,7 +1515,7 @@ const messages = {
     writingAgentInstructions: "編寫 Agent 指令",
     embeddingSdk: "嵌入 SDK",
     frames: "Frames",
-    agentNativeCodeUi: "Agent-Native 程式碼 UI",
+    agentNativeCodeUi: "Jami Studio 程式碼 UI",
     harnessAgents: "Harness 代理",
     adapters: "轉接器",
     cliAdapters: "CLI 轉接器",
