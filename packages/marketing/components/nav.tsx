@@ -1,45 +1,59 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 // ─── Config ───────────────────────────────────────────────────────
-const SVG_BASE = 'https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons'
+const SVG_BASE =
+  "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons";
 
 const NAV_LINKS = [
-  { label: 'Parity',   href: '#parity' },
-  { label: 'Jami',     href: '#jami' },
-  { label: 'Registry', href: '#registry' },
-  { label: 'Stack',    href: '#stack' },
-  { label: 'Apps',     href: '/apps' },
-  { label: 'Docs',     href: '/docs' },
-]
+  { label: "Parity", href: "#parity" },
+  { label: "Jami", href: "#jami" },
+  { label: "Registry", href: "#registry" },
+  { label: "Stack", href: "#stack" },
+  { label: "Apps", href: "/apps" },
+  { label: "Docs", href: "/docs" },
+];
 
 const SOCIAL = [
-  { label: 'GitHub',   href: 'https://github.com/studio-jami',               icon: `${SVG_BASE}/github/default.svg` },
-  { label: 'X',        href: 'https://x.com/studio_jami',                     icon: `${SVG_BASE}/x/default.svg` },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/jami-studio/', icon: `${SVG_BASE}/linkedin/default.svg` },
-]
+  {
+    label: "GitHub",
+    href: "https://github.com/studio-jami",
+    icon: `${SVG_BASE}/github/default.svg`,
+  },
+  {
+    label: "X",
+    href: "https://x.com/studio_jami",
+    icon: `${SVG_BASE}/x/default.svg`,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/jami-studio/",
+    icon: `${SVG_BASE}/linkedin/default.svg`,
+  },
+];
 
 // ─── Component ───────────────────────────────────────────────────
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 24)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
+    const fn = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
 
   return (
     <header
       className={cn(
-        'fixed top-0 inset-x-0 z-50 border-b transition-colors duration-200',
+        "fixed top-0 inset-x-0 z-50 border-b transition-colors duration-200",
         scrolled
-          ? 'border-border bg-background/96 backdrop-blur-md'
-          : 'border-transparent bg-transparent',
+          ? "border-border bg-background/96 backdrop-blur-md"
+          : "border-transparent bg-transparent",
       )}
     >
       <nav
@@ -104,5 +118,5 @@ export function Nav() {
         </div>
       </nav>
     </header>
-  )
+  );
 }
