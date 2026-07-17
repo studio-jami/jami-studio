@@ -493,13 +493,12 @@ function LocalizedError({ error }: { error: unknown }) {
             {t("errors.notFoundBody")}
           </p>
           <div className="flex items-center gap-3">
-            <Link
-              data-an-prefetch="render"
-              to={localizedPath("/")}
+            <a
+              href="/"
               className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-gray-800 hover:no-underline dark:bg-white dark:text-black dark:hover:bg-gray-200"
             >
               {t("errors.goHome")}
-            </Link>
+            </a>
             <Link
               data-an-prefetch="render"
               to={localizedPath("/docs")}
@@ -533,13 +532,12 @@ function LocalizedError({ error }: { error: unknown }) {
         <p className="mb-8 text-base leading-relaxed text-[var(--fg-secondary)]">
           {t("errors.genericBody")}
         </p>
-        <Link
-          data-an-prefetch="render"
-          to={localizedPath("/")}
+        <a
+          href="/"
           className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-gray-800 hover:no-underline dark:bg-white dark:text-black dark:hover:bg-gray-200"
         >
           {t("errors.goHome")}
-        </Link>
+        </a>
         <ErrorReportActions
           appName="Docs"
           title={t("errors.genericTitle")}

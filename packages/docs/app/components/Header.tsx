@@ -1,7 +1,7 @@
 import { FeedbackButton, useLocale, useT } from "@agent-native/core/client";
 import { IconMessage } from "@tabler/icons-react";
 import { useState, useEffect, lazy, Suspense } from "react";
-import { Link, NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
 
 import { DEFAULT_DOCS_LOCALE, sitePathForLocale } from "./docs-locale";
 import DocsLanguagePicker from "./DocsLanguagePicker";
@@ -161,9 +161,8 @@ export default function Header() {
         className={`sticky top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${showHeaderBg ? "border-b border-[var(--docs-border)] bg-[var(--header-bg)] backdrop-blur-lg" : "border-b border-transparent bg-transparent"}`}
       >
         <nav className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-3 px-4 sm:gap-6 sm:px-6">
-          <Link
-            data-an-prefetch="render"
-            to={localizedPath("/")}
+          <a
+            href="/"
             aria-label="Jami Studio"
             className="flex min-w-0 shrink-0 items-center gap-2 text-[var(--fg)] no-underline"
           >
@@ -178,7 +177,7 @@ export default function Header() {
             <span className="hidden min-[380px]:block whitespace-nowrap font-semibold tracking-tight">
               Jami Studio
             </span>
-          </Link>
+          </a>
 
           {/* Desktop nav links */}
           <div className="hidden lg:flex items-center gap-5 text-sm">
