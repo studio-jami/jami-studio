@@ -72,8 +72,18 @@ describe("docs popover controls", () => {
     fireEvent.click(screen.getByRole("button", { name: "Edit Online" }));
 
     const link = screen.getByRole("link", { name: /Join waitlist/ });
-    expect(link.getAttribute("href")).toBe(
+    const href = link.getAttribute("href");
+    expect(href).not.toBeNull();
+    const url = new URL(href as string);
+    expect(`${url.origin}${url.pathname}`).toBe(
       "https://forms.gle/example-waitlist",
+    );
+    // Lane prefill: interests + how-did-you-find-us ride along as
+    // Google Forms pp_url params.
+    expect(url.searchParams.get("usp")).toBe("pp_url");
+    expect(url.searchParams.get("entry.424717529")).toBe("EARLY ACCESS / BETA");
+    expect(url.searchParams.get("entry.1248361760")).toBe(
+      "Marketing or Docs site",
     );
     expect(link.getAttribute("target")).toBe("_blank");
   });

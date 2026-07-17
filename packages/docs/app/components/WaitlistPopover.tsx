@@ -16,8 +16,24 @@ type WaitlistProps = {
 // Set VITE_WAITLIST_FORM_URL to the published Google Form link (Form ->
 // Responses -> linked Google Sheet). No backend involved — the click just
 // opens the form in a new tab.
+//
+// Lane prefill: entry IDs belong to the canonical Jami Studio signup form.
+// Prefill only works on the full docs.google.com/forms/.../viewform URL —
+// the forms.gle short link strips query params during its redirect, so the
+// env var must hold the long URL for prefill to apply (a short link still
+// works, just without prefill).
+const PREFILL_INTERESTS_ENTRY = "entry.424717529"; // INTERESTS checkboxes
+const PREFILL_FOUND_US_ENTRY = "entry.1248361760"; // HOW DID YOU FIND US?
+
 function waitlistFormUrl(): string | undefined {
-  return import.meta.env.VITE_WAITLIST_FORM_URL as string | undefined;
+  const base = import.meta.env.VITE_WAITLIST_FORM_URL as string | undefined;
+  if (!base) return undefined;
+  const params = new URLSearchParams({
+    usp: "pp_url",
+    [PREFILL_INTERESTS_ENTRY]: "EARLY ACCESS / BETA",
+    [PREFILL_FOUND_US_ENTRY]: "Marketing or Docs site",
+  });
+  return `${base}${base.includes("?") ? "&" : "?"}${params.toString()}`;
 }
 
 const primaryButtonClassName =
