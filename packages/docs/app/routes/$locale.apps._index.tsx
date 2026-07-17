@@ -1,1 +1,1 @@
-export { default } from "./templates._index";
+export { default, meta } from "./apps._index";

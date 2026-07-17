@@ -73,12 +73,15 @@ export function Nav() {
         <ul className="hidden md:flex items-center gap-7" role="list">
           {NAV_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <Link
+              {/* /apps and /docs live on the docs deployment behind the
+                  next.config fallback rewrite — client-side <Link> 404s on
+                  them, so cross-app paths must hard-navigate. */}
+              <a
                 href={href}
                 className="text-[0.8rem] font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {label}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>

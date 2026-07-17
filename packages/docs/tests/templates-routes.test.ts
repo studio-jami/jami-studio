@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { AGENT_NATIVE_SOCIAL_IMAGE_CACHE_BUSTER } from "@agent-native/core/shared";
 import { describe, expect, it } from "vitest";
 
 import { loadDoc } from "../app/components/docs-content";
@@ -32,28 +31,16 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const docsRoot = path.resolve(__dirname, "..");
 
-function ogImageUrl(meta: Array<Record<string, unknown>>): URL {
+// The Builder-era dynamic social image route (/_agent-native/og-image.png)
+// is retired — every page ships the static brand card.
+const STATIC_BRAND_OG_IMAGE = "https://www.jami.studio/og-image.png";
+
+function ogImage(meta: Array<Record<string, unknown>>): string {
   const image = meta.find(
     (item) => item.property === "og:image" && typeof item.content === "string",
   );
-  expect(image?.content).toMatch(
-    /^https:\/\/www\.jami\.studio\/_agent-native\/og-image\.png\?/,
-  );
-  const url = new URL(image!.content as string);
-  expect(url.searchParams.get("v")).toBe(
-    AGENT_NATIVE_SOCIAL_IMAGE_CACHE_BUSTER,
-  );
-  return url;
-}
-
-function ogImageTitle(meta: Array<Record<string, unknown>>): string | null {
-  return ogImageUrl(meta).searchParams.get("title");
-}
-
-function ogImageAccentText(
-  meta: Array<Record<string, unknown>>,
-): string | null {
-  return ogImageUrl(meta).searchParams.get("accentText");
+  expect(image?.content).toBeTruthy();
+  return image!.content as string;
 }
 
 function docsSourceExists(docsDir: string, slug: string): boolean {
@@ -85,36 +72,27 @@ describe("template routes", () => {
     ).toThrow(expect.objectContaining({ status: 404 }));
   });
 
-  it("uses product-specific OG image titles for template pages", () => {
-    expect(ogImageTitle(slidesTemplateMeta())).toBe("Jami Studio Slides");
-    expect(ogImageTitle(designTemplateMeta())).toBe("Jami Studio Design");
-    expect(
-      ogImageTitle(genericTemplateMeta({ params: { slug: "assets" } })),
-    ).toBe("Jami Studio Assets");
+  it("uses the static brand OG image for template pages", () => {
+    expect(ogImage(slidesTemplateMeta())).toBe(STATIC_BRAND_OG_IMAGE);
+    expect(ogImage(designTemplateMeta())).toBe(STATIC_BRAND_OG_IMAGE);
+    expect(ogImage(genericTemplateMeta({ params: { slug: "assets" } }))).toBe(
+      STATIC_BRAND_OG_IMAGE,
+    );
   });
 
-  it("uses doc-specific OG image titles and a docs accent line", async () => {
-    const docsIndex = docsIndexMeta();
-    expect(ogImageTitle(docsIndex)).toBe("Getting Started");
-    expect(ogImageAccentText(docsIndex)).toBe("Jami Studio Docs");
+  it("uses the static brand OG image for docs pages", async () => {
+    expect(ogImage(docsIndexMeta())).toBe(STATIC_BRAND_OG_IMAGE);
 
     const localizedIndexDoc = await loadDoc("getting-started", "zh-CN");
     expect(localizedIndexDoc?.title).toBe("开始使用");
-    const localizedIndex = docsIndexMeta({ data: localizedIndexDoc });
-    expect(ogImageTitle(localizedIndex)).toBe("开始使用");
-    expect(ogImageAccentText(localizedIndex)).toBe("Jami Studio Docs");
-
-    const arabicIndexDoc = await loadDoc("getting-started", "ar-SA");
-    expect(arabicIndexDoc?.title).toBe("الخطوات الأولى");
-    const arabicIndex = docsIndexMeta({ data: arabicIndexDoc });
-    expect(ogImageTitle(arabicIndex)).toBe("الخطوات الأولى");
-    expect(ogImageAccentText(arabicIndex)).toBe("Jami Studio Docs");
+    expect(ogImage(docsIndexMeta({ data: localizedIndexDoc }))).toBe(
+      STATIC_BRAND_OG_IMAGE,
+    );
 
     const docsPage = docsSlugMeta({
       params: { slug: "workspace-connections" },
     });
-    expect(ogImageTitle(docsPage)).toBe("Workspace Connections");
-    expect(ogImageAccentText(docsPage)).toBe("Jami Studio Docs");
+    expect(ogImage(docsPage)).toBe(STATIC_BRAND_OG_IMAGE);
 
     const localizedDoc = await loadDoc("internationalization", "zh-CN");
     expect(localizedDoc?.title).toBe("国际化");
@@ -122,8 +100,7 @@ describe("template routes", () => {
       data: localizedDoc,
       params: { locale: "zh-CN", slug: "internationalization" },
     });
-    expect(ogImageTitle(localizedPage)).toBe("国际化");
-    expect(ogImageAccentText(localizedPage)).toBe("Jami Studio Docs");
+    expect(ogImage(localizedPage)).toBe(STATIC_BRAND_OG_IMAGE);
   });
 
   it("emits docs canonical paths and hreflang alternates for localized docs", () => {

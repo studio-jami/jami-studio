@@ -1,110 +1,122 @@
 @import "tailwindcss";
 @import "@agent-native/core/styles/agent-native.css";
 
-/* shadcn CSS variables required by agent-native sidebar components */
+/* shadcn CSS variables required by agent-native sidebar components
+   (warm-tinted to match the marketing palette) */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 0 0% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 9%;
+  --background: 50 25% 97%;
+  --foreground: 25 15% 10%;
+  --card: 50 25% 97%;
+  --card-foreground: 25 15% 10%;
+  --popover: 50 25% 97%;
+  --popover-foreground: 25 15% 10%;
+  --primary: 25 15% 10%;
+  --primary-foreground: 50 25% 97%;
+  --secondary: 48 20% 93%;
+  --secondary-foreground: 25 15% 10%;
+  --muted: 48 20% 93%;
+  --muted-foreground: 30 8% 42%;
+  --accent: 48 20% 93%;
+  --accent-foreground: 25 15% 10%;
   --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 92%;
-  --input: 0 0% 92%;
-  --ring: 0 0% 9%;
-  --radius: 0.5rem;
-  --sidebar-background: 0 0% 98%;
-  --sidebar-foreground: 0 0% 9%;
-  --sidebar-primary: 0 0% 9%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 0 0% 96%;
-  --sidebar-accent-foreground: 0 0% 9%;
-  --sidebar-border: 0 0% 90%;
-  --sidebar-ring: 0 0% 9%;
+  --destructive-foreground: 50 25% 97%;
+  --border: 45 15% 88%;
+  --input: 45 15% 88%;
+  --ring: 25 15% 10%;
+  --radius: 0rem;
+  --sidebar-background: 48 22% 95%;
+  --sidebar-foreground: 25 15% 10%;
+  --sidebar-primary: 25 15% 10%;
+  --sidebar-primary-foreground: 50 25% 97%;
+  --sidebar-accent: 48 20% 93%;
+  --sidebar-accent-foreground: 25 15% 10%;
+  --sidebar-border: 45 15% 86%;
+  --sidebar-ring: 25 15% 10%;
 }
 
 .dark {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 93%;
-  --card: 0 0% 4%;
-  --card-foreground: 0 0% 93%;
-  --popover: 0 0% 4%;
-  --popover-foreground: 0 0% 93%;
-  --primary: 0 0% 93%;
-  --primary-foreground: 0 0% 9%;
-  --secondary: 0 0% 15%;
-  --secondary-foreground: 0 0% 93%;
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 64%;
-  --accent: 0 0% 15%;
-  --accent-foreground: 0 0% 93%;
+  --background: 25 12% 9%;
+  --foreground: 45 15% 92%;
+  --card: 25 12% 12%;
+  --card-foreground: 45 15% 92%;
+  --popover: 25 12% 12%;
+  --popover-foreground: 45 15% 92%;
+  --primary: 45 15% 92%;
+  --primary-foreground: 25 12% 9%;
+  --secondary: 25 10% 16%;
+  --secondary-foreground: 45 15% 92%;
+  --muted: 25 10% 16%;
+  --muted-foreground: 35 8% 62%;
+  --accent: 25 10% 16%;
+  --accent-foreground: 45 15% 92%;
   --destructive: 0 62% 50%;
-  --destructive-foreground: 0 0% 93%;
-  --border: 0 0% 12%;
-  --input: 0 0% 12%;
-  --ring: 0 0% 84%;
-  --sidebar-background: 0 0% 6%;
-  --sidebar-foreground: 0 0% 93%;
-  --sidebar-primary: 0 0% 93%;
-  --sidebar-primary-foreground: 0 0% 9%;
-  --sidebar-accent: 0 0% 15%;
-  --sidebar-accent-foreground: 0 0% 93%;
-  --sidebar-border: 0 0% 15%;
-  --sidebar-ring: 0 0% 84%;
+  --destructive-foreground: 45 15% 92%;
+  --border: 25 10% 18%;
+  --input: 25 10% 18%;
+  --ring: 45 15% 84%;
+  --sidebar-background: 25 12% 11%;
+  --sidebar-foreground: 45 15% 92%;
+  --sidebar-primary: 45 15% 92%;
+  --sidebar-primary-foreground: 25 12% 9%;
+  --sidebar-accent: 25 10% 16%;
+  --sidebar-accent-foreground: 45 15% 92%;
+  --sidebar-border: 25 10% 16%;
+  --sidebar-ring: 45 15% 84%;
 }
 
 @theme {
   --font-sans:
-    -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    "Instrument Sans", -apple-system, "system-ui", "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-    monospace;
+    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* Marketing canon: zero radius — corners are earned. */
+  --radius-xs: 0rem;
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0rem;
+  --radius-2xl: 0rem;
+  --radius-3xl: 0rem;
 }
 
+/* Jami Studio marketing palette — keep in sync with
+   packages/marketing/app/globals.css (warm ink base, rose primary). */
 :root {
-  --fg: #171717;
-  --fg-secondary: #666;
-  --bg: #fff;
-  --bg-secondary: #fafafa;
-  --docs-border: #ebebeb;
-  --docs-accent: #0072f5;
-  --docs-accent-light: rgba(0, 114, 245, 0.1);
-  --header-bg: rgba(255, 255, 255, 0.8);
-  --code-bg: #f5f5f5;
-  --code-border: #ebebeb;
-  --table-header-bg: #fafafa;
-  --sidebar-hover: #f5f5f5;
-  --selection: rgba(0, 114, 245, 0.15);
+  --fg: oklch(0.18 0.018 47);
+  --fg-secondary: oklch(0.45 0.02 55);
+  --bg: oklch(0.985 0.006 72);
+  --bg-secondary: oklch(0.955 0.012 72);
+  --docs-border: oklch(0.9 0.014 65);
+  --docs-accent: oklch(0.55 0.19 14);
+  --docs-accent-light: oklch(0.55 0.19 14 / 0.1);
+  --header-bg: oklch(0.985 0.006 72 / 0.8);
+  --code-bg: oklch(0.945 0.012 72);
+  --code-border: oklch(0.9 0.014 65);
+  --table-header-bg: oklch(0.955 0.012 72);
+  --sidebar-hover: oklch(0.945 0.012 72);
+  --selection: oklch(0.55 0.19 14 / 0.15);
   --approaches-good: #15803d;
   --approaches-warn: #b45309;
   --approaches-bad: #b91c1c;
 }
 
 :root[data-theme="dark"] {
-  --fg: #ededed;
-  --fg-secondary: #a0a0a0;
-  --bg: #000;
-  --bg-secondary: #0a0a0a;
-  --docs-border: #1f1f1f;
-  --docs-accent: #52a8ff;
-  --docs-accent-light: rgba(82, 168, 255, 0.1);
-  --header-bg: rgba(10, 10, 10, 0.8);
-  --code-bg: #111;
-  --code-border: #1f1f1f;
-  --table-header-bg: #0a0a0a;
-  --sidebar-hover: #111;
-  --selection: rgba(82, 168, 255, 0.2);
+  --fg: oklch(0.94 0.012 65);
+  --fg-secondary: oklch(0.62 0.02 55);
+  --bg: oklch(0.13 0.018 47);
+  --bg-secondary: oklch(0.17 0.018 47);
+  --docs-border: oklch(0.25 0.018 47);
+  --docs-accent: oklch(0.73 0.17 14);
+  --docs-accent-light: oklch(0.73 0.17 14 / 0.12);
+  --header-bg: oklch(0.13 0.018 47 / 0.8);
+  --code-bg: oklch(0.16 0.018 47);
+  --code-border: oklch(0.25 0.018 47);
+  --table-header-bg: oklch(0.17 0.018 47);
+  --sidebar-hover: oklch(0.19 0.018 47);
+  --selection: oklch(0.73 0.17 14 / 0.25);
   --approaches-good: #86efac;
   --approaches-warn: #fcd34d;
   --approaches-bad: #fca5a5;
@@ -112,19 +124,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --fg: #ededed;
-    --fg-secondary: #a0a0a0;
-    --bg: #000;
-    --bg-secondary: #0a0a0a;
-    --docs-border: #1f1f1f;
-    --docs-accent: #52a8ff;
-    --docs-accent-light: rgba(82, 168, 255, 0.1);
-    --header-bg: rgba(10, 10, 10, 0.8);
-    --code-bg: #111;
-    --code-border: #1f1f1f;
-    --table-header-bg: #0a0a0a;
-    --sidebar-hover: #111;
-    --selection: rgba(82, 168, 255, 0.2);
+    --fg: oklch(0.94 0.012 65);
+    --fg-secondary: oklch(0.62 0.02 55);
+    --bg: oklch(0.13 0.018 47);
+    --bg-secondary: oklch(0.17 0.018 47);
+    --docs-border: oklch(0.25 0.018 47);
+    --docs-accent: oklch(0.73 0.17 14);
+    --docs-accent-light: oklch(0.73 0.17 14 / 0.12);
+    --header-bg: oklch(0.13 0.018 47 / 0.8);
+    --code-bg: oklch(0.16 0.018 47);
+    --code-border: oklch(0.25 0.018 47);
+    --table-header-bg: oklch(0.17 0.018 47);
+    --sidebar-hover: oklch(0.19 0.018 47);
+    --selection: oklch(0.73 0.17 14 / 0.25);
     --approaches-good: #86efac;
     --approaches-warn: #fcd34d;
     --approaches-bad: #fca5a5;

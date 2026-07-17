@@ -23,8 +23,7 @@ export const templates = [
     slug: "plan",
     cliCommand: "npx @agent-native/core@latest skills add visual-plan",
     color: "#52525B",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fefc6a3ac908149fa92e2b9392c0bb372?format=webp&width=800",
+    screenshot: "/screenshots/content.png",
   },
   {
     name: "Design",
@@ -32,8 +31,7 @@ export const templates = [
     cliCommand:
       "npx @agent-native/core@latest create my-design-app --template design",
     color: "#F472B6",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe2c86908c2fa4f119ee4aa90b4823944?format=webp&width=800",
+    screenshot: "/screenshots/slides.png",
   },
   {
     name: "Content",
@@ -81,8 +79,7 @@ export const templates = [
     cliCommand:
       "npx @agent-native/core@latest create my-brain-app --template brain",
     color: "#8B5CF6",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F9c9fe3b5b9494e33803cd3f494cba356?format=webp&width=800",
+    screenshot: "/screenshots/chat.png",
   },
   {
     name: "Assets",
@@ -90,8 +87,7 @@ export const templates = [
     cliCommand:
       "npx @agent-native/core@latest create my-assets-app --template assets",
     color: "#0F766E",
-    screenshot:
-      "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F769092170a14474f998cbca47384f891?format=webp&width=800",
+    screenshot: "/screenshots/dispatch.png",
   },
   {
     name: "Calendar",

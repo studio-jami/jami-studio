@@ -7,7 +7,6 @@ import {
 import { useState, type SyntheticEvent } from "react";
 import { Link } from "react-router";
 
-import { AgentNativeDemoVideo } from "../components/AgentNativeDemoVideo";
 import { sitePathForLocale } from "../components/docs-locale";
 import arSA from "../i18n/ar-SA";
 import deDE from "../i18n/de-DE";
@@ -276,7 +275,15 @@ export default function SkillsPage() {
             <CliCopy command={INSTALL_COMMAND} location="skills_hero" />
           </div>
 
-          <AgentNativeDemoVideo className="aspect-square w-full" />
+          <img
+            src="/screenshots/chat.png"
+            alt="Jami Studio app with agent chat"
+            width={2434}
+            height={1440}
+            loading="lazy"
+            decoding="async"
+            className="aspect-square w-full rounded-lg border border-[var(--docs-border)] bg-[var(--bg-secondary)] object-cover object-left-top"
+          />
         </div>
       </section>
 

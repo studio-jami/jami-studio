@@ -132,7 +132,9 @@ export function Footer() {
               <ul className="flex flex-col gap-3.5" role="list">
                 {links.map(({ label, href, external }) => (
                   <li key={label}>
-                    <Link
+                    {/* Cross-app paths (/docs, /apps) are served through the
+                        fallback rewrite — must hard-navigate, not <Link>. */}
+                    <a
                       href={href}
                       {...(external
                         ? { target: "_blank", rel: "noopener noreferrer" }
@@ -140,7 +142,7 @@ export function Footer() {
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
