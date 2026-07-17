@@ -22,3 +22,5 @@ todos.json
 
 # Generated at build time
 public/source-index.json
+.vercel
+.env*
