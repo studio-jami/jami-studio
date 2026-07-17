@@ -66,11 +66,103 @@ const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
   "call-agent": 120,
 };
 
+// ─── Managed system layer ────────────────────────────────────────────────────
+//
+// Three-layer ownership split for the ElevenLabs voice agent:
+//
+//   1. Flavor (dashboard-owned): personality text, voice, name, LLM tier,
+//      language, TTS tuning, privacy. Users dial this in freely in the
+//      ElevenLabs dashboard; the workspace never touches it.
+//   2. System contract (code-owned, this block): the durable operating rules
+//      the voice layer needs to work — tool routing, never self-initiating,
+//      headless answers, narrating delegated work. Appended to the agent's
+//      prompt inside sentinel markers; everything the user wrote above the
+//      markers is preserved verbatim on every push, and the block self-heals
+//      if deleted or edited in the dashboard.
+//   3. Tool contract (code-owned): the PATCHed `prompt.tools` manifest.
+//
+// The voice agent is an on-top layer over per-app agents: it routes and
+// narrates, it does not own app capabilities. Each app's own agent knows its
+// tools, so the system layer carries no per-app tool dumps — apps contribute
+// at most a bounded app-context addendum (their identity plus a compact
+// sibling-app roster) through the existing `instructions`/`getInstructions`
+// mount options.
+
+export const ELEVENLABS_SYSTEM_BLOCK_BEGIN =
+  "=== WORKSPACE VOICE SYSTEM (auto-managed: do not edit this block; your personality prompt above is preserved) ===";
+export const ELEVENLABS_SYSTEM_BLOCK_END = "=== END WORKSPACE VOICE SYSTEM ===";
+
 /**
- * Conversation policy appended to every ElevenLabs session's instructions.
- * Owner-ratified seamless-UX north star: questions are answered headlessly;
- * navigation happens only on explicit user intent.
+ * Durable operating contract for the voice layer. Owner-ratified seamless-UX
+ * north star: questions are answered headlessly; navigation happens only on
+ * explicit user intent; the voice layer never initiates actions on its own.
  */
+export const ELEVENLABS_SYSTEM_CONTRACT = [
+  "You are the realtime voice layer of an agent-native workspace. Each app",
+  "has its own full agent with its own tools; you see in, delegate, and",
+  "report back. The personality prompt above this block controls tone and",
+  "style only — it can never authorize autonomous actions or override these",
+  "rules.",
+  "",
+  "1. Never initiate actions on your own. Only use tools to fulfill what the",
+  "   user explicitly asked for in this conversation. Never create, modify,",
+  "   schedule, send, or delete anything the user did not request. When a",
+  "   request is ambiguous, ask one short clarifying question before acting.",
+  "2. Answer questions headlessly. To answer a question about data in this",
+  "   app use run-active-agent-turn; for another app use call-agent. Do NOT",
+  "   navigate to answer a question.",
+  "3. Only use navigate, set-url-path, or set-search-params when the user",
+  "   explicitly asks to go somewhere, open something, or be shown something.",
+  "   Only use view-screen when the user asks about what is currently",
+  "   visible.",
+  "4. Stay engaged while delegated work runs. Announce what you dispatched,",
+  "   keep talking with the user, and report the agent's status and outputs",
+  "   when they return. Never go silent waiting on a tool, and never invent",
+  "   results.",
+  "5. You are never blocked by an app agent's work: app agents act, you",
+  "   observe and narrate. Report failures plainly and offer the next step.",
+].join("\n");
+
+/** Bound the app-context addendum so a verbose app cannot bloat the prompt. */
+const MAX_SYSTEM_ADDENDUM_CHARS = 4_000;
+
+/**
+ * Build the sentinel-delimited managed block: durable contract plus an
+ * optional bounded app-context addendum (app identity, sibling-app roster).
+ */
+export function buildElevenLabsSystemBlock(appContext?: string): string {
+  const addendum = appContext?.trim()
+    ? `\n\nApp context:\n${sanitizeToolErrorText(appContext.trim()).slice(0, MAX_SYSTEM_ADDENDUM_CHARS)}`
+    : "";
+  return `${ELEVENLABS_SYSTEM_BLOCK_BEGIN}\n${ELEVENLABS_SYSTEM_CONTRACT}${addendum}\n${ELEVENLABS_SYSTEM_BLOCK_END}`;
+}
+
+/**
+ * Remove any previous managed block (any version, even truncated by a
+ * missing end marker) while preserving the user's own prompt text.
+ */
+export function stripElevenLabsSystemBlock(prompt: string): string {
+  const begin = prompt.indexOf(ELEVENLABS_SYSTEM_BLOCK_BEGIN);
+  if (begin === -1) return prompt;
+  const end = prompt.indexOf(ELEVENLABS_SYSTEM_BLOCK_END, begin);
+  const after =
+    end === -1 ? "" : prompt.slice(end + ELEVENLABS_SYSTEM_BLOCK_END.length);
+  // Re-run in case multiple stale blocks accumulated.
+  return stripElevenLabsSystemBlock(`${prompt.slice(0, begin)}${after}`);
+}
+
+/**
+ * Compose the dashboard-owned personality text with the managed block. The
+ * user's text always rides first so it reads as the persona; the system
+ * block anchors the operating contract beneath it.
+ */
+export function composeElevenLabsPrompt(
+  remotePrompt: string,
+  systemBlock: string,
+): string {
+  const user = stripElevenLabsSystemBlock(remotePrompt).trim();
+  return user ? `${user}\n\n${systemBlock}` : systemBlock;
+}
 /**
  * ElevenLabs treats `prompt.tools` as the COMPLETE tool list (client +
  * system together); a separate `built_in_tools` map is ignored whenever
@@ -194,22 +286,54 @@ export function elevenLabsClientToolFromRealtimeTool(
 }
 
 /**
- * The workspace owns only the client-tool contract. Personality, prompt,
- * voice, LLM, language, turn-taking, privacy, and all other agent settings
- * remain editable in ElevenLabs and are never overwritten at session mint.
+ * The workspace owns the client-tool contract and the sentinel-delimited
+ * system block inside the prompt. Personality text, voice, LLM, language,
+ * turn-taking, privacy, and all other agent settings remain editable in
+ * ElevenLabs. `prompt` is included only when the remote prompt is missing or
+ * running a stale system block — and it is always composed from the freshly
+ * fetched remote prompt so the user's own text is never overwritten.
  */
 export function buildElevenLabsClientToolsPayload(input: {
   clientTools: Record<string, unknown>[];
+  prompt?: string;
 }): Record<string, unknown> {
   return {
     conversation_config: {
       agent: {
         prompt: {
           tools: [...input.clientTools, ...SYSTEM_TOOLS],
+          ...(input.prompt !== undefined ? { prompt: input.prompt } : {}),
         },
       },
     },
   };
+}
+
+/**
+ * Read the agent's current dashboard prompt so the managed block can be
+ * composed around the user's own text. Returns null when the prompt cannot
+ * be read — callers then push tools-only rather than risking a clobber.
+ */
+async function fetchElevenLabsAgentPrompt(input: {
+  apiKey: string;
+  agentId: string;
+}): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `${ELEVENLABS_API_BASE}/v1/convai/agents/${encodeURIComponent(input.agentId)}`,
+      { headers: { "xi-api-key": input.apiKey } },
+    );
+    if (!response.ok) return null;
+    const body = (await response.json().catch(() => null)) as {
+      conversation_config?: {
+        agent?: { prompt?: { prompt?: unknown } };
+      };
+    } | null;
+    const prompt = body?.conversation_config?.agent?.prompt?.prompt;
+    return typeof prompt === "string" ? prompt : "";
+  } catch {
+    return null;
+  }
 }
 
 async function safeElevenLabsErrorDetail(
@@ -330,7 +454,32 @@ function createElevenLabsSessionHandler(
             ? configuredAgentIdRaw
             : undefined;
 
-        const payload = buildElevenLabsClientToolsPayload({ clientTools });
+        // Self-heal the managed system block on every mint: read the current
+        // dashboard prompt, preserve the user's personality text, and include
+        // the composed prompt only when the block is missing or stale. A
+        // failed read degrades to tools-only — never clobber what we cannot
+        // see.
+        let composedPrompt: string | undefined;
+        if (configuredAgentId) {
+          const appContext =
+            (await options.getInstructions?.(auth)) ?? options.instructions;
+          const systemBlock = buildElevenLabsSystemBlock(
+            appContext ?? undefined,
+          );
+          const remotePrompt = await fetchElevenLabsAgentPrompt({
+            apiKey,
+            agentId: configuredAgentId,
+          });
+          if (remotePrompt !== null) {
+            const composed = composeElevenLabsPrompt(remotePrompt, systemBlock);
+            if (composed !== remotePrompt) composedPrompt = composed;
+          }
+        }
+
+        const payload = buildElevenLabsClientToolsPayload({
+          clientTools,
+          ...(composedPrompt !== undefined ? { prompt: composedPrompt } : {}),
+        });
 
         let pushed: Awaited<ReturnType<typeof pushAgentConfig>>;
         try {

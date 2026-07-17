@@ -55,12 +55,17 @@ vi.mock("../agent/production-agent.js", () => ({
 import type { ActionEntry } from "../agent/production-agent.js";
 import {
   buildElevenLabsClientToolsPayload,
+  buildElevenLabsSystemBlock,
+  composeElevenLabsPrompt,
   ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
   ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST,
   ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
   ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
+  ELEVENLABS_SYSTEM_BLOCK_BEGIN,
+  ELEVENLABS_SYSTEM_BLOCK_END,
   elevenLabsClientToolFromRealtimeTool,
   mountElevenLabsRealtimeVoiceRoutes,
+  stripElevenLabsSystemBlock,
 } from "./realtime-voice-elevenlabs.js";
 import { REALTIME_VOICE_CAPABILITY_HEADER } from "./realtime-voice.js";
 
@@ -237,6 +242,41 @@ describe("buildElevenLabsClientToolsPayload", () => {
   });
 });
 
+describe("managed system block", () => {
+  it("preserves the user's personality text and appends the contract", () => {
+    const block = buildElevenLabsSystemBlock();
+    const composed = composeElevenLabsPrompt("You are Megan, upbeat.", block);
+    expect(composed.startsWith("You are Megan, upbeat.")).toBe(true);
+    expect(composed).toContain(ELEVENLABS_SYSTEM_BLOCK_BEGIN);
+    expect(composed).toContain("Never initiate actions on your own.");
+    expect(composed.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
+    // Re-composing an already-healthy prompt is a no-op (idempotent heal).
+    expect(composeElevenLabsPrompt(composed, block)).toBe(composed);
+  });
+
+  it("replaces stale blocks without touching user text", () => {
+    const staleBlock = `${ELEVENLABS_SYSTEM_BLOCK_BEGIN}\nold rules\n${ELEVENLABS_SYSTEM_BLOCK_END}`;
+    const remote = `Persona text.\n\n${staleBlock}\n\nMore persona.`;
+    const stripped = stripElevenLabsSystemBlock(remote);
+    expect(stripped).not.toContain("old rules");
+    expect(stripped).toContain("Persona text.");
+    expect(stripped).toContain("More persona.");
+    const composed = composeElevenLabsPrompt(
+      remote,
+      buildElevenLabsSystemBlock(),
+    );
+    expect(composed).not.toContain("old rules");
+    expect(composed).toContain("Persona text.");
+    expect(composed.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
+  });
+
+  it("bounds the app-context addendum", () => {
+    const block = buildElevenLabsSystemBlock("x".repeat(50_000));
+    expect(block.length).toBeLessThan(10_000);
+    expect(block).toContain("App context:");
+  });
+});
+
 describe("mountElevenLabsRealtimeVoiceRoutes", () => {
   it("registers both routes and enforces the default allow-list", () => {
     const { routes } = mountWithDefaults();
@@ -252,12 +292,23 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
     expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain("call-agent");
   });
 
-  it("mints a session: updates client tools without overwriting dashboard settings", async () => {
+  it("mints a session: updates client tools, heals the system block, and preserves dashboard personality", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")
-      .mockImplementation(async (input: any) => {
+      .mockImplementation(async (input: any, init?: any) => {
         const url = String(input);
         if (url.includes("/v1/convai/agents/agent_abc123")) {
+          if ((init?.method ?? "GET") === "GET") {
+            // Dashboard-owned prompt with NO managed block yet.
+            return new Response(
+              JSON.stringify({
+                conversation_config: {
+                  agent: { prompt: { prompt: "You are Megan, upbeat." } },
+                },
+              }),
+              { status: 200 },
+            );
+          }
           return new Response("{}", { status: 200 });
         }
         if (url.includes("/v1/convai/conversation/token")) {
@@ -287,8 +338,10 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
       /^[a-f0-9]{32}$/,
     );
 
-    const patchCall = fetchMock.mock.calls.find(([input]) =>
-      String(input).includes("/v1/convai/agents/agent_abc123"),
+    const patchCall = fetchMock.mock.calls.find(
+      ([input, init]) =>
+        String(input).includes("/v1/convai/agents/agent_abc123") &&
+        init?.method === "PATCH",
     );
     expect(patchCall?.[1]?.method).toBe("PATCH");
     const pushed = JSON.parse(String(patchCall?.[1]?.body));
@@ -313,20 +366,60 @@ describe("mountElevenLabsRealtimeVoiceRoutes", () => {
         (t: any) => t.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
       );
     expect(activeAgentTurnTool.response_timeout_secs).toBe(120);
+    // The block was missing remotely, so the PATCH heals the prompt while
+    // preserving the user's dashboard personality text ahead of the block.
+    const pushedPrompt = pushed.conversation_config.agent.prompt.prompt;
+    expect(pushedPrompt.startsWith("You are Megan, upbeat.")).toBe(true);
+    expect(pushedPrompt).toContain(ELEVENLABS_SYSTEM_BLOCK_BEGIN);
+    expect(pushedPrompt.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
+    // Everything else stays dashboard-owned.
     expect(pushed.name).toBeUndefined();
     expect(pushed.conversation_config.agent.language).toBeUndefined();
     expect(pushed.conversation_config.agent.prompt.llm).toBeUndefined();
-    expect(pushed.conversation_config.agent.prompt.prompt).toBeUndefined();
     expect(pushed.conversation_config.tts).toBeUndefined();
     expect(pushed.conversation_config.turn).toBeUndefined();
     expect(pushed.platform_settings).toBeUndefined();
-    // Second mint with unchanged config skips the PATCH (config-hash guard).
+
+    // Second mint with the block now healthy remotely: no prompt in payload
+    // and (after hash settles) no PATCH — dashboard edits stay untouched.
+    fetchMock.mockImplementation(async (input: any, init?: any) => {
+      const url = String(input);
+      if (url.includes("/v1/convai/agents/agent_abc123")) {
+        if ((init?.method ?? "GET") === "GET") {
+          return new Response(
+            JSON.stringify({
+              conversation_config: {
+                agent: { prompt: { prompt: pushedPrompt } },
+              },
+            }),
+            { status: 200 },
+          );
+        }
+        return new Response("{}", { status: 200 });
+      }
+      if (url.includes("/v1/convai/conversation/token")) {
+        return new Response(JSON.stringify({ token: "el-token" }), {
+          status: 200,
+        });
+      }
+      throw new Error(`Unexpected fetch: ${url}`);
+    });
+    fetchMock.mockClear();
+    await handler(fakeEvent());
+    const secondPatch = fetchMock.mock.calls.find(
+      ([, init]) => init?.method === "PATCH",
+    );
+    // Healthy block → tools-only payload; a settle PATCH may occur once but
+    // must never carry a prompt.
+    if (secondPatch) {
+      const settle = JSON.parse(String(secondPatch[1]?.body));
+      expect(settle.conversation_config.agent.prompt.prompt).toBeUndefined();
+    }
+    // Third mint: config hash stable → no PATCH at all.
     fetchMock.mockClear();
     await handler(fakeEvent());
     expect(
-      fetchMock.mock.calls.filter(([input]) =>
-        String(input).includes("/v1/convai/agents/agent_abc123"),
-      ),
+      fetchMock.mock.calls.filter(([, init]) => init?.method === "PATCH"),
     ).toHaveLength(0);
   });
 
