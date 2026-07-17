@@ -39,6 +39,7 @@ const deDE = {
   theme: {
     light: "hell",
     dark: "dunkel",
+    toggle: "Design wechseln",
     label: "Design: {{theme}}",
   },
   docs: {
@@ -485,7 +486,7 @@ const deDE = {
         "Generieren Sie vollständige Präsentationen aus einer Eingabeaufforderung. Bearbeiten Sie visuell oder im Gespräch. AI Bildgenerierung, 8 Layouts und integrierter Präsentationsmodus.",
     },
     analytics: {
-      replaces: "Ersetzt oder erweitert Amplitude, Mixpanel, Looker",
+      replaces: "Open-Source-Alternative zu Amplitude und FullStory",
       description:
         "Verbinden Sie beliebige Datenquellen, fordern Sie beliebige Diagramme an und erstellen Sie wiederverwendbare Dashboards. Der Agent schreibt SQL, generiert Visualisierungen und entwickelt die App weiter.",
     },
@@ -536,7 +537,7 @@ const deDE = {
       s004: "Abfrage-Explorer",
       s005: "Natürliche Sprache",
       s006: "Alle Vorlagen",
-      s007: "Die Open-Source-Alternative zu Amplitude, Mixpanel und Looker",
+      s007: "Die Open-Source-Alternative zu Amplitude und FullStory",
       s008: "Verbinden Sie jede Datenquelle, fordern Sie zur Eingabe eines beliebigen Diagramms auf, erstellen Sie wiederverwendbare Dashboards – der AI-Agent schreibt den SQL.",
       s009: "Ausprobieren",
       s010: "Was Sie tun können",

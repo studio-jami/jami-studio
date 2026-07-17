@@ -11,8 +11,6 @@ import type { EventHandler as H3EventHandler } from "h3";
 import { isAgentActionStopError } from "../action.js";
 import { readAppState } from "../application-state/script-helpers.js";
 import { isReadOnlyShellCommand } from "../coding-tools/index.js";
-import { isDemoModeEnabled } from "../demo/config.js";
-import { redactDemoData, redactDemoString } from "../demo/redact.js";
 import { extensionIdFromPathname } from "../extensions/path.js";
 import { preUploadAttachments } from "../file-upload/pre-upload-attachments.js";
 import { isMcpActionResult } from "../mcp-client/app-result.js";
@@ -50,6 +48,10 @@ import {
   type ReasoningEffort,
 } from "../shared/reasoning-effort.js";
 import { actionPreparationContinuationNote } from "./action-continuation-guidance.js";
+import {
+  buildSystemManifestSections,
+  readContextXraySystemSections,
+} from "./context-xray/manifest.js";
 import {
   AGENT_CHAT_BACKGROUND_RUN_FIELD,
   AGENT_CHAT_PROCESS_RUN_PATH,
@@ -581,6 +583,11 @@ export interface ActionEntry {
    *  read-only/parallel-safe tool calls. Only use for actions that handle
    *  their own write ordering and idempotency. */
   parallelSafe?: boolean;
+  /** Set false to exempt a read-only tool from the duplicate read-only
+   *  tool-call guard (per-turn result cache + repeat-kill). Default true. Use
+   *  for volatile/polling reads that are expected to return a different
+   *  result on each identical call. See `defineAction`'s `dedupe` option. */
+  dedupe?: boolean;
   /** Whether this action may be invoked from the tools-iframe bridge.
    *  **Default-allow opt-out**: only an explicit `false` returns 403.
    *  - `true` / `undefined` — allow.
@@ -1801,6 +1808,12 @@ export interface AgentLoopToolResultSummary {
 
 export interface AgentLoopFinalResponseGuardContext {
   messages: EngineMessage[];
+  /**
+   * Stable text from the real user request that started this turn. Unlike the
+   * trailing entry in `messages`, this never points at an internal continuation
+   * or a final-guard corrective retry.
+   */
+  requestText?: string;
   assistantContent: EngineContentPart[];
   text: string;
   toolCalls: AgentLoopToolCallSummary[];
@@ -1820,6 +1833,15 @@ export type AgentLoopFinalResponseGuardResult =
        * guard/model combination from looping indefinitely.
        */
       maxRetries?: number;
+      /**
+       * A rejected final answer is a recovery path, not a normal compact
+       * first request. When true, expose the complete active registry before
+       * the corrective retry so the model can reach the tool the guard is
+       * asking for without depending on a second, model-specific tool-search
+       * round trip. The registry is still limited to tools already exposed to
+       * this run; hidden/agentTool=false actions are never added.
+       */
+      expandToolSurface?: boolean;
     };
 
 export type AgentLoopFinalResponseGuard = (
@@ -2042,6 +2064,17 @@ function findCurrentTurnStartForContinuation(
   return 0;
 }
 
+/** Resolve the real user request behind any internal continuation messages. */
+export function resolveFinalResponseGuardRequestText(
+  messages: EngineMessage[],
+): string | undefined {
+  const message = messages[findCurrentTurnStartForContinuation(messages)];
+  if (!message || message.role !== "user") return undefined;
+  const text = textFromEngineMessage(message).trim();
+  if (text.startsWith(AGENT_INTERNAL_CONTINUE_PROMPT)) return undefined;
+  return text || undefined;
+}
+
 /**
  * First message index that is safe to start a trimmed window on. A window must
  * not begin with a tool-result-only user message — that would orphan it from
@@ -2142,16 +2175,26 @@ function seedReadOnlyToolResultsFromHistory(
   const cache = new Map<string, string>();
   if (!isInternalContinuationTurn(messages)) return cache;
 
-  const pendingToolCalls = new Map<string, { name: string; input: unknown }>();
-  for (const message of messages) {
+  // Scoped to the current turn only (same slice as
+  // seedWriteToolInterruptionsFromHistory) — reads from a prior turn are no
+  // longer relevant context and must not seed skip-as-duplicate behavior.
+  const turnStart = findCurrentTurnStartForContinuation(messages);
+  const turnMessages = messages.slice(turnStart);
+
+  const pendingToolCalls = new Map<
+    string,
+    { name: string; input: unknown; readOnly: boolean; dedupe: boolean }
+  >();
+  for (const message of turnMessages) {
     if (message.role === "assistant") {
       for (const part of message.content) {
         if (part.type !== "tool-call") continue;
         const entry = actions[part.name];
-        if (entry?.readOnly !== true) continue;
         pendingToolCalls.set(part.id, {
           name: part.name,
           input: part.input,
+          readOnly: entry?.readOnly === true,
+          dedupe: entry?.dedupe !== false,
         });
       }
       continue;
@@ -2161,6 +2204,17 @@ function seedReadOnlyToolResultsFromHistory(
       if (part.type !== "tool-result") continue;
       const call = pendingToolCalls.get(part.toolCallId);
       if (!call) continue;
+      if (!call.readOnly) {
+        // Mirror the live loop: a successful write invalidates all cached
+        // reads (see the `readOnlyToolResultCache.clear()` call below), so a
+        // read seeded from before an intervening write must not be replayed
+        // as still-fresh.
+        if (part.isError !== true) cache.clear();
+        continue;
+      }
+      // dedupe:false read-only tools (volatile/polling reads) are never
+      // cached — every call must execute fresh, seeded or not.
+      if (!call.dedupe) continue;
       if (!isReusableReadOnlyToolResult(part)) continue;
       cache.set(toolCallCacheKey(call.name, call.input), part.content);
     }
@@ -2169,11 +2223,100 @@ function seedReadOnlyToolResultsFromHistory(
   return cache;
 }
 
+function visibleDuplicateReadOnlyToolResult(toolName: string): string {
+  return (
+    `Skipped duplicate read-only call to ${toolName}: identical input already ran in this turn. ` +
+    `Use the previous result already in the conversation instead of calling this tool again.`
+  );
+}
+
+function resurfacedDuplicateReadOnlyToolResultPrefix(toolName: string): string {
+  return (
+    `Skipped duplicate read-only call to ${toolName}: identical input already ran in this turn. ` +
+    `Its earlier result is no longer in view, so here it is again:\n\n`
+  );
+}
+
+function resurfacedDuplicateReadOnlyToolResult(
+  toolName: string,
+  cachedResult: string,
+): string {
+  return `${resurfacedDuplicateReadOnlyToolResultPrefix(toolName)}${cachedResult}`;
+}
+
+/** Restore visible-repeat strike counts for this continuation's active turn. */
+function seedDuplicateReadOnlyToolCallsFromHistory(
+  messages: EngineMessage[],
+  actions: Record<string, ActionEntry>,
+): Map<string, number> {
+  const repeats = new Map<string, number>();
+  if (!isInternalContinuationTurn(messages)) return repeats;
+
+  const turnStart = findCurrentTurnStartForContinuation(messages);
+  const pendingToolCalls = new Map<
+    string,
+    { name: string; input: unknown; readOnly: boolean; dedupe: boolean }
+  >();
+  const reusableReadKeys = new Set<string>();
+
+  for (const message of messages.slice(turnStart)) {
+    if (message.role === "assistant") {
+      for (const part of message.content) {
+        if (part.type !== "tool-call") continue;
+        const entry = actions[part.name];
+        pendingToolCalls.set(part.id, {
+          name: part.name,
+          input: part.input,
+          readOnly: entry?.readOnly === true,
+          dedupe: entry?.dedupe !== false,
+        });
+      }
+      continue;
+    }
+
+    for (const part of message.content) {
+      if (part.type !== "tool-result") continue;
+      const call = pendingToolCalls.get(part.toolCallId);
+      if (!call) continue;
+      if (!call.readOnly) {
+        if (part.isError !== true) {
+          repeats.clear();
+          reusableReadKeys.clear();
+        }
+        continue;
+      }
+      if (!call.dedupe || part.isError === true) continue;
+
+      const cacheKey = toolCallCacheKey(call.name, call.input);
+      if (part.content === visibleDuplicateReadOnlyToolResult(call.name)) {
+        if (reusableReadKeys.has(cacheKey)) {
+          repeats.set(cacheKey, (repeats.get(cacheKey) ?? 0) + 1);
+        }
+        continue;
+      }
+      if (
+        part.content.startsWith(
+          resurfacedDuplicateReadOnlyToolResultPrefix(call.name),
+        )
+      ) {
+        if (reusableReadKeys.has(cacheKey)) repeats.set(cacheKey, 0);
+        continue;
+      }
+      if (isReusableReadOnlyToolResult(part)) {
+        reusableReadKeys.add(cacheKey);
+      }
+    }
+  }
+
+  return repeats;
+}
+
 function isReusableReadOnlyToolResult(part: EngineToolResultPart): boolean {
   if (part.isError) return false;
   const lower = part.content.trim().toLowerCase();
   if (!lower) return false;
   return !(
+    lower.startsWith("skipped duplicate read-only call to ") ||
     lower.startsWith("invalid action parameters for ") ||
     lower.startsWith("error running ") ||
     lower.includes("run aborted") ||
@@ -2181,6 +2324,56 @@ function isReusableReadOnlyToolResult(part: EngineToolResultPart): boolean {
     lower.includes("stale_run") ||
     lower.includes("connection_error")
   );
+}
+
+/**
+ * Whether a cached read-only tool result is still something the model can
+ * actually see in `contextMessages` — the trimmed/summarized view the engine
+ * is streamed (NOT the raw, ever-growing `messages` array the cache is keyed
+ * off of). Context-xray `evict` drops tool-result parts entirely, `summarize`
+ * replaces their content with a placeholder, and observational-memory
+ * trimming drops whole older messages once active. When the cached result
+ * has fallen out of that view, re-serving "use the previous result" is not
+ * actionable — the model has nothing to point back to.
+ *
+ * A visible result must belong to the same tool name + normalized input and
+ * contain either the exact cached body or the exact wrapper used when that
+ * body was re-served after trimming. Matching only by a content suffix is too
+ * loose: short results such as "ok" can also end unrelated tool output.
+ */
+export function isCachedToolResultVisibleInContext(
+  contextMessages: EngineMessage[],
+  toolCall: { name: string; input: unknown },
+  cachedResult: string,
+): boolean {
+  if (cachedResult.length === 0) return true;
+  const cacheKey = toolCallCacheKey(toolCall.name, toolCall.input);
+  const matchingToolCallIds = new Set<string>();
+  for (const message of contextMessages) {
+    if (message.role !== "assistant") continue;
+    for (const part of message.content) {
+      if (part.type !== "tool-call") continue;
+      if (toolCallCacheKey(part.name, part.input) === cacheKey) {
+        matchingToolCallIds.add(part.id);
+      }
+    }
+  }
+
+  const resurfacedResult = resurfacedDuplicateReadOnlyToolResult(
+    toolCall.name,
+    cachedResult,
+  );
+  for (const message of contextMessages) {
+    if (message.role !== "user") continue;
+    for (const part of message.content) {
+      if (part.type !== "tool-result") continue;
+      if (!matchingToolCallIds.has(part.toolCallId)) continue;
+      if (part.content === cachedResult || part.content === resurfacedResult) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**
@@ -2554,7 +2747,7 @@ function stableStringify(value: unknown): string {
     .join(",")}}`;
 }
 
-function toolCallCacheKey(toolName: string, input: unknown): string {
+export function toolCallCacheKey(toolName: string, input: unknown): string {
   return `${toolName}:${stableStringify(normalizeToolCallInputForHistory(input))}`;
 }
 
@@ -2631,7 +2824,7 @@ function rateLimitRecoveryHint(message: string): string {
 }
 
 const SOURCE_SWEEP_TOOL_NAME =
-  /\b(?:api|calls?|deals?|events?|issues?|messages?|metrics?|provider|query|records?|request|search|tickets?|transcripts?)\b/i;
+  /\b(?:api|calls?|deals?|docs?|events?|issues?|messages?|metrics?|provider|query|records?|request|search|source|tickets?|transcripts?)\b/i;
 
 const SOURCE_SWEEP_PROVIDER_TOKEN =
   /\b(?:amplitude|apollo|bigquery|commonroom|data-source|ga4|github|gong|grafana|hubspot|jira|mixpanel|notion|posthog|postgres|postgresql|pylon|sentry|slack|stripe)\b/i;
@@ -2652,6 +2845,18 @@ const SOURCE_SWEEP_EXCLUDED_TOOLS = new Set([
   "view-screen",
 ]);
 
+// The Docs app intentionally exposes several small read-only lookup actions
+// rather than a bulk reader. Keep the per-tool guard for repeated lookups, but
+// do not combine this family into the cross-tool convergence budget.
+const SOURCE_SWEEP_AGGREGATE_EXCLUDED_TOOLS = new Set([
+  "docs-search",
+  "list-docs",
+  "read-doc",
+  "read-source-file",
+  "search-docs",
+  "search-source",
+]);
+
 function normalizeToolNameForHeuristics(name: string): string {
   return name.replace(/[_-]+/g, " ");
 }
@@ -2670,20 +2875,27 @@ function isLikelySourceSweepTool(
   );
 }
 
+function isLikelyAggregateSourceSweepTool(
+  name: string,
+  entry: ActionEntry | undefined,
+): boolean {
+  return (
+    !SOURCE_SWEEP_AGGREGATE_EXCLUDED_TOOLS.has(name.toLowerCase()) &&
+    isLikelySourceSweepTool(name, entry)
+  );
+}
+
 function hasExhaustedSourceSweepBudget(opts: {
   priorToolCalls: readonly AgentLoopToolCallSummary[];
   actions: Record<string, ActionEntry>;
   threshold?: number;
 }): boolean {
   const threshold = opts.threshold ?? SOURCE_SWEEP_TOOL_CALL_THRESHOLD;
-  const counts = new Map<string, number>();
-  for (const call of opts.priorToolCalls) {
-    if (!isLikelySourceSweepTool(call.name, opts.actions[call.name])) continue;
-    const next = (counts.get(call.name) ?? 0) + 1;
-    if (next >= threshold) return true;
-    counts.set(call.name, next);
-  }
-  return false;
+  return (
+    opts.priorToolCalls.filter((call) =>
+      isLikelyAggregateSourceSweepTool(call.name, opts.actions[call.name]),
+    ).length >= threshold
+  );
 }
 
 function sourceSweepDelegationText(input: unknown): string {
@@ -2756,11 +2968,16 @@ export function repeatedSourceSweepGuardMessage(opts: {
   toolName: string;
   priorCalls: number;
   threshold?: number;
+  scope?: "tool" | "aggregate";
 }): string {
   const threshold = opts.threshold ?? SOURCE_SWEEP_TOOL_CALL_THRESHOLD;
+  const target =
+    opts.scope === "aggregate"
+      ? "read-only source/search tools"
+      : "the same read-only source/search tool";
   return (
     `Skipped ${opts.toolName}: this turn already made ${opts.priorCalls} ` +
-    `call(s) to the same read-only source/search tool, which exceeds the ` +
+    `call(s) to ${target}, which exceeds the ` +
     `${threshold}-call convergence budget. Stop calling ${opts.toolName} ` +
     `one item at a time and change strategy before answering. If a broader ` +
     `read-only bulk/source mechanism is available, use it now: provider API ` +
@@ -2784,6 +3001,7 @@ export function shouldGuardRepeatedSourceSweep(opts: {
   toolName: string;
   entry: ActionEntry | undefined;
   priorToolCalls: readonly AgentLoopToolCallSummary[];
+  actions?: Record<string, ActionEntry>;
   threshold?: number;
 }): { toolName: string; priorCalls: number; message: string } | null {
   if (!isLikelySourceSweepTool(opts.toolName, opts.entry)) return null;
@@ -2791,6 +3009,25 @@ export function shouldGuardRepeatedSourceSweep(opts: {
   const priorCalls = opts.priorToolCalls.filter(
     (call) => call.name === opts.toolName,
   ).length;
+  const priorSourceSweepCalls = opts.priorToolCalls.filter((call) =>
+    isLikelyAggregateSourceSweepTool(
+      call.name,
+      opts.actions?.[call.name] ??
+        (call.name === opts.toolName ? opts.entry : undefined),
+    ),
+  ).length;
+  if (priorSourceSweepCalls >= threshold) {
+    return {
+      toolName: opts.toolName,
+      priorCalls: priorSourceSweepCalls,
+      message: repeatedSourceSweepGuardMessage({
+        toolName: opts.toolName,
+        priorCalls: priorSourceSweepCalls,
+        threshold,
+        scope: "aggregate",
+      }),
+    };
+  }
   if (priorCalls < threshold) return null;
   return {
     toolName: opts.toolName,
@@ -2799,6 +3036,7 @@ export function shouldGuardRepeatedSourceSweep(opts: {
       toolName: opts.toolName,
       priorCalls,
       threshold,
+      scope: "tool",
     }),
   };
 }
@@ -2906,6 +3144,7 @@ export async function runAgentLoop(opts: {
   tools: EngineTool[];
   availableTools?: EngineTool[];
   messages: EngineMessage[];
+  systemSections?: import("../shared/context-xray.js").ContextManifestSystemSection[];
   actions: Record<string, ActionEntry>;
   send: (event: AgentChatEvent) => void;
   signal: AbortSignal;
@@ -2925,6 +3164,12 @@ export async function runAgentLoop(opts: {
   executionMode?: AgentExecutionMode;
   maxIterations?: number;
   finalResponseGuard?: AgentLoopFinalResponseGuard;
+  /**
+   * Stable real-user request text preserved across internal continuation
+   * attempts. Callers normally omit this; continuation wrappers freeze it
+   * before appending their synthetic user messages.
+   */
+  finalResponseGuardRequestText?: string;
   threadId?: string;
   turnId?: string;
   /**
@@ -2960,6 +3205,9 @@ export async function runAgentLoop(opts: {
     send,
     signal,
   } = opts;
+  const finalResponseGuardRequestText =
+    opts.finalResponseGuardRequestText ??
+    resolveFinalResponseGuardRequestText(messages);
   const availableToolMap = new Map(
     (availableTools ?? tools).map((tool) => [tool.name, tool]),
   );
@@ -3023,7 +3271,10 @@ export async function runAgentLoop(opts: {
     messages,
     actions,
   );
-  const duplicateReadOnlyToolCalls = new Map<string, number>();
+  const duplicateReadOnlyToolCalls = seedDuplicateReadOnlyToolCallsFromHistory(
+    messages,
+    actions,
+  );
   const writeToolInterruptions = seedWriteToolInterruptionsFromHistory(
     messages,
     actions,
@@ -3081,6 +3332,8 @@ export async function runAgentLoop(opts: {
 
     let assistantContent: EngineContentPart[] | undefined;
     let streamedAssistantText = "";
+    const streamedAssistantToolCalls: import("./engine/types.js").EngineToolCallPart[] =
+      [];
     let terminalStopReason:
       | Extract<EngineEvent, { type: "stop" }>["reason"]
       | undefined;
@@ -3097,6 +3350,7 @@ export async function runAgentLoop(opts: {
         turnId: opts.turnId,
         model,
         messages,
+        systemSections: opts.systemSections,
       });
 
       // Observational Memory (consumer): for long threads that have already been
@@ -3122,6 +3376,7 @@ export async function runAgentLoop(opts: {
     for (let retry = 0; ; retry++) {
       assistantContent = undefined;
       streamedAssistantText = "";
+      streamedAssistantToolCalls.length = 0;
       terminalStopReason = undefined;
       toolCallErrors.clear();
       try {
@@ -3465,7 +3720,16 @@ export async function runAgentLoop(opts: {
             } else if (event.type === "gateway-heartbeat") {
               send({ type: "stream_keepalive" });
             } else if (event.type === "tool-call") {
-              // The authoritative tool-call blocks arrive in assistant-content.
+              // Most engines repeat the authoritative call in assistant-content,
+              // but delegated/custom engines can expose only the stream event.
+              // Keep it so the loop can still execute the requested action when
+              // the normalized terminal event is missing.
+              streamedAssistantToolCalls.push({
+                type: "tool-call",
+                id: event.id,
+                name: event.name,
+                input: event.input,
+              });
             } else if (event.type === "tool-call-error") {
               toolCallErrors.set(event.id, {
                 name: event.name,
@@ -3505,6 +3769,20 @@ export async function runAgentLoop(opts: {
         }
 
         if (endedForNoProgress) {
+          return usage;
+        }
+
+        // A provider can close cleanly after streaming only a partial tool
+        // input. Do not treat that as a completed turn or execute guessed args.
+        const hasEmptyAssistantContent =
+          assistantContent === undefined || assistantContent.length === 0;
+        const hasUnfinishedToolInput =
+          activeToolInputs.size > 0 &&
+          hasEmptyAssistantContent &&
+          streamedAssistantToolCalls.length === 0 &&
+          toolCallErrors.size === 0;
+        if (hasUnfinishedToolInput) {
+          send({ type: "auto_continue", reason: "stream_ended" });
           return usage;
         }
 
@@ -3553,6 +3831,35 @@ export async function runAgentLoop(opts: {
       assistantContent = [];
     }
 
+    if (
+      (!assistantContent || assistantContent.length === 0) &&
+      (streamedAssistantText.trim() || streamedAssistantToolCalls.length > 0)
+    ) {
+      // Some delegated/custom engine streams emit text deltas and/or tool-call
+      // events followed by a terminal stop without the normalized
+      // assistant-content event. Preserve both so final-response guards still
+      // run and requested actions are not silently dropped.
+      assistantContent = [
+        ...(streamedAssistantText.trim()
+          ? [{ type: "text" as const, text: streamedAssistantText }]
+          : []),
+        ...streamedAssistantToolCalls,
+      ];
+    } else if (assistantContent && streamedAssistantToolCalls.length > 0) {
+      const existingToolCallIds = new Set(
+        assistantContent
+          .filter(
+            (part): part is import("./engine/types.js").EngineToolCallPart =>
+              part.type === "tool-call",
+          )
+          .map((part) => part.id),
+      );
+      for (const toolCall of streamedAssistantToolCalls) {
+        if (!existingToolCallIds.has(toolCall.id)) {
+          assistantContent.push(toolCall);
+        }
+      }
+    }
     if (!assistantContent) {
       // No content — done
       break;
@@ -3632,59 +3939,13 @@ export async function runAgentLoop(opts: {
         appendAgentLoopContinuation(messages, "max_tokens");
         continue;
       }
-      let guard: Awaited<ReturnType<AgentLoopFinalResponseGuard>> | null = null;
-      if (opts.finalResponseGuard) {
-        try {
-          guard = await opts.finalResponseGuard({
-            messages,
-            assistantContent: assistantContentForHistory,
-            text: collectTextParts(assistantContentForHistory),
-            toolCalls: [...toolCallHistory],
-            toolResults: [...toolResultHistory],
-            retryCount: finalGuardRetries,
-            executionMode: opts.executionMode ?? "act",
-          });
-        } catch (err) {
-          send({ type: "clear" });
-          throw err;
-        }
-      }
-      let guardEmittedFallback = false;
-      if (guard) {
-        const retryMessage =
-          typeof guard === "string" ? guard : guard.retryMessage;
-        const fallbackMessage =
-          typeof guard === "string" ? guard : guard.fallbackMessage;
-        const maxGuardRetries =
-          typeof guard === "string"
-            ? 1
-            : Math.max(0, Math.min(3, Math.trunc(guard.maxRetries ?? 1)));
-        if (finalGuardRetries < maxGuardRetries) {
-          finalGuardRetries += 1;
-          send({ type: "clear" });
-          messages.push({
-            role: "user",
-            content: [{ type: "text", text: retryMessage }],
-          });
-          continue;
-        }
-        send({ type: "clear" });
-        send({ type: "text", text: fallbackMessage ?? retryMessage });
-        guardEmittedFallback = true;
-      } else {
-        flushUnstreamedAssistantText();
-      }
-      // Some providers (notably OpenAI Responses for gpt-5+) can stream a
-      // successful turn that contains only reasoning content and zero output
-      // text — typically when reasoning consumes the entire output-token
-      // budget. Without a final text part the SSE stream still ends with a
-      // clean `done`, which renders as a totally empty assistant bubble.
-      // Retry so a reasoning-budget miss can still finish; each retry raises
-      // the token ceiling and steps reasoning effort down a tier so it's not
-      // just re-issuing the identical doomed request. If retries also come
-      // back empty, surface a plain-language error.
+
+      // Some providers (notably OpenAI Responses for gpt-5+) can complete a
+      // successful turn with reasoning content but no text or tool call. App
+      // final-answer guards validate an actual draft; letting them see this
+      // contentless turn can misclassify our synthetic recovery message and
+      // replace the shared retry with an unrelated app fallback.
       const hasEmptyFinalResponse =
-        !guardEmittedFallback &&
         collectTextParts(assistantContentForHistory).trim().length === 0 &&
         streamedAssistantText.trim().length === 0;
       if (hasEmptyFinalResponse) {
@@ -3704,11 +3965,65 @@ export async function runAgentLoop(opts: {
           type: "text",
           text: "The model returned an empty response. This usually means reasoning used the full output-token budget. Try again, or pick a different model from the model menu.",
         });
-      } else {
-        emptyFinalResponseRetries = 0;
-        effectiveMaxOutputTokens = opts.maxOutputTokens;
-        effectiveReasoningEffort = opts.reasoningEffort;
+        break;
       }
+
+      let guard: Awaited<ReturnType<AgentLoopFinalResponseGuard>> | null = null;
+      if (opts.finalResponseGuard) {
+        try {
+          guard = await opts.finalResponseGuard({
+            messages,
+            requestText: finalResponseGuardRequestText,
+            assistantContent: assistantContentForHistory,
+            text: collectTextParts(assistantContentForHistory),
+            toolCalls: [...toolCallHistory],
+            toolResults: [...toolResultHistory],
+            retryCount: finalGuardRetries,
+            executionMode: opts.executionMode ?? "act",
+          });
+        } catch (err) {
+          send({ type: "clear" });
+          throw err;
+        }
+      }
+      if (guard) {
+        const retryMessage =
+          typeof guard === "string" ? guard : guard.retryMessage;
+        const fallbackMessage =
+          typeof guard === "string" ? guard : guard.fallbackMessage;
+        const maxGuardRetries =
+          typeof guard === "string"
+            ? 1
+            : Math.max(0, Math.min(3, Math.trunc(guard.maxRetries ?? 1)));
+        if (finalGuardRetries < maxGuardRetries) {
+          // Compact starter catalogs are an optimization for the first model
+          // request. Once a guard rejects a final answer, preserving that
+          // compact surface can make the corrective instruction impossible to
+          // satisfy: the requested data action may still be behind
+          // tool-search, and some models spend the entire retry narrating the
+          // discovery step instead of calling it. Let guards opt into the
+          // full *already-authorized* run registry for the retry. This is
+          // intentionally handled in the shared loop so A2A/MCP and every
+          // model family get the same recovery behavior.
+          if (typeof guard !== "string" && guard.expandToolSurface) {
+            expandActiveTools([...availableToolMap.keys()]);
+          }
+          finalGuardRetries += 1;
+          send({ type: "clear" });
+          messages.push({
+            role: "user",
+            content: [{ type: "text", text: retryMessage }],
+          });
+          continue;
+        }
+        send({ type: "clear" });
+        send({ type: "text", text: fallbackMessage ?? retryMessage });
+      } else {
+        flushUnstreamedAssistantText();
+      }
+      emptyFinalResponseRetries = 0;
+      effectiveMaxOutputTokens = opts.maxOutputTokens;
+      effectiveReasoningEffort = opts.reasoningEffort;
       break;
     }
 
@@ -3743,6 +4058,7 @@ export async function runAgentLoop(opts: {
         toolName: toolCall.name,
         entry: actionEntry,
         priorToolCalls: sourceSweepToolCallHistory,
+        actions,
       });
       const sourceSweepDelegationGuard =
         sourceSweepDelegationGuardActive &&
@@ -3878,7 +4194,10 @@ export async function runAgentLoop(opts: {
       // instead of executing. The action's side effect never happens until a
       // human re-issues the turn approving this call's stable key.
       const approvalKey = toolCallCacheKey(toolCall.name, toolCall.input);
-      if (actionEntry.needsApproval && !approvedToolCallKeys.has(approvalKey)) {
+      // Consume a grant on its first exact match. A second identical call in
+      // the same continuation must request its own human approval.
+      const wasApproved = approvedToolCallKeys.delete(approvalKey);
+      if (actionEntry.needsApproval && !wasApproved) {
         let mustApprove = false;
         try {
           mustApprove =
@@ -4205,18 +4524,49 @@ export async function runAgentLoop(opts: {
         };
       }
 
+      // dedupe: false opts a read-only tool out of the guard entirely — the
+      // cacheKey stays null so it never gets skipped-as-duplicate and never
+      // populates the cache (see the success handler below, which also
+      // leaves dedupe:false results uncached and un-cleared).
       const cacheKey =
-        actionEntry.readOnly === true
+        actionEntry.readOnly === true && actionEntry.dedupe !== false
           ? toolCallCacheKey(toolCall.name, toolCall.input)
           : null;
       if (cacheKey && readOnlyToolResultCache.has(cacheKey)) {
-        const repeats = (duplicateReadOnlyToolCalls.get(cacheKey) ?? 0) + 1;
-        duplicateReadOnlyToolCalls.set(cacheKey, repeats);
         const previousResult = readOnlyToolResultCache.get(cacheKey) ?? "";
-        const result =
-          `Skipped duplicate read-only call to ${toolCall.name}: identical input already ran in this turn. ` +
-          `Use the previous result already in the conversation instead of calling this tool again.\n\n` +
-          `Previous result:\n${previousResult}`;
+        // `contextMessages` (not `messages`) is what the model actually sees
+        // this iteration — context-xray eviction/summarization and
+        // observational-memory trimming can drop the earlier result from
+        // view even though it's still cached here. Only strike-count the
+        // repeat when the model could have looked back and found it itself.
+        const visible = isCachedToolResultVisibleInContext(
+          contextMessages,
+          toolCall,
+          previousResult,
+        );
+        let result: string;
+        if (visible) {
+          const repeats = (duplicateReadOnlyToolCalls.get(cacheKey) ?? 0) + 1;
+          duplicateReadOnlyToolCalls.set(cacheKey, repeats);
+          result = visibleDuplicateReadOnlyToolResult(toolCall.name);
+          if (repeats >= 3) {
+            requestedActionStop ??= {
+              message:
+                "I stopped because the agent kept asking for the same read-only context it already had. Please send the request again if you want me to retry from a fresh turn.",
+              errorCode: "duplicate_read_only_tool",
+            };
+          }
+        } else {
+          // The earlier result was trimmed out of the model's visible
+          // context — this isn't a repetitive loop, the model legitimately
+          // can't see the answer anymore. Re-serve it in full and don't
+          // count a strike.
+          duplicateReadOnlyToolCalls.set(cacheKey, 0);
+          result = resurfacedDuplicateReadOnlyToolResult(
+            toolCall.name,
+            previousResult,
+          );
+        }
         send({
           type: "tool_done",
           id: toolCall.id,
@@ -4226,13 +4576,6 @@ export async function runAgentLoop(opts: {
           completedSideEffect: false,
         });
         recordToolResult(result, false);
-        if (repeats >= 3) {
-          requestedActionStop ??= {
-            message:
-              "I stopped because the agent kept asking for the same read-only context it already had. Please send the request again if you want me to retry from a fresh turn.",
-            errorCode: "duplicate_read_only_tool",
-          };
-        }
         return {
           type: "tool-result" as const,
           toolCallId: toolCall.id,
@@ -4394,48 +4737,24 @@ export async function runAgentLoop(opts: {
           isError = true;
         }
         mcpApp = mcpResult?.mcpApp;
-        // Demo mode: the agent must see the same anonymized data the UI shows, so
-        // it can't read out a real name/email on a live screen share. Redact
-        // the structured result (not the JSON string) so IDs/dates/URLs stay
-        // intact and follow-up tool calls still work. Gated — the expensive
-        // walk only runs when demo mode is on.
-        let redacted: unknown = rawForAgent;
-        const demoMode = await isDemoModeEnabled();
-        if (demoMode) {
-          mcpApp = undefined;
-          if (typeof rawForAgent === "string") {
-            try {
-              redacted = JSON.stringify(
-                redactDemoData(JSON.parse(rawForAgent)),
-                null,
-                2,
-              );
-            } catch {
-              redacted = redactDemoString(rawForAgent);
-            }
-          } else {
-            redacted = redactDemoData(rawForAgent);
-          }
-        }
+        // Demo mode is browser-local presentation state. The agent and MCP
+        // layers always receive the real, access-scoped tool result.
+        let resultForAgent: unknown = rawForAgent;
         // Vision images for the model: MCP tools return standard `image`
         // content parts; first-party actions opt in via the well-known
         // `_agentImages` result field (stripped from the JSON the model
-        // reads, even in demo mode). Demo mode drops the images themselves —
-        // text redaction can't scrub pixels, and a screenshot may expose
-        // original visual data. The images array
+        // reads). The images array
         // never touches the ledger — only the compact text notes appended
         // below are persisted.
         let imageNotes: string[] = [];
         if (mcpResult) {
-          if (!demoMode) {
-            const mcpImages = extractMcpToolResultImages(mcpResult.raw);
-            if (mcpImages.length > 0) toolResultImages = mcpImages;
-          }
+          const mcpImages = extractMcpToolResultImages(mcpResult.raw);
+          if (mcpImages.length > 0) toolResultImages = mcpImages;
         } else {
-          const extracted = extractAgentImagesFromActionResult(redacted);
-          redacted = extracted.value;
+          const extracted = extractAgentImagesFromActionResult(resultForAgent);
+          resultForAgent = extracted.value;
           imageNotes = extracted.notes;
-          if (extracted.images.length > 0 && !demoMode) {
+          if (extracted.images.length > 0) {
             toolResultImages = extracted.images;
           }
         }
@@ -4446,9 +4765,9 @@ export async function runAgentLoop(opts: {
           ];
         }
         let resultStr =
-          typeof redacted === "string"
-            ? redacted
-            : JSON.stringify(redacted, null, 2);
+          typeof resultForAgent === "string"
+            ? resultForAgent
+            : JSON.stringify(resultForAgent, null, 2);
         if (resultStr.length > toolMaxResultChars) {
           const truncated = resultStr.slice(0, toolMaxResultChars);
           resultStr = `${truncated}\n\n...[truncated — full result was ${resultStr.length.toLocaleString()} chars; only first ${toolMaxResultChars.toLocaleString()} shown]`;
@@ -4528,7 +4847,11 @@ export async function runAgentLoop(opts: {
       if (!isError) {
         if (cacheKey) {
           readOnlyToolResultCache.set(cacheKey, result);
-        } else {
+        } else if (actionEntry.readOnly !== true) {
+          // A genuine write invalidates all cached reads. A dedupe:false
+          // read-only tool also has a null cacheKey (see above) but must NOT
+          // clear the cache — it isn't a write and other tools' cached reads
+          // are still valid.
           readOnlyToolResultCache.clear();
           duplicateReadOnlyToolCalls.clear();
         }
@@ -4929,6 +5252,9 @@ export async function runAgentLoopWithMainChatInternalContinuations(
     maxContinuations?: number;
   },
 ): Promise<Awaited<ReturnType<typeof runAgentLoop>>> {
+  const finalResponseGuardRequestText =
+    opts.finalResponseGuardRequestText ??
+    resolveFinalResponseGuardRequestText(opts.messages);
   const usage: Awaited<ReturnType<typeof runAgentLoop>> = {
     inputTokens: 0,
     outputTokens: 0,
@@ -4974,7 +5300,11 @@ export async function runAgentLoopWithMainChatInternalContinuations(
     };
 
     try {
-      const nextUsage = await runAgentLoop({ ...opts, send });
+      const nextUsage = await runAgentLoop({
+        ...opts,
+        send,
+        finalResponseGuardRequestText,
+      });
       addUsage(nextUsage);
     } catch (err) {
       // Preserve exact prior behavior unless explicitly opted in: an aborted
@@ -5977,7 +6307,7 @@ export function createProductionAgentHandler(
     const dispatchToBackground =
       !isBackgroundWorker &&
       isAgentChatDurableBackgroundEnabled({
-        appOptIn: options.durableBackgroundRuns === true,
+        appOptIn: options.durableBackgroundRuns,
       });
     const requestBrowserTabId = normalizeBrowserTabId(browserTabId);
     const requestChatScope = normalizeChatScope(scope);
@@ -6208,6 +6538,22 @@ export function createProductionAgentHandler(
               engine,
               expConfig.configs.model,
             );
+            modelSelectionSource = "experiment";
+          }
+        }
+
+        if (modelSelectionSource === "default") {
+          const { resolveHostedDefaultModelExperiment } =
+            await import("../observability/hosted-model-experiment.js");
+          const hostedExperiment = resolveHostedDefaultModelExperiment({
+            userId: ownerEmail,
+            engineName: engine.name,
+            isDefaultModelSelection: true,
+            supportedModels: engine.supportedModels,
+          });
+          if (hostedExperiment) {
+            effectiveModel = hostedExperiment.model;
+            experimentAssignments.push(hostedExperiment.assignment);
             modelSelectionSource = "experiment";
           }
         }
@@ -6633,6 +6979,31 @@ export function createProductionAgentHandler(
       availableRequestTools,
       options.initialToolNames,
     );
+    // System sections are emitted by the prompt builder once per request. Tool
+    // schemas become known just after prompt setup, so append their measured
+    // contribution here and reuse the immutable result for every loop pass.
+    const contextXraySystemSections = [
+      ...readContextXraySystemSections(event),
+      ...(requestTools.length > 0
+        ? await buildSystemManifestSections([
+            {
+              label: "Action and MCP tool schemas",
+              provenance: "tools",
+              governance: "required",
+              content: requestTools
+                .map((tool) =>
+                  JSON.stringify({
+                    name: tool.name,
+                    description: tool.description,
+                    parameters: tool.inputSchema,
+                  }),
+                )
+                .join("\n"),
+              sourceRef: { scope: "tools" },
+            },
+          ])
+        : []),
+    ];
     setupMark("actions");
     // DIAGNOSTIC-ONLY: action/tool resolution + engine-tool filtering finished.
     workerStep("action_tool_setup");
@@ -7181,7 +7552,7 @@ export function createProductionAgentHandler(
                   // function (40s clamp) here is the correct, safe target.
                   chainViaDurableBackground:
                     isAgentChatDurableBackgroundEnabled({
-                      appOptIn: options.durableBackgroundRuns === true,
+                      appOptIn: options.durableBackgroundRuns,
                     }) && !runsInBackgroundFunction,
                   // Only changes the retry BUDGET, never the dispatch target
                   // above: a worker proven in a real background function has
@@ -7269,7 +7640,7 @@ export function createProductionAgentHandler(
       isBackgroundWorker &&
       !runsInBackgroundFunction &&
       !isAgentChatDurableBackgroundEnabled({
-        appOptIn: options.durableBackgroundRuns === true,
+        appOptIn: options.durableBackgroundRuns,
       });
     const selfChainBudget = isSynchronousSelfChainContinuation
       ? resolveSelfChainContinuationBudget(
@@ -7612,6 +7983,7 @@ export function createProductionAgentHandler(
           tools: requestTools,
           availableTools: availableRequestTools,
           messages,
+          systemSections: contextXraySystemSections,
           actions: requestActions,
           send,
           signal,
@@ -7628,6 +8000,7 @@ export function createProductionAgentHandler(
           executionMode: requestMode,
           maxIterations: loopSettings.maxIterations,
           finalResponseGuard: options.finalResponseGuard,
+          finalResponseGuardRequestText: messageToPersist,
           ...(options.toolLimits ? { toolLimits: options.toolLimits } : {}),
           ...(threadId
             ? { threadId: effectiveThreadId, turnId: effectiveTurnId }

@@ -1,8 +1,5 @@
 {
   "mcpServers": {
-    "plan": {
-      "type": "http",
-      "url": "https://plan.jami.studio/_agent-native/mcp"
-    }
+    "plan": { "type": "http", "url": "https://plan.jami.studio/mcp" }
   }
 }

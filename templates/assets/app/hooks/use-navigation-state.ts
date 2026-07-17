@@ -1,4 +1,5 @@
 import {
+  isAgentChatHomeHandoffActive,
   markAgentChatHomeHandoff,
   useAgentRouteState,
   getBrowserTabId,
@@ -44,6 +45,15 @@ function navigationFromPath(pathname: string, search = "") {
       view: "preset",
       libraryId: decodePathParam(preset[1]),
       presetId: decodePathParam(preset[2]),
+    };
+  }
+  const brandKitSettings = pathname.match(/^\/brand-kits\/([^/]+)\/settings/);
+  if (brandKitSettings) {
+    return {
+      view: "library",
+      selection: decodePathParam(brandKitSettings[1]),
+      libraryId: decodePathParam(brandKitSettings[1]),
+      activeTab: "settings",
     };
   }
   // The "library" view is the unified Library workspace. Keep the internal
@@ -114,6 +124,9 @@ function pathFromCommand(command: any): string | null {
   if (!command) return null;
   if (typeof command.path === "string") return command.path;
   if (command.view === "library" && command.libraryId) {
+    if (command.activeTab === "settings") {
+      return `/brand-kits/${encodeURIComponent(command.libraryId)}/settings`;
+    }
     const params = new URLSearchParams();
     if (typeof command.activeTab === "string") {
       params.set("tab", command.activeTab);
@@ -190,7 +203,8 @@ export function useNavigationState() {
     onNavigate: (_command, path) => {
       if (
         isCreatePath(location.pathname) &&
-        !isCreatePath(pathnameFromPath(path))
+        !isCreatePath(pathnameFromPath(path)) &&
+        isAgentChatHomeHandoffActive(ASSETS_CHAT_STORAGE_KEY)
       ) {
         markAgentChatHomeHandoff(ASSETS_CHAT_STORAGE_KEY);
       }

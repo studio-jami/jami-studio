@@ -30,7 +30,7 @@ import {
 
 import type { ReasoningEffort } from "../../shared/reasoning-effort.js";
 import { AssistantUiStaleIndexErrorBoundary } from "../assistant-ui-recovery.js";
-import { BuilderConnectCta, BuilderSetupCard } from "../chat/run-recovery.js";
+import { BuilderSetupCard, BuilderSetupContent } from "../chat/run-recovery.js";
 import { TooltipProvider } from "../components/ui/tooltip.js";
 import {
   fetchAgentEngineConfiguredState,
@@ -149,11 +149,13 @@ export interface PromptComposerProps {
   /** Called whenever the plain editor text changes. */
   onTextChange?: (text: string) => void;
   /**
-   * Override the Builder.io connect action in the model picker. When provided,
-   * clicking "Connect Builder.io" calls this instead of opening a browser popup.
+   * Override the Jami Studio connect action in the model picker. When provided,
+   * clicking "Connect Jami Studio" calls this instead of opening a browser popup.
    * Used by the Electron desktop app to route through the native IPC handler.
    */
   onConnectProvider?: () => void;
+  /** Called when a local runtime needs its native sign-in/setup flow. */
+  onConnectLocalRuntime?: (engine: string) => void;
   /** Imperative handle for focusing the composer. */
   composerRef?: Ref<TiptapComposerHandle>;
 }
@@ -474,6 +476,7 @@ function PromptComposerInner({
   modelStatusChecksEnabled,
   onTextChange,
   onConnectProvider,
+  onConnectLocalRuntime,
   composerRef,
 }: PromptComposerProps) {
   const localRef = useRef<TiptapComposerHandle>(null);
@@ -592,20 +595,10 @@ function PromptComposerInner({
       ) : null}
       {missingApiKey && useInlineMissingKeySetup ? (
         <div className="mb-2 rounded-md border border-border/80 bg-background/80 p-2.5 text-start shadow-sm">
-          <div className="flex flex-col gap-2">
-            <div className="min-w-0">
-              <p className="text-[12px] font-medium text-foreground">
-                Connect AI
-              </p>
-              <p className="mt-0.5 text-[11px] leading-4 text-muted-foreground">
-                Connect Jami Studio before sending.
-              </p>
-            </div>
-            <BuilderConnectCta
-              variant="compact"
-              onConnected={handleBuilderConnected}
-            />
-          </div>
+          <BuilderSetupContent
+            onConnected={handleBuilderConnected}
+            layout="sidebar"
+          />
         </div>
       ) : null}
       <AgentComposerFrame
@@ -656,6 +649,7 @@ function PromptComposerInner({
           onEffortChange={handleEffortChange}
           providerConnectStatusEnabled={resolvedModelStatusChecksEnabled}
           onConnectProvider={onConnectProvider}
+          onConnectLocalRuntime={onConnectLocalRuntime}
         />
       </AgentComposerFrame>
     </>

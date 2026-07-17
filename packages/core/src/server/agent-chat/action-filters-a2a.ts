@@ -6,9 +6,11 @@ import {
   type A2AToolResultSummary,
 } from "../../a2a/artifact-response.js";
 import { collectFinalResponseTextFromAgentEvents } from "../../a2a/response-text.js";
+import { resolveMainChatMaxOutputTokens } from "../../agent/engine/output-tokens.js";
 import type { EngineTool } from "../../agent/engine/types.js";
 import {
   filterInitialEngineTools,
+  resolveAgentRequestReasoningEffort,
   type ActionEntry,
 } from "../../agent/production-agent.js";
 import { runAgentLoopDirectWithSoftTimeout } from "../../agent/run-loop-with-resume.js";
@@ -108,6 +110,7 @@ export function assembleA2AFinalResponse(
   const finalText = appendA2AArtifactLinks(responseText, [...toolResults], {
     baseUrl: options.baseUrl ?? resolveArtifactBaseUrl(options.event),
     includeReferencedArtifacts: true,
+    includePersistedArtifactMarker: true,
   });
   if (terminalError && !finalText.trim()) {
     throw new Error(formatA2ATerminalError(terminalError));
@@ -148,6 +151,36 @@ function formatA2ATerminalError(
 
 type A2AAgentLoopRunner = typeof runAgentLoopDirectWithSoftTimeout;
 
+function runDelegatedAgentLoop(
+  runOptions: Parameters<A2AAgentLoopRunner>[0],
+  pluginOptions: Pick<
+    AgentChatPluginOptions,
+    "finalResponseGuard" | "runSoftTimeoutMs"
+  >,
+  timeoutOptions: Parameters<A2AAgentLoopRunner>[2],
+  runner: A2AAgentLoopRunner,
+) {
+  return runner(
+    {
+      ...runOptions,
+      // Delegated runs resolve their own model and do not pass through the
+      // interactive request handler's output-token setup. Use the same
+      // model-aware headroom here so reasoning models (notably GPT-5.x) do
+      // not spend the small internal default entirely on reasoning before
+      // emitting a tool call or answer. Preserve explicit test/caller values.
+      maxOutputTokens:
+        runOptions.maxOutputTokens ??
+        resolveMainChatMaxOutputTokens(runOptions.model),
+      reasoningEffort:
+        runOptions.reasoningEffort ??
+        resolveAgentRequestReasoningEffort({ model: runOptions.model }),
+      finalResponseGuard: pluginOptions.finalResponseGuard,
+    },
+    pluginOptions.runSoftTimeoutMs,
+    timeoutOptions,
+  );
+}
+
 /**
  * Run an A2A-delegated agent turn with the same final-response guard used by
  * the app's interactive chat surface.
@@ -165,13 +198,33 @@ export function runA2AAgentLoop(
   timeoutOptions: Parameters<A2AAgentLoopRunner>[2],
   runner: A2AAgentLoopRunner = runAgentLoopDirectWithSoftTimeout,
 ) {
-  return runner(
-    {
-      ...runOptions,
-      finalResponseGuard: pluginOptions.finalResponseGuard,
-    },
-    pluginOptions.runSoftTimeoutMs,
+  return runDelegatedAgentLoop(
+    runOptions,
+    pluginOptions,
     timeoutOptions,
+    runner,
+  );
+}
+
+/**
+ * Run the MCP-local ask_app turn with the same app-level response guard as
+ * A2A. Keeping this seam shared prevents hosted MCP callers from bypassing
+ * template guarantees when the request cannot use the self-A2A route.
+ */
+export function runMCPAgentLoop(
+  runOptions: Parameters<A2AAgentLoopRunner>[0],
+  pluginOptions: Pick<
+    AgentChatPluginOptions,
+    "finalResponseGuard" | "runSoftTimeoutMs"
+  >,
+  timeoutOptions: Parameters<A2AAgentLoopRunner>[2],
+  runner: A2AAgentLoopRunner = runAgentLoopDirectWithSoftTimeout,
+) {
+  return runDelegatedAgentLoop(
+    runOptions,
+    pluginOptions,
+    timeoutOptions,
+    runner,
   );
 }
 

@@ -1,5 +1,387 @@
 # @agent-native/core
 
+## 0.105.0
+
+### Minor Changes
+
+- 9f2f7a7: Add the Creative Context package for importing, versioning, searching, and reusing workspace decks, designs, assets, websites, and content across creative apps.
+
+  Expose reusable ingestion, prompt-context provider, and search utility seams from core for package-driven creative context.
+
+  Includes bounded image-region cropping for durable localized creative-context fallbacks.
+
+- 9f2f7a7: Redesign the agent workspace with plain files first, dedicated resource collections, and a snapshots view for recent context inspection.
+- 9f2f7a7: Add public session replay context and timestamped Analytics links, support host-owned tracking identity, and allow Analytics replay pages to open at a requested timeline offset.
+
+### Patch Changes
+
+- 9f2f7a7: Fail serverless builds that bundle Vitest test runtime code into production SSR output.
+- 9f2f7a7: Disable app-shell transitions across the shared AgentSidebar subtree while the sidebar is being resized.
+- 9f2f7a7: Count explicitly failed action tool events as errors in observability traces and summaries even when their result text does not start with `Error`.
+- 9f2f7a7: Fix managed Slack OAuth to resolve scoped app credentials within the signed-in request context.
+- 9f2f7a7: Render dashboard, form, and other resource context as a normal composer chip instead of a scoped-chat badge and history partition.
+- 9f2f7a7: Protect existing extension visual design during data-only repairs by requiring explicit intent for full-body replacements, stop deterministic edit failures before the agent retries the same arguments, and resume cleanly when a provider closes while an action input is still being assembled.
+- 9f2f7a7: Teach Plan agents to fence destructive edits against fresh plan revisions and verify persisted content before closing feedback.
+- 9f2f7a7: Inline `AgentChatSurface` and `AgentChatHome` instances now hide the legacy Chat/Workspace header and chat tab row by default.
+- 9f2f7a7: Share package-registered actions across runtime module instances and mount them alongside explicit app action registries.
+- 9f2f7a7: Hide sidebar chat tabs until a second chat is open so a lone chat does not show a “New chat” tab.
+- 9f2f7a7: Re-enable the sticky 80/20 Sonnet 5 versus GPT-5.6 Luna default-model experiment across first-party hosted templates.
+- 9f2f7a7: Avoid repeated desktop sidebar width transitions while the agent sidebar is being resized.
+- 9f2f7a7: Prevent duplicate recovery submissions and reject late worker events after an agent run has already reached a terminal state.
+- Updated dependencies [9f2f7a7]
+  - @agent-native/recap-cli@0.4.3
+
+## 0.104.0
+
+### Minor Changes
+
+- 2625de5: Add the Creative Context package for importing, versioning, searching, and reusing workspace decks, designs, assets, websites, and content across creative apps.
+
+  Expose reusable ingestion, prompt-context provider, and search utility seams from core for package-driven creative context.
+
+  Includes bounded image-region cropping for durable localized creative-context fallbacks.
+
+- 2625de5: Redesign the agent workspace with plain files first, dedicated resource collections, and a snapshots view for recent context inspection.
+- 2625de5: Add public session replay context and timestamped Analytics links, support host-owned tracking identity, and allow Analytics replay pages to open at a requested timeline offset.
+
+### Patch Changes
+
+- 2625de5: Disable app-shell transitions across the shared AgentSidebar subtree while the sidebar is being resized.
+- 2625de5: Count explicitly failed action tool events as errors in observability traces and summaries even when their result text does not start with `Error`.
+- 2625de5: Fix managed Slack OAuth to resolve scoped app credentials within the signed-in request context.
+- 2625de5: Render dashboard, form, and other resource context as a normal composer chip instead of a scoped-chat badge and history partition.
+- 2625de5: Protect existing extension visual design during data-only repairs by requiring explicit intent for full-body replacements, stop deterministic edit failures before the agent retries the same arguments, and resume cleanly when a provider closes while an action input is still being assembled.
+- 2625de5: Teach Plan agents to fence destructive edits against fresh plan revisions and verify persisted content before closing feedback.
+- 2625de5: Inline `AgentChatSurface` and `AgentChatHome` instances now hide the legacy Chat/Workspace header and chat tab row by default.
+- 2625de5: Share package-registered actions across runtime module instances and mount them alongside explicit app action registries.
+- 2625de5: Keep sidebar chat tabs visible in the header and place them beside the new-chat, options, and close controls.
+- 2625de5: Re-enable the sticky 80/20 Sonnet 5 versus GPT-5.6 Luna default-model experiment across first-party hosted templates.
+- 2625de5: Avoid repeated desktop sidebar width transitions while the agent sidebar is being resized.
+- 2625de5: Prevent duplicate recovery submissions and reject late worker events after an agent run has already reached a terminal state.
+- Updated dependencies [2625de5]
+  - @agent-native/recap-cli@0.4.2
+
+## 0.103.1
+
+### Patch Changes
+
+- f512fd2: Keep Cloudflare template builds deployable when browser-only editor and chat packages import input-rule and message-part runtime helpers.
+
+## 0.103.0
+
+### Minor Changes
+
+- 0af0783: Let Content connect manifest-declared local folders to its normal database-backed workspace without enabling a separate local-file data mode.
+
+## 0.102.2
+
+### Patch Changes
+
+- 76a9cca: Improve MCP connection status and make provider connection errors actionable.
+- 76a9cca: Keep queued chat follow-ups draining after fast turns and route cross-origin Assets pickers through a top-level sign-in-safe handoff.
+- 76a9cca: Recover the Agent panel when a stale lazy-loaded chat chunk fails to load.
+- 76a9cca: Keep the Builder source-change handoff card visible outside the collapsed chat work summary.
+
+## 0.102.1
+
+### Patch Changes
+
+- ab33ae7: Make the Agent Files tab taller and viewport-responsive, and let file previews fill the panel height with natural scrolling.
+
+## 0.102.0
+
+### Minor Changes
+
+- 6498492: Add the Tasks template app — a task-list-first agent-native workspace with inbox triage, custom fields, and full action parity for UI and agent.
+
+## 0.101.14
+
+### Patch Changes
+
+- 866d8f0: Bundle the Chat template in the CLI package and download GitHub fallbacks directly from codeload for faster, more reliable scaffolding.
+- 866d8f0: Polish the chat sidebar header by hiding mode tabs and moving full-view navigation into the icon row.
+
+## 0.101.13
+
+### Patch Changes
+
+- e503433: Keep CLI repository downloads asynchronous and challenge bare loopback MCP URLs for OAuth clients.
+- e503433: Keep completed chat work disclosures collapsed and stable when submitting a later message.
+- e503433: Remove the automatic first-session personalization questions from agent chat so new requests are handled directly.
+
+## 0.101.12
+
+### Patch Changes
+
+- 2ff004e: Fix workspace-file resolution and run-code paging/routing edge cases. `contentFromWorkspaceFile` now resolves the same file the run-code `workspaceRead`/`workspaceWrite` bridge sees (bridge scope first, then Resources), and fails closed on a bridge read error instead of silently falling back to a possibly-different same-path Resources body. `workspaceRead` returns null instead of a silently truncated prefix when a later page fails, and the run-code bridge now returns a distinct "not registered" (404) error for unknown tools instead of a misleading read-only access error.
+
+## 0.101.11
+
+### Patch Changes
+
+- fd0ddb8: Wait for agent-card and A2A routes to finish initializing on cold starts, preserve human approval gates across A2A tasks, and carry exact one-time chat authorization through authenticated agent delegation.
+
+## 0.101.10
+
+### Patch Changes
+
+- 3453dd3: Allow review hosts to attach a composer target, anchor, metadata, and visible context while independently controlling agent dispatch, and keep comment-only composers human-routed.
+
+## 0.101.9
+
+### Patch Changes
+
+- bc29c82: Retry visual recap publishing once with a focused source-repair turn when the hosted Plan parser rejects malformed MDX.
+- Updated dependencies [bc29c82]
+  - @agent-native/recap-cli@0.4.1
+
+## 0.101.8
+
+### Patch Changes
+
+- b023dad: Keep Builder account connection available when an app does not configure the separate Builder branch-creation capability, and describe preview relay setup failures before authorization accurately.
+- b023dad: Show Builder connection setup in Settings and use a content-blocker-safe status route.
+- b023dad: Relay Builder authorization securely from an approved callback deployment into an exact allowlisted, immutable preview origin, with deploy-specific Netlify permalinks, a 32+ character shared HMAC secret, and bounded relay request bodies.
+
+## 0.101.7
+
+### Patch Changes
+
+- 70caa6f: Preserve participant-visible integration replies and verified artifact identities so threaded corrections can reliably target resources after renames.
+
+## 0.101.6
+
+### Patch Changes
+
+- dd47e0a: Clarify how to add a UI later while preserving a headless app's shared action and data contract.
+
+## 0.101.5
+
+### Patch Changes
+
+- 9dd88f4: Opt the dedicated `get-code-execution` and `refresh-screen` volatile reads out of the duplicate read-only tool-call guard via the new `dedupe: false` action option while retaining default duplicate protection for normal `run-code` executions. Also raise `get-extension` and `get-extension-history-version` result caps to 500,000 and 2,000,000 characters respectively so JSON serialization overhead cannot slice mid-content and corrupt source reads for large extensions or their history.
+- 9dd88f4: Prevent repeated read-only tool loops while preserving trimmed results, allow volatile reads to opt out of deduping, and enforce notification webhook allowlists at the scope that supplied each secret.
+
+## 0.101.4
+
+### Patch Changes
+
+- 7d72df1: Keep chat responsive while replaying dense agent event bursts, and surface safe cancellation when a live background run has gone quiet.
+- 7d72df1: Bundle one complete Yjs runtime into serverless deploy output so SSR starts without missing named exports.
+
+## 0.101.3
+
+### Patch Changes
+
+- 7cfb087: Keep centered chat composer skeletons aligned with the real composer while the chat UI loads.
+- 7cfb087: Document PR Visual Recap's cost drivers and cheaper model options (`claude-haiku-4-5`, `gpt-5.6-luna`/`gpt-5.6-terra`, `openai-compatible` providers), and note that the Claude backend now defaults to `claude-sonnet-5` when `VISUAL_RECAP_MODEL` is unset. Adds a matching cost/model-choice section to the Visual Plans template doc.
+- 7cfb087: Fail closed when first-party scaffolds cannot be downloaded from the CLI's immutable core version tags instead of mixing newer templates with an older runtime.
+- 7cfb087: Resolve `${keys.NAME}` in the agent fetch tool and notification webhooks through the request-scope cascade so Dispatch-vault keys scoped to the workspace/org resolve like they already do for extensions and automations.
+- 7cfb087: Resolve provider credentials from encrypted Dispatch vault secrets, keep hosted A2A agent discovery distinct from mounted workspace app inventory, and run long Analytics A2A tasks on the durable background worker.
+- 7cfb087: Expose the embedded OG font resolver so template social images keep their text visible in serverless runtimes.
+- 7cfb087: Stop agent turns from looping across alternating read-only docs and source search tools.
+- 7cfb087: Publish PR Visual Recap helpers as a dependency-light CLI package so recap workflows no longer install the full Agent-Native framework dependency graph.
+- 7cfb087: Derive workspace-shared secret encryption material from A2A_SECRET on hosted workspace deploys so vault keys decrypt across sibling apps, and stop serving stale shared ciphertext after a value is updated without shared key material.
+- Updated dependencies [7cfb087]
+- Updated dependencies [7cfb087]
+- Updated dependencies [7cfb087]
+  - @agent-native/recap-cli@0.4.0
+
+## 0.101.2
+
+### Patch Changes
+
+- 616e2b9: Copying an assistant message now preserves formatting when pasting into apps
+  that read rich clipboard content (e.g. Slack), while still pasting as markdown
+  in editors like Notion. Falls back to plain-text copy where the browser does
+  not support rich clipboard writes.
+
+## 0.101.1
+
+### Patch Changes
+
+- f25194e: Keep centered chat composer skeletons aligned with the real composer while the chat UI loads.
+- f25194e: Document PR Visual Recap's cost drivers and cheaper model options (`claude-haiku-4-5`, `gpt-5.6-luna`/`gpt-5.6-terra`, `openai-compatible` providers), and note that the Claude backend now defaults to `claude-sonnet-5` when `VISUAL_RECAP_MODEL` is unset. Adds a matching cost/model-choice section to the Visual Plans template doc.
+- f25194e: Fail closed when first-party scaffolds cannot be downloaded from the CLI's immutable core version tags instead of mixing newer templates with an older runtime.
+- f25194e: Expose the embedded OG font resolver so template social images keep their text visible in serverless runtimes.
+- f25194e: Stop agent turns from looping across alternating read-only docs and source search tools.
+- f25194e: Publish PR Visual Recap helpers as a dependency-light CLI package so recap workflows no longer install the full Agent-Native framework dependency graph.
+- Updated dependencies [f25194e]
+- Updated dependencies [f25194e]
+- Updated dependencies [f25194e]
+  - @agent-native/recap-cli@0.3.0
+
+## 0.101.0
+
+### Minor Changes
+
+- fb281f4: Export first-class A2A auth primitives for the HTTP action route so workspaces
+  stop reaching into core internals:
+  - `verifyA2AToken` (and `A2ATokenPayload`) from `@agent-native/core/a2a` — the
+    same verifier the `/_agent-native/a2a` endpoint uses, including org-level
+    fallback secrets. Apps no longer need to reimplement a partial HS256 verifier.
+  - `AGENT_RUN_OWNER_CONTEXT_KEY`, `seedAgentRunOwnerContext`, and
+    `AgentRunOwnerContext` from `@agent-native/core/server` — a typed contract for
+    pre-seeding the resolved caller, replacing the hardcoded context-key string.
+  - A new `actionRouteAuth` option on `createAgentChatPlugin` (and `ActionRouteAuthAdapter`
+    / `actionRouteAuth` on `mountActionRoutes`). Its `resolveCaller` runs before
+    the `getSession` chain on `/_agent-native/actions/*`, letting apps accept A2A
+    JWTs declaratively instead of intercepting Nitro's `request` hook. Returning
+    `null` defers to the existing framework auth chain; throwing hard-rejects the
+    request with a 401 so an invalid credential can't fall through to a
+    same-origin session cookie. A resolved caller's org comes exclusively from
+    the verified credential — the adapter-returned `orgId`
+    (`ActionRouteResolvedCaller`) or the owner-email membership lookup — never
+    from ambient session/org cookie state, so a request carrying both a valid
+    A2A bearer and an unrelated browser cookie can't execute under the cookie
+    user's org. A2A writes stay org-scoped.
+
+  All additive — existing callers are unaffected.
+
+## 0.100.4
+
+### Patch Changes
+
+- f2ed084: Add public-safe review reads and client gating, root-thread agent routing, durable resolution notes, and capability-aware review panels.
+
+## 0.100.3
+
+### Patch Changes
+
+- a6742d1: Publish PR Visual Recap helpers as a dependency-light CLI package so recap workflows no longer install the full Agent-Native framework dependency graph.
+- Updated dependencies [a6742d1]
+  - @agent-native/recap-cli@0.2.0
+
+## 0.100.2
+
+### Patch Changes
+
+- f8cf755: Add a native local-runtime sign-in handoff for Codex-backed ChatGPT subscriptions in Agent composer surfaces.
+- f8cf755: Fix Slack integration fallbacks and link replies directly to Dispatch chat threads.
+- f8cf755: Keep workspace-shared app secrets decryptable across sibling apps.
+
+## 0.100.1
+
+### Patch Changes
+
+- 037cc3a: Validate explicit Calendar and Mail connector catalog actions through the external MCP lifecycle.
+
+## 0.100.0
+
+### Minor Changes
+
+- 8e6f022: Add an Agent Jobs page tab for recurring jobs and personal automations, with scoped status views and management controls.
+- 8e6f022: Add the full-page Agent surface with scoped Context, Files, Connections, Jobs, and Access tabs, plus shared MCP connection guidance.
+- 8e6f022: Expose system-prompt sections in Context X-Ray and add a no-thread context preview with provenance, governance, and token breakdowns.
+
+### Patch Changes
+
+- 8e6f022: Document the full-page Agent surface, its tab responsibilities, and the in-app external-client Access flow.
+- 8e6f022: Align fullscreen chat thread width with the composer width.
+- 8e6f022: Preserve the registered root Google OAuth callback for workspace apps when deploy-time workspace metadata is available but a runtime relay flag is missing.
+- 8e6f022: Recover reasoning-only model completions before app-specific final-answer guards run, and keep guards anchored to the original user request across internal continuations.
+
+## 0.99.3
+
+### Patch Changes
+
+- 03cd25c: Document the `agent-native invoke` CLI usage and flags on the A2A protocol docs page, across all locales.
+
+## 0.99.2
+
+### Patch Changes
+
+- 34b4f29: Keep Demo mode browser-local so backend actions and agent/MCP results retain real access-scoped data.
+- 34b4f29: Fix 404s when client-side navigating from the dispatch shell into a mounted workspace sub-app's root route. React Router's `.data` loader-fetch convention (e.g. `/coach.data`) didn't match either deployment platform's per-app routing rules (`basePath` / `basePath/*`), so the request fell through to a bare 404 before reaching the app's own server, leaving the sub-app stuck retrying its own action/agent-chat calls afterward.
+- 34b4f29: Keep the latest reasoning thought expanded until a newer thought arrives, then animate the previous thought closed.
+- 34b4f29: Preserve native browser link behavior when opening embedded extensions in their full view.
+- 34b4f29: Keep chat composers editable while AI provider readiness is loading.
+- 34b4f29: Record framework-owned Design preview iframes in session replays with the same privacy masking as the host page.
+- 34b4f29: Remove the extension viewer's View / edit source button.
+- 34b4f29: Retry transient chat-thread database failures so completed agent responses are not surfaced as unsaved.
+
+## 0.99.1
+
+### Patch Changes
+
+- 7effaba: Ignore malformed collaboration presence payloads and keep recoverable server chat timeout handoffs out of Sentry error issues.
+- 7effaba: Fix mounted app auth and OAuth URL resolution when Vite build-time base paths are not present in the runtime environment.
+- 7effaba: Make delegated agent retries and agent-team runs use the model-aware output budget, so MCP/A2A investigations and background sub-agents can reach real data tools across model families.
+- Updated dependencies [7effaba]
+  - @agent-native/toolkit@0.4.10
+
+## 0.99.0
+
+### Minor Changes
+
+- 3c3a59d: Return durable task handles for long-running MCP agent requests and expose
+  grant-checked status polling instead of holding one MCP tool call open for the
+  full agent run.
+
+### Patch Changes
+
+- 3c3a59d: Add Atlassian Rovo MCP to the built-in integration catalog with Jira setup guidance.
+- 3c3a59d: Keep delegated A2A agent runs aligned with interactive prompt context and request-scoped browser access.
+- 3c3a59d: Keep anonymous SSR shells long-cacheable across hosting providers and keep viewer-specific data on client/API paths.
+- 3c3a59d: Add `/mcp` as the canonical public MCP URL while preserving `/_agent-native/mcp` for existing clients.
+
+## 0.98.17
+
+### Patch Changes
+
+- 7bc381d: Preserve the authenticated owner context when delegated A2A agent runs are reconstructed by the processor.
+
+## 0.98.16
+
+### Patch Changes
+
+- cc35446: Resolve the authenticated owner's active provider key for A2A and MCP ask-agent runs, matching the interactive chat engine path.
+
+## 0.98.15
+
+### Patch Changes
+
+- 2161d10: Preserve streamed tool calls when an engine omits its normalized assistant-content event so delegated and MCP agent runs can still execute requested actions.
+
+## 0.98.14
+
+### Patch Changes
+
+- 460583e: Run final-response guards even when an engine completes with streamed text but no normalized assistant-content event.
+
+## 0.98.13
+
+### Patch Changes
+
+- c61d923: Keep delegated A2A and MCP agent turns explicitly bound to the authenticated owner/org scope and Act execution mode.
+
+## 0.98.12
+
+### Patch Changes
+
+- 29a77ab: Keep MCP-local `ask_app` turns on the same app-level final-response guard as A2A turns.
+
+## 0.98.11
+
+### Patch Changes
+
+- 3a4b613: Fall back to the portable A2A processor when a configured durable background worker rejects a task dispatch, and allow apps to explicitly opt out of stale deploy-wide background flags.
+- 3a4b613: Preserve structured payloads from read-only MCP actions so external agents can inspect detailed records and replay data directly.
+- 3a4b613: Preserve unset durable-background configuration and make A2A fallback dispatches reliable when the background worker is unavailable.
+
+## 0.98.10
+
+### Patch Changes
+
+- 079713c: Fall back to the portable A2A processor when a configured durable background worker rejects a task dispatch, and allow apps to explicitly opt out of stale deploy-wide background flags.
+- 079713c: Preserve structured payloads from read-only MCP actions so external agents can inspect detailed records and replay data directly.
+
+## 0.98.9
+
+### Patch Changes
+
+- 944c202: Preserve structured payloads from read-only MCP actions so external agents can inspect detailed records and replay data directly.
+
 ## 0.98.8
 
 ### Patch Changes

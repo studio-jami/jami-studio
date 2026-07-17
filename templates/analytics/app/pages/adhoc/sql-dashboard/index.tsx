@@ -297,7 +297,10 @@ const PanelCell = memo(function PanelCell({
     [panel, vars],
   );
   const resolvedSql = useMemo(
-    () => interpolate(serializePanelSql(panel.sql), vars),
+    () =>
+      interpolate(serializePanelSql(panel.sql), vars, {
+        failClosedTimeVariables: true,
+      }),
     [panel.sql, vars],
   );
   const handleSelectForChat = useCallback(
@@ -1144,12 +1147,16 @@ export default function SqlDashboardPage() {
   }, [dashboard]);
 
   const requestedTab = searchParams.get("tab");
-  const activeTab =
+  const selectedTab =
     tabs.length > 0
       ? requestedTab && tabs.includes(requestedTab)
         ? requestedTab
         : tabs[0]
       : null;
+  // Report captures need the complete dashboard in one image. The report
+  // URL intentionally has no `tab` parameter, so do not apply the normal
+  // first-tab selection while rendering the screenshot surface.
+  const activeTab = reportScreenshot ? null : selectedTab;
   const groupedTabs = useMemo(() => groupDashboardTabs(tabs), [tabs]);
   const activeTabGroup = activeTab
     ? groupedTabs.groups.find((group) =>

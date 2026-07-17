@@ -10,6 +10,7 @@ import {
   IconTool,
   IconX,
   IconClipboardList,
+  IconKey,
   IconPencil,
   IconPlugConnected,
 } from "@tabler/icons-react";
@@ -57,6 +58,7 @@ import {
   TooltipTrigger,
 } from "../components/ui/tooltip.js";
 import { isTrustedFrameMessage } from "../frame.js";
+import { useT } from "../i18n.js";
 import { useBuilderConnectFlow } from "../settings/useBuilderStatus.js";
 import { ComposerPlusMenu } from "./ComposerPlusMenu.js";
 import { getComposerDraftKey } from "./draft-key.js";
@@ -623,11 +625,13 @@ export interface TiptapComposerProps {
    */
   providerConnectStatusEnabled?: boolean;
   /**
-   * Override the Builder.io connect action in the model picker. When provided,
+   * Override the Jami Studio connect action in the model picker. When provided,
    * clicking "Connect Jami Studio" calls this instead of opening a browser popup.
    * Used by the Electron desktop app to route through the native IPC handler.
    */
   onConnectProvider?: () => void;
+  /** Route local runtime setup through the host's native bridge. */
+  onConnectLocalRuntime?: (engine: string) => void;
   /**
    * Optional secondary model menu (e.g. an image-generation model) rendered as
    * an extra section inside the model picker. Opt-in; omit for chat-only apps.
@@ -807,6 +811,7 @@ function ModeSelector({
 
 const FRIENDLY_MODEL_NAMES: Record<string, string> = {
   auto: "Default model",
+  "codex-cli": "ChatGPT subscription",
   "claude-fable-5": "Fable 5",
   "kimi-k2-5": "Kimi K2.5",
   "deepseek-v3-1": "DeepSeek v3.1",
@@ -949,6 +954,7 @@ function ModelSelector({
   onEffortChange,
   providerConnectStatusEnabled = true,
   onConnectProvider,
+  onConnectLocalRuntime,
   imageModel,
 }: {
   model: string;
@@ -963,8 +969,10 @@ function ModelSelector({
   onEffortChange?: (effort: ReasoningEffort) => void;
   providerConnectStatusEnabled?: boolean;
   onConnectProvider?: () => void;
+  onConnectLocalRuntime?: (engine: string) => void;
   imageModel?: ComposerImageModelMenu;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const autoModelGroup = engines.find((group) => group.models.includes("auto"));
   const providerGroups = useMemo(
@@ -1050,6 +1058,13 @@ function ModelSelector({
     window.dispatchEvent(new CustomEvent("agent-panel:open-settings"));
     setOpen(false);
   }, []);
+  const connectLocalRuntime = useCallback(
+    (engine: string) => {
+      onConnectLocalRuntime?.(engine);
+      setOpen(false);
+    },
+    [onConnectLocalRuntime],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -1102,11 +1117,37 @@ function ModelSelector({
               <span className="flex-1 min-w-0">
                 <span className="block text-[12px] font-medium text-foreground">
                   {!onConnectProvider && builderFlow.connecting
-                    ? "Connecting Jami Studio…"
-                    : "Connect Jami Studio"}
+                    ? t("agentPanel.connectingBuilder", {
+                        defaultValue: "Connecting Jami Studio…",
+                      })
+                    : t("agentPanel.connectBuilderIo", {
+                        defaultValue: "Connect Jami Studio",
+                      })}
                 </span>
                 <span className="block text-[11px] text-muted-foreground">
-                  Free credits for Claude, OpenAI &amp; Gemini
+                  {t("agentPanel.builderModelCredits", {
+                    defaultValue: "Free credits for Claude, OpenAI & Gemini",
+                  })}
+                </span>
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={openLlmSettings}
+              className="flex w-full items-start gap-2 px-3 py-2 text-start hover:bg-accent/50"
+            >
+              <IconKey className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-[12px] font-medium text-foreground">
+                  {t("agentPanel.addOwnKeys", {
+                    defaultValue: "Add your own keys",
+                  })}
+                </span>
+                <span className="block text-[11px] text-muted-foreground">
+                  {t("agentPanel.configureProviderKeys", {
+                    defaultValue:
+                      "Configure Anthropic, OpenAI, or another provider",
+                  })}
                 </span>
               </span>
             </button>
@@ -1207,9 +1248,15 @@ function ModelSelector({
                   <button
                     type="button"
                     className="text-[10px] text-muted-foreground/60 hover:text-foreground cursor-pointer pe-3 py-1.5"
-                    onClick={openLlmSettings}
+                    onClick={() =>
+                      group.engine === "codex-cli" && onConnectLocalRuntime
+                        ? connectLocalRuntime(group.engine)
+                        : openLlmSettings()
+                    }
                   >
-                    needs API key
+                    {group.engine === "codex-cli" && onConnectLocalRuntime
+                      ? "sign in"
+                      : "needs API key"}
                   </button>
                 )}
               </div>
@@ -1220,7 +1267,14 @@ function ModelSelector({
                     type="button"
                     onClick={() => {
                       if (!group.configured) {
-                        openLlmSettings();
+                        if (
+                          group.engine === "codex-cli" &&
+                          onConnectLocalRuntime
+                        ) {
+                          connectLocalRuntime(group.engine);
+                        } else {
+                          openLlmSettings();
+                        }
                         return;
                       }
                       onChange(m, group.engine);
@@ -1339,6 +1393,7 @@ export function TiptapComposer({
   onEffortChange,
   providerConnectStatusEnabled,
   onConnectProvider,
+  onConnectLocalRuntime,
   imageModelMenu,
   draftScope,
   contextItems = [],
@@ -2740,6 +2795,7 @@ export function TiptapComposer({
             onEffortChange={onEffortChange}
             providerConnectStatusEnabled={providerConnectStatusEnabled}
             onConnectProvider={onConnectProvider}
+            onConnectLocalRuntime={onConnectLocalRuntime}
             imageModel={imageModelMenu}
           />
         )}

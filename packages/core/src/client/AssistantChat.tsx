@@ -1813,6 +1813,8 @@ export interface AssistantChatProps {
   onForkChat?: () => void | boolean | Promise<void | boolean>;
   /** Override Builder/provider connect routing for embedded hosts. */
   onConnectProvider?: () => void;
+  /** Route local runtime setup through the host's native bridge. */
+  onConnectLocalRuntime?: (engine: string) => void;
   /**
    * Controls the shared composer + menu. Sidebar keeps the full menu by default;
    * hosts without the sidebar provider stack can use upload-only.
@@ -2177,6 +2179,7 @@ const AssistantChatInner = forwardRef<
     imageModelMenu,
     onForkChat,
     onConnectProvider,
+    onConnectLocalRuntime,
     plusMenuMode = "full",
     providerStatusChecksEnabled = true,
     loadHistoryRepository,
@@ -2307,8 +2310,7 @@ const AssistantChatInner = forwardRef<
   const missingApiKey = agentEngineConfigured.missing;
   const isProviderStatusChecking =
     providerStatusChecksEnabled && agentEngineConfigured.state === "unknown";
-  const isComposerDisabled =
-    missingApiKey || isProviderStatusChecking || composerDisabled;
+  const isComposerDisabled = missingApiKey || composerDisabled;
   const [missingKeySetupOpen, setMissingKeySetupOpen] = useState(false);
   const requestMissingKeySetup = useCallback(() => {
     setMissingKeySetupOpen(true);
@@ -2352,6 +2354,11 @@ const AssistantChatInner = forwardRef<
   } | null>(null);
   const [authSessionAvailable, setAuthSessionAvailable] = useState(false);
   const [queuedMessages, setQueuedMessages] = useState<QueuedMessage[]>([]);
+  // The dequeue guard briefly stays locked after appending a queued turn so
+  // the adapter has time to claim the run. Wake the effect when that guard
+  // expires; otherwise a fast-completing turn can leave the remaining queue
+  // pending with no state transition left to trigger another dequeue.
+  const [queueWakeVersion, setQueueWakeVersion] = useState(0);
   const queuedMessagesRef = useRef<QueuedMessage[]>([]);
   const queueDirtyRef = useRef(false);
   const queueMutationVersionRef = useRef(0);
@@ -4039,6 +4046,7 @@ const AssistantChatInner = forwardRef<
           if (appended) {
             window.setTimeout(() => {
               dequeueInFlightRef.current = false;
+              setQueueWakeVersion((version) => version + 1);
             }, 500);
           } else {
             dequeueInFlightRef.current = false;
@@ -4060,6 +4068,7 @@ const AssistantChatInner = forwardRef<
     applyLocalQueuedMessages,
     isRestoring,
     isRunning,
+    queueWakeVersion,
     queuedMessages,
     threadId,
   ]);
@@ -5136,13 +5145,11 @@ const AssistantChatInner = forwardRef<
                             "agent-empty-state",
                             emptyStateDisplay === "hidden"
                               ? "sr-only"
-                              : "flex h-full flex-col items-center justify-center gap-4 px-4 py-16",
+                              : "flex h-full flex-col items-center justify-center gap-3 px-4 py-16",
                           )}
                           aria-busy="true"
                         >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                            <IconMessage className="h-5 w-5 text-muted-foreground" />
-                          </div>
+                          <IconMessage className="h-5 w-5 text-muted-foreground/60" />
                           <p className="sr-only">
                             {emptyStateText ?? "Loading chat..."}
                           </p>
@@ -5164,19 +5171,17 @@ const AssistantChatInner = forwardRef<
                             "agent-empty-state",
                             emptyStateDisplay === "hidden"
                               ? "sr-only"
-                              : "flex h-full flex-col items-center justify-center gap-4 px-4 py-16",
+                              : "flex h-full flex-col items-center justify-center gap-3 px-4 py-16",
                           )}
                         >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                            <IconMessage className="h-5 w-5 text-muted-foreground" />
-                          </div>
+                          <IconMessage className="h-5 w-5 text-muted-foreground/60" />
                           <p className="sr-only">
                             {emptyStateText ?? "How can I help you?"}
                           </p>
                           {emptyStateAddon}
                           {resolvedSuggestions &&
                           resolvedSuggestions.length > 0 ? (
-                            <div className="flex flex-col gap-1.5 w-full max-w-[280px]">
+                            <div className="flex w-full max-w-[280px] flex-col gap-1">
                               {resolvedSuggestions.map((suggestion) => (
                                 <button
                                   key={suggestion}
@@ -5187,7 +5192,7 @@ const AssistantChatInner = forwardRef<
                                     }
                                     void addToQueue(suggestion);
                                   }}
-                                  className="w-full rounded-lg border border-border px-3 py-2 text-start text-[13px] text-muted-foreground hover:bg-accent hover:text-foreground"
+                                  className="w-full px-2 py-1 text-center text-[13px] text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                 >
                                   {suggestion}
                                 </button>
@@ -5530,6 +5535,7 @@ const AssistantChatInner = forwardRef<
                             onEffortChange={onEffortChange}
                             imageModelMenu={imageModelMenu}
                             onConnectProvider={onConnectProvider}
+                            onConnectLocalRuntime={onConnectLocalRuntime}
                             toolbarSlot={composerToolbarSlot}
                             contextItems={composerContextItems}
                             onRemoveContextItem={removeComposerContextItem}

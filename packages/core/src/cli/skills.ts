@@ -12,6 +12,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  MCP_LEGACY_ROUTE_PREFIX,
+  MCP_PUBLIC_ROUTE_PREFIX,
+} from "../mcp/route-paths.js";
+import {
   buildAppSkillPack,
   ensureAppSkill,
   loadAppSkillManifest,
@@ -72,7 +76,7 @@ export const BUILT_IN_APP_SKILLS = {
         "Create, search, select, and export brand image and video assets from the Assets app.",
       hosted: {
         url: "https://assets.jami.studio",
-        mcpUrl: "https://assets.jami.studio/_agent-native/mcp",
+        mcpUrl: "https://assets.jami.studio/mcp",
       },
       mcp: { serverName: "agent-native-assets" },
       auth: {
@@ -115,16 +119,16 @@ export const BUILT_IN_APP_SKILLS = {
       id: "content",
       displayName: "Content",
       description:
-        "Edit docs, blogs, resources, and MDX content through the Content app, including repo-backed Local File Mode.",
+        "Edit docs, blogs, resources, and MDX content through the Content app, including database-backed local-folder sources.",
       hosted: {
         url: "https://content.jami.studio",
-        mcpUrl: "https://content.jami.studio/_agent-native/mcp",
+        mcpUrl: "https://content.jami.studio/mcp",
       },
       mcp: { serverName: "agent-native-content" },
       auth: {
         mode: "oauth",
         setup:
-          "Authenticate with the Content MCP connector in the host app. Local File Mode requires a local Content app, Agent Native Desktop, or trusted local bridge for filesystem access.",
+          "Authenticate with the Content MCP connector in the host app. Local-folder synchronization requires a local Content app, Agent Native Desktop, or trusted local bridge for filesystem access.",
       },
       surfaces: [
         {
@@ -170,7 +174,7 @@ export const BUILT_IN_APP_SKILLS = {
         "Explore, compare, iterate, and export interactive UI design prototypes from the Design app.",
       hosted: {
         url: "https://design.jami.studio",
-        mcpUrl: "https://design.jami.studio/_agent-native/mcp",
+        mcpUrl: "https://design.jami.studio/mcp",
       },
       mcp: { serverName: "agent-native-design" },
       auth: {
@@ -247,7 +251,7 @@ export const BUILT_IN_APP_SKILLS = {
         "Create rich interactive visual plans, recaps, and repo-native visual docs with diagrams, file maps, annotated code and diffs, API/schema summaries, feedback, and HTML export.",
       hosted: {
         url: "https://plan.jami.studio",
-        mcpUrl: "https://plan.jami.studio/_agent-native/mcp",
+        mcpUrl: "https://plan.jami.studio/mcp",
       },
       mcp: { serverName: "plan", aliases: ["agent-native-plans"] },
       auth: {
@@ -317,7 +321,7 @@ export const BUILT_IN_APP_SKILLS = {
         "Visualize local Codex and Claude Code context usage with warnings and optimization tips.",
       hosted: {
         url: "https://context-xray.jami.studio",
-        mcpUrl: "https://context-xray.jami.studio/_agent-native/mcp",
+        mcpUrl: "https://context-xray.jami.studio/mcp",
       },
       mcp: { serverName: "agent-native-context-xray" },
       auth: { mode: "none" },
@@ -937,15 +941,15 @@ function contentModeInstructionBlock(input: {
   if (input.mode === "local-files") {
     return `## Installed Mode
 
-Default storage for this installation: Content Local File Mode. This repo should
-have an \`agent-native.json\` file with \`apps.content.mode: "local-files"\`;
-the installer writes one if missing and fills in default roots for \`docs/\`,
-\`blog/\`, \`content/\`, and \`resources/\`. Prefer Content document actions
-when a local Content app,
-Agent Native Desktop, or another trusted local bridge exposes them. If those
-tools are not currently available, edit the configured Markdown/MDX files and
-local components directly, preserving frontmatter, imports, JSX, and unknown MDX
-syntax. The hosted Content app cannot read private repo files by itself.`;
+Default storage for this installation is Content's SQL database. This repo's
+\`agent-native.json\` declares \`docs/\`, \`blog/\`, \`content/\`, and
+\`resources/\` as local-folder sources with opaque connection ids; it does not
+select a separate application mode. A trusted local Content app or Agent Native
+Desktop bridge imports those files into their workspace's canonical Files
+database, after which normal Content document actions read and edit the SQL-backed
+pages. Use \`sync-manifest-local-folder-source\` with each root's generated
+connection id, or launch \`agent-native content local-files <target>\`, to connect
+and pull it. The hosted Content app cannot read private repo files by itself.`;
   }
   if (input.mode === "self-hosted") {
     return `## Installed Mode
@@ -1135,8 +1139,23 @@ function shouldWriteContentLocalFilesManifest(
   return targetId === "content" && mode === "local-files";
 }
 
+function contentLocalFolderConnectionId(baseDir: string, rootPath: string) {
+  const absoluteRootPath = path.resolve(baseDir, rootPath);
+  let canonicalRootPath = absoluteRootPath;
+  try {
+    canonicalRootPath = fs.realpathSync(absoluteRootPath);
+  } catch (error: any) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+  return `local-folder:${createHash("sha256")
+    .update(canonicalRootPath)
+    .digest("base64url")
+    .slice(0, 24)}`;
+}
+
 function mergeContentLocalFilesManifest(
   existing: unknown,
+  baseDir: string,
 ): Record<string, unknown> {
   const manifest = isJsonRecord(existing) ? { ...existing } : {};
   if (manifest.version === undefined) manifest.version = 1;
@@ -1144,10 +1163,29 @@ function mergeContentLocalFilesManifest(
   const apps = isJsonRecord(manifest.apps) ? { ...manifest.apps } : {};
   const contentApp = isJsonRecord(apps.content) ? { ...apps.content } : {};
   const defaults = defaultContentLocalFilesAppConfig();
-  contentApp.mode = "local-files";
   if (!Array.isArray(contentApp.roots) || contentApp.roots.length === 0) {
     contentApp.roots = defaults.roots;
   }
+  contentApp.roots = contentApp.roots.map((root: unknown) => {
+    if (!isJsonRecord(root) || typeof root.path !== "string") return root;
+    const source = isJsonRecord(root.source) ? root.source : {};
+    return {
+      ...root,
+      source: {
+        ...source,
+        type: "local-folder",
+        connectionId:
+          typeof source.connectionId === "string" && source.connectionId
+            ? source.connectionId
+            : contentLocalFolderConnectionId(baseDir, root.path),
+        truthPolicy:
+          typeof source.truthPolicy === "string"
+            ? source.truthPolicy
+            : "source_primary",
+      },
+    };
+  });
+  delete contentApp.mode;
   if (contentApp.components === undefined) {
     contentApp.components = defaults.components;
   }
@@ -1177,7 +1215,7 @@ function writeContentLocalFilesManifest(
       );
     }
   }
-  const manifest = mergeContentLocalFilesManifest(existing);
+  const manifest = mergeContentLocalFilesManifest(existing, baseDir);
   if (!options.dryRun) {
     fs.writeFileSync(
       manifestPath,
@@ -2771,8 +2809,11 @@ function preserveMcpUrlAppPathOverride(
     return target;
   }
   const trimmedPath = parsed.pathname.replace(/\/+$/, "");
-  const appPath = trimmedPath.endsWith("/_agent-native/mcp")
-    ? trimmedPath.slice(0, -"/_agent-native/mcp".length).replace(/\/+$/, "")
+  const mcpSuffix = [MCP_LEGACY_ROUTE_PREFIX, MCP_PUBLIC_ROUTE_PREFIX].find(
+    (suffix) => trimmedPath === suffix || trimmedPath.endsWith(suffix),
+  );
+  const appPath = mcpSuffix
+    ? trimmedPath.slice(0, -mcpSuffix.length).replace(/\/+$/, "")
     : trimmedPath;
   if (!appPath) return target;
   const url = `${parsed.origin}${appPath}`;
@@ -2782,7 +2823,7 @@ function preserveMcpUrlAppPathOverride(
       ...target.loaded,
       manifest: {
         ...target.loaded.manifest,
-        hosted: { url, mcpUrl: `${url}/_agent-native/mcp` },
+        hosted: { url, mcpUrl: `${url}${MCP_PUBLIC_ROUTE_PREFIX}` },
       },
     },
   };
@@ -2870,7 +2911,8 @@ async function runCommand(
 /**
  * Resolve a `--mcp-url` override into the `{ url, mcpUrl }` pair the manifest
  * expects. Accepts a bare origin (`https://x.ngrok-free.dev`) — appending the
- * standard `/_agent-native/mcp` path — or a full MCP URL already ending in it.
+ * standard `/mcp` path — or a full MCP URL already ending in `/mcp` or the
+ * legacy `/_agent-native/mcp` path.
  */
 function resolveMcpUrlOverride(input: string): { url: string; mcpUrl: string } {
   let parsed: URL;
@@ -2884,9 +2926,12 @@ function resolveMcpUrlOverride(input: string): { url: string; mcpUrl: string } {
   }
   const origin = parsed.origin;
   const trimmedPath = parsed.pathname.replace(/\/+$/, "");
-  const mcpUrl = trimmedPath.endsWith("/_agent-native/mcp")
-    ? `${origin}${trimmedPath}`
-    : `${origin}/_agent-native/mcp`;
+  const mcpSuffix = [MCP_LEGACY_ROUTE_PREFIX, MCP_PUBLIC_ROUTE_PREFIX].find(
+    (suffix) => trimmedPath === suffix || trimmedPath.endsWith(suffix),
+  );
+  const mcpUrl = mcpSuffix
+    ? `${origin}${trimmedPath.slice(0, -mcpSuffix.length)}${MCP_PUBLIC_ROUTE_PREFIX}`
+    : `${origin}${MCP_PUBLIC_ROUTE_PREFIX}`;
   return { url: origin, mcpUrl };
 }
 

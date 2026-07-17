@@ -20,6 +20,7 @@ import type { ListContentDatabasesResponse } from "@shared/api";
 import {
   IconDatabase,
   IconDeviceDesktop,
+  IconBrain,
   IconFileText,
   IconFolderOpen,
   IconLoader2,
@@ -61,6 +62,7 @@ import {
 } from "./lib/content-command-search";
 
 import stylesheet from "./global.css?url";
+import katexStylesheet from "katex/dist/katex.min.css?url";
 configureTracking({
   getDefaultProps: (_name, properties) => ({
     ...properties,
@@ -70,6 +72,7 @@ configureTracking({
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: katexStylesheet },
 ];
 
 interface RootLoaderData {
@@ -522,6 +525,7 @@ function ContentCommandMenu({
   onOpenChange: (open: boolean) => void;
 }) {
   const t = useT();
+  const navigate = useNavigate();
   return (
     <CommandMenu
       open={open}
@@ -536,6 +540,12 @@ function ContentCommandMenu({
         />
       )}
     >
+      <CommandMenu.Group heading={t("root.commandContent")}>
+        <CommandMenu.Item onSelect={() => navigate("/agent")}>
+          <IconBrain size={16} />
+          {t("root.openAgent")}
+        </CommandMenu.Item>
+      </CommandMenu.Group>
       <CommandMenu.Group heading={t("root.commandAppearance")}>
         <ThemeToggleItem />
       </CommandMenu.Group>

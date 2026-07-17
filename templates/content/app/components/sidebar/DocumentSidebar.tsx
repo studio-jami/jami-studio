@@ -2,6 +2,7 @@ import {
   DevDatabaseLink,
   FeedbackButton,
   appPath,
+  setClientAppState,
   useActionMutation,
   useCodeMode,
   useT,
@@ -10,7 +11,11 @@ import {
   ExtensionSlot,
   ExtensionsSidebarSection,
 } from "@agent-native/core/client/extensions";
-import { OrgSwitcher } from "@agent-native/core/client/org";
+import {
+  OrgSwitcher,
+  useOrg,
+  useSwitchOrg,
+} from "@agent-native/core/client/org";
 import {
   closestCenter,
   DndContext,
@@ -29,6 +34,7 @@ import {
 import type { Document, DocumentTreeNode } from "@shared/api";
 import {
   IconDatabase,
+  IconBrain,
   IconFileText,
   IconPlus,
   IconRestore,
@@ -44,10 +50,18 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import { ContentFilesSidebarView } from "@/components/editor/database/sidebar";
 import { QueryErrorState } from "@/components/QueryErrorState";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -75,11 +89,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  useContentDatabaseById,
+  useContentDatabasePersonalView,
+  useUpdateContentDatabasePersonalView,
   useCreateContentDatabase,
   useDeleteContentDatabase,
   useRestoreContentDatabase,
   useTrashedContentDatabases,
 } from "@/hooks/use-content-database";
+import {
+  useContentSpaces,
+  useEnsureContentSpaces,
+} from "@/hooks/use-content-spaces";
 import {
   useDocuments,
   useCreateDocument,
@@ -98,6 +119,10 @@ import {
 } from "./document-sidebar-sections";
 import { DocumentSidebarIcon, DocumentTreeItem } from "./DocumentTreeItem";
 import { NotionButton } from "./NotionButton";
+import {
+  contentSpaceForActiveOrg,
+  selectContentSpace,
+} from "./select-content-space";
 
 function nanoid(size = 12): string {
   const chars =
@@ -162,6 +187,7 @@ type CollapsedSectionsState = Record<SidebarSectionId, boolean>;
 
 const SIDEBAR_SECTION_COLLAPSE_STORAGE_KEY =
   "content-sidebar-collapsed-sections";
+const SELECTED_CONTENT_SPACE_STORAGE_KEY = "content-selected-space";
 
 const DEFAULT_COLLAPSED_SECTIONS: CollapsedSectionsState = {
   "local-files": false,
@@ -211,6 +237,79 @@ export function DocumentSidebar({
   const { data: trashedDatabases } = useTrashedContentDatabases();
   const { isCodeMode } = useCodeMode();
   const updateDocument = useUpdateDocument();
+  const contentSpacesQuery = useContentSpaces();
+  const ensureContentSpaces = useEnsureContentSpaces();
+  const { data: activeOrg } = useOrg();
+  const switchOrg = useSwitchOrg();
+  const contentSpaces = contentSpacesQuery.data?.spaces ?? [];
+  const spaceProvisionAttemptedRef = useRef(false);
+  useEffect(() => {
+    if (
+      contentSpacesQuery.isSuccess &&
+      !spaceProvisionAttemptedRef.current &&
+      !ensureContentSpaces.isPending
+    ) {
+      spaceProvisionAttemptedRef.current = true;
+      ensureContentSpaces.mutate({});
+    }
+  }, [
+    contentSpacesQuery.isSuccess,
+    ensureContentSpaces,
+    ensureContentSpaces.isPending,
+  ]);
+  const [storedSpaceId, setStoredSpaceId] = useLocalStorage<string | null>(
+    SELECTED_CONTENT_SPACE_STORAGE_KEY,
+    null,
+  );
+  const selectedSpace = contentSpaceForActiveOrg({
+    spaces: contentSpaces,
+    storedSpaceId,
+    activeOrgId: activeOrg?.orgId,
+  });
+  useEffect(() => {
+    if (selectedSpace && selectedSpace.id !== storedSpaceId) {
+      setStoredSpaceId(selectedSpace.id);
+    }
+  }, [selectedSpace, setStoredSpaceId, storedSpaceId]);
+  const handleSelectContentSpace = useCallback(
+    async (space: (typeof contentSpaces)[number]) => {
+      try {
+        await selectContentSpace({
+          space,
+          activeOrgId: activeOrg?.orgId,
+          switchOrg: (orgId) => switchOrg.mutateAsync(orgId),
+          persistSelection: setStoredSpaceId,
+        });
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : String(error));
+      }
+    },
+    [activeOrg?.orgId, setStoredSpaceId, switchOrg, t],
+  );
+  useEffect(() => {
+    if (!selectedSpace) return;
+    void setClientAppState(
+      "content-space",
+      {
+        spaceId: selectedSpace.id,
+        name: selectedSpace.name,
+        kind: selectedSpace.kind,
+        filesDatabaseId: selectedSpace.filesDatabaseId,
+      },
+      { requestSource: "content-sidebar" },
+    ).catch(() => {
+      // Space selection remains usable when best-effort agent context sync fails.
+    });
+  }, [selectedSpace]);
+  const filesDatabase = useContentDatabaseById(
+    selectedSpace?.filesDatabaseId ?? null,
+  );
+  const filesPersonalView = useContentDatabasePersonalView(
+    selectedSpace?.filesDatabaseId ?? null,
+  );
+  const updateFilesPersonalView = useUpdateContentDatabasePersonalView(
+    selectedSpace?.filesDatabaseId ?? null,
+  );
   const removeLocalFileSource = useActionMutation<
     RemoveLocalFileSourceResult,
     { sourceRootPath?: string | null }
@@ -232,6 +331,7 @@ export function DocumentSidebar({
   const [removeLocalFilesDialogOpen, setRemoveLocalFilesDialogOpen] =
     useState(false);
   const localFilesActive = location.pathname.startsWith("/local-files");
+  const agentActive = location.pathname.startsWith("/agent");
   const settingsActive = location.pathname.startsWith("/settings");
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -281,10 +381,6 @@ export function DocumentSidebar({
   } = getDocumentSidebarSections(documents, treeDocuments);
   const localFileTree = buildDocumentTree(localSourceDocuments);
   const databaseTree = buildDocumentTree(databaseDocuments);
-  const privateTree = databaseTree.filter((node) => node.visibility !== "org");
-  const organizationTree = databaseTree.filter(
-    (node) => node.visibility === "org",
-  );
   const importedLocalFileCount = localFileMode
     ? 0
     : localSourceDocuments.filter(
@@ -346,6 +442,7 @@ export function DocumentSidebar({
           const created = await createDocument.mutateAsync({
             title: "",
             parentId: parentId ?? undefined,
+            spaceId: selectedSpace?.id,
           });
           queryClient.setQueryData(
             ["action", "get-document", { id: created.id }],
@@ -400,6 +497,7 @@ export function DocumentSidebar({
           id,
           title: "",
           parentId: parentId ?? undefined,
+          spaceId: selectedSpace?.id,
         });
         const nextId = created?.id || id;
         if (nextId !== id) {
@@ -442,6 +540,7 @@ export function DocumentSidebar({
       navigateToDocument,
       onNavigate,
       queryClient,
+      selectedSpace?.id,
     ],
   );
 
@@ -450,6 +549,7 @@ export function DocumentSidebar({
       try {
         const result = await createDatabase.mutateAsync({
           parentId: parentId ?? null,
+          spaceId: parentId ? undefined : selectedSpace?.id,
           title: t("editor.untitledDatabase"),
         });
         navigateToDocument(result.database.documentId);
@@ -461,7 +561,7 @@ export function DocumentSidebar({
         });
       }
     },
-    [createDatabase, navigateToDocument, onNavigate, t],
+    [createDatabase, navigateToDocument, onNavigate, selectedSpace?.id, t],
   );
 
   const handleDelete = useCallback(
@@ -721,104 +821,101 @@ export function DocumentSidebar({
     </SortableContext>
   );
 
-  const renderNewButton = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+  const renderNewButton = () =>
+    selectedSpace ? (
+      <div className="flex items-center gap-1">
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-3 py-[5px] text-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-          disabled={createDocument.isPending || createDatabase.isPending}
+          className="flex min-w-0 flex-1 items-center gap-2 rounded-md px-3 py-[5px] text-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+          disabled={createDocument.isPending}
+          onClick={() => void handleCreatePage()}
         >
           <IconPlus size={14} className="shrink-0" />
-          <span>{t("sidebar.new")}</span>
+          <span>{t("sidebar.newPage")}</span>
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-44">
-        <DropdownMenuItem
-          disabled={createDocument.isPending}
-          onClick={() => void handleCreatePage()}
-        >
-          <IconFileText className="me-2 size-4" />
-          {t("sidebar.page")}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={createDatabase.isPending}
-          onClick={() => void handleCreateDatabase(null)}
-        >
-          <IconDatabase className="me-2 size-4" />
-          {t("sidebar.database")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-
-  const renderCollapsedNewButton = () => (
-    <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
+        <Tooltip>
+          <TooltipTrigger asChild>
             <button
               type="button"
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground"
-              disabled={createDocument.isPending || createDatabase.isPending}
+              className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+              disabled={createDatabase.isPending}
+              aria-label={t("sidebar.newDatabase")}
+              onClick={() => void handleCreateDatabase()}
             >
-              <IconPlus size={16} />
+              <IconDatabase size={14} />
             </button>
-          </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent>{t("sidebar.newDatabase")}</TooltipContent>
+        </Tooltip>
+      </div>
+    ) : null;
+
+  const renderCollapsedNewButton = () =>
+    selectedSpace ? (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground"
+            disabled={createDocument.isPending}
+            onClick={() => void handleCreatePage()}
+          >
+            <IconPlus size={16} />
+          </button>
         </TooltipTrigger>
-        <TooltipContent>{t("sidebar.new")}</TooltipContent>
+        <TooltipContent>{t("sidebar.newPage")}</TooltipContent>
       </Tooltip>
-      <DropdownMenuContent align="start" className="w-44">
-        <DropdownMenuItem
-          disabled={createDocument.isPending}
-          onClick={() => void handleCreatePage()}
-        >
-          <IconFileText className="me-2 size-4" />
-          {t("sidebar.page")}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={createDatabase.isPending}
-          onClick={() => void handleCreateDatabase(null)}
-        >
-          <IconDatabase className="me-2 size-4" />
-          {t("sidebar.database")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+    ) : null;
 
   const renderLocalFilesNavButton = () => (
-    <button
+    <Link
+      to="/local-files"
       className={cn(
         "flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm",
         localFilesActive
           ? "bg-accent text-accent-foreground"
           : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
       )}
-      onClick={() => navigate("/local-files")}
     >
       <IconFolderOpen size={15} className="shrink-0" />
       <span className="min-w-0 flex-1 truncate text-start">
         {t("sidebar.localFiles")}
       </span>
-    </button>
+    </Link>
   );
 
   const renderSettingsNavButton = () => (
-    <button
+    <Link
+      to="/settings"
       className={cn(
         "flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm",
         settingsActive
           ? "bg-accent text-accent-foreground"
           : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
       )}
-      onClick={() => navigate("/settings")}
     >
       <IconSettings size={15} className="shrink-0" />
       <span className="min-w-0 flex-1 truncate text-start">
         {t("navigation.settings")}
       </span>
-    </button>
+    </Link>
+  );
+
+  const renderAgentNavButton = () => (
+    <Link
+      to="/agent"
+      className={cn(
+        "flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm",
+        agentActive
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+      )}
+    >
+      <IconBrain size={15} className="shrink-0" />
+      <span className="min-w-0 flex-1 truncate text-start">
+        {t("navigation.agent")}
+      </span>
+    </Link>
   );
 
   const toggleSection = (id: SidebarSectionId) => {
@@ -848,9 +945,11 @@ export function DocumentSidebar({
         <TooltipContent>{t("sidebar.localFilesActions")}</TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={() => navigate("/local-files")}>
-          <IconFolderOpen className="me-2 size-4" />
-          {t("sidebar.manageLocalFolders")}
+        <DropdownMenuItem asChild>
+          <Link to="/local-files">
+            <IconFolderOpen className="me-2 size-4" />
+            {t("sidebar.manageLocalFolders")}
+          </Link>
         </DropdownMenuItem>
         {canRemoveLocalFiles && (
           <>
@@ -966,6 +1065,73 @@ export function DocumentSidebar({
     );
   };
 
+  const renderWorkspaceNavigation = () => (
+    <div className="mb-2 space-y-1 px-2">
+      <div className="px-1 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {t("sidebar.workspaces")}
+      </div>
+      {contentSpaces.map((space) => (
+        <button
+          key={space.id}
+          type="button"
+          className={cn(
+            "flex h-8 w-full min-w-0 items-center rounded-md px-2 text-sm",
+            selectedSpace?.id === space.id
+              ? "bg-accent text-accent-foreground"
+              : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+          )}
+          onClick={() => void handleSelectContentSpace(space)}
+          disabled={switchOrg.isPending}
+        >
+          <span className="min-w-0 flex-1 truncate text-start">
+            {space.name}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+
+  const renderFilesDatabase = () => (
+    <div className="min-w-0">
+      <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {t("sidebar.files")}
+      </div>
+      {selectedSpace ? (
+        <>
+          <ContentFilesSidebarView
+            data={filesDatabase.data}
+            overrides={filesPersonalView.data?.overrides}
+            isLoading={filesDatabase.isLoading || filesPersonalView.isLoading}
+            onSelectView={(viewId) => {
+              if (!selectedSpace) return;
+              const current = filesPersonalView.data?.overrides;
+              updateFilesPersonalView.mutate({
+                databaseId: selectedSpace.filesDatabaseId,
+                overrides: {
+                  version: current?.version ?? 1,
+                  activeViewId: viewId,
+                  views: current?.views ?? [],
+                },
+              });
+            }}
+            labels={{
+              loadingLabel: t("sidebar.loadingFiles"),
+              noMatchesLabel: t("database.noRowsMatchThisView"),
+              clearLabel: t("database.clearSearchAndFilters"),
+              navigationLabel: t("sidebar.files"),
+              untitledLabel: t("sidebar.untitled"),
+            }}
+          />
+          {renderNewButton()}
+        </>
+      ) : (
+        <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+          {t("sidebar.noWorkspaces")}
+        </div>
+      )}
+    </div>
+  );
+
   const renderTrashSection = () => {
     if (trashItems.length === 0) return null;
     const collapsed = collapsedSections.trash;
@@ -1080,33 +1246,49 @@ export function DocumentSidebar({
         {renderCollapsedNewButton()}
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
+            <Link
+              to="/local-files"
               className={cn(
                 "w-10 h-10 flex items-center justify-center rounded-lg hover:bg-accent",
                 localFilesActive
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
-              onClick={() => navigate("/local-files")}
             >
               <IconFolderOpen size={16} />
-            </button>
+            </Link>
           </TooltipTrigger>
           <TooltipContent>{t("sidebar.localFiles")}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
+            <Link
+              to="/agent"
+              className={cn(
+                "w-10 h-10 flex items-center justify-center rounded-lg hover:bg-accent",
+                agentActive
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <IconBrain size={16} />
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>{t("navigation.agent")}</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              to="/settings"
               className={cn(
                 "w-10 h-10 flex items-center justify-center rounded-lg hover:bg-accent",
                 settingsActive
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
-              onClick={() => navigate("/settings")}
             >
               <IconSettings size={16} />
-            </button>
+            </Link>
           </TooltipTrigger>
           <TooltipContent>{t("navigation.settings")}</TooltipContent>
         </Tooltip>
@@ -1272,58 +1454,9 @@ export function DocumentSidebar({
                 </div>
               )}
 
-              {localFileMode ? (
-                <>
-                  {renderTreeSection({
-                    id: "local-files",
-                    label: t("sidebar.localFiles"),
-                    nodes: localFileTree,
-                    emptyLabel: t("sidebar.noFilesYet"),
-                    headerActions: renderLocalFilesSectionActions(),
-                    footer: renderNewButton(),
-                  })}
-                  {databaseTree.length > 0
-                    ? renderTreeSection({
-                        id: "shared-copies",
-                        label: t("sidebar.sharedCopies"),
-                        nodes: databaseTree,
-                        emptyLabel: t("sidebar.noSharedCopiesYet"),
-                        className: "mt-3",
-                      })
-                    : null}
-                  {renderTrashSection()}
-                </>
-              ) : (
-                <>
-                  {localFileTree.length > 0 &&
-                    renderTreeSection({
-                      id: "local-files",
-                      label: t("sidebar.localFiles"),
-                      nodes: localFileTree,
-                      emptyLabel: t("sidebar.noLocalFilesYet"),
-                      className: "mb-2",
-                      headerActions: renderLocalFilesSectionActions(),
-                    })}
-
-                  {renderTreeSection({
-                    id: "private",
-                    label: t("sidebar.private"),
-                    nodes: privateTree,
-                    emptyLabel: t("sidebar.noPrivatePagesYet"),
-                    footer: renderNewButton(),
-                  })}
-
-                  {!isLoading &&
-                    renderTreeSection({
-                      id: "organization",
-                      label: t("sidebar.organization"),
-                      nodes: organizationTree,
-                      emptyLabel: t("sidebar.noOrganizationPagesYet"),
-                      className: "mt-3",
-                    })}
-                  {renderTrashSection()}
-                </>
-              )}
+              {renderWorkspaceNavigation()}
+              {renderFilesDatabase()}
+              {renderTrashSection()}
             </>
           )}
         </div>
@@ -1332,6 +1465,7 @@ export function DocumentSidebar({
       <div className="shrink-0 px-3 py-2">
         <div className="space-y-1">
           {renderLocalFilesNavButton()}
+          {renderAgentNavButton()}
           {renderSettingsNavButton()}
         </div>
       </div>

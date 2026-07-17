@@ -20,6 +20,12 @@ details live in `.agents/skills/`.
   status) and call `list-data-dictionary` with a focused search to learn what
   exists and which table/columns/join paths to use. Don't fan out blind queries
   when the catalog already answers where a fact lives.
+- `data-source-status` always includes the built-in first-party Analytics source
+  and returns `hasConnectedExternalDataSources`,
+  `dataSourcesSetupLink` (a real deep link to `/data-sources`). Chat stays
+  available when no external provider is connected; for a request that needs
+  one, explain the missing source in context and include that returned link so
+  the user can connect it. Do not replace this with a generic canned response.
 - Simple time-bounded metric fast path: when the data dictionary or a known
   canonical source already identifies the metric, run one bounded aggregate.
   Once that query returns a valid result, answer immediately with the source,
@@ -119,11 +125,11 @@ details live in `.agents/skills/`.
   without raw replay events or storage references. Do not add replay blob or
   dashboard mutation actions to this catalog without an explicit security
   review.
-- While Demo mode is enabled, session and error identities display anonymized
-  (`anonymous@builder.io`), so incident lookups must filter by the stable
+- Demo mode is a browser-local presentation preference. Analytics backend
+  actions, agent/MCP reads, session replays, and error issues always return real
+  authorized identities, so incident lookups should use the actual
   `userId`/email parameter (e.g. `userId: "user@example.com"`) or recording/
-  issue id — never by matching emails read back from previously displayed
-  output.
+  issue id.
 - Analytics keeps its direct MCP surface explicitly curated, so external
   agents should use `ask_app` for multi-step investigation and changes. The
   six incident reads above are bounded, user/org-scoped fallback tools for
@@ -169,6 +175,15 @@ details live in `.agents/skills/`.
   or bespoke workflow cannot be done faithfully with the built-in dashboard JSON
   config/components or saved-analysis markdown/chart format, automatically build
   it as an extension instead and tell the user why.
+- For an existing extension-backed dashboard or migrated surface such as Risk
+  Meeting, separate data repair from visual redesign. Inspect the dashboard and
+  extension first, then use `update-extension` `patches`/`edits` that touch only
+  the data-loading seam. Preserve the existing layout, CSS, copy, and
+  interactions; never reconstruct the full HTML body for a data-only fix.
+  `update-extension` blocks full-body replacement unless
+  `allowFullReplacement: true` is explicit, and that flag is reserved for a
+  user-requested broad rewrite or a complete replacement body supplied by the
+  user. If a focused edit fails, do not retry unchanged arguments.
 - Use framework sharing and access helpers for dashboards, analyses, and saved
   resources.
 - Dashboard email reports live in SQL via the

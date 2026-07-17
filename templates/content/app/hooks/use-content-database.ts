@@ -4,6 +4,8 @@ import type {
   AddDatabaseItemRequest,
   AttachContentDatabaseSourceRequest,
   BuilderCmsModelsResponse,
+  CancelPreparedBuilderSourceUpdateRequest,
+  CancelPreparedBuilderSourceUpdateResponse,
   ChangeContentDatabaseSourceRoleRequest,
   ContentDatabaseResponse,
   ContentDatabasePersonalViewResponse,
@@ -25,6 +27,7 @@ import type {
   ExecuteBuilderSourceExecutionRequest,
   MoveDatabaseItemRequest,
   PrepareBuilderSourceExecutionRequest,
+  PreviewBuilderSourceReviewResponse,
   PrepareBuilderSourceReviewRequest,
   PrepareBuilderSourceReviewResponse,
   ProcessBuilderBodyHydrationRequest,
@@ -47,6 +50,10 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export function contentDatabaseQueryKey(documentId: string) {
   return ["action", "get-content-database", { documentId }] as const;
+}
+
+export function contentDatabaseByIdQueryKey(databaseId: string) {
+  return ["action", "get-content-database", { databaseId }] as const;
 }
 
 function isContentDatabaseQueryForDocument(
@@ -451,6 +458,18 @@ export function useContentDatabase(documentId: string | null, limit?: number) {
   );
 }
 
+export function useContentDatabaseById(databaseId: string | null) {
+  return useActionQuery<ContentDatabaseResponse>(
+    "get-content-database",
+    databaseId ? { databaseId } : undefined,
+    {
+      enabled: !!databaseId,
+      retry: false,
+      placeholderData: (previous) => previous,
+    },
+  );
+}
+
 export function useCreateContentDatabase(documentId: string | null) {
   const queryClient = useQueryClient();
   return useActionMutation<ContentDatabaseResponse, CreateDatabaseRequest>(
@@ -815,6 +834,27 @@ export function useAddContentDatabaseSourceFieldProperty(documentId: string) {
   });
 }
 
+export function useMaterializeBuilderRequiredFields(documentId: string) {
+  const queryClient = useQueryClient();
+  return useActionMutation<
+    ContentDatabaseResponse,
+    { documentId: string; sourceId: string }
+  >("materialize-builder-required-fields", {
+    onSuccess: (data) => {
+      writeContentDatabaseResponseToCache(queryClient, documentId, data);
+      queryClient.invalidateQueries({
+        queryKey: contentDatabaseQueryKey(documentId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["action", "get-content-database-source", { documentId }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["action", "list-document-properties", { documentId }],
+      });
+    },
+  });
+}
+
 export function useBuilderCmsModels(enabled: boolean) {
   return useActionQuery<BuilderCmsModelsResponse>(
     "list-builder-cms-models",
@@ -1014,6 +1054,23 @@ export function usePrepareBuilderSourceExecution(documentId: string) {
   });
 }
 
+export function useCancelPreparedBuilderSourceUpdate(documentId: string) {
+  const queryClient = useQueryClient();
+  return useActionMutation<
+    CancelPreparedBuilderSourceUpdateResponse,
+    CancelPreparedBuilderSourceUpdateRequest
+  >("cancel-prepared-builder-source-update", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: contentDatabaseQueryKey(documentId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["action", "get-content-database-source", { documentId }],
+      });
+    },
+  });
+}
+
 export function useValidateBuilderSourceExecution(documentId: string) {
   const queryClient = useQueryClient();
   return useActionMutation<
@@ -1097,6 +1154,33 @@ export function usePrepareBuilderSourceReview(documentId: string) {
       });
     },
   });
+}
+
+export function usePreviewBuilderSourceReview(args: {
+  documentId: string;
+  sourceId: string | null;
+  scope: "selected" | "all";
+  documentIds?: string[];
+  enabled: boolean;
+}) {
+  return useActionQuery<PreviewBuilderSourceReviewResponse>(
+    "preview-builder-source-review",
+    args.enabled && args.sourceId
+      ? {
+          documentId: args.documentId,
+          sourceId: args.sourceId,
+          scope: args.scope,
+          documentIds: args.documentIds,
+        }
+      : undefined,
+    {
+      enabled: args.enabled && !!args.sourceId,
+      retry: false,
+      staleTime: 0,
+      gcTime: 0,
+      refetchOnWindowFocus: false,
+    },
+  );
 }
 
 export function useStageBuilderSourceBulkUpdate(documentId: string) {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   _agentChatPromptSectionsForTests,
+  buildLeanRunPolicyPrompt,
   shouldBlockInProductCodeEditingSurface,
 } from "./agent-chat-plugin.js";
 import {
@@ -11,7 +12,6 @@ import {
 import {
   buildFrameworkCore,
   buildFrameworkCoreCompact,
-  FIRST_SESSION_PERSONALIZATION,
 } from "./prompts/index.js";
 
 describe("shouldBlockInProductCodeEditingSurface", () => {
@@ -62,6 +62,18 @@ describe("shouldBlockInProductCodeEditingSurface", () => {
         host: "agent.example.com",
       }),
     ).toBe(false);
+  });
+});
+
+describe("lean production run policy", () => {
+  it("uses the same combined policy for the emitted prompt and Context X-Ray manifest", () => {
+    const restriction = "<app-rendered-chat-no-direct-code-edits />";
+    const codeExecution =
+      "<code-execution-mode>Sandboxed</code-execution-mode>";
+
+    expect(buildLeanRunPolicyPrompt(restriction, codeExecution)).toBe(
+      restriction + codeExecution,
+    );
   });
 });
 
@@ -117,8 +129,11 @@ describe("prompt token-budget regressions", () => {
     expect(compact.length).toBeLessThan(full.length * 0.75);
   });
 
-  it("first-session personalization block stays under 3 KB", () => {
-    expect(FIRST_SESSION_PERSONALIZATION.length).toBeLessThan(3 * 1024);
+  it("does not include first-session personalization onboarding", () => {
+    for (const prompt of [full, compact]) {
+      expect(prompt).not.toContain("First-Session Personalization");
+      expect(prompt).not.toContain("application_state.personalization");
+    }
   });
 });
 

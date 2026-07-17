@@ -33,6 +33,12 @@ patterns live in `.agents/skills/`.
   tool. The action schema is the source of truth for parameters.
 - Call `view-screen` before editing a specific design if the current design or
   selected file is not already clear from context.
+- For shared prototype feedback, use the persisted review actions
+  (`list-review-comments`, `get-review-feedback`, `create-review-comment`,
+  `reply-review-comment`, `resolve-review-thread`, `consume-review-feedback`,
+  `send-review-thread-to-agent`, and `set-review-status`). Work one thread at a time, prefer its stable node
+  anchor, verify saved edits before resolving, and read
+  `.agents/skills/design-review-feedback/SKILL.md` for the full loop.
 - Generated files must be complete, standalone HTML unless the user asks for a
   different export format. They should render in the iframe without a build step.
 - For design generation, ground the work in a concrete audience, primary job,
@@ -127,12 +133,15 @@ patterns live in `.agents/skills/`.
   `generate-design` for new files. For broad rewrites of an existing selected
   file, use `edit-design` with `mode: "replace-file"` and the exact `fileId`;
   never resend files you aren't changing.
-- For reusable starting points, call `list-design-templates`. Use
+- When the user references a template, prior design, or past work, call both
+  `list-design-templates` and `list-designs` before generating so the existing
+  starting point is resolved instead of recreated. Use
   `save-design-as-template` to snapshot an editable inline design, including
   its screens, canvas dimensions, defaults, and locked layers. Use
   `create-design-from-template` to instantiate a normal design. If the user
   supplies a prompt, call `get-design-snapshot` once and refine the copied
   files with `edit-design`; never regenerate the template from scratch.
+  Read the `design-templates` skill for the complete copy/adaptation workflow.
 - Treat `data-agent-native-locked="true"` as an authoritative template
   boundary. Locked backgrounds, logos, and their descendants must remain
   byte-for-byte unchanged during agent edits. The server rejects attempts to
@@ -158,6 +167,10 @@ patterns live in `.agents/skills/`.
   `inspectorTab: "extensions"` after installing it.
 - Follow linked design-system tokens and `customInstructions` whenever present;
   explicit user instructions in the current turn still win.
+- Before generation, follow the creative-context reuse ladder in
+  `.agents/skills/creative-context/SKILL.md`: explicit request and current
+  design first, then a pinned/current pack, then narrow library search. Respect
+  `creative-context.contextMode: "off"` without silently restoring a pack.
 - For reusable design-system setup from Figma, connected code/GitHub, local
   code/design files, or optional `design.md`, use Jami Studio-backed DSI indexing
   through `index-design-system-with-builder` or the Design System Setup `.fig`
@@ -459,9 +472,13 @@ and requires Jami Studio connected. See `full-app-build` skill for the full flow
 Read the relevant skill before deeper work:
 
 - `design-generation` for creating/editing prototype HTML and variant flows.
+- `design-templates` for resolving, saving, copying, and adapting templates or
+  prior Design work without fresh generation.
 - `responsive-breakpoints` for Framer-style breakpoint editing (single DOM,
   cascading width-scoped overrides, the managed breakpoints media block).
 - `design-systems` for tokens, brand extraction, and linked systems.
+- `creative-context` for cross-app source reuse, pinned packs, provenance, and
+  context opt-out.
 - `export-handoff` for HTML/PNG/SVG/ZIP/code handoff.
 - `full-app-build` for flag-gated fusion-backed full app building.
 - `shader-fills` for code-backed GLSL shader fills/effects (editable source

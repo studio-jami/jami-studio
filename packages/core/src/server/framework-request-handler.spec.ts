@@ -15,7 +15,11 @@ function createNitroApp() {
   return { h3: { "~middleware": [] as any[] } };
 }
 
-async function dispatch(nitroApp: any, pathname: string) {
+async function dispatch(
+  nitroApp: any,
+  pathname: string,
+  onEvent?: (event: any) => void,
+) {
   const url = new URL(`http://example.test${pathname}`);
   const event = {
     method: "GET",
@@ -31,6 +35,7 @@ async function dispatch(nitroApp: any, pathname: string) {
     // setResponseHeader (e.g. the init-failure 503 fallback) work under test.
     res: { status: 200, headers: new Headers() },
   };
+  onEvent?.(event);
   let index = 0;
   const next = async (): Promise<unknown> => {
     const middleware = nitroApp.h3["~middleware"][index++];
@@ -213,6 +218,24 @@ describe("framework request handler", () => {
     ).resolves.toEqual({
       mountPrefix: "/starter/.well-known/agent-card.json",
       mountedPathname: "/starter/.well-known/agent-card.json",
+      pathname: "/",
+      path: "/",
+    });
+  });
+
+  it("dispatches the public MCP alias under APP_BASE_PATH", async () => {
+    process.env.APP_BASE_PATH = "/starter";
+    const nitroApp = createNitroApp();
+    getH3App(nitroApp).use("/mcp", (event: any) => ({
+      mountPrefix: event.context._mountPrefix,
+      mountedPathname: event.context._mountedPathname,
+      pathname: event.url.pathname,
+      path: event.path,
+    }));
+
+    await expect(dispatch(nitroApp, "/starter/mcp")).resolves.toEqual({
+      mountPrefix: "/starter/mcp",
+      mountedPathname: "/starter/mcp",
       pathname: "/",
       path: "/",
     });
@@ -501,6 +524,71 @@ describe("framework request handler", () => {
 
     await expect(pending).resolves.toEqual({ ok: true });
   });
+
+  it.each([
+    {
+      trackedPath: "/.well-known/agent-card.json",
+      requestPath: "/.well-known/agent-card.json",
+    },
+    {
+      trackedPath: "/_agent-native/a2a",
+      requestPath: "/_agent-native/a2a/processor",
+    },
+  ])(
+    "delivers $requestPath when its agent-chat route registers during async init",
+    async ({ trackedPath, requestPath }) => {
+      const nitroApp = createHookableNitroApp();
+      let registerRoute!: () => void;
+      const ready = new Promise<void>((resolve) => {
+        registerRoute = () => {
+          getH3App(nitroApp).use(trackedPath, () => ({ ok: true }));
+          resolve();
+        };
+      });
+      trackPluginInit(nitroApp, ready, { paths: [trackedPath] });
+
+      const pending = dispatchProductionOrder(nitroApp, requestPath, {
+        runRequestHooks: true,
+      });
+      await Promise.resolve();
+      registerRoute();
+
+      await expect(pending).resolves.toEqual({ ok: true });
+    },
+  );
+
+  it.each([
+    {
+      trackedPath: "/.well-known/agent-card.json",
+      requestPath: "/.well-known/agent-card.json",
+    },
+    {
+      trackedPath: "/_agent-native/a2a",
+      requestPath: "/_agent-native/a2a/processor",
+    },
+  ])(
+    "returns a retryable 503 when $requestPath initialization fails",
+    async ({ trackedPath, requestPath }) => {
+      const nitroApp = createNitroApp();
+      let fail!: (err: Error) => void;
+      const ready = new Promise<void>((_resolve, reject) => {
+        fail = reject;
+      });
+      trackPluginInit(nitroApp, ready, { paths: [trackedPath] });
+
+      fail(new Error("db unreachable"));
+      await Promise.resolve();
+      await Promise.resolve();
+
+      let response: any;
+      const result = await dispatch(nitroApp, requestPath, (event) => {
+        response = event.res;
+      });
+
+      expect(response.status).toBe(503);
+      expect(JSON.stringify(result)).toContain("initializing or unavailable");
+    },
+  );
 
   it("does not treat similar non-prefixed paths as framework routes", async () => {
     process.env.APP_BASE_PATH = "/docs";

@@ -2,7 +2,6 @@ import { Buffer } from "node:buffer";
 import { createHash, randomUUID } from "node:crypto";
 import { gzipSync, gunzipSync } from "node:zlib";
 
-import { appStateGet } from "@agent-native/core/application-state";
 import {
   deletePrivateBlob,
   putPrivateBlob,
@@ -47,6 +46,12 @@ export type ReplayRange = "24h" | "7d" | "30d" | "90d" | "all";
 export interface ReplayScope {
   userEmail: string;
   orgId: string | null;
+}
+
+export interface SessionReplayLinkResolution {
+  recordingId: string;
+  offsetMs: number;
+  path: string;
 }
 
 function rangeStartIso(range: ReplayRange): string | null {
@@ -258,8 +263,6 @@ const DEFAULT_REPLAY_MAX_REQUESTS_PER_MINUTE = 120;
 const RETENTION_DELETE_BATCH_SIZE = 500;
 const REPLAY_PRIVATE_BLOB_REF_KIND = "agent-native.session-replay.private-blob";
 const REPLAY_PRIVATE_BLOB_REF_VERSION = 1;
-const SESSION_DEMO_EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
-const SESSION_DEMO_ANONYMOUS_EMAIL = "anonymous@builder.io";
 let inlineReplayFallbackWarned = false;
 
 function replayError(message: string, statusCode: number): Error {
@@ -295,89 +298,6 @@ function replayString(value: unknown): string | null {
 function replayEmail(value: unknown): string | null {
   const raw = replayString(value);
   return raw && raw.includes("@") ? raw : null;
-}
-
-function normalizedEmail(value: unknown): string | null {
-  return replayEmail(value)?.toLowerCase() ?? null;
-}
-
-function isBuilderEmail(value: unknown): boolean {
-  return normalizedEmail(value)?.endsWith("@builder.io") === true;
-}
-
-async function isSessionDemoModeEnabled(
-  userEmail?: string | null,
-): Promise<boolean> {
-  if (process.env.DEMO_MODE === "true") return true;
-  if (!userEmail) return false;
-  try {
-    // These reads also run from custom routes and actions, so use the
-    // authenticated scope explicitly instead of ambient request state.
-    const state = await appStateGet(userEmail, "demo-mode");
-    return state?.enabled === true;
-  } catch {
-    return false;
-  }
-}
-
-function demoBuilderSessionCondition() {
-  return or(
-    sql`lower(${schema.sessionRecordings.userId}) like ${"%@builder.io"}`,
-    sql`lower(${schema.sessionRecordings.userKey}) like ${"%@builder.io"}`,
-  );
-}
-
-class SessionDemoAnonymizer {
-  aliasFor(value: unknown): string | null {
-    const raw = replayString(value);
-    if (!raw || raw.match(SESSION_DEMO_EMAIL_PATTERN)?.[0] !== raw) {
-      return null;
-    }
-    return SESSION_DEMO_ANONYMOUS_EMAIL;
-  }
-
-  summarize(row: any, role?: SessionReplayAccessRole): SessionRecordingSummary {
-    const summary = rowToSessionRecordingSummary(row, role);
-    return {
-      ...summary,
-      userId: this.aliasFor(row.userId) ?? summary.userId,
-      userKey: this.aliasFor(row.userKey) ?? summary.userKey,
-      ownerEmail: this.aliasFor(summary.ownerEmail) ?? summary.ownerEmail,
-      metadata: anonymizeEmailValue(summary.metadata, this) as Record<
-        string,
-        unknown
-      >,
-    };
-  }
-}
-
-function anonymizeEmailValue(
-  value: unknown,
-  anonymizer: SessionDemoAnonymizer,
-): unknown {
-  const alias = anonymizer.aliasFor(value);
-  if (alias) return alias;
-  if (Array.isArray(value)) {
-    return value.map((item) => anonymizeEmailValue(item, anonymizer));
-  }
-  if (typeof value === "string") {
-    return value.replace(SESSION_DEMO_EMAIL_PATTERN, (email) => {
-      return anonymizer.aliasFor(email) ?? email;
-    });
-  }
-  if (value && typeof value === "object") {
-    const out: Record<string, unknown> = {};
-    for (const [key, item] of Object.entries(value)) {
-      out[key] = anonymizeEmailValue(item, anonymizer);
-    }
-    return out;
-  }
-  return value;
-}
-
-function assertDemoVisibleSession(row: any): void {
-  if (isBuilderEmail(row.userId) || isBuilderEmail(row.userKey)) return;
-  throw replayError("Session recording not found", 404);
 }
 
 function replayInteger(value: unknown): number | null {
@@ -1686,7 +1606,6 @@ export async function listSessionRecordings(
   filters: SessionReplayListFilters = {},
 ): Promise<SessionRecordingSummary[]> {
   const db = getDb() as any;
-  const demoMode = await isSessionDemoModeEnabled(scope.userEmail);
   const limit = Math.min(
     MAX_SESSION_RECORDINGS_LIMIT,
     Math.max(1, filters.limit ?? DEFAULT_SESSION_RECORDINGS_LIMIT),
@@ -1699,7 +1618,6 @@ export async function listSessionRecordings(
     replayVisibleIdentityCondition(),
     replayPlayableEventsCondition(),
   ];
-  if (demoMode) conditions.push(demoBuilderSessionCondition());
   if (filters.app)
     conditions.push(eq(schema.sessionRecordings.app, filters.app));
   if (filters.template) {
@@ -1753,22 +1671,13 @@ export async function listSessionRecordings(
     .where(and(...conditions))
     .orderBy(desc(schema.sessionRecordings.startedAt))
     .limit(limit);
-  if (!demoMode) {
-    return rows.map((row: any) => rowToSessionRecordingSummary(row));
-  }
-  const anonymizer = new SessionDemoAnonymizer();
-  return rows
-    .filter(
-      (row: any) => isBuilderEmail(row.userId) || isBuilderEmail(row.userKey),
-    )
-    .map((row: any) => anonymizer.summarize(row));
+  return rows.map((row: any) => rowToSessionRecordingSummary(row));
 }
 
 export async function getSessionReplaySummary(
   recordingId: string,
   scope: SessionReplayScope,
 ): Promise<SessionRecordingSummary> {
-  const demoMode = await isSessionDemoModeEnabled(scope.userEmail);
   const access = await resolveAccess("session-recording", recordingId, {
     userEmail: scope.userEmail,
     orgId: scope.orgId ?? undefined,
@@ -1777,22 +1686,77 @@ export async function getSessionReplaySummary(
   if (!isVisibleSessionRecording(access.resource)) {
     throw replayError("Session recording not found", 404);
   }
-  if (!demoMode) {
-    return rowToSessionRecordingSummary(access.resource, access.role);
-  }
-  assertDemoVisibleSession(access.resource);
-  return new SessionDemoAnonymizer().summarize(access.resource, access.role);
+  return rowToSessionRecordingSummary(access.resource, access.role);
+}
+
+export async function resolveSessionReplayLink(
+  input: {
+    sessionId: string;
+    clientRecordingId: string;
+    at?: string | null;
+  },
+  scope: SessionReplayScope,
+): Promise<SessionReplayLinkResolution | null> {
+  const db = getDb() as any;
+  const [row] = await db
+    .select({
+      id: schema.sessionRecordings.id,
+      startedAt: schema.sessionRecordings.startedAt,
+      endedAt: schema.sessionRecordings.endedAt,
+      durationMs: schema.sessionRecordings.durationMs,
+      ownerEmail: schema.sessionRecordings.ownerEmail,
+      orgId: schema.sessionRecordings.orgId,
+      visibility: schema.sessionRecordings.visibility,
+      chunkCount: schema.sessionRecordings.chunkCount,
+      eventCount: schema.sessionRecordings.eventCount,
+      userId: schema.sessionRecordings.userId,
+      userKey: schema.sessionRecordings.userKey,
+    })
+    .from(schema.sessionRecordings)
+    .where(
+      and(
+        eq(schema.sessionRecordings.sessionId, input.sessionId),
+        eq(schema.sessionRecordings.clientRecordingId, input.clientRecordingId),
+        eq(schema.sessionRecordings.ownerEmail, scope.userEmail),
+        scope.orgId
+          ? eq(schema.sessionRecordings.orgId, scope.orgId)
+          : isNull(schema.sessionRecordings.orgId),
+      ),
+    )
+    .limit(1);
+
+  if (!row || !isVisibleSessionRecording(row)) return null;
+
+  const startedAtMs = Date.parse(row.startedAt);
+  if (!Number.isFinite(startedAtMs)) return null;
+  const requestedAtMs = input.at ? Date.parse(input.at) : Date.now();
+  const safeRequestedAtMs = Number.isFinite(requestedAtMs)
+    ? requestedAtMs
+    : startedAtMs;
+  const inferredDurationMs = row.endedAt
+    ? Math.max(0, Date.parse(row.endedAt) - startedAtMs)
+    : 0;
+  const durationMs =
+    typeof row.durationMs === "number" && Number.isFinite(row.durationMs)
+      ? Math.max(0, row.durationMs)
+      : inferredDurationMs;
+  const offsetMs = Math.max(
+    0,
+    Math.min(Math.max(0, safeRequestedAtMs - startedAtMs), durationMs),
+  );
+  return {
+    recordingId: row.id,
+    offsetMs,
+    path: `/sessions/${encodeURIComponent(row.id)}?atMs=${Math.round(offsetMs)}`,
+  };
 }
 
 export async function getSessionReplayTokenizedSummary(
   recordingId: string,
   viewerEmail: string,
 ): Promise<SessionRecordingSummary> {
-  // Tokenized reads often run without an authenticated request session. Use
-  // the viewer identity embedded in the signed, recording-scoped grant so a
-  // link minted while demo mode is enabled cannot reveal real identities when
-  // it is opened in a signed-out browser or by an external agent.
-  const demoMode = await isSessionDemoModeEnabled(viewerEmail);
+  // Tokenized reads often run without an authenticated request session. The
+  // viewer identity is still required by the signed, recording-scoped grant.
   const db = getDb() as any;
   // guard:allow-unscoped -- called only after verifySessionReplayAgentAccess(recordingId, token) verifies a signed, recording-scoped agent_access token.
   const [row] = await db
@@ -1803,9 +1767,7 @@ export async function getSessionReplayTokenizedSummary(
   if (!row || !isVisibleSessionRecording(row)) {
     throw replayError("Session recording not found", 404);
   }
-  if (!demoMode) return rowToSessionRecordingSummary(row, "viewer");
-  assertDemoVisibleSession(row);
-  return new SessionDemoAnonymizer().summarize(row, "viewer");
+  return rowToSessionRecordingSummary(row, "viewer");
 }
 
 function parseInlineReplayEvents(inlineData: string): unknown[] {

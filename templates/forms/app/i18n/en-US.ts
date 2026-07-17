@@ -4,6 +4,7 @@ const messages = {
     searchForms: "Search forms",
     appearance: "Appearance",
     toggleTheme: "Toggle theme",
+    openAgent: "Open Agent",
   },
   header: {
     settings: "Settings",
@@ -19,6 +20,7 @@ const messages = {
     askForms: "Ask Forms",
     allForms: "All forms",
     team: "Team",
+    agent: "Agent",
   },
   settings: {
     title: "Settings",
@@ -32,10 +34,10 @@ const messages = {
       "Manage team members, organization access, and shared workspace preferences.",
     openTeamSettings: "Open team settings",
     openResourceSettings: "Open resource settings",
-    agentTitle: "Agent settings",
+    agentTitle: "Agent workspace",
     agentDescription:
-      "Open the agent sidebar settings for model, API keys, automations, voice, and other agent controls.",
-    openAgentSettings: "Open agent settings",
+      "Open the agent workspace for model, API keys, automations, voice, and other agent controls.",
+    openAgentSettings: "Open agent workspace",
   },
   agent: {
     emptyState: "Ask me anything about your forms",
@@ -192,6 +194,9 @@ const messages = {
       anonymousResponses: "Anonymous responses",
       anonymousResponsesDescription:
         "Do not retain IP addresses, submitter identity, or source metadata.",
+      emailNewResponses: "Email me for new responses",
+      emailNewResponsesDescription:
+        "Send a notification to the form owner's account email whenever someone submits a response.",
       saveSettings: "Save Settings",
     },
     integrations: {

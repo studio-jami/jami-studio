@@ -6,6 +6,7 @@ import {
   useSession,
   useT,
 } from "@agent-native/core/client";
+import { CreativeContextComposerChip } from "@agent-native/creative-context/client";
 import { HeaderActionsProvider } from "@agent-native/toolkit/app-shell";
 import { IconMenu2 } from "@tabler/icons-react";
 import {
@@ -81,6 +82,7 @@ export function Layout({ children }: LayoutProps) {
     ? `show-questions:${designScope.id}`
     : "show-questions";
   const { questions: pendingDesignQuestions } = useGuidedQuestionFlow({
+    enabled: hasSession,
     stateKey: designQuestionStateKey,
     queryKey: [designQuestionStateKey],
     browserTabId,
@@ -149,6 +151,7 @@ export function Layout({ children }: LayoutProps) {
         <AgentSidebar
           position="right"
           storageKey={DESIGN_CHAT_STORAGE_KEY}
+          agentPageHref="/agent"
           emptyStateText={t("chat.emptyState")}
           suggestions={[
             t("chat.suggestionLandingPage"),
@@ -161,9 +164,12 @@ export function Layout({ children }: LayoutProps) {
           threadFooterSlot={designQuestionsWaitingSlot}
           onComposerTextChange={handleComposerTextChange}
           composerSlot={
-            detectedFigmaComposerLink ? (
-              <FigmaLinkComposerBubble link={detectedFigmaComposerLink} />
-            ) : null
+            <>
+              <CreativeContextComposerChip />
+              {detectedFigmaComposerLink ? (
+                <FigmaLinkComposerBubble link={detectedFigmaComposerLink} />
+              ) : null}
+            </>
           }
         >
           <div className="agent-layout-shell flex h-dvh w-full overflow-hidden bg-background text-foreground">

@@ -204,6 +204,35 @@ export interface MCPRequestMeta {
   inlineMcpApps?: boolean;
 }
 
+const ASK_AGENT_DEFAULT_INLINE_WAIT_MS = 20_000;
+const ASK_AGENT_MAX_INLINE_WAIT_MS = 25_000;
+
+function boundedAskAgentWaitMs(raw: unknown): number {
+  if (raw == null || raw === "") return ASK_AGENT_DEFAULT_INLINE_WAIT_MS;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return ASK_AGENT_DEFAULT_INLINE_WAIT_MS;
+  return Math.max(
+    0,
+    Math.min(ASK_AGENT_MAX_INLINE_WAIT_MS, Math.trunc(parsed)),
+  );
+}
+
+function isExplicitAsyncAskAgent(raw: unknown): boolean {
+  return raw === true || raw === "true" || raw === 1 || raw === "1";
+}
+
+function formatAskAgentResult(result: unknown): string {
+  if (typeof result === "string") return result;
+  if (result && typeof result === "object") {
+    const record = result as Record<string, unknown>;
+    if (record.status === "completed" && typeof record.response === "string") {
+      return record.response;
+    }
+  }
+  const serialized = JSON.stringify(result);
+  return serialized === undefined ? String(result) : serialized;
+}
+
 /**
  * Deploy-toggleable kill switch for inline MCP App embeds — the `ui://`
  * resource reference hosts like Codex / Cursor / ChatGPT render in a sandboxed
@@ -354,6 +383,7 @@ const AUTO_READ_EXCLUDED_ACTION_NAMES = new Set([
   "db-exec",
   "db-patch",
   "context-manifest-get",
+  "context-preview-get",
   "context-pin",
   "context-evict",
   "context-restore",
@@ -512,28 +542,91 @@ function routePathFromOpenUrl(value: string): string | null {
  * `mcpApp.resource` (the resource path already strips them via
  * `mcpAppStructuredContent`).
  *
- * Depth-capped to avoid pathological / circular structures. Strings that
- * embed an `isEmbedStartUrl` substring (e.g. a longer message that includes
- * the URL) are replaced with `[hidden embed URL]`.
+ * Circular structures are replaced with a marker. Strings that embed an
+ * `isEmbedStartUrl` substring (e.g. a longer message that includes the URL)
+ * are replaced with `[hidden embed URL]`. Credential-like `ticket` fields are
+ * removed only inside an embed-signaled object/branch, so ordinary business
+ * fields from unrelated read actions remain faithful.
  */
-function purgeEmbedStartUrls(value: unknown, depth = 0): unknown {
-  if (depth > 5) return value;
+const EMBED_RESULT_SENSITIVE_KEYS = new Set([
+  "embedTargetPath",
+  "embedExpiresAt",
+  "embedTicket",
+]);
+
+function isEmbedCredentialKey(key: string): boolean {
+  return key === "ticket" || /Ticket$/.test(key);
+}
+
+function containsEmbedRoutingSignal(
+  value: unknown,
+  seen = new WeakSet<object>(),
+): boolean {
+  if (typeof value === "string") return isEmbedStartUrl(value);
+  if (!value || typeof value !== "object") return false;
+  if (seen.has(value)) return false;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    const result = value.some((item) => containsEmbedRoutingSignal(item, seen));
+    seen.delete(value);
+    return result;
+  }
+  for (const [key, val] of Object.entries(value)) {
+    if (EMBED_RESULT_SENSITIVE_KEYS.has(key)) {
+      seen.delete(value);
+      return true;
+    }
+    if (containsEmbedRoutingSignal(val, seen)) {
+      seen.delete(value);
+      return true;
+    }
+  }
+  seen.delete(value);
+  return false;
+}
+
+function purgeEmbedStartUrls(
+  value: unknown,
+  seen = new WeakSet<object>(),
+  embedContext = false,
+): unknown {
   if (typeof value === "string") {
     return isEmbedStartUrl(value) ? "[hidden embed URL]" : value;
   }
   if (Array.isArray(value)) {
-    return value.map((item) => purgeEmbedStartUrls(item, depth + 1));
+    if (seen.has(value)) return "[circular result]";
+    seen.add(value);
+    // An embed marker in one array item puts the whole result in the embed
+    // routing context. Credential fields in sibling items must not survive
+    // just because the marker lives elsewhere in the array.
+    const arrayEmbedContext = embedContext || containsEmbedRoutingSignal(value);
+    const out = value.map((item) =>
+      purgeEmbedStartUrls(item, seen, arrayEmbedContext),
+    );
+    seen.delete(value);
+    return out;
   }
   if (value && typeof value === "object") {
+    if (seen.has(value)) return "[circular result]";
+    seen.add(value);
+    const entries = Object.entries(value as Record<string, unknown>);
+    const localEmbedContext = embedContext || containsEmbedRoutingSignal(value);
     const out: Record<string, unknown> = {};
-    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+    for (const [key, val] of entries) {
+      if (
+        EMBED_RESULT_SENSITIVE_KEYS.has(key) ||
+        (localEmbedContext && isEmbedCredentialKey(key))
+      ) {
+        continue;
+      }
       if (typeof val === "string" && isEmbedStartUrl(val)) {
         // Drop the key entirely for object-typed inputs so a tool result like
         // `{ embedStartUrl: "..." }` does not appear at all in the LLM text.
         continue;
       }
-      out[key] = purgeEmbedStartUrls(val, depth + 1);
+      out[key] = purgeEmbedStartUrls(val, seen, localEmbedContext);
     }
+    seen.delete(value);
     return out;
   }
   return value;
@@ -1195,11 +1288,12 @@ function mcpAppStructuredContent(
   result: unknown,
   meta: Record<string, unknown> | undefined,
 ): Record<string, unknown> {
+  const purged = purgeEmbedStartUrls(result);
   const out: Record<string, unknown> =
-    result && typeof result === "object" && !Array.isArray(result)
-      ? { ...(result as Record<string, unknown>) }
-      : primitiveValue(result)
-        ? { result }
+    purged && typeof purged === "object" && !Array.isArray(purged)
+      ? { ...(purged as Record<string, unknown>) }
+      : primitiveValue(purged)
+        ? { result: purged }
         : {};
   for (const key of ["embedStartUrl", "startUrl"]) {
     const value = out[key];
@@ -1213,17 +1307,6 @@ function mcpAppStructuredContent(
   // LLM). `embedTargetPath` reveals the exact route + thread/draft id the user
   // is looking at; `embedExpiresAt` is an unintended timestamp; ticket-bearing
   // fields are single-use credentials. Drop all of them unconditionally.
-  for (const key of [
-    "embedTargetPath",
-    "embedExpiresAt",
-    "ticket",
-    "embedTicket",
-  ]) {
-    delete out[key];
-  }
-  for (const key of Object.keys(out)) {
-    if (/Ticket$/.test(key)) delete out[key];
-  }
   const openLink = meta?.["agent-native/openLink"];
   if (openLink && typeof openLink === "object" && !Array.isArray(openLink)) {
     const webUrl = (openLink as Record<string, unknown>).webUrl;
@@ -1275,12 +1358,25 @@ function isSuccessOnlyResult(value: Record<string, unknown>): boolean {
   });
 }
 
-function conciseToolResultText(name: string, result: unknown): string {
+function conciseToolResultText(
+  name: string,
+  result: unknown,
+  options?: { preserveObjectResult?: boolean },
+): string {
   const purged = purgeEmbedStartUrls(result);
   if (typeof purged === "string") return truncateToolText(purged);
   if (purged === true || purged == null) return `${name} completed.`;
   if (purged && typeof purged === "object" && !Array.isArray(purged)) {
     const record = purged as Record<string, unknown>;
+    // Read-only actions are data reads, not mutations. Keep their object
+    // payload available to MCP clients in the text fallback too; the
+    // structuredContent branch below is the lossless path for clients that
+    // support it. Mutating/action-style results retain the concise status
+    // text so we do not unexpectedly dump write results into conversations.
+    if (options?.preserveObjectResult) {
+      const text = JSON.stringify(purged);
+      return text === undefined ? `${name} completed.` : truncateToolText(text);
+    }
     const message = record.message ?? record.summary;
     if (typeof message === "string" && message.trim()) {
       return truncateToolText(message.trim());
@@ -1552,13 +1648,25 @@ export async function createMCPServerForRequest(
           description:
             "Send a natural-language message to the app's AI agent and get a response. " +
             "Use this for complex, multi-step tasks that require the agent's reasoning " +
-            "and full context about the app.",
+            "and full context about the app. On hosted MCP, the server waits briefly " +
+            "for fast completions and returns a taskId plus ask_app_status polling " +
+            "instructions when the agent needs longer.",
           inputSchema: {
             type: "object" as const,
             properties: {
               message: {
                 type: "string",
                 description: "The message to send to the agent",
+              },
+              async: {
+                type: "boolean",
+                description:
+                  "Start a durable task and return immediately with a taskId.",
+              },
+              maxWaitMs: {
+                type: "number",
+                description:
+                  "Maximum inline wait in milliseconds. Hosted MCP clamps this to 25000ms.",
               },
             },
             required: ["message"],
@@ -1602,8 +1710,29 @@ export async function createMCPServerForRequest(
         }
         const message = args?.message ?? "";
         try {
-          const result = await config.askAgent(message);
-          return { content: [{ type: "text", text: result }] };
+          // Keep the legacy meta-tool compatible for local callers, but use
+          // the same durable A2A submission path as ask_app whenever this is
+          // an HTTP/hosted request. A full agent loop must never be held open
+          // for minutes behind one MCP tools/call request. Always route
+          // through ask_app's own run() — even with no request origin, since
+          // it now bounds that case too via its process-local inline-task
+          // fallback (ask-app-inline-tasks.ts) instead of us awaiting
+          // config.askAgent() here unbounded. This is the shared helper: no
+          // second task map to keep in sync.
+          const hostedAskApp = getBuiltinCrossAppTools(
+            config,
+            requestMeta,
+          ).ask_app;
+          const result = await hostedAskApp.run({
+            message,
+            async: isExplicitAsyncAskAgent(args?.async),
+            maxWaitMs: isExplicitAsyncAskAgent(args?.async)
+              ? 0
+              : boundedAskAgentWaitMs(args?.maxWaitMs),
+          });
+          return {
+            content: [{ type: "text", text: formatAskAgentResult(result) }],
+          };
         } catch (err: any) {
           return {
             content: [{ type: "text", text: `Error: ${err.message}` }],
@@ -1704,6 +1833,14 @@ export async function createMCPServerForRequest(
           Array.isArray(toolVisibility) &&
           toolVisibility.length > 0 &&
           toolVisibility.every((v) => v === "app");
+        const readOnlyStructuredResult =
+          entry.readOnly === true &&
+          rawResultForClient &&
+          typeof rawResultForClient === "object"
+            ? Array.isArray(rawResultForClient)
+              ? { items: rawResultForClient }
+              : rawResultForClient
+            : undefined;
         const structuredContent = mcpAppResource
           ? mcpAppStructuredContent(rawResultForClient, responseMeta)
           : isAppOnlyVisibility &&
@@ -1711,10 +1848,14 @@ export async function createMCPServerForRequest(
               typeof rawResult === "object" &&
               !Array.isArray(rawResult)
             ? (rawResult as Record<string, unknown>)
-            : undefined;
+            : readOnlyStructuredResult
+              ? mcpAppStructuredContent(readOnlyStructuredResult, responseMeta)
+              : undefined;
         const text = mcpAppResource
           ? conciseMcpAppToolText(name, resultForClient, structuredContent!)
-          : conciseToolResultText(name, resultForClient);
+          : conciseToolResultText(name, resultForClient, {
+              preserveObjectResult: entry.readOnly === true,
+            });
         const content: any[] = [{ type: "text", text }];
         if (block) content.push(block);
         return {

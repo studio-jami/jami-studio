@@ -168,10 +168,10 @@ const enUS = {
     untitledDashboard: "Untitled dashboard",
   },
   settings: {
-    agentTitle: "Agent settings",
+    agentTitle: "Agent workspace",
     agentDescription:
-      "Open the agent sidebar settings for model, API keys, automations, voice, and other agent controls.",
-    openAgentSettings: "Open agent settings",
+      "Open the agent workspace for model, API keys, automations, voice, and other agent controls.",
+    openAgentSettings: "Open agent workspace",
     account: "Account",
     signedInAs: "Signed in as",
     credentials: "Data Source Credentials",
@@ -588,6 +588,7 @@ const enUS = {
     clearAll: "Clear all",
     collapseFilters: "Collapse filters",
     expandFilters: "Expand filters",
+    filterSeries: "Filter",
     hide: "Hide",
     show: "Show",
     saveAsView: "Save as View",

@@ -38,12 +38,21 @@ Detailed document editing, Notion, storage, and UI rules live in
 
 ## Application State
 
+- Before generation, follow the creative-context reuse ladder in
+  `.agents/skills/creative-context/SKILL.md`: explicit request and current
+  document first, then a pinned/current pack, then narrow library search.
+  Respect `creative-context.contextMode: "off"` without silently restoring a
+  pack.
+
 - `navigation` exposes document, selected block, comment, media, and Notion view
   context.
 - `navigate` moves the UI to documents, comments, media, and settings surfaces.
 - Use actions for full document content and comment context.
 
 ## Skills
+
+- `creative-context` for cross-app source reuse, pinned packs, provenance, and
+  context opt-out.
 
 Read the relevant skill before deeper work:
 
@@ -96,25 +105,33 @@ cd templates/content && pnpm action <name> [args]
 | `list-documents`                            | `[--format json]`                                                                                                                                                                                  | List document metadata/tree; no full bodies                                                                                                                                       |
 | `export-content-source`                     | `[--format json]`                                                                                                                                                                                  | Export editable docs as `content/*.mdx` source files                                                                                                                              |
 | `import-content-source`                     | `--files <json> [--dryRun true\|false]`                                                                                                                                                            | Import `.md`/`.mdx` source files into editable docs                                                                                                                               |
+| `connect-local-folder-source`               | `--connectionId <opaque-id> --label <name> [--spaceId <id>\|--databaseId <id>\|--createSourceBackedSpace true] [--truthPolicy database_primary\|source_primary\|reviewed_bidirectional]`           | Connect a trusted browser/Desktop folder registry entry to canonical Files without storing its path or handle in SQL                                                              |
+| `sync-local-folder-source`                  | `--sourceId <id> --files <json> [--dryRun true\|false]`                                                                                                                                            | Materialize a connected folder through Files source rows and record concurrent changes for review                                                                                 |
+| `sync-manifest-local-folder-source`         | `--connectionId <opaque-id> [--file <relative-path>] [--spaceId <id>] [--dryRun true\|false]`                                                                                                      | Use the trusted local server bridge to materialize a manifest-declared folder into normal SQL-backed Content                                                                      |
+| `resolve-local-folder-conflict`             | `--changeSetId <id> --decision keep_content\|accept_source [--sourceContent <text>]`                                                                                                               | Resolve a reviewed folder conflict; accepting requires the exact hashed folder revision                                                                                           |
+| `disconnect-local-folder-source`            | `--sourceId <id>`                                                                                                                                                                                  | Disconnect a folder adapter without deleting local files or its SQL-backed Content pages                                                                                          |
 | `list-builder-docs`                         | `[--model docs-content\|blog-article] [--limit <n>]`                                                                                                                                               | List Builder docs/blog entries available for `.builder.mdx` pull                                                                                                                  |
 | `pull-builder-doc`                          | `--model <model> --entryId <builder-entry-id> [--dryRun true\|false]`                                                                                                                              | Pull one Builder entry into Content and return `.builder.mdx` plus `content/builder/.raw` sidecar files                                                                           |
 | `check-builder-doc`                         | `--files <json> [--path <file.builder.mdx>]` or `--documentId <id>`                                                                                                                                | Validate Builder MDX round-trip, sidecar hashes, and remote conflict status before push                                                                                           |
 | `push-builder-doc`                          | `--files <json> [--path <file.builder.mdx>] [--dryRun true\|false]`                                                                                                                                | Guarded Builder autosave PATCH for the safe Builder test model; never publishes                                                                                                   |
 | `navigate`                                  | `--path <path>` or `--documentId <id>` or `--databaseId <id>`                                                                                                                                      | Open a route, document page, or database page in the UI                                                                                                                           |
 | `search-documents`                          | `--query <text> [--format json]`                                                                                                                                                                   | Search by title/content and return snippets                                                                                                                                       |
-| `get-document`                              | `--id <id> [--format json]`                                                                                                                                                                        | Get a single document with content                                                                                                                                                |
+| `get-document`                              | `--id <id> [--format json]`                                                                                                                                                                        | Get a document with content, stable description, properties, and computed ancestry context                                                                                        |
 | `pull-document`                             | `--id <id> [--format markdown\|text]`                                                                                                                                                              | Collab-aware "ingest the final" read                                                                                                                                              |
-| `create-document`                           | `--title <text> [--content] [--parentId] [--icon]`                                                                                                                                                 | Create a new document                                                                                                                                                             |
+| `create-document`                           | `--title <text> [--content] [--description] [--parentId] [--icon]`                                                                                                                                 | Create a document with optional stable guidance about why it exists and what belongs there                                                                                        |
 | `edit-document`                             | `--id <id> --find <text> --replace <text>`                                                                                                                                                         | Surgical text edit (preferred for modifications)                                                                                                                                  |
 | `edit-document`                             | `--id <id> --edits <json>`                                                                                                                                                                         | Batch surgical text edits                                                                                                                                                         |
-| `update-document`                           | `--id <id> [--title] [--content] [--icon]`                                                                                                                                                         | Full rewrite of document fields                                                                                                                                                   |
+| `update-document`                           | `--id <id> [--title] [--content] [--description] [--icon]`                                                                                                                                         | Update document fields; descriptions are stable guidance, not summaries of current content                                                                                        |
 | `share-local-file-document`                 | `--id <local-file-document-id>`                                                                                                                                                                    | Create or refresh a DB-backed shareable copy of a local file document                                                                                                             |
 | `remove-local-file-source`                  | `[--sourceRootPath <path>]`                                                                                                                                                                        | Unlink local-file sources from Content without deleting local Markdown/MDX files                                                                                                  |
 | `list-local-component-files`                |                                                                                                                                                                                                    | List registered local MDX component source files                                                                                                                                  |
 | `write-local-component-file`                | `--workspaceId <id> --path <relative-component-path> --content <source>`                                                                                                                           | Create or update a file in a registered local `components/` folder                                                                                                                |
-| `create-content-database`                   | `[--documentId <id>] [--parentId <id>] [--title <text>]`                                                                                                                                           | Create a database page or convert an existing page into a database                                                                                                                |
-| `create-inline-content-database`            | `--hostDocumentId <id> [--title <text>]`                                                                                                                                                           | Create a database owned by an inline database block in the host document                                                                                                          |
-| `get-content-database`                      | `--databaseId <id>` or `--documentId <id>`                                                                                                                                                         | Get a database table with property schema and item pages                                                                                                                          |
+| `ensure-content-spaces`                     |                                                                                                                                                                                                    | Idempotently provision the signed-in user's personal and current organization Content spaces, system databases, and catalog references                                            |
+| `backfill-content-files`                    |                                                                                                                                                                                                    | Assign legacy pages to Content spaces and reconcile exactly one canonical Files database membership per non-system page                                                           |
+| `list-content-spaces`                       |                                                                                                                                                                                                    | List already-provisioned Content spaces authorized by the signed-in user's current ownership or organization memberships                                                          |
+| `create-content-database`                   | `[--documentId <id>] [--spaceId <id>] [--parentId <id>] [--title <text>] [--description <text>]`                                                                                                   | Create a described database page in a Content space or convert an existing page into a database                                                                                   |
+| `create-inline-content-database`            | `--hostDocumentId <id> [--title <text>] [--description <text>]`                                                                                                                                    | Create a described database owned by an inline database block in the host document                                                                                                |
+| `get-content-database`                      | `--databaseId <id>` or `--documentId <id>`                                                                                                                                                         | Get a database with its description, property/option schema guidance, item pages, and computed ancestry context                                                                   |
 | `list-trashed-content-databases`            |                                                                                                                                                                                                    | List soft-deleted databases visible in the sidebar Trash surface                                                                                                                  |
 | `restore-content-database`                  | `--databaseId <id>`                                                                                                                                                                                | Restore a soft-deleted database from the sidebar Trash surface                                                                                                                    |
 | `get-content-database-source`               | `--databaseId <id>` or `--documentId <id>`                                                                                                                                                         | Inspect local/no-source or source-backed status, mappings, row identity, freshness, and change sets                                                                               |
@@ -123,13 +140,14 @@ cd templates/content && pnpm action <name> [args]
 | `change-content-database-source-role`       | `--databaseId <id>` or `--documentId <id> --sourceId <id> --relationshipMode items\|details [--join <json>]`                                                                                       | Change an attached source between adding rows and adding matched detail columns without removing the source                                                                       |
 | `refresh-content-database-source`           | `--databaseId <id>` or `--documentId <id>`                                                                                                                                                         | Refresh the read-only source status envelope; large Builder CMS sources may return a partial fetch, and another refresh continues loading remaining rows                          |
 | `process-builder-body-hydration`            | `--sourceId <id> [--documentId <id>] [--limit <n>]`                                                                                                                                                | Hydrate queued Builder article bodies into readable Content markdown with preserved source-component markers                                                                      |
-| `set-content-database-source-write-mode`    | `--databaseId <id>` or `--documentId <id> --liveWritesEnabled true\|false [--allowedWriteModes <json>]`                                                                                            | Enable/disable per-source Builder live writes; enabling is allowed only for `agent-native-blog-article-test` with explicit modes                                                  |
+| `set-content-database-source-write-mode`    | `--databaseId <id>` or `--documentId <id> [--sourceId <id>] --writeMode read_only\|stage_only\|publish_updates [--allowPublicationTransitions true\|false]`                                        | Set the per-source Builder write tier; requires page admin access and remains read-only by default                                                                                |
 | `stage-builder-revision`                    | `--databaseId <id>` or `--documentId <id>`                                                                                                                                                         | Stage pending local Builder CMS changes as a local-only save-revision record; never calls Builder                                                                                 |
 | `review-content-database-source-change-set` | `--databaseId <id>` or `--documentId <id> --changeSetId <id> --decision approve\|reject [--note]`                                                                                                  | Approve or reject a local source change-set review record without provider writes                                                                                                 |
 | `stage-builder-source-bulk-update`          | `--databaseId <id>` or `--documentId <id> --itemIds <json-array>` or `--documentIds <json-array> --field <json> [--sourceId <id>] [--dryRun true\|false]`                                          | Preview or stage one bounded field update across selected source-backed Builder rows; apply still goes through Builder review/execution                                           |
 | `prepare-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--pushModeConfirmation autosave\|draft\|publish]`                                                                                    | Prepare a dry-run Builder execution gate for approved field/body changes with request semantics/idempotency key; never calls Builder                                              |
 | `validate-builder-source-execution`         | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>]`                                                                                                             | Validate/replay a prepared Builder execution gate locally as a dry run; never calls Builder                                                                                       |
-| `execute-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>] [--pushModeConfirmation autosave\|draft\|publish]`                                                           | Execute a guarded live Builder write only when approved, validated, enabled, idempotent, and targeting `agent-native-blog-article-test`                                           |
+| `execute-builder-source-execution`          | `--databaseId <id>` or `--documentId <id> --changeSetId <id> [--idempotencyKey <key>] [--pushModeConfirmation autosave\|draft\|publish]`                                                           | Execute a guarded live Builder write only when approved, validated, enabled for that source, and idempotent                                                                       |
+| `cancel-prepared-builder-source-update`     | `--databaseId <id>` or `--documentId <id> --sourceId <id> --changeSetId <id> [--note <text>]`                                                                                                      | Cancel an exact prepared Builder update only when every associated execution is provably pre-dispatch; preserves review and execution history and never calls Builder             |
 | `add-database-item`                         | `--databaseId <id> [--title <text>] [--propertyValues <json>]`                                                                                                                                     | Add a page row to a database, optionally seeding property values                                                                                                                  |
 | `submit-content-database-form`              | `--databaseId <id> [--viewId <form-view-id>] [--title <text>] [--propertyValues <json>]`                                                                                                           | Submit one form response atomically; validates required questions, resolves option labels/IDs, writes Blocks correctly, verifies persistence, and returns the exact row page link |
 | `duplicate-database-item`                   | `--itemId <id>` or `--documentId <id> [--title <text>]`                                                                                                                                            | Duplicate exactly one database row page and its stored property values; for two or more rows, use `duplicate-database-items` once                                                 |
@@ -138,7 +156,7 @@ cd templates/content && pnpm action <name> [args]
 | `move-database-item`                        | `--itemId <id>` or `--documentId <id> --position <number>`                                                                                                                                         | Move a database row page to a new zero-based table position                                                                                                                       |
 | `update-content-database-view`              | `--databaseId <id> --viewConfig <json>`                                                                                                                                                            | Persist database views, sorts, filters, hidden properties, and view settings                                                                                                      |
 | `list-document-properties`                  | `--documentId <id> [--format json]`                                                                                                                                                                | List Notion-style property definitions and values for a document                                                                                                                  |
-| `configure-document-property`               | `--documentId <id> [--id <propertyId>] --name <name> --type <type> [--visibility always_show\|hide_when_empty\|always_hide]`                                                                       | Create or update a property definition                                                                                                                                            |
+| `configure-document-property`               | `--documentId <id> [--id <propertyId>] --name <name> --type <type> [--description <text>] [--visibility always_show\|hide_when_empty\|always_hide] [--options <json>]`                             | Create or update a property definition and its option-level guidance                                                                                                              |
 | `duplicate-document-property`               | `--documentId <id> --propertyId <propertyId>`                                                                                                                                                      | Duplicate a property definition and its stored values                                                                                                                             |
 | `delete-document-property`                  | `--documentId <id> --propertyId <propertyId>`                                                                                                                                                      | Delete a property definition and its stored values                                                                                                                                |
 | `set-document-property`                     | `--documentId <id> --propertyId <propertyId> --value <json>`                                                                                                                                       | Set a document property value (for a `blocks` field, the value is its markdown content)                                                                                           |
@@ -150,6 +168,27 @@ cd templates/content && pnpm action <name> [args]
 Database views follow Notion-style tab labels. When creating or duplicating
 views in `viewConfig`, use unique default names (`Table 2`, `SEO copy 2`, etc.)
 instead of appending several tabs with the same label.
+
+### Self-Documenting Descriptions
+
+Descriptions are stable semantic guidance, not generated summaries of current
+content. Preserve this distinction when reading or writing them:
+
+- A page description explains why the page exists and what belongs there.
+- A database description explains the collection's purpose and inclusion
+  boundary. Inline and full-page views of one database share the same
+  description.
+- A property description explains what the field means and what value belongs
+  there.
+- A select, status, or multi-select option description explains when to choose
+  that option.
+
+Descriptions are owned; context is inherited. Never copy an ancestor's prose
+into a child description. Focused reads expose a root-to-parent `contextPath`
+so the agent can use ancestor guidance without creating stale duplicates. Read
+the returned descriptions before placing content or setting property values.
+Update a description only when the object's meaning changes, not whenever its
+current content changes.
 
 **`pull-document` is the collab-aware "ingest the final" read** — prefer it over
 `get-document` for external ingest (another app, an external coding agent over
@@ -171,37 +210,24 @@ strip of the markdown.
 
 ### Local Source Files
 
-Content has two file workflows:
+Content has one database-backed document model with optional folder sources:
 
-- **Database mode local folders:** the `/local-files` view links one or more
+- **Local folder sources:** the `/local-files` view links one or more
   browser or Agent Native Desktop folders to SQL-backed documents. The UI uses
-  folder rows: **Pull** reads local `.md`/`.mdx` files through
-  `import-content-source`, **Check** runs the same import as `--dryRun true`,
-  and **Push** uses `export-content-source` to write Content documents back to
-  the chosen folder. Files with known `id` values update existing docs only
-  when the caller has editor access, and files without ids create new private
-  docs for the current user. Imported rows keep `source.mode: "local-files"`
-  and `source.path`, so `list-documents`/`get-document` can distinguish them
-  from ordinary private pages and the sidebar can show them under Local files.
-  With one linked folder, imported paths stay flat (`content/page.mdx`); with
-  multiple linked folders, paths are prefixed by folder name so Local files can
-  group them by folder. Once a source folder is linked, the selected
-  `.md`/`.mdx` file is authoritative: opening the page reads the file, editor
-  saves write the file first, and SQL is updated afterward as
-  cache/history/search glue. Use `--dryRun true` before a large import when the
-  source folder may contain unexpected files.
-- **Local File Mode editing:** when the app runs with `AGENT_NATIVE_MODE=local-files`
-  or an `agent-native.json` whose app config enables local files, the standard
-  Content editor reads and writes configured repo files directly. The left
-  sidebar is populated from local roots such as `docs/`, `blog/`, `content/`,
-  and `resources/`; selecting a file opens `/page/<local-file-id>` and
-  `update-document` writes the selected `.md`/`.mdx` file. The document id is
-  derived from the file path, and unknown frontmatter is preserved when title,
-  content, icon, or favorite state changes.
-  Repos can opt into `profile: "docs/no-bookkeeping"` to keep docs edits from
-  adding absent `updatedAt`, `icon`, or `isFavorite` frontmatter. Content-only
-  edits under that profile preserve existing frontmatter but do not create new
-  bookkeeping keys; explicit title/icon/favorite edits still persist.
+  folder rows: **Pull** calls `sync-local-folder-source`, **Check** runs the
+  same action with `dryRun: true`, and **Push** uses the source-scoped
+  `export-content-source`. Imported files become ordinary SQL documents in the
+  target space's canonical Files database. Preserve frontmatter `id` across
+  renames; missing files and concurrent changes become reviewable incoming
+  change sets instead of silently deleting or overwriting a page. SQL stores
+  only opaque connection identity, relative paths, and hashes. Disconnecting a
+  folder keeps both the Content pages and disk files.
+- **Manifest/CLI bridge:** `agent-native content local-files <target>` remains
+  as a compatibility spelling, but it launches normal database-backed Content.
+  `agent-native.json` declares `source.type: "local-folder"` and an opaque
+  `connectionId`; it does not select a separate application mode. The trusted
+  local server bridge materializes that source through
+  `sync-manifest-local-folder-source`.
 - **Local MDX components:** local file workspaces can expose React components
   from the configured `components` folder. Export PascalCase components such as
   `ImpactCounter` from `.tsx` files, then use `<ImpactCounter />` in MDX or pick
@@ -388,6 +414,7 @@ Public documents are reachable at `/p/<id>` once visibility is `public`. Anyone 
 | ------------------------------ | ------------------------------------------------------------------------------ |
 | "What am I looking at?"        | `view-screen`                                                                  |
 | "Create a page about X"        | `create-document --title "X" --content "# X\n\n..."`                           |
+| "Explain what belongs here"    | `view-screen` to get ID, `update-document --id ... --description "..."`        |
 | "Find my meeting notes"        | `search-documents --query "meeting notes"`                                     |
 | "Update the title of this doc" | `view-screen` to get ID, `update-document --id ... --title "New"`              |
 | "Fix a typo / small edit"      | `view-screen` to get ID, `edit-document --id ... --find "old" --replace "new"` |

@@ -1,5 +1,40 @@
 # @agent-native/dispatch
 
+## 0.14.12
+
+### Patch Changes
+
+- 7f5068c: Make dreams page responsive across all screen sizes: stat tile labels now truncate instead of clipping, stats render as a full-width grid (2-col on mobile, 4-col on md+), action buttons wrap on their own row, and the three-panel content grid stacks on mobile, goes 2-col on lg, and 3-col on xl.
+
+## 0.14.11
+
+### Patch Changes
+
+- cdfa357: Fix infinite render loop in DreamsRoute caused by the `useEffect` fallback clearing `selectedDreamId` to `null` while `dreams` was still loading. Added a `dreamsQuery.isLoading` guard to prevent the fallback from running before data resolves.
+
+## 0.14.10
+
+### Patch Changes
+
+- 7cfb087: Re-sync all vault secrets into the shared credential store at startup so upgraded encryption formats propagate without manually re-saving each key.
+- 7cfb087: Resolve provider credentials from encrypted Dispatch vault secrets, keep hosted A2A agent discovery distinct from mounted workspace app inventory, and run long Analytics A2A tasks on the durable background worker.
+
+## 0.14.9
+
+### Patch Changes
+
+- 8e6f022: Allow Dispatch hosts to link the AgentSidebar to a full-page Agent surface.
+- 8e6f022: Improve collapsed Dispatch navigation spacing and sizing.
+
+## 0.14.8
+
+### Patch Changes
+
+- 3c3a59d: Default the unified MCP gateway to expose all discovered workspace apps until an explicit access policy is configured.
+- 3c3a59d: Return durable task handles for long-running MCP agent requests and expose
+  grant-checked status polling instead of holding one MCP tool call open for the
+  full agent run.
+
 ## 0.14.7
 
 ### Patch Changes

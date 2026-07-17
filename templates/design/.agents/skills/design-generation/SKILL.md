@@ -175,6 +175,22 @@ defaults. The banned-defaults list above still applies, plus:
 
 This flow mirrors Claude Design's UX: clarify only what's unclear → show variants → user picks → refine. Don't collapse phases into one shot for new, open-ended designs.
 
+### Creative-context gate
+
+Before Phase 1, read the `creative-context` skill and retrieve components,
+interaction examples, visual style, and factual evidence as separate roles.
+Respect `contextMode: "off"` and pinned packs. Apply its reuse ladder exactly:
+use an approved native component/template/asset unchanged, compose approved
+pieces, lightly adapt a real example, generate from narrowly retrieved
+references, then generate net-new only when the relevant corpus is empty.
+Retrieval is a separate operation from `generate-screens`, `generate-design`,
+or `present-design-variants`.
+
+Keep the selected immutable `contextPackId` and reuse labels on the generation
+session and every resulting screen/variant. Rendered HTML and screenshots are
+not provenance. App-local design systems and components remain the fallback
+when shared retrieval finds no relevant evidence.
+
 ### Phase 1 — Create the project + ask before generating
 
 ```bash
@@ -661,6 +677,9 @@ regeneration is slow, expensive, and regresses unrelated parts.
 
 1. **Read before you edit.** Pull the current file with `get-design-snapshot`
    (or `get-design`) so you edit the live content, not a stale memory of it.
+   If the design has persisted review comments, fetch the open queue with
+   `get-review-feedback` and use `.agents/skills/design-review-feedback` to
+   apply and verify one anchored thread at a time.
 2. **Prefer `edit-design` for small changes.** It applies one or more
    search/replace blocks to a file's HTML — surgical, cheap, and it preserves
    everything you didn't touch (Alpine state, scroll, other screens):

@@ -41,7 +41,7 @@ import {
 import { format } from "date-fns";
 import { nanoid } from "nanoid";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 import { FieldPropertiesPanel } from "@/components/builder/FieldPropertiesPanel";
@@ -338,13 +338,15 @@ export function FormBuilderPage() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
+                  asChild
                   variant="ghost"
                   size="icon"
                   className="size-10 shrink-0 active:scale-[0.96]"
-                  onClick={() => navigate("/forms")}
                   aria-label={t("builder.backToForms")}
                 >
-                  <IconArrowLeft className="h-4 w-4" />
+                  <Link to="/forms">
+                    <IconArrowLeft className="h-4 w-4" />
+                  </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{t("builder.backToForms")}</TooltipContent>
@@ -399,12 +401,8 @@ export function FormBuilderPage() {
           {isAccessIssue ? t("builder.accessDenied") : t("builder.loadFailed")}
         </p>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/forms")}
-          >
-            {t("builder.backToForms")}
+          <Button asChild variant="outline" size="sm">
+            <Link to="/forms">{t("builder.backToForms")}</Link>
           </Button>
           {!isAccessIssue && (
             <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -557,13 +555,15 @@ export function FormBuilderPage() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                asChild
                 variant="ghost"
                 size="icon"
                 className="size-10 shrink-0 active:scale-[0.96]"
-                onClick={() => navigate("/forms")}
                 aria-label={t("builder.backToForms")}
               >
-                <IconArrowLeft className="h-4 w-4" />
+                <Link to="/forms">
+                  <IconArrowLeft className="h-4 w-4" />
+                </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent>{t("builder.backToForms")}</TooltipContent>
@@ -1468,10 +1468,10 @@ function ResultsContent({ formId, form }: { formId: string; form: any }) {
                   key={response.id}
                   className="border-b border-border hover:bg-muted/20"
                 >
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                  <td className="px-4 py-2.5 align-top text-xs text-muted-foreground">
                     {responses.length - idx}
                   </td>
-                  <td className="min-w-36 px-4 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                  <td className="min-w-36 px-4 py-2.5 align-top text-xs text-muted-foreground whitespace-nowrap">
                     {format(new Date(response.submittedAt), "MMM d, h:mm a")}
                   </td>
                   {hasSubmitterEmail && (
@@ -1618,6 +1618,25 @@ function SettingsEditor({
           checked={settings.anonymous === true}
           onCheckedChange={(anonymous) => update({ anonymous })}
           aria-label={t("builder.settings.anonymousResponses")}
+        />
+      </div>
+
+      <div className="flex items-start justify-between gap-4 rounded-lg border border-border/60 bg-card p-3">
+        <div className="space-y-1">
+          <Label htmlFor="email-new-responses" className="text-xs">
+            {t("builder.settings.emailNewResponses")}
+          </Label>
+          <p className="text-xs leading-5 text-muted-foreground">
+            {t("builder.settings.emailNewResponsesDescription")}
+          </p>
+        </div>
+        <Switch
+          id="email-new-responses"
+          checked={settings.emailOnNewResponses === true}
+          onCheckedChange={(emailOnNewResponses) =>
+            update({ emailOnNewResponses })
+          }
+          aria-label={t("builder.settings.emailNewResponses")}
         />
       </div>
 

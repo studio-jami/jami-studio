@@ -17,6 +17,7 @@ import {
   IconSun,
   IconMoon,
   IconHistory,
+  IconHierarchy2,
   IconLanguage,
   IconRefresh,
   IconSettings,
@@ -584,6 +585,22 @@ export function CommandPalette() {
 
             {showHiddenResults && (
               <CommandGroup key="settings" heading={t("navigation.settings")}>
+                <CommandItem
+                  value={`setting:agent-page:${t("settings.agentTitle")}`}
+                  onSelect={() => go("/agent")}
+                  keywords={commandPaletteKeywords(
+                    t("settings.agentTitle"),
+                    "agent",
+                    "context",
+                    "files",
+                    "connections",
+                    "jobs",
+                    "access",
+                  )}
+                >
+                  <IconHierarchy2 className="me-2 h-4 w-4 text-muted-foreground" />
+                  <span className="truncate">{t("settings.agentTitle")}</span>
+                </CommandItem>
                 {settingsCommands.map((setting) => (
                   <CommandItem
                     key={`setting-${setting.id}`}

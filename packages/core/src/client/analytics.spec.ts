@@ -23,6 +23,8 @@ const amplitudeMock = vi.hoisted(() => ({
 const replayMock = vi.hoisted(() => ({
   emitSessionReplayException: vi.fn(),
   getSessionReplayId: vi.fn(() => undefined),
+  getSessionReplayContext: vi.fn(() => null),
+  getSessionReplayUrl: vi.fn(() => null),
   maybeStartSessionReplay: vi.fn(async () => ({ started: false })),
   startSessionReplay: vi.fn(async () => ({ started: false })),
   stopSessionReplay: vi.fn(async () => undefined),
@@ -209,6 +211,21 @@ describe("browser analytics pageviews", () => {
         llm_connection_source: "app_secrets",
       },
     });
+  });
+
+  it("can skip the authenticated engine-status probe on public routes", async () => {
+    installBrowser("https://design.agent-native.com/present/public-design");
+    const { fetchMock } = installFetch();
+    const { configureTracking } = await freshAnalytics();
+
+    configureTracking({ llmConnectionStatus: false });
+    await tick();
+
+    expect(
+      fetchMock.mock.calls.some(([url]) =>
+        String(url).includes("/_agent-native/agent-engine/status"),
+      ),
+    ).toBe(false);
   });
 
   it("keeps sanitized tracking but disables content capture on local Plan routes", async () => {
@@ -822,6 +839,56 @@ describe("browser analytics pageviews", () => {
     });
 
     expect(result).toBeNull();
+  });
+
+  it("drops recoverable server run_timeout transitions from Sentry", async () => {
+    installBrowser("https://analytics.agent-native.com/ask");
+    (window as any).__AGENT_NATIVE_CONFIG__ = {
+      sentryDsn: "https://public@example/4511270423822336",
+      sentryEnvironment: "production",
+    };
+    const { configureTracking } = await freshAnalytics();
+
+    configureTracking({});
+    const options = sentryMock.init.mock.calls[0][0];
+    const result = options.beforeSend({
+      exception: {
+        values: [{ type: "Error", value: "agent-chat:run_timeout" }],
+      },
+      tags: {
+        context: "agent-native-chat",
+        errorCode: "run_timeout",
+        reconnectTimedOut: "false",
+        reconnectTerminalReason: "run_timeout",
+      },
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("keeps locally timed-out chat reconnects visible in Sentry", async () => {
+    installBrowser("https://analytics.agent-native.com/ask");
+    (window as any).__AGENT_NATIVE_CONFIG__ = {
+      sentryDsn: "https://public@example/4511270423822336",
+      sentryEnvironment: "production",
+    };
+    const { configureTracking } = await freshAnalytics();
+
+    configureTracking({});
+    const options = sentryMock.init.mock.calls[0][0];
+    const event = {
+      exception: {
+        values: [{ type: "Error", value: "agent-chat:run_timeout" }],
+      },
+      tags: {
+        context: "agent-native-chat",
+        errorCode: "run_timeout",
+        reconnectTimedOut: "true",
+        reconnectTerminalReason: "run_timeout",
+      },
+    };
+
+    expect(options.beforeSend(event)).toBe(event);
   });
 
   it("captures browser errors through the generic captureError helper", async () => {
