@@ -42,7 +42,7 @@
     "provenance": true
   },
   "scripts": {
-    "build": "tsc && cp src/styles.css dist/styles.css",
+    "build": "tsc && node -e \"require('fs').copyFileSync('src/styles.css','dist/styles.css')\"",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit"
   },

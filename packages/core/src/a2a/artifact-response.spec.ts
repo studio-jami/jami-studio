@@ -262,17 +262,17 @@ describe("appendA2AArtifactLinks", () => {
           tool: "save-monitor",
           result: JSON.stringify({
             id: "monitor_123",
-            name: "clips.agent-native.com",
+            name: "clips.jami.studio",
             monitorAppUrl:
-              "https://analytics.agent-native.com/monitoring?view=uptime&monitor=monitor_123",
+              "https://analytics.jami.studio/monitoring?view=uptime&monitor=monitor_123",
           }),
         },
       ],
-      { baseUrl: "https://analytics.agent-native.com" },
+      { baseUrl: "https://analytics.jami.studio" },
     );
 
     expect(text).toContain(
-      '- Monitor "clips.agent-native.com": https://analytics.agent-native.com/monitoring?view=uptime&monitor=monitor_123 (ID: monitor_123)',
+      '- Monitor "clips.jami.studio": https://analytics.jami.studio/monitoring?view=uptime&monitor=monitor_123 (ID: monitor_123)',
     );
   });
 
@@ -288,15 +288,15 @@ describe("appendA2AArtifactLinks", () => {
             status: "published",
             settings: { anonymous: true },
             publicUrl:
-              "https://forms.agent-native.com/f/product-feedback-a1b2c3",
+              "https://forms.jami.studio/f/product-feedback-a1b2c3",
           }),
         },
       ],
-      { baseUrl: "https://forms.agent-native.com" },
+      { baseUrl: "https://forms.jami.studio" },
     );
 
     expect(text).toContain(
-      '- Anonymous form "Product feedback": https://forms.agent-native.com/f/product-feedback-a1b2c3 (ID: form_123)',
+      '- Anonymous form "Product feedback": https://forms.jami.studio/f/product-feedback-a1b2c3 (ID: form_123)',
     );
   });
 
@@ -730,21 +730,21 @@ describe("appendA2AArtifactLinks", () => {
 
   it("allows a Content URL proven by a nested get-content-document read result", () => {
     const text = appendA2AArtifactLinks(
-      "Document: https://content.agent-native.com/page/doc_read",
+      "Document: https://content.jami.studio/page/doc_read",
       [
         {
           tool: "get-content-document",
           result: JSON.stringify({
             document: { id: "doc_read", title: "Design asks" },
-            url: "https://content.agent-native.com/page/doc_read",
+            url: "https://content.jami.studio/page/doc_read",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toBe(
-      "Document: https://content.agent-native.com/page/doc_read",
+      "Document: https://content.jami.studio/page/doc_read",
     );
   });
 
@@ -760,10 +760,10 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://content.agent-native.com" },
+      { baseUrl: "https://content.jami.studio" },
     );
 
-    expect(text).toContain("https://content.agent-native.com/page/doc_read");
+    expect(text).toContain("https://content.jami.studio/page/doc_read");
     expect(text).not.toContain("https://untrusted.example.com/page/doc_read");
   });
 
@@ -779,18 +779,18 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://content.agent-native.com" },
+      { baseUrl: "https://content.jami.studio" },
     );
 
-    expect(text).toContain("https://content.agent-native.com/page/doc_read");
+    expect(text).toContain("https://content.jami.studio/page/doc_read");
     expect(text).not.toContain("https://untrusted.example.com/page/doc_read");
   });
 
   it("allows database and row page URLs returned by get-content-database", () => {
     const text = appendA2AArtifactLinks(
       [
-        "Database: https://content.agent-native.com/page/database_doc",
-        "Row: https://content.agent-native.com/page/request_doc",
+        "Database: https://content.jami.studio/page/database_doc",
+        "Row: https://content.jami.studio/page/request_doc",
       ].join("\n"),
       [
         {
@@ -810,14 +810,14 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain(
-      "Database: https://content.agent-native.com/page/database_doc",
+      "Database: https://content.jami.studio/page/database_doc",
     );
     expect(text).toContain(
-      "Row: https://content.agent-native.com/page/request_doc",
+      "Row: https://content.jami.studio/page/request_doc",
     );
     expect(text).not.toContain("could not verify");
   });
@@ -845,19 +845,19 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://content.agent-native.com" },
+      { baseUrl: "https://content.jami.studio" },
     );
 
     expect(text).toContain(
-      "https://content.agent-native.com/page/database_doc",
+      "https://content.jami.studio/page/database_doc",
     );
-    expect(text).toContain("https://content.agent-native.com/page/request_doc");
+    expect(text).toContain("https://content.jami.studio/page/request_doc");
     expect(text).not.toContain("https://untrusted.example.com/page/");
   });
 
   it("does not treat an unavailable get-content-database result as document proof", () => {
     const text = appendA2AArtifactLinks(
-      "Database: https://content.agent-native.com/page/database_missing",
+      "Database: https://content.jami.studio/page/database_missing",
       [
         {
           tool: "get-content-database",
@@ -869,7 +869,7 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the document URL");
@@ -878,27 +878,27 @@ describe("appendA2AArtifactLinks", () => {
 
   it("allows a canonical document URL paired with its ID by a generic read action", () => {
     const text = appendA2AArtifactLinks(
-      "Document: https://content.agent-native.com/page/doc_read",
+      "Document: https://content.jami.studio/page/doc_read",
       [
         {
           tool: "read-content-resource",
           result: JSON.stringify({
             documentId: "doc_read",
-            url: "https://content.agent-native.com/page/doc_read",
+            url: "https://content.jami.studio/page/doc_read",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toBe(
-      "Document: https://content.agent-native.com/page/doc_read",
+      "Document: https://content.jami.studio/page/doc_read",
     );
   });
 
   it("does not let a generic read result prove a document URL on another origin", () => {
     const text = appendA2AArtifactLinks(
-      "Document: https://content.agent-native.com/page/doc_read",
+      "Document: https://content.jami.studio/page/doc_read",
       [
         {
           tool: "read-content-resource",
@@ -908,28 +908,28 @@ describe("appendA2AArtifactLinks", () => {
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the document URL");
     expect(text).not.toContain(
-      "https://content.agent-native.com/page/doc_read",
+      "https://content.jami.studio/page/doc_read",
     );
   });
 
   it("does not let a generic read result prove a mismatched document URL", () => {
     const text = appendA2AArtifactLinks(
-      "Document: https://content.agent-native.com/page/doc_fake",
+      "Document: https://content.jami.studio/page/doc_fake",
       [
         {
           tool: "read-content-resource",
           result: JSON.stringify({
             documentId: "doc_real",
-            url: "https://content.agent-native.com/page/doc_fake",
+            url: "https://content.jami.studio/page/doc_fake",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the document URL");
@@ -938,17 +938,17 @@ describe("appendA2AArtifactLinks", () => {
 
   it("does not let a generic write result prove a document URL", () => {
     const text = appendA2AArtifactLinks(
-      "Document: https://content.agent-native.com/page/doc_fake",
+      "Document: https://content.jami.studio/page/doc_fake",
       [
         {
           tool: "publish-unrelated-resource",
           result: JSON.stringify({
             documentId: "doc_fake",
-            url: "https://content.agent-native.com/page/doc_fake",
+            url: "https://content.jami.studio/page/doc_fake",
           }),
         },
       ],
-      { baseUrl: "https://dispatch.agent-native.com" },
+      { baseUrl: "https://dispatch.jami.studio" },
     );
 
     expect(text).toContain("could not verify the document URL");

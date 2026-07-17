@@ -368,7 +368,7 @@ function documentUrlForId(
 
 function isContentDocumentUrl(rawUrl: string): boolean {
   try {
-    return new URL(rawUrl).origin === "https://content.agent-native.com";
+    return new URL(rawUrl).origin === "https://content.jami.studio";
   } catch {
     return false;
   }
