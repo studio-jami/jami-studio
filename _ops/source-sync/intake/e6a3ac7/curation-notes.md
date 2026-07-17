@@ -113,3 +113,35 @@ integration check on sync merges, with one structural caveat:
   tokens 403 on raw Bearer API calls (proof-of-possession) — all Vercel ops
   must go through the CLI now; `_ops/scripts/vercel-inspect.mjs` is dead.
   After this, sync-branch status = docs project only, and red means red.
+
+## Port rule — Jami-owned docs chrome (owner-ratified 2026-07-17)
+
+Main's commit 9d72344a9 rebranded the public docs surface (Jami Studio
+identity, Apps/Discord removal, Google-Form waitlist, self-hosted
+screenshots, brand/privacy/terms moved to packages/marketing). The intake
+identity overlay covered docs MDX content only — NOT the docs app UI — so
+this branch still carries pre-rebrand chrome (Agent-Native i18n,
+BuilderWaitlistPopover, Apps/Discord links, Builder CDN screenshots and the
+brand/privacy/terms routes).
+
+Ratified rule for the staging→main port and every future sync:
+
+- **Docs app UI chrome is Jami-owned; main wins.** Header, Footer,
+  i18n/*, _index, TemplateCard, waitlist components, vite-sitemap-plugin,
+  seo.ts defaults, and the ABSENCE of brand/privacy/terms routes are never
+  accepted from upstream by default. `packages/marketing` is Jami-only;
+  upstream never touches it.
+- **Port upstream selectively**: system fixes, advances, new capabilities,
+  and refactors come over (with Jami identity re-applied where copy rides
+  along); Builder-branded copy/content/assets stay behind.
+- **Acceptance narrows over time** as the takeover deepens — each sync adds
+  history to dial the keep/leave classification in tighter.
+
+First application (ported to main as bd127fa77, verified 111/111 docs
+tests): readOnly flags on the five docs agent actions (+test), SearchModal
+theme quick-action + useDocsTheme refactor, agent-chat plugin
+initialToolNames + tool guidance, analytics SEO copy, theme.toggle i18n key
+×12 locales. Left behind: BuilderIO edit/source URLs (DocsLayout,
+templates.$slug, package.json), Builder JSON-LD/homepage-new identity,
+Builder-CDN default OG image in seo.ts (main keeps self-hosted
+og-image.png), and the new agent-native-*.svg logo assets (wrong brand).
