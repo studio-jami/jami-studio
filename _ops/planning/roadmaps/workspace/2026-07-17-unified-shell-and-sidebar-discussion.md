@@ -19,6 +19,26 @@ Companions:
    user — shape that matches our intended shift towards unified workspaces
    vs disparate apps."
 
+### Round 2 (same day) — the workspace surface itself
+
+3. **A reimagined single workspace**: the main chat with split panels and
+   surfaceable, interactive UI — "the substitute for any navigation at
+   all." This is the REAL payoff of the Dispatch layer, reimagined and more
+   focused. Today every page has several chats and a sidebar — great for
+   adaptability, but the direction is to FOCUS: one primary chat surface in
+   the shell. (This directionally answers fork question 1 below: the agent
+   surface moves up.)
+4. **Sidebar in the shell across everything — ratified.** It can render
+   small inline cards at any time; cards click through to the full
+   workspace with surfaceable-UI powers across all components and
+   workspaces, with **full operability as-if in the apps themselves**.
+5. The workspace is both a single page and a split-panel surface: chat,
+   viewer, context, terminal — plus file explorer, diff view, artifact
+   view; eventually a sandbox pane. Terminal/TUI frameworks welcome.
+   Quality bar: a polished, high-class agent workspace of the
+   well-known open-source archetype, REUSING proven open-source libraries
+   rather than inventing panes.
+
 This is the opening of the shell discussion — NOT the Phase-3 consolidation
 decision. Roadmap order stands (Phase 2.5 cohesion → 2.75 de-Builder.io →
 owner-led Phase-3 mapping). The question this note frames: is the SHELL a
@@ -58,6 +78,53 @@ A persistent shell and app consolidation are SEPARABLE:
 - **Voice/video dock**: body-portalled, panel-aware, hover-reveal controls
   (avatar plan §1.3). Moving its OWNER into a shell document is precisely
   what makes call sessions survive app switches with zero reconnect.
+
+### Workspace-surface primitives (verified in-repo, round 2)
+
+The split-panel agent workspace is mostly ASSEMBLY of things that already
+exist in the stack, not greenfield:
+
+- **Dispatch** — the workspace-level chat/orchestration app; round 2 names
+  it as the layer whose real payoff the unified workspace is. The shell
+  workspace is Dispatch's chat surface promoted and focused, not a rival.
+- **Surfaceable UI cards** — already three primitives deep: generative-ui
+  (transient/saved inline chat UI), extensions (sandboxed Alpine mini-apps
+  with `appAction`/`dbQuery`/`extensionFetch`), and extension-points (named
+  UI slots). The MCP app host already models exactly the card ladder the
+  owner described: display modes `inline | pip | fullscreen`
+  (`mcp-app-host.ts`).
+- **Full operability without navigation** — this is the action surface by
+  construction: actions are the single source of truth (agent tools = UI
+  calls), and `call-agent`/A2A reaches every sibling app. "As-if in the
+  app" has three fidelity rungs, cheapest first:
+  1. action-backed cards/panels (generative-ui/extensions — exists today);
+  2. same-origin iframe of the app route inside a pane (full fidelity,
+     less composable — the round-1 shape A mechanism, now demoted from
+     "the shell" to "one pane type");
+  3. true component-level reuse of app UIs inside workspace panes — the
+     polished end state, but a real component-extraction program across
+     apps; honest cost, not a v1 item.
+- **Code surfaces** — `@agent-native/code-agents-ui` exists as "Reusable
+  React UI for Agent-Native Code surfaces" (published, versioned); the
+  harness-agents runtime layer (Claude Code, Codex, Pi, ACP…) and
+  context-xray already exist for the agent side of a coding pane.
+- **Terminal** — `@xterm/*` is ALREADY a dependency of core and the chat,
+  clips, design, and plan templates. A shell terminal pane reuses that,
+  not a new framework.
+- **Sandbox** — `packages/core/src/coding-tools/sandbox/` exists upstream
+  today (adapter interface, local child-process adapter, background
+  executions store) and is under active upstream development. The
+  "eventually sandbox" pane has a landing seam already.
+- **Artifacts/diff/file views** — Plan owns visual artifacts (diff,
+  file-tree, annotated-code block types in its normalized schema); Code
+  surfaces own diff/explorer UI. Survey-then-reuse before building panes.
+- **Open-source archetype** (research item, evaluate at build time with
+  current versions per the AGENTS.md dependency rule): split-pane layout
+  (shadcn resizable / react-resizable-panels), chat UI kits
+  (assistant-ui, CopilotKit, AG-UI protocol), agent-workspace shells of
+  the OpenHands class for interaction patterns, xterm.js (already in).
+  Rule: reuse where a library is genuinely better-maintained than what the
+  stack already ships; the stack already ships a lot of this.
 
 ## Candidate shapes
 
@@ -114,12 +181,13 @@ keep controlled. Honest options:
 
 ## Fork-in-the-road questions (owner input wanted)
 
-1. **Does the agent panel move into the shell?** Biggest product decision
-   here. Shell-owned panel = ONE conversation/transcript/composer across
-   all apps (matches the A2A read-first design; the panel talks to the
-   active app's agent via the same call-agent bridge). Per-app panels
-   stay = shell only owns the call dock/video; smaller change, keeps
-   today's per-app agent identity. This choice shapes everything else.
+1. **Does the agent panel move into the shell?** Round 2 answers the
+   direction: YES — one primary chat surface in the shell, the navigation
+   substitute; today's several-chats-per-page adaptability gets focused.
+   Remaining sub-questions: what happens to per-app panels during the
+   transition (deprecate gradually? keep as a pane-local affordance that
+   feeds the same thread?), and does the shell chat carry ONE continuous
+   thread with per-pane context chips, or thread-per-workspace-domain?
 2. **URL model**: top URL mirrors the active pane route 1:1 (recommended —
    preserves deep links, bookmarks, browser history), or shell gets its own
    nav state with app routes secondary?
@@ -135,6 +203,16 @@ keep controlled. Honest options:
    gateway, or a gateway-level root app in the fork (framework-owned so
    every agent-native workspace gets it)? The second is the more
    upstream answer but touches the fork; the first proves the shape.
+7. **Pane fidelity ladder (round 2)**: confirm the v1 pane set — chat +
+   viewer + context + terminal, with file-explorer/diff/artifact views
+   riding the viewer — and that "as-if in the app" starts on rungs 1–2
+   (action-backed cards + same-origin iframe panes), with rung 3
+   (component-level reuse) as the stated polish trajectory rather than a
+   v1 requirement.
+8. **Dispatch relationship**: is the shell workspace literally Dispatch's
+   next form (Dispatch chat promoted to `/`), or a new surface that
+   consumes Dispatch? Affects where the code lives and what "more focused"
+   deprecates.
 
 ## Guardrails this work must honor (from the roadmap, restated)
 
