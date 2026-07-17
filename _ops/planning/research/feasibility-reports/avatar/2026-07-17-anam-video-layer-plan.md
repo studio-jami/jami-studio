@@ -235,12 +235,31 @@ SDK. This is exactly what `avatar-agent` runs in production today.
 
 ### Current read (recommendation, not decision)
 
-A is the lower-risk two-week path because it leaves the verified voice
-slice's tool bridge untouched; B is the better long-term shape if/when the
-tool question is solved (client-tool support lands, or webhook tools get a
-proper caller-shape design). The UI layer (§3.2) and most of the server mint
-work are identical under both, so the shared work can start while A-vs-B is
-settled. Decision point: before the bridge slice (§4 slice 4).
+**Owner clarification (2026-07-17, second review): the video feed itself
+carries NO tools — it is a pure face render. Conversation, tools, STT/TTS,
+and orchestration stay in our stack (the engine adapters and the developing
+Layer-1/2 voice layers).** That requirement maps onto the paths as follows:
+
+- Path A **is** that shape today: Anam receives audio and returns face
+  video; it never sees a tool, a prompt, or a transcript source of truth.
+  Durable bonus: an audio-passthrough face layer is engine-agnostic — ANY
+  current or future conversation engine that can hand us TTS PCM
+  (`elevenlabs-agent` now; `gemini-live`, the owned LiveKit engine later)
+  drives the same face through the same Layer-3 adapter. The video layer
+  never needs to know who is thinking.
+- Path B is NOT just a video feed today: Anam brokers the EL conversation
+  itself, which is exactly why browser client tools stop firing. B becomes
+  compatible with the tool-less-feed requirement only if Anam ships
+  client-tool passthrough, or if we deliberately move the tool surface
+  server-side (the webhook caller-shape design in the research items).
+
+So the clarification substantially settles the near-term shape: A matches
+the stated requirement with zero rework; B stays a future option to
+re-evaluate on its research items, not a two-week candidate. A is also the
+lower-risk two-week path because it leaves the verified voice slice's tool
+bridge untouched. The UI layer (§3.2) and most of the server mint work are
+identical under both. Formal decision point stays where it was: before the
+bridge slice (§4 slice 4).
 
 ## 3. Proposed design
 
@@ -433,16 +452,20 @@ account.
 
 ## 5. Open questions / research items
 
-1. **Path A vs B (§2)** — the main open discussion. Inputs still wanted:
-   whether passthrough latency is acceptable in practice, whether a webhook
-   tool route can be designed as the adapter contract's second caller shape
-   without breaking local dev, and whether Anam has near-term server-side
-   client-tool support (worth asking directly given the contest).
+1. **Path A vs B (§2)** — substantially narrowed by the owner's tool-less
+   video-feed clarification (see §2 Current read): A matches the stated
+   requirement today; B's research items (webhook caller-shape design,
+   Anam server-side client-tool timing — worth asking directly given the
+   contest) stay open for the long-term shape, not the two-week window.
 2. **personaId in passthrough mint (§1.4)** — expected to work; settle with
    the slice-2 probe. Persona ids themselves are settled: keep as stored.
-3. **Cross-app persistence depth for the demo (§3.3)** — is re-attach
-   (brief reconnect on app switch) acceptable for the contest video, or
-   does the demo need the persistent-shell answer pulled forward?
+3. **Cross-app persistence depth for the demo (§3.3)** — discussion opened
+   2026-07-17: the owner plans ONE unified shell with a domain-grouped,
+   user-adjustable sidebar (unified workspaces vs disparate apps). See the
+   companion note
+   `_ops/planning/roadmaps/workspace/2026-07-17-unified-shell-and-sidebar-discussion.md`.
+   Interim question stands: is re-attach acceptable for the contest video,
+   or does a minimal shell spike get pulled forward?
 4. **Default placement when panel is open at start**: dock into panel
    automatically (proposed) or stay floating until user docks it?
 5. **Mid-call video toggle**: accept "choose at start" for MVP? (Hot-upgrade
