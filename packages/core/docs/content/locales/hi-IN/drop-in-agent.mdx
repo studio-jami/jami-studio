@@ -179,7 +179,7 @@ export default function AgentRoute() {
 
 ## प्रोग्रामेटिक संदेश: `sendToAgentChat()` {#send}
 
-एक बटन जो एजेंट को काम सौंपता है (इनलाइन `llm()` कॉल चलाने के बजाय - [ladder](/docs/what-is-agent-native#the-ladder) से एंटी-पैटर्न):
+एक बटन जो एजेंट को काम सौंपता है (इनलाइन `llm()` कॉल चलाने के बजाय - [ladder](/docs/what-is-jami#the-ladder) से एंटी-पैटर्न):
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -264,7 +264,7 @@ const { send, isGenerating } = useSendToAgentChat();
 
 ## UI से टाइपसेफ actions: `useActionMutation()` {#use-action-mutation}
 
-जब UI को समान ऑपरेशन चलाने की आवश्यकता होती है तो एक एजेंट टूल चलेगा - [ladder](/docs/what-is-agent-native#rung-three) का क्रमांक 3 - `useActionMutation` का उपयोग करें:
+जब UI को समान ऑपरेशन चलाने की आवश्यकता होती है तो एक एजेंट टूल चलेगा - [ladder](/docs/what-is-jami#rung-three) का क्रमांक 3 - `useActionMutation` का उपयोग करें:
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -280,7 +280,7 @@ const { mutate, isPending } = useActionMutation("reply-to-email");
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

@@ -197,7 +197,7 @@ const jaJP = {
       },
     },
     framework: {
-      title: "agent-native apps のための framework",
+      title: "Jami Studio apps のための framework",
       body1:
         "Jami Studio は agentic applications を構築するためのオープンソース framework です。Chat から始め、共有 actions を定義し、同じ state を中心に UI、jobs、コラボレーションを追加できます。",
       body2:
@@ -268,7 +268,7 @@ const jaJP = {
     },
     comparison: {
       titleLine1: "アプリと agent のどちらかを選ぶ必要はありません。",
-      titleAccent: "agent-native apps は両方です。",
+      titleAccent: "Jami Studio apps は両方です。",
       columns: {
         saas: "SaaS ツール",
         agents: "生の AI Agents",
@@ -1043,7 +1043,7 @@ const jaJP = {
       s026: "共有可能なリンク",
       s027: "すべてのプランにはパブリック URL が付与されます。非同期レビュー、コメント、承認のためにチームメイトと共有します。",
       s028: "デスクトップファイル同期",
-      s029: "アプリを複製したり CLI を実行したりせずに、ホストされたプランを Agent Native Desktop からローカルの MDX ファイルにミラーリングします。",
+      s029: "アプリを複製したり CLI を実行したりせずに、ホストされたプランを Jami Studio Desktop からローカルの MDX ファイルにミラーリングします。",
       s030: "なので、レビューはコードの横にあります。",
       s031: "仕組み",
       s032: "計画は共有アプリ内に存在します。あなたとエージェントの両方が、機能のライフサイクル全体を通じて計画を読み取り、更新できます。",
@@ -1077,7 +1077,7 @@ const jaJP = {
       s060: "すべてのテンプレートを表示",
       s061: "VS Code ハンドオフ",
       s062: "次を使って VS Code のサイドパネルでプランリンクを開きます:",
-      s063: "Agent Native Plans 拡張機能",
+      s063: "Jami Studio Plans 拡張機能",
       s064: "ワイヤーフレーム — コンポーネント枠付きのラフな UI モックアップ",
       s065: "注釈付きコード — 行ごとのメモ付きソースファイル",
       s066: "図 — フロー、シーケンス、またはアーキテクチャ",
@@ -1159,7 +1159,7 @@ const jaJP = {
     metaOgDescription:
       "ホスト、確認、カスタマイズできる Jami Studio アプリで、コーディングエージェントにスラッシュコマンドを追加します。",
     metaKeywords:
-      "agent skills, visual plan, visual recap, visual edit, コーディングエージェント, Claude Code, Codex, PR レビュー, 計画, agent-native",
+      "agent skills, visual plan, visual recap, visual edit, コーディングエージェント, Claude Code, Codex, PR レビュー, 計画, Jami Studio",
     heroTitle: "コーディングエージェントに新しい力を追加",
     heroBody:
       "完全にカスタマイズできる Jami Studio アプリベースのスキルをインストールします。実装前の視覚的な計画、変更後の視覚的な PR レビュー要約、ローカル UI フローの視覚編集に対応します。",
@@ -1199,9 +1199,9 @@ const jaJP = {
     },
   },
   downloadPage: {
-    title: "Agent Native をダウンロード",
-    body: "すべての agent-native アプリを 1 つのデスクトップシェルに集約。プロダクションアプリを内蔵し、ローカル開発向けの dev モード切り替えも備えています。",
-    openDesktop: "Agent Native を開く",
+    title: "Jami Studio をダウンロード",
+    body: "すべての Jami Studio アプリを 1 つのデスクトップシェルに集約。プロダクションアプリを内蔵し、ローカル開発向けの dev モード切り替えも備えています。",
+    openDesktop: "Jami Studio を開く",
     downloadInstaller: "インストーラーをダウンロード",
     viewInstallers: "インストーラーを表示",
     viewInstallersOnGithub: "GitHub でインストーラーを表示",

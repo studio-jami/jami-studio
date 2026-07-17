@@ -32,7 +32,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI form builder, Typeform alternative, open source Google Forms alternative, AI survey tool, AI form generator, agent-native forms, prompt to form, form automation, form integrations, customizable form builder",
+          "AI form builder, Typeform alternative, open source Google Forms alternative, AI survey tool, AI form generator, Jami Studio forms, prompt to form, form automation, form integrations, customizable form builder",
       },
     ],
     "Forms",

@@ -17,7 +17,7 @@ export const meta = () =>
       {
         name: "description",
         content:
-          "Your agent's home base. Talk to it from Slack, Telegram, or any messenger and it routes to your other agents. Jobs, memory, approvals, and A2A delegation built in. The central hub for all your agent-native apps.",
+          "Your agent's home base. Talk to it from Slack, Telegram, or any messenger and it routes to your other agents. Jobs, memory, approvals, and A2A delegation built in. The central hub for all your Jami Studio apps.",
       },
       {
         property: "og:title",
@@ -27,12 +27,12 @@ export const meta = () =>
       {
         property: "og:description",
         content:
-          "Talk to your agent from any messenger. Jobs, memory, approvals, and A2A delegation — the central router for your agent-native apps.",
+          "Talk to your agent from any messenger. Jobs, memory, approvals, and A2A delegation — the central router for your Jami Studio apps.",
       },
       {
         name: "keywords",
         content:
-          "Slack agent, Telegram agent, agent router, A2A protocol, agent-to-agent, AI orchestration, AI assistant Slack, agent memory, recurring jobs agent, AI approvals, agent-native dispatch",
+          "Slack agent, Telegram agent, agent router, A2A protocol, agent-to-agent, AI orchestration, AI assistant Slack, agent memory, recurring jobs agent, AI approvals, Jami Studio dispatch",
       },
     ],
     "Dispatch",
@@ -555,7 +555,7 @@ export default function DispatchTemplate() {
                   {t("templateLanding.dispatch.s038")}
                 </td>
                 <td className="px-5 py-3 text-[var(--fg)]">
-                  A2A to any agent-native app
+                  A2A to any Jami Studio app
                 </td>
               </tr>
               <tr className="border-b border-[var(--docs-border)]">

@@ -11,7 +11,7 @@ description: "Mount the agent chat + workspace into any React app with <AgentPan
 
 </Callout>
 
-You don't need to build agent-native from scratch. The agent chat, workspace tab, CLI terminal, voice input, and all the related infrastructure ship as a handful of React components you drop into any app.
+You don't need to build Jami from scratch. The agent chat, workspace tab, CLI terminal, voice input, and all the related infrastructure ship as a handful of React components you drop into any app.
 
 <Callout tone="info">
 
@@ -185,7 +185,7 @@ Full props: `AgentPanelProps` in `@agent-native/core/client`.
 
 ## Programmatic messages: `sendToAgentChat()` {#send}
 
-A button that hands work off to the agent (instead of running an inline `llm()` call — the anti-pattern from the [ladder](/docs/what-is-agent-native#the-ladder)):
+A button that hands work off to the agent (instead of running an inline `llm()` call — the anti-pattern from the [ladder](/docs/what-is-jami#the-ladder)):
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -270,7 +270,7 @@ client code does not learn a second, ad hoc transport.
 
 ## Typesafe actions from the UI: `useActionMutation()` {#use-action-mutation}
 
-When the UI needs to run the same operation an agent tool would run — rung 3 of the [ladder](/docs/what-is-agent-native#rung-three) — use `useActionMutation`:
+When the UI needs to run the same operation an agent tool would run — rung 3 of the [ladder](/docs/what-is-jami#rung-three) — use `useActionMutation`:
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -286,7 +286,7 @@ Type-safe arguments come from the zod schema in your `defineAction()`. See [Acti
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

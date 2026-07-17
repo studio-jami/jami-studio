@@ -179,7 +179,7 @@ Vollständige Requisiten: `AgentPanelProps` in `@agent-native/core/client`.
 
 ## Programmatische Nachrichten: `sendToAgentChat()` {#send}
 
-Eine Schaltfläche, die die Arbeit an den Agenten übergibt (anstatt einen Inline-`llm()`-Aufruf auszuführen – das Anti-Pattern von [ladder](/docs/what-is-agent-native#the-ladder)):
+Eine Schaltfläche, die die Arbeit an den Agenten übergibt (anstatt einen Inline-`llm()`-Aufruf auszuführen – das Anti-Pattern von [ladder](/docs/what-is-jami#the-ladder)):
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -264,7 +264,7 @@ Client-Code lernt keinen zweiten Ad-hoc-Transport.
 
 ## Typsicheres actions vom UI: `useActionMutation()` {#use-action-mutation}
 
-Wenn der UI den gleichen Vorgang ausführen muss, den ein Agent-Tool ausführen würde – Strompfad 3 des [ladder](/docs/what-is-agent-native#rung-three) – verwenden Sie `useActionMutation`:
+Wenn der UI den gleichen Vorgang ausführen muss, den ein Agent-Tool ausführen würde – Strompfad 3 des [ladder](/docs/what-is-jami#rung-three) – verwenden Sie `useActionMutation`:
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -280,7 +280,7 @@ Typsichere Argumente stammen aus dem Zod-Schema in Ihrem `defineAction()`. Das v
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

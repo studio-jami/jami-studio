@@ -12,10 +12,10 @@ Actions are the single source of truth for anything your app does. Define an act
 - **Imperative client calls** — `callAction("name", params)` when a hook does not fit.
 - **Framework transport** — auto-mounted by the framework behind those hooks and available to external HTTP clients.
 - **An MCP tool** — exposed to Claude, ChatGPT custom MCP apps, Claude Desktop/Code, Cursor, Codex, and any other MCP host.
-- **An A2A tool** — called by other agent-native apps over A2A.
+- **An A2A tool** — called by other Jami Studio apps over A2A.
 - **A CLI command** — `pnpm action <name>` for scripting and dev loops.
 
-One definition, seven consumers. This is rung 3 of the [ladder](/docs/what-is-agent-native#the-ladder).
+One definition, seven consumers. This is rung 3 of the [ladder](/docs/what-is-jami#the-ladder).
 In the default getting-started flow, the action first appears as an agent tool in
 chat, then as a native inline result, then as the operation behind a durable app
 page. For the full surface map, see [Agent Surfaces](/docs/agent-surfaces).
@@ -52,7 +52,7 @@ page. For the full surface map, see [Agent Surfaces](/docs/agent-surfaces).
       MCP tool<br /><small class="diagram-muted">external hosts</small>
     </div>
     <div class="diagram-node">
-      A2A tool<br /><small class="diagram-muted">other agent-native apps</small>
+      A2A tool<br /><small class="diagram-muted">other Jami Studio apps</small>
     </div>
     <div class="diagram-node">
       CLI<br /><small class="diagram-muted">pnpm action &lt;name&gt;</small>
@@ -514,7 +514,7 @@ scripts. Useful for agent-dev loops, scripts, and cron.
 
 ## Calling it from another agent (A2A) {#a2a}
 
-If your app is an [A2A](/docs/a2a-protocol) peer, other agent-native apps discover your actions automatically and can call them by name. Same-origin deploys skip JWT signing; cross-origin uses a shared `A2A_SECRET`.
+If your app is an [A2A](/docs/a2a-protocol) peer, other Jami Studio apps discover your actions automatically and can call them by name. Same-origin deploys skip JWT signing; cross-origin uses a shared `A2A_SECRET`.
 
 ## Exposing it over MCP {#mcp}
 

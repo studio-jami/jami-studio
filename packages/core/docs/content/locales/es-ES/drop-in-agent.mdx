@@ -179,7 +179,7 @@ Accesorios completos: `AgentPanelProps` en `@agent-native/core/client`.
 
 ## Mensajes programáticos: `sendToAgentChat()` {#send}
 
-Un botón que entrega el trabajo al agente (en lugar de ejecutar una llamada `llm()` en línea, el antipatrón del [ladder](/docs/what-is-agent-native#the-ladder)):
+Un botón que entrega el trabajo al agente (en lugar de ejecutar una llamada `llm()` en línea, el antipatrón del [ladder](/docs/what-is-jami#the-ladder)):
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -264,7 +264,7 @@ El código del cliente no aprende un segundo transporte ad hoc.
 
 ## actions con seguridad tipográfica desde UI: `useActionMutation()` {#use-action-mutation}
 
-Cuando UI necesita ejecutar la misma operación que ejecutaría una herramienta de agente (rango 3 de [ladder](/docs/what-is-agent-native#rung-three)), use `useActionMutation`:
+Cuando UI necesita ejecutar la misma operación que ejecutaría una herramienta de agente (rango 3 de [ladder](/docs/what-is-jami#rung-three)), use `useActionMutation`:
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -280,7 +280,7 @@ Los argumentos de tipo seguro provienen del esquema zod en su `defineAction()`. 
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

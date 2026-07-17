@@ -31,6 +31,9 @@ const SLUG_REDIRECTS: Record<string, string> = {
   "toolkit-sharing-ui": "toolkit-sharing",
   // Migration workbench folded into the code-agents-ui /migrate section.
   "migration-workbench": "code-agents-ui",
+  // Jami reframe renames (2026-07).
+  "what-is-agent-native": "what-is-jami",
+  "agent-native-toolkit": "jami-studio-toolkit",
 };
 
 function requireLocale(value: unknown): DocsLocale {

@@ -32,7 +32,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI calendar, open source calendar, Google Calendar alternative, Calendly alternative, AI scheduling, agent-native calendar, AI booking page, open source scheduling, AI appointment booking, natural language scheduling",
+          "AI calendar, open source calendar, Google Calendar alternative, Calendly alternative, AI scheduling, Jami Studio calendar, AI booking page, open source scheduling, AI appointment booking, natural language scheduling",
       },
     ],
     "Calendar",

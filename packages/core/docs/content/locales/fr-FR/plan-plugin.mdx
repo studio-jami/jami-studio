@@ -224,14 +224,14 @@ accès et configuration Actions requise. Une fois l'installation terminée, red�
 rechargez le client de l'agent pour que le nouveau skills et les nouveaux outils se chargent, puis exécutez
 `/visual-plan`.
 
-> Remarque : le `npx skills@latest add Jami Studio/agent-native --skill visual-plan` nu (Vercel/open Skills CLI) installe **instructions uniquement** — il n'enregistre pas le connecteur MCP. Utilisez le Jami Studio CLI ci-dessus lorsque vous souhaitez également câbler le connecteur.
+> Remarque : le `npx skills@latest add studio-jami/jami-studio --skill visual-plan` nu (Vercel/open Skills CLI) installe **instructions uniquement** — il n'enregistre pas le connecteur MCP. Utilisez le Jami Studio CLI ci-dessus lorsque vous souhaitez également câbler le connecteur.
 
 ### Code Claude (plugin) {#claude-code}
 
-Le référentiel public `Jami Studio/agent-native` est lui-même un marché de plugins Claude Code, vous l'ajoutez donc directement – sans étape de construction. À l'intérieur du code Claude :
+Le référentiel public `studio-jami/jami-studio` est lui-même un marché de plugins Claude Code, vous l'ajoutez donc directement – sans étape de construction. À l'intérieur du code Claude :
 
 ```text
-/plugin marketplace add Jami Studio/agent-native
+/plugin marketplace add studio-jami/jami-studio
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ Le référentiel public `Jami Studio/agent-native` est lui-même un marché de p
 Le même référentiel est un marché de plugins Codex. Ajoutez-le, installez le plugin, puis authentifiez le connecteur :
 
 ```bash
-codex plugin marketplace add Jami Studio/agent-native
+codex plugin marketplace add studio-jami/jami-studio
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth dans le navigateur
 ```
@@ -269,7 +269,7 @@ Le connecteur pointe vers une application **hébergée**, de sorte que le action
 
 ## Avez-vous besoin de soumettre quelque chose ? {#submission}
 
-**Aucune soumission ou révision n'est requise pour distribuer ou installer ceci.** `Jami Studio/agent-native` est un marché git public et auto-hébergé, les utilisateurs l'ajoutent donc directement avec les commandes ci-dessus sur **à la fois le code Claude et le Codex** — aucune demande ni approbation. L'itinéraire universel CLI ne nécessite aucun marché.
+**Aucune soumission ou révision n'est requise pour distribuer ou installer ceci.** `studio-jami/jami-studio` est un marché git public et auto-hébergé, les utilisateurs l'ajoutent donc directement avec les commandes ci-dessus sur **à la fois le code Claude et le Codex** — aucune demande ni approbation. L'itinéraire universel CLI ne nécessite aucun marché.
 
 Découverte facultative, si vous souhaitez une liste publique :
 

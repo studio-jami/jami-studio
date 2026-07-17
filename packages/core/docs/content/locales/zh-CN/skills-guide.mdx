@@ -348,7 +348,7 @@ npx @agent-native/core@latest skills add assets
 npx @agent-native/core@latest skills add content --mode local-files --scope project
 
 # Vercel/open技能CLI：仅导出指令，无MCP配置。
-npx skills@latest add Jami Studio/agent-native --skill assets
+npx skills@latest add studio-jami/jami-studio --skill assets
 
 # 为本地代理客户端注册托管 MCP 连接器。
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json
@@ -376,7 +376,7 @@ Vercel Labs `skills` 适配器是便携式 `skills/<name>/SKILL.md` 捆绑包
 适用于 `npx skills@latest add ...`，但原始 `skills` CLI 仅安装说明。
 它不运行存储库定义的安装后脚本或注册 MCP 连接器。
 将 Jami Studio CLI 保留为本地代理的默认文档路径，因为它
-还注册 MCP 连接器。 `Jami Studio/agent-native`是真正的GitHub
+还注册 MCP 连接器。 `studio-jami/jami-studio`是真正的GitHub
 Vercel/open Skills CLI 的存储库源； `skills.sh` 是一个发现，并且
 排行榜目录，而不是npm风格的包命名空间。
 

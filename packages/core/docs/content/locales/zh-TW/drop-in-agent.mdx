@@ -179,7 +179,7 @@ export default function AgentRoute() {
 
 ## 程式化訊息：`sendToAgentChat()` {#send}
 
-將工作交給代理的按鈕（而不是執行行內 `llm()` 呼叫 - [ladder](/docs/what-is-agent-native#the-ladder) 的反模式）：
+將工作交給代理的按鈕（而不是執行行內 `llm()` 呼叫 - [ladder](/docs/what-is-jami#the-ladder) 的反模式）：
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -264,7 +264,7 @@ const { send, isGenerating } = useSendToAgentChat();
 
 ## 來自 UI 的型別安全 actions：`useActionMutation()` {#use-action-mutation}
 
-當 UI 需要執行代理工具將執行的相同操作（[ladder](/docs/what-is-agent-native#rung-three) 的梯級 3）時，請使用 `useActionMutation`：
+當 UI 需要執行代理工具將執行的相同操作（[ladder](/docs/what-is-jami#rung-three) 的梯級 3）時，請使用 `useActionMutation`：
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -280,7 +280,7 @@ const { mutate, isPending } = useActionMutation("reply-to-email");
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

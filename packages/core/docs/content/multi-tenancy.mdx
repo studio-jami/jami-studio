@@ -1,11 +1,11 @@
 ---
 title: "Multi-Tenancy"
-description: "Every agent-native app is multi-tenant out of the box — organizations, team members, roles, and per-org data isolation, with zero configuration."
+description: "Every Jami Studio app is multi-tenant out of the box — organizations, team members, roles, and per-org data isolation, with zero configuration."
 ---
 
 # Multi-Tenancy
 
-Every agent-native app is multi-tenant out of the box. Organizations, team members, role-based access, and per-org data isolation are built into the framework with zero configuration.
+Every Jami Studio app is multi-tenant out of the box. Organizations, team members, role-based access, and per-org data isolation are built into the framework with zero configuration.
 
 ## What you get for free {#free}
 
@@ -17,7 +17,7 @@ A fresh `npx @agent-native/core@latest create` scaffold already ships with:
 - **Org switching** — the session tracks the active org (`session.orgId`), and switching it changes the data the user and agent see.
 - **Per-org data isolation** — every query is automatically scoped to the active org.
 
-If you're evaluating agent-native for a CRM, project tracker, support inbox, or any team tool, the multi-tenant foundation is already there. All first-party templates are multi-tenant — see [Templates](/docs/cloneable-saas) for the list.
+If you're evaluating Jami Studio for a CRM, project tracker, support inbox, or any team tool, the multi-tenant foundation is already there. All first-party templates are multi-tenant — see [Templates](/docs/cloneable-saas) for the list.
 
 <Diagram id="doc-block-1nlyz0h" title="Org membership and isolation" summary={"Users join organizations as owner/admin/member. Every ownable row carries the org_id of the tenant that owns it, and no row leaks across the boundary."}>
 
@@ -121,4 +121,4 @@ This is the same pipeline used for per-user scoping. For the SQL-level mechanics
 
 - [**Authentication**](/docs/authentication#organizations) — sessions, social providers, and the org-management surface
 - [**Security — Data Scoping**](/docs/security#data-scoping) — SQL-level isolation, the `ownableColumns()` contract, and access guards
-- [**Multi-App Workspace**](/docs/multi-app-workspace) — hosting multiple agent-native apps in one monorepo with shared auth and RBAC
+- [**Multi-App Workspace**](/docs/multi-app-workspace) — hosting multiple Jami Studio apps in one monorepo with shared auth and RBAC

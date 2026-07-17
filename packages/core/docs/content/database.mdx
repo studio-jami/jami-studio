@@ -1,11 +1,11 @@
 ---
 title: "Database"
-description: "Connect a portable SQL database to your agent-native app and write provider-agnostic Drizzle code."
+description: "Connect a portable SQL database to your Jami Studio app and write provider-agnostic Drizzle code."
 ---
 
 # Database
 
-Agent-native apps use [Drizzle ORM](https://orm.drizzle.team) and support portable SQL backends. For anything beyond local development, connect a persistent SQL database — Postgres, libSQL/Turso, or another Drizzle-compatible backend — by setting `DATABASE_URL`. When that variable is unset, the app falls back to a zero-config local SQLite file so you can start developing immediately. For local development that should behave like Postgres without running a separate database server, opt into PGlite with `DATABASE_URL=pglite:./data/pglite`.
+Jami Studio apps use [Drizzle ORM](https://orm.drizzle.team) and support portable SQL backends. For anything beyond local development, connect a persistent SQL database — Postgres, libSQL/Turso, or another Drizzle-compatible backend — by setting `DATABASE_URL`. When that variable is unset, the app falls back to a zero-config local SQLite file so you can start developing immediately. For local development that should behave like Postgres without running a separate database server, opt into PGlite with `DATABASE_URL=pglite:./data/pglite`.
 
 <Diagram id="doc-block-vykcz4" title="One schema, many backends" summary={"App code uses the framework's dialect-agnostic helpers. The dialect is auto-detected from DATABASE_URL at runtime; unset means a local SQLite file."}>
 

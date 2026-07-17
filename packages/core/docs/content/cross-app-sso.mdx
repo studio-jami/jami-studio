@@ -1,6 +1,6 @@
 ---
 title: "Cross-App SSO"
-description: "Sign in once across every hosted agent-native app via identity federation with Dispatch as the identity authority — opt-in per app, reversible with a single env var."
+description: "Sign in once across every hosted Jami Studio app via identity federation with Dispatch as the identity authority — opt-in per app, reversible with a single env var."
 ---
 
 # Cross-App SSO
@@ -136,7 +136,7 @@ The flow is a standard authorize → signed-token → callback redirect, with em
 
 </Endpoint>
 
-2. **Dispatch authenticates the human.** If the user already has a Dispatch session, this is transparent. If not, Dispatch shows its own normal login (email/password, Google, etc. — see [Authentication](/docs/authentication)). Dispatch is just a regular agent-native app here; it is not running a special auth mode.
+2. **Dispatch authenticates the human.** If the user already has a Dispatch session, this is transparent. If not, Dispatch shows its own normal login (email/password, Google, etc. — see [Authentication](/docs/authentication)). Dispatch is just a regular Jami Studio app here; it is not running a special auth mode.
 
 3. **Dispatch → App (signed identity token).** Dispatch validates `redirect_uri` against a strict allowlist and 302-redirects back to the app's `redirect_uri` carrying a short-lived **`A2A_SECRET`-signed identity JWT**. The token's claims are intentionally minimal:
 

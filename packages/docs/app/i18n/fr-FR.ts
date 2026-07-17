@@ -197,7 +197,7 @@ const frFR = {
       },
     },
     framework: {
-      title: "Le framework pour apps agent-native",
+      title: "Le framework pour apps Jami Studio",
       body1:
         "Jami Studio est un framework open source pour construire des agentic applications : commencez avec Chat, définissez des actions partagées, puis ajoutez UI, jobs et collaboration autour du même état.",
       body2:
@@ -268,7 +268,7 @@ const frFR = {
     },
     comparison: {
       titleLine1: "Ne choisissez pas entre apps et agents.",
-      titleAccent: "Les apps agent-native sont les deux.",
+      titleAccent: "Les apps Jami Studio sont les deux.",
       columns: {
         saas: "Outils SaaS",
         agents: "AI Agents bruts",
@@ -464,7 +464,7 @@ const frFR = {
     design: {
       replaces: "Remplace ou complète les outils de prototypage design",
       description:
-        "Studio de prototypage HTML agent-native. Générez des designs Alpine/Tailwind interactifs, comparez les variantes, ajustez les contrôles en direct et exportez le résultat.",
+        "Studio de prototypage HTML Jami Studio. Générez des designs Alpine/Tailwind interactifs, comparez les variantes, ajustez les contrôles en direct et exportez le résultat.",
     },
     content: {
       replaces: "Remplace ou augmente Obsidian pour MDX, Notion, Google Docs",
@@ -1045,7 +1045,7 @@ const frFR = {
       s026: "Liens partageables",
       s027: "Chaque plan reçoit une URL publique. Partagez avec vos coéquipiers pour une révision asynchrone, des commentaires et des approbations.",
       s028: "Synchronisation des fichiers de bureau",
-      s029: "Mettez en miroir les plans hébergés sur les fichiers MDX locaux à partir d'Agent Native Desktop sans cloner l'application ni exécuter un CLI.",
+      s029: "Mettez en miroir les plans hébergés sur les fichiers MDX locaux à partir d'Jami Studio Desktop sans cloner l'application ni exécuter un CLI.",
       s030: ", donc la révision reste à côté du code.",
       s031: "Comment ça marche",
       s032: "La planification se déroule dans une application partagée: vous et l'agent pouvez la lire et la mettre à jour tout au long du cycle de vie d'une fonctionnalité.",
@@ -1079,7 +1079,7 @@ const frFR = {
       s060: "Afficher tous les modèles",
       s061: "Transferts VS Code",
       s062: "Ouvrez les liens de plan dans un panneau latéral VS Code avec l'",
-      s063: "extension Agent Native Plans",
+      s063: "extension Jami Studio Plans",
       s064: "Wireframe — maquette UI esquissée avec emplacements de composants",
       s065: "Code annoté — fichier source avec notes ligne par ligne",
       s066: "Diagramme — flux, séquence ou architecture",
@@ -1161,7 +1161,7 @@ const frFR = {
     metaOgDescription:
       "Donnez a votre agent de code des commandes slash propulsees par des apps Jami Studio que vous pouvez heberger, inspecter et personnaliser.",
     metaKeywords:
-      "skills agent, visual plan, visual recap, visual edit, agent de code, Claude Code, Codex, revue PR, planification, agent-native",
+      "skills agent, visual plan, visual recap, visual edit, agent de code, Claude Code, Codex, revue PR, planification, Jami Studio",
     heroTitle: "Donnez de nouveaux superpouvoirs a votre agent de code",
     heroBody:
       "Installez des skills adossees a des apps Jami Studio entierement personnalisables : planification visuelle avant implementation, recaps visuels de PR apres les changements et edition visuelle des flows UI locaux.",
@@ -1202,9 +1202,9 @@ const frFR = {
     },
   },
   downloadPage: {
-    title: "Télécharger Agent Native",
-    body: "Toutes vos apps agent-native dans une seule interface de bureau. Apps de production intégrées, avec un mode dev pour le développement local.",
-    openDesktop: "Ouvrir Agent Native",
+    title: "Télécharger Jami Studio",
+    body: "Toutes vos apps Jami Studio dans une seule interface de bureau. Apps de production intégrées, avec un mode dev pour le développement local.",
+    openDesktop: "Ouvrir Jami Studio",
     downloadInstaller: "Télécharger l'installateur",
     viewInstallers: "Voir les installateurs",
     viewInstallersOnGithub: "Voir les installateurs sur GitHub",

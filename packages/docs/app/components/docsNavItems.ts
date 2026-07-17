@@ -39,9 +39,9 @@ const NAV_SECTION_CONFIG: NavSectionConfig[] = [
         slug: "getting-started",
       },
       {
-        id: "what-is-agent-native",
+        id: "what-is-jami",
         labelKey: "whatIsAgentNative",
-        slug: "what-is-agent-native",
+        slug: "what-is-jami",
       },
       {
         id: "agent-surfaces",
@@ -271,9 +271,9 @@ const NAV_SECTION_CONFIG: NavSectionConfig[] = [
     titleKey: "agentNativeToolkit",
     items: [
       {
-        id: "agent-native-toolkit",
+        id: "jami-studio-toolkit",
         labelKey: "toolkitOverview",
-        slug: "agent-native-toolkit",
+        slug: "jami-studio-toolkit",
       },
       {
         id: "toolkit-ui",

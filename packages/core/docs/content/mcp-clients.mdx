@@ -1,11 +1,11 @@
 ---
 title: "MCP Clients"
-description: "Connect your agent-native app to local MCP servers (claude-in-chrome, filesystem, playwright, etc) so the agent gains their tools."
+description: "Connect your Jami Studio app to local MCP servers (claude-in-chrome, filesystem, playwright, etc) so the agent gains their tools."
 ---
 
 # MCP Clients
 
-**This page: give your agent more tools.** Point an agent-native app at MCP servers — local or remote — so their tools show up in the agent chat. This is the _client_ direction, the mirror image of [MCP Server](/docs/mcp-protocol) (which makes your app an MCP _server_). Note the dual use of "client" here: this page is about your app acting as an MCP client of _other_ servers — a different sense from an "MCP host" like Claude or Cursor connecting to your app (see [MCP Server](/docs/mcp-protocol) for that direction).
+**This page: give your agent more tools.** Point a Jami Studio app at MCP servers — local or remote — so their tools show up in the agent chat. This is the _client_ direction, the mirror image of [MCP Server](/docs/mcp-protocol) (which makes your app an MCP _server_). Note the dual use of "client" here: this page is about your app acting as an MCP client of _other_ servers — a different sense from an "MCP host" like Claude or Cursor connecting to your app (see [MCP Server](/docs/mcp-protocol) for that direction).
 
 | If you want to…                                              | Read                                     |
 | ------------------------------------------------------------ | ---------------------------------------- |
@@ -15,7 +15,7 @@ description: "Connect your agent-native app to local MCP servers (claude-in-chro
 | Build generated inline UI inside Jami Studio chat           | [Generative UI](/docs/generative-ui)     |
 | Lower-level MCP server reference (auth, tools, custom mount) | [MCP Server](/docs/mcp-protocol)         |
 
-With one config file, every agent-native app in your workspace gains access to tools provided by MCP servers on your machine: `claude-in-chrome` for browser automation, `@modelcontextprotocol/server-filesystem` for reading files, `@playwright/mcp` for browser testing, and anything else that speaks MCP.
+With one config file, every Jami Studio app in your workspace gains access to tools provided by MCP servers on your machine: `claude-in-chrome` for browser automation, `@modelcontextprotocol/server-filesystem` for reading files, `@playwright/mcp` for browser testing, and anything else that speaks MCP.
 
 You can also [connect remote (HTTP) MCP servers at runtime](#remote-via-ui) — individual users or whole organizations — without editing a config file.
 
@@ -240,7 +240,7 @@ normally.
 
 If you have **no** `mcp.config.json` and the `claude-in-chrome-mcp` binary is on `PATH` (or in the well-known install location `~/.claude-in-chrome/bin/claude-in-chrome-mcp`), agent-native auto-registers it as a default MCP server. Set `AGENT_NATIVE_DISABLE_MCP_AUTODETECT=1` to opt out.
 
-This means users who've installed the claude-in-chrome extension get browser control across every agent-native app they open with no config changes.
+This means users who've installed the claude-in-chrome extension get browser control across every Jami Studio app they open with no config changes.
 
 ## Remote MCP servers via the settings UI {#remote-via-ui}
 
@@ -310,7 +310,7 @@ Stdio servers are still a no-op outside Node runtimes, but remote HTTP MCP serve
 
 ## Shared MCP servers via a hub {#hub}
 
-If your workspace runs multiple agent-native apps (e.g. dispatch + mail + clips), share MCP servers across all of them without per-app copy-pasting of URLs and bearer tokens. See [Multi-App Workspace](/docs/multi-app-workspace) for the full deployment picture.
+If your workspace runs multiple Jami Studio apps (e.g. dispatch + mail + clips), share MCP servers across all of them without per-app copy-pasting of URLs and bearer tokens. See [Multi-App Workspace](/docs/multi-app-workspace) for the full deployment picture.
 
 ### Recommended: Dispatch workspace MCP resources {#hub-recommended}
 

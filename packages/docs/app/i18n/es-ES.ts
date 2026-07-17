@@ -197,7 +197,7 @@ const esES = {
       },
     },
     framework: {
-      title: "El framework para apps agent-native",
+      title: "El framework para apps Jami Studio",
       body1:
         "Jami Studio es un framework open source para crear agentic applications: empieza con Chat, define actions compartidas y luego añade UI, jobs y colaboración alrededor del mismo estado.",
       body2:
@@ -268,7 +268,7 @@ const esES = {
     },
     comparison: {
       titleLine1: "No elijas entre apps o agents.",
-      titleAccent: "Las apps agent-native son ambas.",
+      titleAccent: "Las apps Jami Studio son ambas.",
       columns: {
         saas: "Herramientas SaaS",
         agents: "AI Agents crudos",
@@ -464,7 +464,7 @@ const esES = {
     design: {
       replaces: "Reemplaza o amplía herramientas de prototipado",
       description:
-        "Estudio de prototipos HTML agent-native. Genera diseños interactivos Alpine/Tailwind, compara variantes, ajusta controles en vivo y exporta el resultado.",
+        "Estudio de prototipos HTML Jami Studio. Genera diseños interactivos Alpine/Tailwind, compara variantes, ajusta controles en vivo y exporta el resultado.",
     },
     content: {
       replaces: "Reemplaza o aumenta Obsidian por MDX, Notion, Google Docs",
@@ -1044,7 +1044,7 @@ const esES = {
       s026: "Enlaces para compartir",
       s027: "Cada plan obtiene una URL pública. Compártalo con sus compañeros de equipo para realizar revisiones, comentarios y aprobaciones asincrónicas.",
       s028: "Sincronización de archivos de escritorio",
-      s029: "Refleje los planes alojados en archivos MDX locales desde Agent Native Desktop sin clonar la aplicación ni ejecutar un CLI.",
+      s029: "Refleje los planes alojados en archivos MDX locales desde Jami Studio Desktop sin clonar la aplicación ni ejecutar un CLI.",
       s030: ", por lo que la revisión permanece al lado del código.",
       s031: "como funciona",
       s032: "La planificación reside en una aplicación compartida: tanto usted como el agente pueden leerla y actualizarla durante todo el ciclo de vida de una función.",
@@ -1078,7 +1078,7 @@ const esES = {
       s060: "Ver todas las plantillas",
       s061: "Entregas a VS Code",
       s062: "Abre enlaces de planes en un panel lateral de VS Code con la",
-      s063: "extensión Agent Native Plans",
+      s063: "extensión Jami Studio Plans",
       s064: "Wireframe — maqueta de UI esbozada con espacios para componentes",
       s065: "Código anotado — archivo fuente con notas por línea",
       s066: "Diagrama — flujo, secuencia o arquitectura",
@@ -1160,7 +1160,7 @@ const esES = {
     metaOgDescription:
       "Dale a tu agente de codigo comandos slash impulsados por apps Jami Studio que puedes alojar, inspeccionar y personalizar.",
     metaKeywords:
-      "skills de agente, visual plan, visual recap, visual edit, agente de codigo, Claude Code, Codex, revision de PR, planificacion, agent-native",
+      "skills de agente, visual plan, visual recap, visual edit, agente de codigo, Claude Code, Codex, revision de PR, planificacion, Jami Studio",
     heroTitle: "Dale nuevos superpoderes a tu agente de codigo",
     heroBody:
       "Instala skills respaldadas por apps Jami Studio que puedes personalizar por completo: planificacion visual antes de implementar, recapitulaciones visuales de PR despues de los cambios y edicion visual de flujos UI locales.",
@@ -1201,9 +1201,9 @@ const esES = {
     },
   },
   downloadPage: {
-    title: "Descargar Agent Native",
-    body: "Todas tus apps agent-native en una sola shell de escritorio. Apps de producción integradas, con un modo de desarrollo para trabajo local.",
-    openDesktop: "Abrir Agent Native",
+    title: "Descargar Jami Studio",
+    body: "Todas tus apps Jami Studio en una sola shell de escritorio. Apps de producción integradas, con un modo de desarrollo para trabajo local.",
+    openDesktop: "Abrir Jami Studio",
     downloadInstaller: "Descargar instalador",
     viewInstallers: "Ver instaladores",
     viewInstallersOnGithub: "Ver instaladores en GitHub",

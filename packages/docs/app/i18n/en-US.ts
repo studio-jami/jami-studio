@@ -103,7 +103,7 @@ const enUS = {
     code: {
       quickStartComment: "Create an app with one command",
       skillInstallComment:
-        "Add agent-native planning to a coding agent you already use",
+        "Add Jami planning to a coding agent you already use",
       frameworkComment:
         "One action powers the agent, UI, HTTP, MCP, A2A, and CLI.",
       frameworkDescription: "Say hello from the local app-agent loop.",
@@ -208,7 +208,7 @@ const enUS = {
       },
     },
     framework: {
-      title: "The framework for agent-native apps",
+      title: "Just another machine interface",
       body1:
         "Jami Studio is an open-source framework for building agentic applications: start with chat, define shared actions, then add UI, jobs, and collaboration around the same state.",
       body2:
@@ -506,7 +506,7 @@ const enUS = {
         "Full calendar with Google sync, availability management, and a public booking page. The agent finds open slots, creates events, and manages your schedule.",
     },
     dispatch: {
-      replaces: "Mission control for your agent-native apps",
+      replaces: "Mission control for your Jami Studio apps",
       description:
         "Centralized messaging and management for every agent in your stack. Talk to your agents from Slack, Telegram, or the web; route jobs, hold memory, approve actions, and delegate across apps over A2A.",
     },
@@ -844,9 +844,9 @@ const enUS = {
       s008: "Talk to your agent from Slack, Telegram, or any messenger and it routes to your other apps. Jobs, memory, approvals, and A2A delegation — all in one place.",
       s009: "Try It",
       s010: "What you can do",
-      s011: "Dispatch is the messenger-facing front door for your whole agent-native stack.",
+      s011: "Dispatch is the messenger-facing front door for your whole Jami Studio stack.",
       s012: "Bidirectional messaging with thread context, Block Kit replies, and inline approvals. Talk from anywhere.",
-      s013: "Dispatch routes work to your other agent-native apps via the A2A protocol. Mail, slides, design — all reachable from one chat.",
+      s013: "Dispatch routes work to your other Jami Studio apps via the A2A protocol. Mail, slides, design — all reachable from one chat.",
       s014: "Recurring Jobs",
       s015: "Schedule the agent to run on a cron — daily standups, weekly digests, hourly checks. Results land in your messenger.",
       s016: "Approvals",
@@ -857,7 +857,7 @@ const enUS = {
       s021: "Per-user, per-org, and global memory scopes",
       s022: "Inspect and edit what the agent remembers",
       s023: "Cross-App Routing",
-      s024: "Dispatch is the hub. Connect your other agent-native apps and every request gets routed to the agent that can do the job.",
+      s024: "Dispatch is the hub. Connect your other Jami Studio apps and every request gets routed to the agent that can do the job.",
       s025: '"Send a deck to the design team" → Slides agent',
       s026: '"Reply to the latest sales email" → Mail agent',
       s027: '"Summarize this quarter\'s events" → Analytics agent',
@@ -1041,7 +1041,7 @@ const enUS = {
       s026: "Shareable Links",
       s027: "Every plan gets a public URL. Share with teammates for async review, comments, and approvals.",
       s028: "Desktop File Sync",
-      s029: "Mirror hosted plans to local MDX files from Agent Native Desktop without cloning the app or running a CLI.",
+      s029: "Mirror hosted plans to local MDX files from Jami Studio Desktop without cloning the app or running a CLI.",
       s030: ", so review stays beside the code.",
       s031: "How it works",
       s032: "Planning lives in a shared app — both you and the agent can read and update it throughout the lifecycle of a feature.",
@@ -1075,7 +1075,7 @@ const enUS = {
       s060: "View all apps",
       s061: "VS Code Handoffs",
       s062: "Open plan links in a VS Code side panel with the",
-      s063: "Agent Native Plans extension",
+      s063: "Jami Studio Plans extension",
       s064: "Wireframe — sketchy UI mockup with component slots",
       s065: "Annotated code — source file with per-line notes",
       s066: "Diagram — flowchart, sequence, or architecture",
@@ -1157,7 +1157,7 @@ const enUS = {
     metaOgDescription:
       "Give your coding agent slash commands powered by Jami Studio apps you can host, inspect, and customize.",
     metaKeywords:
-      "agent skills, visual plan, visual recap, visual edit, coding agent, Claude Code, Codex, PR review, planning, agent-native",
+      "agent skills, visual plan, visual recap, visual edit, coding agent, Claude Code, Codex, PR review, planning, Jami Studio",
     heroTitle: "Give your coding agent new superpowers",
     heroBody:
       "Install app-backed skills powered by Jami Studio apps you can fully customize: visual planning before implementation, visual PR recaps after changes land, and visual editing for local UI flows.",
@@ -1197,9 +1197,9 @@ const enUS = {
     },
   },
   downloadPage: {
-    title: "Download Agent Native",
-    body: "All your agent-native apps in one desktop shell. Production apps built-in, with a dev mode toggle for local development.",
-    openDesktop: "Open Agent Native",
+    title: "Download Jami Studio",
+    body: "All your Jami Studio apps in one desktop shell. Production apps built-in, with a dev mode toggle for local development.",
+    openDesktop: "Open Jami Studio",
     downloadInstaller: "Download installer",
     viewInstallers: "View installers",
     viewInstallersOnGithub: "View installers on GitHub",

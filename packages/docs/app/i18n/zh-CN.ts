@@ -194,7 +194,7 @@ const zhCN = {
       },
     },
     framework: {
-      title: "面向 agent-native apps 的框架",
+      title: "面向 Jami Studio apps 的框架",
       body1:
         "Jami Studio 是一个开源框架，用来构建 agentic applications：从 Chat 开始，定义共享 actions，再围绕同一份 state 添加 UI、jobs 和协作。",
       body2: "使用你自己的数据库、托管服务、模型栈和 app 代码。",
@@ -1032,7 +1032,7 @@ const zhCN = {
       s026: "可分享的链接",
       s027: "每个计划都有一个公共 URL。与团队成员共享以进行异步审阅、评论和批准。",
       s028: "桌面文件同步",
-      s029: "将托管计划从 Agent Native Desktop 镜像到本地 MDX 文件，无需克隆应用程序或运行 CLI。",
+      s029: "将托管计划从 Jami Studio Desktop 镜像到本地 MDX 文件，无需克隆应用程序或运行 CLI。",
       s030: "，因此审查位于代码旁边。",
       s031: "它是如何运作的",
       s032: "规划存在于共享应用程序中 - 您和代理都可以在功能的整个生命周期中读取和更新它。",
@@ -1066,7 +1066,7 @@ const zhCN = {
       s060: "查看所有模板",
       s061: "VS Code 交接",
       s062: "使用以下扩展在 VS Code 侧边面板中打开计划链接：",
-      s063: "Agent Native Plans 扩展",
+      s063: "Jami Studio Plans 扩展",
       s064: "线框图 — 带组件插槽的草图式 UI 模型",
       s065: "带注释的代码 — 带逐行注释的源文件",
       s066: "图表 — 流程图、序列图或架构图",
@@ -1148,7 +1148,7 @@ const zhCN = {
     metaOgDescription:
       "为你的编码代理添加由 Jami Studio 应用驱动的斜杠命令，可托管、检查并自定义。",
     metaKeywords:
-      "代理技能, visual plan, visual recap, visual edit, 编码代理, Claude Code, Codex, PR 审查, 规划, agent-native",
+      "代理技能, visual plan, visual recap, visual edit, 编码代理, Claude Code, Codex, PR 审查, 规划, Jami Studio",
     heroTitle: "给你的编码代理新的超能力",
     heroBody:
       "安装由 Jami Studio 应用支持、可完全自定义的应用技能：实现前做可视化规划，变更落地后做可视化 PR 回顾，并可视化编辑本地 UI 流程。",
@@ -1188,9 +1188,9 @@ const zhCN = {
     },
   },
   downloadPage: {
-    title: "下载 Agent Native",
-    body: "所有 agent-native 应用都在一个桌面外壳中。内置生产应用，并提供用于本地开发的开发模式开关。",
-    openDesktop: "打开 Agent Native",
+    title: "下载 Jami Studio",
+    body: "所有 Jami Studio 应用都在一个桌面外壳中。内置生产应用，并提供用于本地开发的开发模式开关。",
+    openDesktop: "打开 Jami Studio",
     downloadInstaller: "下载安装程序",
     viewInstallers: "查看安装程序",
     viewInstallersOnGithub: "在 GitHub 查看安装程序",

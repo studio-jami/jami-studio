@@ -9,7 +9,7 @@ A2A lets agents talk to each other directly over HTTP: they discover each other'
 
 <Callout tone="info">
 
-**A2A vs MCP.** A2A is for **agent-to-agent** delegation — one agent-native app's agent handing work to another app's agent, which reasons over it with its own LLM loop. [MCP](/docs/mcp-protocol) is for **tool-to-agent** access — an external host like Claude or Cursor calling your app's actions directly as tools, with no extra agent reasoning in between. Use A2A when the receiving side should think; use MCP when it should just execute. See [MCP Server — MCP vs A2A](/docs/mcp-protocol#mcp-vs-a2a) for the full comparison table.
+**A2A vs MCP.** A2A is for **agent-to-agent** delegation — one Jami Studio app's agent handing work to another app's agent, which reasons over it with its own LLM loop. [MCP](/docs/mcp-protocol) is for **tool-to-agent** access — an external host like Claude or Cursor calling your app's actions directly as tools, with no extra agent reasoning in between. Use A2A when the receiving side should think; use MCP when it should just execute. See [MCP Server — MCP vs A2A](/docs/mcp-protocol#mcp-vs-a2a) for the full comparison table.
 
 </Callout>
 
@@ -22,7 +22,7 @@ A2A is the substrate for cross-app delegation in this framework — most promine
 Key concepts:
 
 - **Agent card** — public metadata at `/.well-known/agent-card.json` describing skills and capabilities
-- **JSON-RPC** — agent-native apps use `POST /_agent-native/a2a`; external/legacy peers may use `POST /a2a`
+- **JSON-RPC** — Jami Studio apps use `POST /_agent-native/a2a`; external/legacy peers may use `POST /a2a`
 - **Tasks** — each message creates a task with a lifecycle (submitted, working, completed, failed, canceled)
 - **JWT bearer auth** — production A2A requires `A2A_SECRET` or an explicit legacy `apiKeyEnv`
 
@@ -95,7 +95,7 @@ export default defineNitroPlugin((nitro) => {
       },
     ],
     // Optional legacy external-peer bearer key. Prefer A2A_SECRET for
-    // agent-native workspace calls and production deployments.
+    // Jami Studio workspace calls and production deployments.
     apiKeyEnv: "A2A_API_KEY",
     streaming: true, // enable message/stream
   });
@@ -366,7 +366,7 @@ console.log(response); // "There were 1,247 signups last week..."
 
 ## Programmatic workspace invoke {#programmatic-invoke}
 
-For agent-native workspaces, prefer the `agentNative` helper when code or a
+For Jami Studio workspaces, prefer the `agentNative` helper when code or a
 headless app needs to discover sibling apps and invoke them by id, name, or
 URL. It uses the same discovery and A2A invocation primitives as the
 `agent-native agents` and `agent-native invoke` CLI commands.
@@ -387,7 +387,7 @@ console.log(`Called ${result.target.name}: ${result.responseText}`);
 
 Use this for composable mini-apps: Dispatch or an orchestrator app discovers
 workspace siblings, then invokes the specialist app that owns the provider,
-dataset, or workflow. In production agent-native apps, set `A2A_SECRET` in each
+dataset, or workflow. In production Jami Studio apps, set `A2A_SECRET` in each
 app environment and pass the caller identity (`userEmail`) so outbound calls are
 signed as JWT bearer tokens. Use `apiKeyEnv` only for legacy external peers that
 expect a static bearer token. Use local actions instead of invoking yourself.

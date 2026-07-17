@@ -169,7 +169,7 @@ to verify the repo is ready.
 If you only want the portable instruction file through the open Skills CLI, use:
 
 ```bash
-npx skills@latest add Jami Studio/agent-native --skill visual-plan
+npx skills@latest add studio-jami/jami-studio --skill visual-plan
 ```
 
 That installs the skill instructions only. It does not register the hosted MCP
@@ -178,7 +178,7 @@ connector, so use the Jami Studio CLI path when you want the one-command setup.
 <Callout tone="info">
 
 **Prefer a one-install plugin?** Claude Code and Codex can add
-`Jami Studio/agent-native` directly as a plugin marketplace, which bundles the
+`studio-jami/jami-studio` directly as a plugin marketplace, which bundles the
 Plan skills _and_ the connector in one install and auto-updates as the skills
 improve — see [Plan plugin & marketplace](/docs/plan-plugin).
 
@@ -262,7 +262,7 @@ Sharing and commenting are the workflows that need an account:
 
 - **Viewing** a public or shared plan works for anyone with the link — no account
   required.
-- **Commenting** on a shared plan requires an agent-native account.
+- **Commenting** on a shared plan requires a Jami Studio account.
 - **Sharing** a plan (publishing it to a link, private sharing, reviewer access,
   cross-device or team review) requires signing in. Google sign-in appears when
   the standard Google OAuth env vars are configured.

@@ -224,14 +224,14 @@ access, and required Actions configuration. After install finishes, restart or
 reload the agent client so the new skills and tools load, then run
 `/visual-plan`.
 
-> Note: the bare `npx skills@latest add Jami Studio/agent-native --skill visual-plan` (Vercel/open Skills CLI) installs **instructions only** — it does not register the MCP connector. Use the Jami Studio CLI above when you want the connector wired up too.
+> Note: the bare `npx skills@latest add studio-jami/jami-studio --skill visual-plan` (Vercel/open Skills CLI) installs **instructions only** — it does not register the MCP connector. Use the Jami Studio CLI above when you want the connector wired up too.
 
 ### Claude Code (plugin) {#claude-code}
 
-The public `Jami Studio/agent-native` repo is itself a Claude Code plugin marketplace, so you add it directly — no build step. Inside Claude Code:
+The public `studio-jami/jami-studio` repo is itself a Claude Code plugin marketplace, so you add it directly — no build step. Inside Claude Code:
 
 ```text
-/plugin marketplace add Jami Studio/agent-native
+/plugin marketplace add studio-jami/jami-studio
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ The public `Jami Studio/agent-native` repo is itself a Claude Code plugin market
 The same repo is a Codex plugin marketplace. Add it, install the plugin, then authenticate the connector:
 
 ```bash
-codex plugin marketplace add Jami Studio/agent-native
+codex plugin marketplace add studio-jami/jami-studio
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth in the browser
 ```
@@ -277,7 +277,7 @@ The connector points at a **hosted** app, so the Plan app's actions and live too
 
 ## Do you need to submit anything? {#submission}
 
-**No submission or review is required to distribute or install this.** `Jami Studio/agent-native` is a self-hosted, public git marketplace, so users add it directly with the commands above on **both Claude Code and Codex** — no application or approval. The universal CLI route needs no marketplace at all.
+**No submission or review is required to distribute or install this.** `studio-jami/jami-studio` is a self-hosted, public git marketplace, so users add it directly with the commands above on **both Claude Code and Codex** — no application or approval. The universal CLI route needs no marketplace at all.
 
 Optional discoverability, if you want a public listing:
 

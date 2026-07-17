@@ -89,7 +89,7 @@ export default defineNitroPlugin((nitro) => {
       },
     ],
     // Optional legacy external-peer bearer key. Prefer A2A_SECRET for
-    // agent-native workspace calls and production deployments.
+    // Jami Studio workspace calls and production deployments.
     apiKeyEnv: "A2A_API_KEY",
     streaming: true, // enable message/stream
   });
@@ -379,7 +379,7 @@ console.log(`Called ${result.target.name}: ${result.responseText}`);
 
 कंपोज़ेबल मिनी-ऐप्स के लिए इसका उपयोग करें: डिस्पैच या एक ऑर्केस्ट्रेटर ऐप खोजता है
 कार्यस्थान भाई-बहन, फिर प्रदाता के स्वामित्व वाले विशेषज्ञ ऐप को आमंत्रित करता है,
-dataset, or workflow. In production agent-native apps, set `A2A_SECRET` in each
+dataset, or workflow. In production Jami Studio apps, set `A2A_SECRET` in each
 ऐप वातावरण और कॉल करने वाले की पहचान (`userEmail`) पास करें ताकि आउटबाउंड कॉल हों
 JWT वाहक टोकन के रूप में हस्ताक्षरित। `apiKeyEnv` का उपयोग केवल विरासती बाहरी समकक्षों के लिए करें
 एक स्थिर वाहक टोकन की अपेक्षा करें। स्वयं का आह्वान करने के बजाय स्थानीय actions का उपयोग करें।

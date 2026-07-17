@@ -179,7 +179,7 @@ Acessórios completos: `AgentPanelProps` em `@agent-native/core/client`.
 
 ## Mensagens programáticas: `sendToAgentChat()` {#send}
 
-Um botão que transfere o trabalho para o agente (em vez de executar uma chamada `llm()` em linha — o antipadrão do [ladder](/docs/what-is-agent-native#the-ladder)):
+Um botão que transfere o trabalho para o agente (em vez de executar uma chamada `llm()` em linha — o antipadrão do [ladder](/docs/what-is-jami#the-ladder)):
 
 ```tsx
 import { sendToAgentChat } from "@agent-native/core/client";
@@ -264,7 +264,7 @@ o código do cliente não aprende um segundo transporte ad hoc.
 
 ## Typesafe actions do UI: `useActionMutation()` {#use-action-mutation}
 
-Quando o UI precisar executar a mesma operação que uma ferramenta de agente executaria — linha 3 do [ladder](/docs/what-is-agent-native#rung-three) — use `useActionMutation`:
+Quando o UI precisar executar a mesma operação que uma ferramenta de agente executaria — linha 3 do [ladder](/docs/what-is-jami#rung-three) — use `useActionMutation`:
 
 ```tsx
 import { useActionMutation } from "@agent-native/core/client";
@@ -280,7 +280,7 @@ Argumentos de tipo seguro vêm do esquema zod em seu `defineAction()`. Consulte 
 
 <Callout id="doc-block-1757zi5" tone="decision">
 
-**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-agent-native#the-ladder).
+**`useActionMutation` vs `sendToAgentChat`.** Run the operation directly with `useActionMutation` when the user clicked a deterministic button ("Send reply"). Hand it to `sendToAgentChat` when the work needs the agent's reasoning, tools, or multi-step planning. Never call an inline `llm()` from UI — that is rung 1 of the [ladder](/docs/what-is-jami#the-ladder).
 
 </Callout>
 

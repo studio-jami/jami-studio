@@ -1,15 +1,15 @@
 ---
 title: "Deployment"
-description: "Deploy agent-native apps to any platform with Nitro presets — Node.js, Vercel, Netlify, Cloudflare, AWS, and more."
+description: "Deploy Jami Studio apps to any platform with Nitro presets — Node.js, Vercel, Netlify, Cloudflare, AWS, and more."
 ---
 
 # Deployment
 
-Agent-native apps use [Nitro](https://nitro.build) under the hood, which means you can deploy to any platform with zero config changes — just set a preset.
+Jami Studio apps use [Nitro](https://nitro.build) under the hood, which means you can deploy to any platform with zero config changes — just set a preset.
 
 ## Before You Deploy: Pick a Persistent Database {#persistent-database}
 
-Every deployed app needs a persistent SQL database. In local development, agent-native falls back to a SQLite file at `data/app.db`; that is convenient on your machine, but it is not durable in containers, previews, or serverless environments where the filesystem can be reset.
+Every deployed app needs a persistent SQL database. In local development, the framework falls back to a SQLite file at `data/app.db`; that is convenient on your machine, but it is not durable in containers, previews, or serverless environments where the filesystem can be reset.
 
 Set `DATABASE_URL` in your deploy provider before promoting an app to production. Jami Studio uses Drizzle for schema and queries, so the data layer is portable across Drizzle-compatible SQL backends and the framework auto-detects the dialect from the URL. See [Database](/docs/database#production) for the adapter list and dialect details.
 
@@ -559,7 +559,7 @@ The `run-code` sandbox is process-level isolation, not an OS container. It strip
 
 ## Updating UI in Production {#updating-ui-in-production}
 
-One of agent-native's core features is that the agent can modify your app's source code — components, routes, styles, actions. During local development this works seamlessly because the agent has full filesystem access.
+One of Jami Studio's core features is that the agent can modify your app's source code — components, routes, styles, actions. During local development this works seamlessly because the agent has full filesystem access.
 
 In a standard production deployment with [production code execution](#production-code-execution) left off, the agent has access to app tools (actions, database, MCP) but not the filesystem. This means the agent can read and write data, run actions, and interact with external services — but it can't edit your React components or add new routes on a deployed instance.
 
@@ -569,7 +569,7 @@ In a standard production deployment with [production code execution](#production
 
 **How it works:**
 
-1. Connect your agent-native repo to Jami Studio
+1. Connect your Jami Studio repo to Jami Studio
 2. Jami Studio provides a cloud frame with the agent, visual editing, and real-time collaboration
 3. Prompt the agent to make UI changes — it edits your components, routes, and styles live
 4. Changes are committed back to your repo
@@ -578,7 +578,7 @@ See [Frames](/docs/frames) for more on the embedded agent panel vs. cloud frame 
 
 ## Multi-instance deploys {#multi-instance}
 
-Agent-native apps store all state in SQL via Drizzle and sync the UI via [polling](/docs/key-concepts#polling-sync) against the database — no file-system state, no sticky sessions, no in-memory caches. That means multi-instance and serverless deployments work out of the box: point every instance at the same `DATABASE_URL` and they converge automatically. See [Key Concepts — Data in SQL](/docs/key-concepts#data-in-sql) and [Portability](/docs/key-concepts#hosting-agnostic).
+Jami Studio apps store all state in SQL via Drizzle and sync the UI via [polling](/docs/key-concepts#polling-sync) against the database — no file-system state, no sticky sessions, no in-memory caches. That means multi-instance and serverless deployments work out of the box: point every instance at the same `DATABASE_URL` and they converge automatically. See [Key Concepts — Data in SQL](/docs/key-concepts#data-in-sql) and [Portability](/docs/key-concepts#hosting-agnostic).
 
 ## What's next
 

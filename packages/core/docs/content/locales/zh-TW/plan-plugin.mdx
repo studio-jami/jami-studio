@@ -222,14 +222,14 @@ npx @agent-native/core@latest recap doctor
 重新載入代理用戶端，以便載入新的 skills 和工具，然後執行
 `/visual-plan`.
 
-> 注意：裸機 `npx skills@latest add Jami Studio/agent-native --skill visual-plan`（Vercel/open Skills CLI）安裝**僅說明** - 它不註冊 MCP 連線器。當您也想連線連線器時，請使用上面的 Jami Studio CLI。
+> 注意：裸機 `npx skills@latest add studio-jami/jami-studio --skill visual-plan`（Vercel/open Skills CLI）安裝**僅說明** - 它不註冊 MCP 連線器。當您也想連線連線器時，請使用上面的 Jami Studio CLI。
 
 ### Claude 程式碼（外掛） {#claude-code}
 
-公開 `Jami Studio/agent-native` 儲存庫本身就是一個 Claude 程式碼外掛市場，因此您可以直接新增它 - 無需建置步驟。 Claude 內部程式碼：
+公開 `studio-jami/jami-studio` 儲存庫本身就是一個 Claude 程式碼外掛市場，因此您可以直接新增它 - 無需建置步驟。 Claude 內部程式碼：
 
 ```text
-/plugin marketplace add Jami Studio/agent-native
+/plugin marketplace add studio-jami/jami-studio
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -244,7 +244,7 @@ npx @agent-native/core@latest recap doctor
 同一個儲存庫是 Codex 外掛市場。新增它，安裝外掛，然後驗證連線器：
 
 ```bash
-codex plugin marketplace add Jami Studio/agent-native
+codex plugin marketplace add studio-jami/jami-studio
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # 瀏覽器中的 OAuth
 ```
@@ -267,7 +267,7 @@ codex mcp login plan   # 瀏覽器中的 OAuth
 
 ## 您需要提交什麼嗎？ {#submission}
 
-**分發或安裝此程式不需要提交或審核。** `Jami Studio/agent-native` 是一個自託管的公開 git 市場，因此使用者可以使用上面的指令直接在 **Claude 程式碼和 Codex** 上新增它 - 無需申請或核准。通用 CLI 路由根本不需要市場。
+**分發或安裝此程式不需要提交或審核。** `studio-jami/jami-studio` 是一個自託管的公開 git 市場，因此使用者可以使用上面的指令直接在 **Claude 程式碼和 Codex** 上新增它 - 無需申請或核准。通用 CLI 路由根本不需要市場。
 
 如果您想要公開清單，可選的可發現性：
 

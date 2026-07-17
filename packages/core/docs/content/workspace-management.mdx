@@ -11,7 +11,7 @@ description: "Branching, CODEOWNERS, PR review, and how Dispatch handles runtime
 
 </Callout>
 
-This guide covers the operational side of running an agent-native workspace — how to branch, who reviews what, how to set up code ownership, and how the Dispatch control plane fits into your governance model.
+This guide covers the operational side of running an Jami Studio workspace — how to branch, who reviews what, how to set up code ownership, and how the Dispatch control plane fits into your governance model.
 
 <Diagram id="doc-block-1krauqp" title="Two governance planes" summary={"Git governs code; Dispatch governs runtime. They are complementary — don't replicate one inside the other."}>
 
@@ -176,7 +176,7 @@ Then add the [actions/labeler](https://github.com/actions/labeler) action — se
 
 ### Concurrent Agent Work
 
-Agent-native workspaces often have multiple AI agents working on the same branch simultaneously. This is by design — the agents share a branch and push independently.
+Jami Studio workspaces often have multiple AI agents working on the same branch simultaneously. This is by design — the agents share a branch and push independently.
 
 <Callout id="doc-block-smcj91" tone="warning">
 

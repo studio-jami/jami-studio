@@ -119,7 +119,7 @@ describe("DocsSidebar", () => {
     const html = renderSidebar("/docs/toolkit-collaboration");
     const toolkitLinks = getDocsNavItems().filter(
       (item) =>
-        item.to === "/docs/agent-native-toolkit" ||
+        item.to === "/docs/jami-studio-toolkit" ||
         item.to.startsWith("/docs/toolkit-"),
     );
 

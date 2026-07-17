@@ -1,11 +1,11 @@
 ---
 title: "Assets"
-description: "An agent-native digital asset manager and cross-agent generation service for brand-consistent media."
+description: "A Jami-powered digital asset manager and cross-agent generation service for brand-consistent media."
 ---
 
 # Assets
 
-Assets is an agent-native workspace for creating and managing brand-consistent media. It organizes uploads and generated results into libraries and folders, lets teams collect examples for blog heroes, diagrams, landing pages, product shots, videos, and logos, then routes generation through the agent chat so every asset can be reviewed and refined.
+Assets is an Jami Studio workspace for creating and managing brand-consistent media. It organizes uploads and generated results into libraries and folders, lets teams collect examples for blog heroes, diagrams, landing pages, product shots, videos, and logos, then routes generation through the agent chat so every asset can be reviewed and refined.
 
 <WireframeBlock id="doc-block-x7640h">
   <Screen
@@ -276,7 +276,7 @@ Generate and pick brand media without leaving Codex, Claude Code, Claude, or Cha
    Skills CLI, use:
 
    ```bash
-   npx skills@latest add Jami Studio/agent-native --skill assets
+   npx skills@latest add studio-jami/jami-studio --skill assets
    ```
 
    The Vercel/open Skills CLI installs the instruction file only; it does not
@@ -635,7 +635,7 @@ The Assets app skill has app id `assets` and hosted MCP URL
 npx @agent-native/core@latest skills add assets
 
 # Vercel/open Skills CLI install: exported instructions only, no MCP config.
-npx skills@latest add Jami Studio/agent-native --skill assets
+npx skills@latest add studio-jami/jami-studio --skill assets
 
 # Hosted install: URL-only MCP connector, no shared secrets in skill files.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json

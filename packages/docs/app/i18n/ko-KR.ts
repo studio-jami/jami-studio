@@ -197,7 +197,7 @@ const koKR = {
       },
     },
     framework: {
-      title: "agent-native apps 를 위한 framework",
+      title: "Jami Studio apps 를 위한 framework",
       body1:
         "Jami Studio 는 agentic applications를 만들기 위한 오픈소스 framework 입니다. Chat에서 시작하고, shared actions를 정의한 뒤, 같은 state를 중심으로 UI, jobs, 협업을 추가하세요.",
       body2:
@@ -268,7 +268,7 @@ const koKR = {
     },
     comparison: {
       titleLine1: "앱과 agent 중 하나를 고르지 마세요.",
-      titleAccent: "agent-native apps 는 둘 다입니다.",
+      titleAccent: "Jami Studio apps 는 둘 다입니다.",
       columns: {
         saas: "SaaS 도구",
         agents: "원시 AI 에이전트",
@@ -1043,7 +1043,7 @@ const koKR = {
       s026: "공유 가능한 링크",
       s027: "모든 계획에는 공개 URL이 있습니다. 비동기식 검토, 댓글 및 승인을 위해 팀원과 공유하세요.",
       s028: "데스크탑 파일 동기화",
-      s029: "앱을 복제하거나 CLI을 실행하지 않고 Agent Native Desktop에서 로컬 MDX 파일로 호스팅된 계획을 미러링합니다.",
+      s029: "앱을 복제하거나 CLI을 실행하지 않고 Jami Studio Desktop에서 로컬 MDX 파일로 호스팅된 계획을 미러링합니다.",
       s030: "이므로 리뷰는 코드 옆에 유지됩니다.",
       s031: "작동 원리",
       s032: "계획은 공유 앱에 있습니다. 귀하와 상담원 모두 기능 수명 주기 동안 계획을 읽고 업데이트할 수 있습니다.",
@@ -1077,7 +1077,7 @@ const koKR = {
       s060: "모든 템플릿 보기",
       s061: "VS Code 핸드오프",
       s062: "다음을 사용해 VS Code 사이드 패널에서 계획 링크를 여세요:",
-      s063: "Agent Native Plans 확장",
+      s063: "Jami Studio Plans 확장",
       s064: "와이어프레임 — 컴포넌트 슬롯이 있는 스케치 UI 모형",
       s065: "주석 코드 — 줄별 메모가 있는 소스 파일",
       s066: "다이어그램 — 흐름, 시퀀스 또는 아키텍처",
@@ -1159,7 +1159,7 @@ const koKR = {
     metaOgDescription:
       "호스팅, 검사, 커스터마이즈가 가능한 Jami Studio 앱으로 코딩 에이전트에 슬래시 명령을 추가하세요.",
     metaKeywords:
-      "agent skills, visual plan, visual recap, visual edit, 코딩 에이전트, Claude Code, Codex, PR 리뷰, 계획, agent-native",
+      "agent skills, visual plan, visual recap, visual edit, 코딩 에이전트, Claude Code, Codex, PR 리뷰, 계획, Jami Studio",
     heroTitle: "코딩 에이전트에 새로운 능력을 더하세요",
     heroBody:
       "완전히 커스터마이즈할 수 있는 Jami Studio 앱 기반 스킬을 설치하세요. 구현 전 시각적 계획, 변경 후 시각적 PR 요약, 로컬 UI 흐름의 시각적 편집을 제공합니다.",
@@ -1199,9 +1199,9 @@ const koKR = {
     },
   },
   downloadPage: {
-    title: "Agent Native 다운로드",
-    body: "모든 agent-native 앱을 하나의 데스크톱 셸에서 사용하세요. 프로덕션 앱이 내장되어 있고 로컬 개발용 dev 모드 토글이 있습니다.",
-    openDesktop: "Agent Native 열기",
+    title: "Jami Studio 다운로드",
+    body: "모든 Jami Studio 앱을 하나의 데스크톱 셸에서 사용하세요. 프로덕션 앱이 내장되어 있고 로컬 개발용 dev 모드 토글이 있습니다.",
+    openDesktop: "Jami Studio 열기",
     downloadInstaller: "설치 프로그램 다운로드",
     viewInstallers: "설치 프로그램 보기",
     viewInstallersOnGithub: "GitHub에서 설치 프로그램 보기",

@@ -402,7 +402,7 @@ function BatteriesIncludedCloud({
           </p>
           <Link
             data-an-prefetch="render"
-            to={localizedPath("/docs/agent-native-toolkit")}
+            to={localizedPath("/docs/jami-studio-toolkit")}
             className="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-950 no-underline transition hover:border-neutral-500 dark:border-white/20 dark:text-white dark:hover:border-white/40"
             onClick={() =>
               trackEvent("click cta", {

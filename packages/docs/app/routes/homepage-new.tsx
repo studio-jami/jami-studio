@@ -592,7 +592,7 @@ export default function HomepageNew() {
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <ArrowLink
-                to={localizedPath("/docs/what-is-agent-native")}
+                to={localizedPath("/docs/what-is-jami")}
                 location="homepage_new_agentic_core"
               >
                 Read the framework guide

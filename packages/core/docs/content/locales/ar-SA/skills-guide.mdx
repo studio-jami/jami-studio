@@ -348,7 +348,7 @@ npx @agent-native/core@latest skills add assets
 npx @agent-native/core@latest skills add content --mode local-files --scope project
 
 # Vercel/open Skills CLI: تعليمات مصدرة فقط، بلا تكوين MCP.
-npx skills@latest add Jami Studio/agent-native --skill assets
+npx skills@latest add studio-jami/jami-studio --skill assets
 
 # قم بتسجيل موصل MCP مستضاف لعملاء الوكيل المحلي.
 npx @agent-native/core@latest app-skill ensure --manifest templates/assets/agent-native.app-skill.json
@@ -376,7 +376,7 @@ claude plugin install agent-native-assets@agent-native-apps
 بالنسبة إلى `npx skills@latest add ...`، إلا أن `skills` CLI الأولي يقوم بتثبيت الإرشادات فقط.
 لا يقوم بتشغيل البرامج النصية لما بعد التثبيت المحددة بواسطة الريبو أو تسجيل موصلات MCP.
 احتفظ بـ Jami Studio CLI كمسار المستندات الافتراضي للوكلاء المحليين لأنه
-أيضًا بتسجيل موصل MCP. `Jami Studio/agent-native` هو GitHub حقيقي
+أيضًا بتسجيل موصل MCP. `studio-jami/jami-studio` هو GitHub حقيقي
 مصدر مستودع Vercel/open Skills CLI؛ `skills.sh` هو اكتشاف و
 دليل لوحة الصدارة، وليس مساحة اسم حزمة بنمط npm.
 

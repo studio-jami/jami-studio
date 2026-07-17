@@ -1,5 +1,5 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from "next/image";
+import Link from "next/link";
 
 // ─── Ecosystem ────────────────────────────────────────────────────
 // Dark base. Two giant blocks stacked: CTA strip + Intercal.
@@ -7,8 +7,11 @@ import Link from 'next/link'
 
 export function Ecosystem() {
   return (
-    <section id="ecosystem" className="bg-background border-t border-border" aria-labelledby="ecosystem-heading">
-
+    <section
+      id="ecosystem"
+      className="bg-background border-t border-border"
+      aria-labelledby="ecosystem-heading"
+    >
       {/* CTA block — foreground panel with image behind */}
       <div className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0" aria-hidden="true">
@@ -29,13 +32,16 @@ export function Ecosystem() {
             id="ecosystem-heading"
             className="font-serif text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[0.92] tracking-tight balance text-foreground mb-10"
           >
-            Build the next<br />
-            generation of<br />
+            Build the next
+            <br />
+            generation of
+            <br />
             <span className="text-rose">agent software.</span>
           </h2>
           <p className="text-[1.05rem] text-muted-foreground leading-relaxed max-w-xl mb-14">
             For solo developers, technical founders, and small teams building
-            agent-enabled internal tools, workflow systems, and product surfaces.
+            agent-enabled internal tools, workflow systems, and product
+            surfaces.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link
@@ -76,13 +82,14 @@ export function Ecosystem() {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-end">
             <div>
               <h3 className="font-serif text-[clamp(1.8rem,4vw,2.8rem)] leading-[0.95] tracking-tight text-foreground balance mb-6">
-                Intercal: knowledge delta<br />
+                Intercal: knowledge delta
+                <br />
                 for current context.
               </h3>
               <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-                Intercal supplements model training gaps with discovery and current 
-                context. It extends the JAMI ecosystem without introducing technical 
-                dependencies to the core framework.
+                Intercal supplements model training gaps with discovery and
+                current context. It extends the Jami ecosystem without
+                introducing technical dependencies to the core framework.
               </p>
             </div>
             <Link
@@ -96,7 +103,6 @@ export function Ecosystem() {
           </div>
         </div>
       </div>
-
     </section>
-  )
+  );
 }

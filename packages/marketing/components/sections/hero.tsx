@@ -1,17 +1,27 @@
-import Link from 'next/link'
-import Image from 'next/image'
+import Image from "next/image";
+import Link from "next/link";
 
 // ─── Hero ─────────────────────────────────────────────────────────
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-between pt-14 overflow-hidden" aria-label="Hero">
-
+    <section
+      className="relative min-h-screen flex flex-col justify-between pt-14 overflow-hidden"
+      aria-label="Hero"
+    >
       {/* Top strip */}
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10 pt-16 flex items-center justify-between">
-        <p className="eyebrow">JAMI: Just Another Machine Interface</p>
+        <p className="eyebrow">Jami: Just Another Machine Interface</p>
         <div className="hidden sm:flex items-center gap-3">
-          {['Provider-agnostic', 'Agent-native', 'Durable state', 'Open source'].map((tag) => (
-            <span key={tag} className="border border-border px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-widest text-muted-foreground">
+          {[
+            "Provider-agnostic",
+            "Interchangeable parts",
+            "Always-on agent",
+            "Open source",
+          ].map((tag) => (
+            <span
+              key={tag}
+              className="border border-border px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-widest text-muted-foreground"
+            >
               {tag}
             </span>
           ))}
@@ -22,16 +32,20 @@ export function Hero() {
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10 flex flex-col lg:flex-row lg:items-end gap-10">
         <div className="flex-1 min-w-0">
           <h1 className="font-serif text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[0.95] tracking-tight balance">
-            The workspace where<br />
-            <span className="text-rose">agents</span> and<br />
-            <span className="text-rose">humans</span> share<br />
+            The workspace where
+            <br />
+            <span className="text-rose">agents</span> and
+            <br />
+            <span className="text-rose">humans</span> share
+            <br />
             the same interface.
           </h1>
           <p className="mt-8 max-w-lg text-[1.05rem] text-muted-foreground leading-relaxed">
-            JAMI is an open source framework for building agent-native applications. 
-            Define your operations once in standard SQL and actions. They become 
-            instantly accessible to humans through web interfaces, and to agents through 
-            tools, voice, or automated tasks.
+            Jami is an open source framework for customizable workspaces — mail,
+            calendars, analytics, design, planning, research and beyond. Define
+            an operation once and every interface gets it: buttons for humans,
+            tools for the always-on agent, voice, and automations. Every part
+            interchangeable — your models, your data, your hosting, your look.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link
@@ -70,18 +84,36 @@ export function Hero() {
       {/* Bottom stat bar */}
       <div className="border-t border-border mt-16">
         <dl className="mx-auto max-w-7xl px-6 md:px-10 grid grid-cols-1 sm:grid-cols-3">
-          {([
-            ['One action surface',     'Every button, tool call, and voice command runs the same code. Always.'],
-            ['SQL-backed state',       'Agents write directly to SQL where humans read. No sync layer, no drift.'],
-            ['Swap any provider',      'Replace any layer: model, database, search, or storage, without rebuilding.'],
-          ] as const).map(([term, def], i) => (
-            <div key={term} className={`px-8 py-7 ${i > 0 ? 'border-t sm:border-t-0 sm:border-l border-border' : ''}`}>
-              <dt className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-rose mb-2">{term}</dt>
-              <dd className="text-sm text-muted-foreground leading-relaxed">{def}</dd>
+          {(
+            [
+              [
+                "One action surface",
+                "Every button, tool call, and voice command runs the same code. Always.",
+              ],
+              [
+                "Interchangeable parts",
+                "Swap any layer — model, database, search, or storage — without rebuilding.",
+              ],
+              [
+                "An agent that keeps up",
+                "Always on, fully interruptible. Steer it, stop it, or take over any time.",
+              ],
+            ] as const
+          ).map(([term, def], i) => (
+            <div
+              key={term}
+              className={`px-8 py-7 ${i > 0 ? "border-t sm:border-t-0 sm:border-l border-border" : ""}`}
+            >
+              <dt className="font-mono text-[0.6rem] uppercase tracking-[0.22em] text-rose mb-2">
+                {term}
+              </dt>
+              <dd className="text-sm text-muted-foreground leading-relaxed">
+                {def}
+              </dd>
             </div>
           ))}
         </dl>
       </div>
     </section>
-  )
+  );
 }

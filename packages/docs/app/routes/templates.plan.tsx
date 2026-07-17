@@ -32,7 +32,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI coding agent plans, visual planning, Codex visual plan, Claude Code plans, coding agent wireframe, agent plan skill, visual plan mode, AI diagram generator, agent-native plans, annotated code review, shareable agent plans",
+          "AI coding agent plans, visual planning, Codex visual plan, Claude Code plans, coding agent wireframe, agent plan skill, visual plan mode, AI diagram generator, Jami Studio plans, annotated code review, shareable agent plans",
       },
     ],
     "Plans",

@@ -21,7 +21,7 @@ agent-native add provider stripe | claude
 agent-native add channel discord  | codex
 ```
 
-<Diagram id="doc-block-11vh2b" title={"add prints a recipe; your coding agent applies it"} summary={"agent-native emits a Markdown blueprint to stdout (diagnostics to stderr); you pipe it into Claude Code or Codex, which edits your live repo with full context."}>
+<Diagram id="doc-block-11vh2b" title={"add prints a recipe; your coding agent applies it"} summary={"The CLI emits a Markdown blueprint to stdout (diagnostics to stderr); you pipe it into Claude Code or Codex, which edits your live repo with full context."}>
 
 ```html
 <div class="diagram-bp">
@@ -109,7 +109,7 @@ Blueprint `.md` files ship in the published package via the `blueprints` entry i
 
 Write each blueprint as an instruction set for a coding agent with no other context. A good blueprint has:
 
-1. **A one-line goal** and a "you are a coding agent in an agent-native app, apply these as real source changes" framing.
+1. **A one-line goal** and a "you are a coding agent in a Jami Studio app, apply these as real source changes" framing.
 2. **Read first** — the exact files that _are_ the contract.
 3. **Files to touch** — concrete paths and what each change does.
 4. **Framework rules to honor** — actions-first, no hardcoded secrets, scope ownable data, add a changeset for publishable-package source.

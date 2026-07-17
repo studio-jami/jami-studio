@@ -196,7 +196,7 @@ const hiIN = {
       },
     },
     framework: {
-      title: "agent-native apps के लिए framework",
+      title: "Jami Studio apps के लिए framework",
       body1:
         "Jami Studio agentic applications बनाने के लिए open-source framework है: Chat से शुरू करें, shared actions define करें, फिर उसी state के आसपास UI, jobs और collaboration जोड़ें।",
       body2:
@@ -267,7 +267,7 @@ const hiIN = {
     },
     comparison: {
       titleLine1: "apps या agents में से चुनने की ज़रूरत नहीं।",
-      titleAccent: "agent-native apps दोनों हैं।",
+      titleAccent: "Jami Studio apps दोनों हैं।",
       columns: {
         saas: "सास उपकरण",
         agents: "कच्चे AI एजेंट",
@@ -1075,7 +1075,7 @@ const hiIN = {
       s060: "सभी टेम्पलेट देखें",
       s061: "VS Code हैंडऑफ",
       s062: "इससे VS Code साइड पैनल में प्लान लिंक खोलें:",
-      s063: "Agent Native Plans एक्सटेंशन",
+      s063: "Jami Studio Plans एक्सटेंशन",
       s064: "वायरफ्रेम — कंपोनेंट स्लॉट वाला स्केची UI मॉकअप",
       s065: "एनोटेटेड कोड — प्रति-लाइन नोट्स वाली स्रोत फ़ाइल",
       s066: "डायग्राम — फ़्लोचार्ट, सीक्वेंस या आर्किटेक्चर",
@@ -1157,7 +1157,7 @@ const hiIN = {
     metaOgDescription:
       "अपने कोडिंग एजेंट को Jami Studio ऐप्स से चलने वाले slash commands दें जिन्हें आप host, inspect और customize कर सकते हैं।",
     metaKeywords:
-      "agent skills, visual plan, visual recap, visual edit, कोडिंग एजेंट, Claude Code, Codex, PR review, planning, agent-native",
+      "agent skills, visual plan, visual recap, visual edit, कोडिंग एजेंट, Claude Code, Codex, PR review, planning, Jami Studio",
     heroTitle: "अपने कोडिंग एजेंट को नई शक्तियां दें",
     heroBody:
       "पूरी तरह customize किए जा सकने वाले Jami Studio app-backed skills इंस्टॉल करें: implementation से पहले visual planning, changes के बाद visual PR recaps, और local UI flows के लिए visual editing।",
@@ -1197,9 +1197,9 @@ const hiIN = {
     },
   },
   downloadPage: {
-    title: "Agent Native डाउनलोड करें",
-    body: "आपके सभी agent-native ऐप एक ही desktop shell में। Production apps built-in हैं, और local development के लिए dev mode toggle है।",
-    openDesktop: "Agent Native खोलें",
+    title: "Jami Studio डाउनलोड करें",
+    body: "आपके सभी Jami Studio ऐप एक ही desktop shell में। Production apps built-in हैं, और local development के लिए dev mode toggle है।",
+    openDesktop: "Jami Studio खोलें",
     downloadInstaller: "Installer डाउनलोड करें",
     viewInstallers: "Installers देखें",
     viewInstallersOnGithub: "GitHub पर installers देखें",

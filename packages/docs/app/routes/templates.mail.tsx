@@ -32,7 +32,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI email client, open source email, Gmail alternative, Superhuman alternative, AI inbox, keyboard shortcuts email, agent-native mail, AI email triage, smart inbox, natural language email",
+          "AI email client, open source email, Gmail alternative, Superhuman alternative, AI inbox, keyboard shortcuts email, Jami Studio mail, AI email triage, smart inbox, natural language email",
       },
     ],
     "Mail",

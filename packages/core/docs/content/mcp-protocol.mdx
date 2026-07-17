@@ -1,11 +1,11 @@
 ---
 title: "MCP Server"
-description: "Expose your agent-native app as a remote MCP server so Claude, ChatGPT, Claude Code, Cursor, and other AI tools can call your app's actions directly."
+description: "Expose your Jami Studio app as a remote MCP server so Claude, ChatGPT, Claude Code, Cursor, and other AI tools can call your app's actions directly."
 ---
 
 # MCP Server
 
-**This page: the lower-level MCP server reference.** How every agent-native app exposes its actions over MCP — the auto-mounted endpoint, auth modes, the `tools/call` / `ask-agent` surface, and custom mounting. Reach for it when you need server internals; for connecting a host, start with [External Agents](/docs/external-agents).
+**This page: the lower-level MCP server reference.** How every Jami Studio app exposes its actions over MCP — the auto-mounted endpoint, auth modes, the `tools/call` / `ask-agent` surface, and custom mounting. Reach for it when you need server internals; for connecting a host, start with [External Agents](/docs/external-agents).
 
 | If you want to…                                              | Read                                     |
 | ------------------------------------------------------------ | ---------------------------------------- |
@@ -15,11 +15,11 @@ description: "Expose your agent-native app as a remote MCP server so Claude, Cha
 | Build generated inline UI inside Jami Studio chat           | [Generative UI](/docs/generative-ui)     |
 | Lower-level MCP server reference (auth, tools, custom mount) | **This page** — MCP Server               |
 
-Every agent-native app automatically exposes a remote MCP (Model Context Protocol) server, so external AI tools like Claude, ChatGPT custom MCP apps, Claude Code, Cursor, Codex, and VS Code GitHub Copilot can discover and call your app's actions directly — no extra code needed. If your goal is to _connect_ one of those hosts to a hosted app, [External Agents](/docs/external-agents) covers the recommended single Dispatch connector, per-app URLs, OAuth, MCP Apps inline UIs, and deep links. This page documents what sits underneath that.
+Every Jami Studio app automatically exposes a remote MCP (Model Context Protocol) server, so external AI tools like Claude, ChatGPT custom MCP apps, Claude Code, Cursor, Codex, and VS Code GitHub Copilot can discover and call your app's actions directly — no extra code needed. If your goal is to _connect_ one of those hosts to a hosted app, [External Agents](/docs/external-agents) covers the recommended single Dispatch connector, per-app URLs, OAuth, MCP Apps inline UIs, and deep links. This page documents what sits underneath that.
 
 ## Overview {#overview}
 
-MCP is the standard protocol for connecting AI tools to external capabilities. When you deploy an agent-native app, it auto-mounts an MCP endpoint alongside the existing A2A endpoint. Any MCP-compatible host can connect and use your app's tools.
+MCP is the standard protocol for connecting AI tools to external capabilities. When you deploy a Jami Studio app, it auto-mounts an MCP endpoint alongside the existing A2A endpoint. Any MCP-compatible host can connect and use your app's tools.
 
 Key concepts:
 
@@ -96,7 +96,7 @@ Both protocols are auto-mounted. Use whichever fits your use case:
 | **Protocol**       | MCP Streamable HTTP                                                      | JSON-RPC 2.0                                 |
 | **Tool discovery** | `tools/list`                                                             | Agent card at `/.well-known/agent-card.json` |
 | **Endpoint**       | `/_agent-native/mcp`                                                     | `/_agent-native/a2a`                         |
-| **Supported by**   | Claude, ChatGPT, Claude Code, Cursor, Codex, Cowork, and other MCP hosts | Other agent-native apps                      |
+| **Supported by**   | Claude, ChatGPT, Claude Code, Cursor, Codex, Cowork, and other MCP hosts | Other Jami Studio apps                      |
 | **Execution**      | Direct tool calls (no extra LLM)                                         | Full agent loop (LLM reasoning)              |
 
 You can also use the `ask-agent` MCP tool to get the best of both worlds — call it from Claude Code and let your app's agent reason through complex tasks.
@@ -141,7 +141,7 @@ POST https://your-app.example.com/_agent-native/mcp
 
 The server supports the standard MCP handshake: `initialize` → `initialized` → `tools/list` → `tools/call`.
 
-<Endpoint id="doc-block-86ic5g" title="MCP endpoint" summary="The auto-mounted Streamable HTTP endpoint every agent-native app exposes." method="POST" path="/_agent-native/mcp" auth="Standard remote MCP OAuth (Bearer access token), connect-minted JWT, or static ACCESS_TOKEN/ACCESS_TOKENS" params={[
+<Endpoint id="doc-block-86ic5g" title="MCP endpoint" summary="The auto-mounted Streamable HTTP endpoint every Jami Studio app exposes." method="POST" path="/_agent-native/mcp" auth="Standard remote MCP OAuth (Bearer access token), connect-minted JWT, or static ACCESS_TOKEN/ACCESS_TOKENS" params={[
   {
     "name": "Authorization",
     "in": "header",

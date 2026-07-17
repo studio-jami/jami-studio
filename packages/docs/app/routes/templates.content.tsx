@@ -30,7 +30,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "Obsidian for MDX, open source Obsidian alternative, MDX editor, local Markdown editor, AI content editor, open source Notion alternative, Google Docs alternative, AI writing tool, agent-native content, AI-powered CMS, AI document editor, custom MDX blocks",
+          "Obsidian for MDX, open source Obsidian alternative, MDX editor, local Markdown editor, AI content editor, open source Notion alternative, Google Docs alternative, AI writing tool, Jami Studio content, AI-powered CMS, AI document editor, custom MDX blocks",
       },
     ],
     "Content",

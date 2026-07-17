@@ -197,7 +197,7 @@ const deDE = {
       },
     },
     framework: {
-      title: "Das Framework für agent-native apps",
+      title: "Das Framework für Jami Studio apps",
       body1:
         "Jami Studio ist ein Open-Source-Framework zum Bau von agentic applications: Starte mit Chat, definiere gemeinsame actions und ergänze dann UI, jobs und Zusammenarbeit rund um denselben state.",
       body2:
@@ -1046,7 +1046,7 @@ const deDE = {
       s026: "Gemeinsam nutzbare Links",
       s027: "Jeder Plan erhält eine öffentliche URL. Teilen Sie sie mit Teamkollegen für asynchrone Überprüfungen, Kommentare und Genehmigungen.",
       s028: "Desktop-Dateisynchronisierung",
-      s029: "Spiegeln Sie gehostete Pläne in lokale MDX-Dateien von Agent Native Desktop, ohne die App zu klonen oder ein CLI auszuführen.",
+      s029: "Spiegeln Sie gehostete Pläne in lokale MDX-Dateien von Jami Studio Desktop, ohne die App zu klonen oder ein CLI auszuführen.",
       s030: "Daher bleibt die Überprüfung neben dem Code.",
       s031: "Wie es funktioniert",
       s032: "Planen Sie Leben in einer gemeinsamen App – sowohl Sie als auch der Agent können sie während des gesamten Lebenszyklus einer Funktion lesen und aktualisieren.",
@@ -1080,7 +1080,7 @@ const deDE = {
       s060: "Alle Vorlagen anzeigen",
       s061: "VS Code-Übergaben",
       s062: "Öffnen Sie Plan-Links in einem VS Code-Seitenbereich mit der",
-      s063: "Agent Native Plans-Erweiterung",
+      s063: "Jami Studio Plans-Erweiterung",
       s064: "Wireframe — skizzenhaftes UI-Modell mit Komponentenplätzen",
       s065: "Kommentierter Code — Quelldatei mit zeilenweisen Notizen",
       s066: "Diagramm — Ablauf, Sequenz oder Architektur",
@@ -1162,7 +1162,7 @@ const deDE = {
     metaOgDescription:
       "Gib deinem Coding Agent Slash-Commands auf Basis von Jami Studio Apps, die du hosten, pruefen und anpassen kannst.",
     metaKeywords:
-      "Agent Skills, Visual Plan, Visual Recap, Visual Edit, Coding Agent, Claude Code, Codex, PR Review, Planung, agent-native",
+      "Agent Skills, Visual Plan, Visual Recap, Visual Edit, Coding Agent, Claude Code, Codex, PR Review, Planung, Jami Studio",
     heroTitle: "Gib deinem Coding Agent neue Superkraefte",
     heroBody:
       "Installiere appgestuetzte Skills mit Jami Studio Apps, die du voll anpassen kannst: visuelle Planung vor der Umsetzung, visuelle PR-Recaps nach den Aenderungen und visuelle Bearbeitung lokaler UI-Flows.",
@@ -1202,9 +1202,9 @@ const deDE = {
     },
   },
   downloadPage: {
-    title: "Agent Native herunterladen",
-    body: "Alle agent-native Apps in einer Desktop-Shell. Produktions-Apps sind integriert, mit Dev-Modus für lokale Entwicklung.",
-    openDesktop: "Agent Native öffnen",
+    title: "Jami Studio herunterladen",
+    body: "Alle Jami Studio Apps in einer Desktop-Shell. Produktions-Apps sind integriert, mit Dev-Modus für lokale Entwicklung.",
+    openDesktop: "Jami Studio öffnen",
     downloadInstaller: "Installer herunterladen",
     viewInstallers: "Installer ansehen",
     viewInstallersOnGithub: "Installer auf GitHub ansehen",

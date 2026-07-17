@@ -196,7 +196,7 @@ const ptBR = {
       },
     },
     framework: {
-      title: "O framework para apps agent-native",
+      title: "O framework para apps Jami Studio",
       body1:
         "Jami Studio é um framework open source para construir agentic applications: comece com Chat, defina actions compartilhadas e depois adicione UI, jobs e colaboração ao redor do mesmo estado.",
       body2:
@@ -267,7 +267,7 @@ const ptBR = {
     },
     comparison: {
       titleLine1: "Não escolha entre apps ou agents.",
-      titleAccent: "Apps agent-native são os dois.",
+      titleAccent: "Apps Jami Studio são os dois.",
       columns: {
         saas: "Ferramentas SaaS",
         agents: "Agentes AI brutos",
@@ -463,7 +463,7 @@ const ptBR = {
     design: {
       replaces: "Substitui ou amplia ferramentas de prototipagem de design",
       description:
-        "Estúdio de prototipagem HTML agent-native. Gere designs Alpine/Tailwind interativos, compare variantes, ajuste controles ao vivo e exporte o resultado.",
+        "Estúdio de prototipagem HTML Jami Studio. Gere designs Alpine/Tailwind interativos, compare variantes, ajuste controles ao vivo e exporte o resultado.",
     },
     content: {
       replaces: "Substitui ou aumenta Obsidian por MDX, Notion, Google Docs",
@@ -1043,7 +1043,7 @@ const ptBR = {
       s026: "Links compartilháveis",
       s027: "Cada plano recebe um URL público. Compartilhe com colegas de equipe para revisão, comentários e aprovações assíncronas.",
       s028: "Sincronização de arquivos da área de trabalho",
-      s029: "Espelhe planos hospedados para arquivos MDX locais do Agent Native Desktop sem clonar o aplicativo ou executar um CLI.",
+      s029: "Espelhe planos hospedados para arquivos MDX locais do Jami Studio Desktop sem clonar o aplicativo ou executar um CLI.",
       s030: ", então a revisão fica ao lado do código.",
       s031: "Como funciona",
       s032: "O planejamento fica em um aplicativo compartilhado – você e o agente podem lê-lo e atualizá-lo durante todo o ciclo de vida de um recurso.",
@@ -1077,7 +1077,7 @@ const ptBR = {
       s060: "Ver todos os modelos",
       s061: "Envios para VS Code",
       s062: "Abra links de planos em um painel lateral do VS Code com a",
-      s063: "extensão Agent Native Plans",
+      s063: "extensão Jami Studio Plans",
       s064: "Wireframe — maquete de UI esboçada com slots de componentes",
       s065: "Código anotado — arquivo-fonte com notas por linha",
       s066: "Diagrama — fluxo, sequência ou arquitetura",
@@ -1159,7 +1159,7 @@ const ptBR = {
     metaOgDescription:
       "De comandos slash ao seu agente de codigo com apps Jami Studio que voce pode hospedar, inspecionar e customizar.",
     metaKeywords:
-      "skills de agente, visual plan, visual recap, visual edit, agente de codigo, Claude Code, Codex, revisao de PR, planejamento, agent-native",
+      "skills de agente, visual plan, visual recap, visual edit, agente de codigo, Claude Code, Codex, revisao de PR, planejamento, Jami Studio",
     heroTitle: "Dê novos superpoderes ao seu agente de codigo",
     heroBody:
       "Instale skills com apps Jami Studio que voce pode customizar por completo: planejamento visual antes da implementacao, recaps visuais de PR depois das mudancas e edicao visual de fluxos UI locais.",
@@ -1199,9 +1199,9 @@ const ptBR = {
     },
   },
   downloadPage: {
-    title: "Baixar Agent Native",
-    body: "Todos os seus apps agent-native em uma única shell de desktop. Apps de produção integrados, com alternância de modo dev para desenvolvimento local.",
-    openDesktop: "Abrir Agent Native",
+    title: "Baixar Jami Studio",
+    body: "Todos os seus apps Jami Studio em uma única shell de desktop. Apps de produção integrados, com alternância de modo dev para desenvolvimento local.",
+    openDesktop: "Abrir Jami Studio",
     downloadInstaller: "Baixar instalador",
     viewInstallers: "Ver instaladores",
     viewInstallersOnGithub: "Ver instaladores no GitHub",

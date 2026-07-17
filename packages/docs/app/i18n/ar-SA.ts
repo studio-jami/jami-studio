@@ -195,7 +195,7 @@ const arSA = {
       },
     },
     framework: {
-      title: "framework لتطبيقات agent-native apps",
+      title: "framework لتطبيقات Jami Studio apps",
       body1:
         "Jami Studio هو framework مفتوح المصدر لبناء agentic applications: ابدأ مع Chat، وعرّف actions مشتركة، ثم أضف UI و jobs والتعاون حول نفس state.",
       body2:
@@ -266,7 +266,7 @@ const arSA = {
     },
     comparison: {
       titleLine1: "لا تختَر بين apps و agents.",
-      titleAccent: "agent-native apps هما الاثنان معًا.",
+      titleAccent: "Jami Studio apps هما الاثنان معًا.",
       columns: {
         saas: "أدوات ادارة العلاقات مع",
         agents: "وكلاء AI الخام",
@@ -459,7 +459,7 @@ const arSA = {
     design: {
       replaces: "يستبدل أو يعزز أدوات نمذجة التصميم",
       description:
-        "استوديو نمذجة HTML agent-native. أنشئ تصاميم Alpine/Tailwind تفاعلية، قارن النسخ، حسّن عناصر التحكم مباشرة، وصدّر النتيجة.",
+        "استوديو نمذجة HTML Jami Studio. أنشئ تصاميم Alpine/Tailwind تفاعلية، قارن النسخ، حسّن عناصر التحكم مباشرة، وصدّر النتيجة.",
     },
     content: {
       replaces: "يستبدل أو يزيد Obsidian لـ MDX، Notion، Google Docs",
@@ -1039,7 +1039,7 @@ const arSA = {
       s026: "روابط قابلة للمشاركة",
       s027: "تحصل كل خطة على عنوان URL عام. شارك مع زملائك في الفريق للمراجعة غير المتزامنة والتعليقات والموافقات.",
       s028: "مزامنة ملفات سطح المكتب",
-      s029: "قم بنسخ الخطط المستضافة على ملفات MDX المحلية من Agent Native Desktop دون استنساخ التطبيق أو تشغيل CLI.",
+      s029: "قم بنسخ الخطط المستضافة على ملفات MDX المحلية من Jami Studio Desktop دون استنساخ التطبيق أو تشغيل CLI.",
       s030: "، لذا تظل المراجعة بجوار الرمز.",
       s031: "كيف يعمل",
       s032: "التخطيط للحياة في تطبيق مشترك - يمكنك أنت والوكيل قراءته وتحديثه طوال دورة حياة الميزة.",
@@ -1073,7 +1073,7 @@ const arSA = {
       s060: "عرض كافة القوالب",
       s061: "تسليمات VS Code",
       s062: "افتح روابط الخطة في لوحة جانبية في VS Code باستخدام",
-      s063: "إضافة Agent Native Plans",
+      s063: "إضافة Jami Studio Plans",
       s064: "إطار سلكي — نموذج UI تخطيطي مع أماكن للمكونات",
       s065: "كود مشروح — ملف مصدر مع ملاحظات لكل سطر",
       s066: "مخطط — تدفق أو تسلسل أو بنية",
@@ -1155,7 +1155,7 @@ const arSA = {
     metaOgDescription:
       "امنح وكيل البرمجة أوامر slash مدعومة بتطبيقات Jami Studio يمكنك استضافتها وفحصها وتخصيصها.",
     metaKeywords:
-      "مهارات الوكيل, visual plan, visual recap, visual edit, وكيل برمجة, Claude Code, Codex, مراجعة PR, تخطيط, agent-native",
+      "مهارات الوكيل, visual plan, visual recap, visual edit, وكيل برمجة, Claude Code, Codex, مراجعة PR, تخطيط, Jami Studio",
     heroTitle: "امنح وكيل البرمجة قدرات جديدة",
     heroBody:
       "ثبّت مهارات مدعومة بتطبيقات Jami Studio يمكنك تخصيصها بالكامل: تخطيط مرئي قبل التنفيذ وملخصات PR مرئية بعد وصول التغييرات وتحرير مرئي لتدفقات UI المحلية.",
@@ -1195,9 +1195,9 @@ const arSA = {
     },
   },
   downloadPage: {
-    title: "تنزيل Agent Native",
-    body: "كل تطبيقاتك agent-native في واجهة سطح مكتب واحدة. تطبيقات الإنتاج مدمجة، مع تبديل وضع التطوير للتطوير المحلي.",
-    openDesktop: "افتح Agent Native",
+    title: "تنزيل Jami Studio",
+    body: "كل تطبيقاتك Jami Studio في واجهة سطح مكتب واحدة. تطبيقات الإنتاج مدمجة، مع تبديل وضع التطوير للتطوير المحلي.",
+    openDesktop: "افتح Jami Studio",
     downloadInstaller: "تنزيل المثبّت",
     viewInstallers: "عرض المثبّتات",
     viewInstallersOnGithub: "عرض المثبّتات على GitHub",

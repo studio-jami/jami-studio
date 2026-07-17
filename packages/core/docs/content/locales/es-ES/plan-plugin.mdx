@@ -224,14 +224,14 @@ acceso y configuración Actions requerida. Una vez finalizada la instalación, r
 Vuelva a cargar el cliente del agente para que se carguen el nuevo skills y las herramientas, luego ejecútelo
 `/visual-plan`.
 
-> Nota: el `npx skills@latest add Jami Studio/agent-native --skill visual-plan` desnudo (Vercel/open Skills CLI) instala **solo instrucciones**; no registra el conector MCP. Utilice el Jami Studio CLI anterior cuando desee conectar el conector también.
+> Nota: el `npx skills@latest add studio-jami/jami-studio --skill visual-plan` desnudo (Vercel/open Skills CLI) instala **solo instrucciones**; no registra el conector MCP. Utilice el Jami Studio CLI anterior cuando desee conectar el conector también.
 
 ### Código Claude (complemento) {#claude-code}
 
-El repositorio público `Jami Studio/agent-native` es en sí mismo un mercado de complementos de código Claude, por lo que puede agregarlo directamente, sin paso de compilación. Código interior Claude:
+El repositorio público `studio-jami/jami-studio` es en sí mismo un mercado de complementos de código Claude, por lo que puede agregarlo directamente, sin paso de compilación. Código interior Claude:
 
 ```text
-/plugin marketplace add Jami Studio/agent-native
+/plugin marketplace add studio-jami/jami-studio
 /plugin install agent-native-visual-plans@agent-native-apps
 /reload-plugins
 /mcp        # authenticate the Plan connector (one OAuth approval)
@@ -246,7 +246,7 @@ El repositorio público `Jami Studio/agent-native` es en sí mismo un mercado de
 El mismo repositorio es un mercado de complementos Codex. Agréguelo, instale el complemento y luego autentique el conector:
 
 ```bash
-codex plugin marketplace add Jami Studio/agent-native
+codex plugin marketplace add studio-jami/jami-studio
 codex plugin add agent-native-visual-plans@agent-native-apps
 codex mcp login plan   # OAuth en el navegador
 ```
@@ -269,7 +269,7 @@ El conector apunta a una aplicación **alojada**, por lo que el actions de la ap
 
 ## ¿Necesitas enviar algo? {#submission}
 
-**No se requiere envío ni revisión para distribuir o instalar esto.** `Jami Studio/agent-native` es un mercado git público autohospedado, por lo que los usuarios lo agregan directamente con los comandos anteriores en **tanto el código Claude como el Codex**: sin solicitud ni aprobación. La ruta universal CLI no necesita ningún mercado.
+**No se requiere envío ni revisión para distribuir o instalar esto.** `studio-jami/jami-studio` es un mercado git público autohospedado, por lo que los usuarios lo agregan directamente con los comandos anteriores en **tanto el código Claude como el Codex**: sin solicitud ni aprobación. La ruta universal CLI no necesita ningún mercado.
 
 Descubrimiento opcional, si desea un listado público:
 

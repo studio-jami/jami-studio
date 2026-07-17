@@ -405,7 +405,7 @@ Replies quote the inbound WhatsApp message using its `wamid` when available.
 
 ## Use Dispatch as your agent's central inbox {#dispatch}
 
-If you're running multiple agent-native apps (mail, calendar, analytics, etc.), the recommended pattern is to set up messaging on **[Dispatch](/docs/dispatch)** (see also the [template reference](/docs/template-dispatch)) and let it route work to your domain apps over [A2A](/docs/a2a-protocol).
+If you're running multiple Jami Studio apps (mail, calendar, analytics, etc.), the recommended pattern is to set up messaging on **[Dispatch](/docs/dispatch)** (see also the [template reference](/docs/template-dispatch)) and let it route work to your domain apps over [A2A](/docs/a2a-protocol).
 
 Why this is nice:
 
@@ -607,7 +607,7 @@ The built-in runtime adapters are **Slack**, **Microsoft Teams**, **Discord inte
 
 ### Threading and identity {#threading-and-identity}
 
-Each external conversation maps to a persistent thread in the agent-native database:
+Each external conversation maps to a persistent thread in the app's database:
 
 - **Slack DM** → one thread per Slack user.
 - **Slack channel @mention** → one thread per channel.

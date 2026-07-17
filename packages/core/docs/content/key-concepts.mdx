@@ -1,15 +1,15 @@
 ---
 title: "Key Concepts"
-description: "How agent-native apps work: actions first, SQL database, app-agent loop, optional UI, polling sync, external-agent entry points, context awareness, and portability."
+description: "How Jami Studio apps work: actions first, SQL database, app-agent loop, optional UI, polling sync, external-agent entry points, context awareness, and portability."
 ---
 
 # Key Concepts
 
-How agent-native apps work under the hood — the principles and the architecture. This page is the contract; for the vision and the case for building this way, see [What Is Agent-Native?](/docs/what-is-agent-native).
+How Jami Studio apps work under the hood — the principles and the architecture. This page is the contract; for the vision and the case for building this way, see [What Is Jami?](/docs/what-is-jami).
 
 ## The architecture {#the-architecture}
 
-Every agent-native app is three things working together:
+Every Jami Studio app is three things working together:
 
 - **Agent** — Autonomous AI that reads data, writes data, runs actions, and modifies code. Customizable with skills and instructions.
 - **Application** — The product surface around the agent. This may start as chat, add native inline results, grow into a small control plane, or become a full React UI with dashboards, flows, and visualizations.
@@ -80,7 +80,7 @@ Automation-first apps can run the same production app-agent loop from the folder
 
 ## Agent building blocks {#agent-building-blocks}
 
-Every agent-native app has the same agent building blocks, regardless of whether
+Every Jami Studio app has the same agent building blocks, regardless of whether
 the product surface is chat-first, automation-first, or a full UI:
 
 <FileTree
@@ -125,7 +125,7 @@ Six rules govern the architecture:
 
 ## The four-area checklist {#four-area-checklist}
 
-Every user-facing feature should update all applicable areas. Skipping an applicable area breaks the agent-native contract; forcing a screen onto an automation that no human needs to browse is also a smell.
+Every user-facing feature should update all applicable areas. Skipping an applicable area breaks the machine-interface contract; forcing a screen onto an automation that no human needs to browse is also a smell.
 
 | Area             | Description                                                    |
 | ---------------- | -------------------------------------------------------------- |
@@ -374,7 +374,7 @@ This works in all deployment environments — including serverless and edge — 
 
 A _frame_ is the environment that hosts the agent next to your app — locally that's the embedded panel; in the cloud it's Jami Studio's managed surface. See [Frames](/docs/frames).
 
-Agent-native apps include an embedded agent panel that provides the AI agent alongside the app UI. This is what makes the architecture work: the agent needs a computer (database, browser, code execution), and the app needs the agent for AI work.
+Jami Studio apps include an embedded agent panel that provides the AI agent alongside the app UI. This is what makes the architecture work: the agent needs a computer (database, browser, code execution), and the app needs the agent for AI work.
 
 - **Embedded Agent Panel** — Chat and optional CLI terminal built into every app. Supports Claude Code, Codex, Gemini, OpenCode, and Jami Studio. Runs locally. Free and open source.
 - **Cloud** — Deploy to any cloud with real-time collaboration, visual editing, roles and permissions. Best for teams.
@@ -434,7 +434,7 @@ These sit on top of the same contract and have their own deep dives:
 
 Adopting the framework is valuable mostly because of what you stop having to build. The moment your app follows the six rules, you inherit:
 
-- **One action = every surface.** Every action defined with `defineAction()` is simultaneously an agent tool, a typesafe frontend hook (`useActionQuery` / `useActionMutation`), a framework-owned HTTP transport, a CLI command, an MCP tool for external clients, and an A2A tool for other agent-native apps. Optional `link` and `mcpApp` metadata add deep links and MCP Apps UI without a second implementation.
+- **One action = every surface.** Every action defined with `defineAction()` is simultaneously an agent tool, a typesafe frontend hook (`useActionQuery` / `useActionMutation`), a framework-owned HTTP transport, a CLI command, an MCP tool for external clients, and an A2A tool for other Jami Studio apps. Optional `link` and `mcpApp` metadata add deep links and MCP Apps UI without a second implementation.
 - **A full workspace per user.** Skills, shared `LEARNINGS.md`, personal `memory/MEMORY.md`, `AGENTS.md`, custom sub-agents, scheduled jobs, connected MCP servers — all SQL-backed, no dev-box required. See [Workspace](/docs/workspace).
 - **Drop-in React components.** `<AgentPanel />` and `<AgentSidebar />` render chat + workspace anywhere in your app. See [Drop-in Agent](/docs/drop-in-agent).
 - **BYO agent chat runtimes.** The same chat UI can sit on top of OpenAI Agents, OpenAI Responses, Claude Agent SDK, Vercel AI SDK, AG-UI, or your own normalized HTTP stream. See [Native Chat UI](/docs/native-chat-ui#byo-agent-runtimes).
@@ -450,7 +450,7 @@ That's the "and everything else" you'd otherwise be gluing together yourself.
 
 ## What's next {#deep-dives}
 
-- [**What Is Agent-Native?**](/docs/what-is-agent-native) — the vision and philosophy behind these rules
+- [**What Is Jami?**](/docs/what-is-jami) — the vision and philosophy behind these rules
 - [**Context Awareness**](/docs/context-awareness) — navigation state, view-screen, and navigate commands in depth
 - [**Skills Guide**](/docs/skills-guide) — framework skills, domain skills, and creating custom skills
 - [**Native Chat UI**](/docs/native-chat-ui) — action-declared tables, charts, and BYO runtime posture

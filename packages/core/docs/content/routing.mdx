@@ -1,11 +1,11 @@
 ---
 title: "Routing"
-description: "File-based routing for agent-native apps with React Router v8 — pages, dynamic params, and navigation."
+description: "File-based routing for Jami Studio apps with React Router v8 — pages, dynamic params, and navigation."
 ---
 
 # Routing
 
-Agent-native apps use **React Router v8** with file-based routing via `flatRoutes()` from `@react-router/fs-routes`. Every file in `app/routes/` becomes a URL. Templates use the dot-notation convention — dots separate URL segments inside a single filename.
+Jami Studio apps use **React Router v8** with file-based routing via `flatRoutes()` from `@react-router/fs-routes`. Every file in `app/routes/` becomes a URL. Templates use the dot-notation convention — dots separate URL segments inside a single filename.
 
 ## File-Based Routing {#file-based-routing}
 
@@ -112,6 +112,6 @@ navigate(`/inbox/${threadId}`);
 
 ## What's next
 
-- [**Client**](/docs/client) — the agent-native browser hooks and utilities
+- [**Client**](/docs/client) — the framework browser hooks and utilities
 - [**Server**](/docs/server) — file-based server routes and the `/_agent-native/` namespace
 - [**Context Awareness**](/docs/context-awareness) — how the agent learns the current route and selection

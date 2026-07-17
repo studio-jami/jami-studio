@@ -236,7 +236,7 @@ Dies bedeutet auch, dass Sie die Workflow-Datei **bevor** die Geheimnisse existi
 
 Wenn Sie Zusammenfassungen für Fork-PRs generieren möchten, steht eine zweite Workflow-Datei zur Verfügung: `.github/workflows/pr-visual-recap-fork.yml`. Es verwendet `pull_request_target` (das mit Basis-Repo-Geheimnissen läuft), checkt aber niemals Fork-Code aus oder führt ihn aus. Vertrauenswürdige Fork-Autoren mit der Autorenzuordnung GitHub `OWNER`, `MEMBER` oder `COLLABORATOR` werden automatisch ausgeführt. Externe Fork-PRs erfordern eine explizite **Pro-Kopf-Betreuer-Opt-In** über ein neues `recap`-Label-Ereignis, bevor der Recap-Agent ausgeführt wird.
 
-Um es zu installieren, kopieren Sie die Datei von [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) in das `.github/workflows/`-Verzeichnis Ihres Repos neben dem vorhandenen `pr-visual-recap.yml`. Es gelten die gleichen Geheimnisse (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`).
+Um es zu installieren, kopieren Sie die Datei von [studio-jami/jami-studio](https://github.com/studio-jami/jami-studio/blob/main/.github/workflows/pr-visual-recap-fork.yml) in das `.github/workflows/`-Verzeichnis Ihres Repos neben dem vorhandenen `pr-visual-recap.yml`. Es gelten die gleichen Geheimnisse (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`).
 
 <Diagram id="doc-block-cd4zy4" title="Fork PR-Zustimmungstor" summary={"Fork-PRs erhalten standardmäßig keine Geheimnisse; Vertrauenswürdige Autoren werden automatisch ausgeführt und externe Mitwirkende benötigen ein neues Betreuer-Recap-Label."}>
 
@@ -350,7 +350,7 @@ Der `gate`-Schritt überspringt die Zusammenfassung vollständig, wenn ein PR ei
 | `**/AGENTS.md`                             | Agent weist den Läufer an, zu laden          |
 | `**/.mcp.json`                             | MCP Serverkonfiguration, die der Runner lädt |
 
-Im `Jami Studio/agent-native`-Monorepo führt der Workflow die Zusammenfassung CLI von der vertrauenswürdigen Basiszweigquelle statt von der PR-Kopfquelle aus. Dadurch bleiben normale Paketänderungen, einschließlich `packages/core/**`, für Wiederholungen berechtigt, ohne dass PR-modifizierter CLI-Code ausgeführt werden muss.
+Im `studio-jami/jami-studio`-Monorepo führt der Workflow die Zusammenfassung CLI von der vertrauenswürdigen Basiszweigquelle statt von der PR-Kopfquelle aus. Dadurch bleiben normale Paketänderungen, einschließlich `packages/core/**`, für Wiederholungen berechtigt, ohne dass PR-modifizierter CLI-Code ausgeführt werden muss.
 
 ## Datenschutzmodus für lokale Dateien
 
@@ -438,7 +438,7 @@ Die Zulassungsliste wird nur vom Secret-Scan-Gate konsultiert. Es hat keinen Ein
 
 Das Standardinstallationsprogramm kopiert den vollständigen ~360-Zeilen-Workflow YAML in Ihr Repo (die Option **Kopieren**). Dies ist die richtige Wahl für Air-Gap-Repos oder Repos, die jede Zeile ihrer Ausführung prüfen müssen. Der Nachteil ist, dass Fehlerkorrekturen und Verbesserungen Sie nie erreichen – Sie müssen `npx @agent-native/core@latest recap setup` nach jeder Veröffentlichung manuell erneut ausführen.
 
-Die Option **wiederverwendbar** schreibt stattdessen einen dünnen Aufrufer mit ca. 20 Leitungen. Es wird über `uses:` an `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` delegiert. Jeder Aufrufer ruft automatisch die neueste Logik ab, wenn der Workflow ausgeführt wird, ohne dass eine lokale Aktualisierung erforderlich ist.
+Die Option **wiederverwendbar** schreibt stattdessen einen dünnen Aufrufer mit ca. 20 Leitungen. Es wird über `uses:` an `studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml` delegiert. Jeder Aufrufer ruft automatisch die neueste Logik ab, wenn der Workflow ausgeführt wird, ohne dass eine lokale Aktualisierung erforderlich ist.
 
 |                                          | Kopieren (Standard)                   | Wiederverwendbar                    |
 | ---------------------------------------- | ------------------------------------- | ----------------------------------- |
@@ -454,7 +454,7 @@ Das schreibt `npx @agent-native/core@latest recap setup --reusable` (oder Sie k�
 ```yaml
 name: PR Visual Recap
 
-# Thin Caller – die gesamte Workflow-Logik befindet sich in Jami Studio/agent-native.
+# Thin Caller – die gesamte Workflow-Logik befindet sich in studio-jami/jami-studio.
 # Korrekturen und Verbesserungen erreichen dieses Repo automatisch bei jedem Lauf.
 # Um eine bestimmte Version zur Reproduzierbarkeit anzupinnen, ersetzen Sie „@main“ durch a
 # Tag oder SHA, z.B. „@v1.2.3“ oder „@abc1234“.
@@ -471,7 +471,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -508,7 +508,7 @@ Führen Sie nach dem Schreiben wie gewohnt `npx @agent-native/core@latest recap 
 Standardmäßig verweist der Aufrufer auf `@main`, das immer die neueste veröffentlichte Version des wiederverwendbaren Workflows verwendet. Für Produktions-Repos, die reproduzierbares CI benötigen, pinnen Sie es an ein Tag oder SHA:
 
 ```yaml
-uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 Die `cli-version`-Eingabe steuert, welche `@agent-native/core` CLI-Version im Workflow ausgeführt wird – belassen Sie sie bei `"latest"`, um die neueste Version zu verfolgen, oder heften Sie sie für eine vollständige Reproduzierbarkeit an eine Versionszeichenfolge (z. B. `"1.5.0"`).

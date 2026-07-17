@@ -5,13 +5,13 @@ description: "Google-Docs-style sharing, built into the framework. Every user-cr
 
 # Sharing & Privacy
 
-Every resource a user creates in an agent-native app — a document, a dashboard, a design, a deck, a screen recording, a meeting transcript, a form, a booking link — is **private to the creator by default**. Other people see it only when the creator explicitly shares it, or changes its visibility to `org` or `public`.
+Every resource a user creates in a Jami Studio app — a document, a dashboard, a design, a deck, a screen recording, a meeting transcript, a form, a booking link — is **private to the creator by default**. Other people see it only when the creator explicitly shares it, or changes its visibility to `org` or `public`.
 
 It looks and works like Google Docs. The same share button, the same dialog, the same three-tier visibility model, the same per-user/per-org grants — across every template, with no per-app reinvention.
 
 ## Why one model {#why}
 
-Most app frameworks make sharing a per-feature project. The result: every doc-like surface ends up with its own share dialog, its own permissions schema, its own access-check bugs. In agent-native, sharing is a **framework primitive**. The schema columns, the access-check helpers, the share popover, and the agent-callable share actions all ship with the core. A new template gets the full sharing story by adding two columns and one line of registration.
+Most app frameworks make sharing a per-feature project. The result: every doc-like surface ends up with its own share dialog, its own permissions schema, its own access-check bugs. In Jami Studio, sharing is a **framework primitive**. The schema columns, the access-check helpers, the share popover, and the agent-callable share actions all ship with the core. A new template gets the full sharing story by adding two columns and one line of registration.
 
 This also means the agent never has to learn a new sharing model per app. Tell the agent "share this with Alice as an editor" in any template and the same `share-resource` action fires.
 
@@ -106,7 +106,7 @@ Every one of these uses the same `ownableColumns()` schema helper, the same `sha
 A few areas are intentionally outside the sharing system:
 
 - **Personal-data apps** (Mail, Macros) — user-scoped by design. There's no "share my inbox" concept.
-- **External source-of-truth apps** — access control lives in the upstream system, not the agent-native app.
+- **External source-of-truth apps** — access control lives in the upstream system, not the Jami Studio app.
 - **Anonymous public URLs** — form publish slugs and booking-link slugs that expose a URL to logged-out users are a separate axis. They live alongside the sharing system, not on top of it.
 
 ## The share UI {#share-ui}

@@ -1,11 +1,11 @@
 ---
 title: "Creating Templates"
-description: "How to create and publish your own agent-native app templates."
+description: "How to create and publish your own Jami Studio app templates."
 ---
 
 # Creating Templates
 
-Templates are complete, forkable agent-native apps that solve a real workflow. The first-party templates are built with the same framework surface you use: React routes for the UI, Drizzle SQL for data, actions for operations, workspace resources for agent behavior, and polling sync so the agent and UI stay aligned.
+Templates are complete, forkable Jami Studio apps that solve a real workflow. The first-party templates are built with the same framework surface you use: React routes for the UI, Drizzle SQL for data, actions for operations, workspace resources for agent behavior, and polling sync so the agent and UI stay aligned.
 
 Use `@agent-native/core` for the runtime contract: actions, server plugins,
 database helpers, app state, routing helpers, and agent chat. Use
@@ -300,7 +300,7 @@ export function AppSync() {
 }
 ```
 
-**The agent-native promise: agent writes show up in the UI without a manual refresh.** `useActionQuery` is the easy path — every hook refetches when a mutating action emits `source: "action"`. If you reach for raw `useQuery` with a custom key (for example, a low-level client helper that reads integration status), fold the per-source counter into the queryKey for targeted refreshes:
+**The Jami promise: agent writes show up in the UI without a manual refresh.** `useActionQuery` is the easy path — every hook refetches when a mutating action emits `source: "action"`. If you reach for raw `useQuery` with a custom key (for example, a low-level client helper that reads integration status), fold the per-source counter into the queryKey for targeted refreshes:
 
 ```tsx
 import { useChangeVersions } from "@agent-native/core/client";
@@ -523,7 +523,7 @@ workspace pointed at current build output.
 
 - [**Writing Agent Instructions**](/docs/writing-agent-instructions) — how to
   keep `AGENTS.md` and skills skimmable as the template grows.
-- [**Jami Studio Toolkit**](/docs/agent-native-toolkit) — reusable sharing,
+- [**Jami Studio Toolkit**](/docs/jami-studio-toolkit) — reusable sharing,
   settings, history, and review surfaces instead of rebuilding them per app.
 - [**Multi-App Workspace**](/docs/multi-app-workspace) — make the template fit
   naturally alongside sibling apps and Dispatch.

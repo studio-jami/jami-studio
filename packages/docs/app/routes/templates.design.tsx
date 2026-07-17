@@ -30,7 +30,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI design tool, AI HTML prototype, open source design tool, AI UI generator, Alpine Tailwind prototype, agent-native design, prompt to HTML, generative design",
+          "AI design tool, AI HTML prototype, open source design tool, AI UI generator, Alpine Tailwind prototype, Jami Studio design, prompt to HTML, generative design",
       },
     ],
     "Design",

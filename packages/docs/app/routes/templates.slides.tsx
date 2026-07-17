@@ -31,7 +31,7 @@ export const meta = () =>
       {
         name: "keywords",
         content:
-          "AI presentation maker, AI slide generator, open source Google Slides alternative, Pitch alternative, AI PowerPoint, AI deck builder, agent-native slides, AI presentation tool, AI slide deck, prompt to presentation",
+          "AI presentation maker, AI slide generator, open source Google Slides alternative, Pitch alternative, AI PowerPoint, AI deck builder, Jami Studio slides, AI presentation tool, AI slide deck, prompt to presentation",
       },
     ],
     "Slides",

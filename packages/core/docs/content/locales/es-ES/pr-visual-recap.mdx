@@ -236,7 +236,7 @@ Esto también significa que puede fusionar el archivo de flujo de trabajo **ante
 
 Si desea generar resúmenes de relaciones públicas de bifurcación, hay disponible un segundo archivo de flujo de trabajo: `.github/workflows/pr-visual-recap-fork.yml`. Utiliza `pull_request_target` (que se ejecuta con secretos de repositorio base) pero nunca desprotege ni ejecuta código de bifurcación. Los autores de bifurcaciones confiables con asociación de autores GitHub `OWNER`, `MEMBER` o `COLLABORATOR` se ejecutan automáticamente. Los PR de bifurcación externos requieren una **inscripción explícita del mantenedor por cabeza** a través de un nuevo evento de etiqueta `recap` antes de que se ejecute el agente de resumen.
 
-Para instalarlo, copie el archivo de [Jami Studio/agent-native](https://github.com/BuilderIO/agent-native/blob/main/.github/workflows/pr-visual-recap-fork.yml) en el directorio `.github/workflows/` de su repositorio junto con el `pr-visual-recap.yml` existente. Se aplican los mismos secretos (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`).
+Para instalarlo, copie el archivo de [studio-jami/jami-studio](https://github.com/studio-jami/jami-studio/blob/main/.github/workflows/pr-visual-recap-fork.yml) en el directorio `.github/workflows/` de su repositorio junto con el `pr-visual-recap.yml` existente. Se aplican los mismos secretos (`PLAN_RECAP_TOKEN`, `ANTHROPIC_API_KEY`).
 
 <Diagram id="doc-block-1wba1la" title={"Puerta de consentimiento de relaciones públicas de bifurcación"} summary={"Los PR de bifurcación no obtienen secretos de forma predeterminada; Los autores confiables se ejecutan automáticamente y los contribuyentes externos requieren una nueva etiqueta de resumen del mantenedor."}>
 
@@ -350,7 +350,7 @@ El paso `gate` omite el resumen por completo cuando un RP toca cualquiera de las
 | `**/AGENTS.md`                             | Instrucciones del agente que carga el corredor       |
 | `**/.mcp.json`                             | Configuración del servidor MCP que carga el ejecutor |
 
-En el monorepo `Jami Studio/agent-native`, el flujo de trabajo ejecuta el resumen CLI desde la fuente confiable de la rama base en lugar de la fuente principal de PR. Esto mantiene los cambios de paquetes normales, incluido `packages/core/**`, elegibles para resúmenes sin ejecutar el código CLI modificado por PR.
+En el monorepo `studio-jami/jami-studio`, el flujo de trabajo ejecuta el resumen CLI desde la fuente confiable de la rama base en lugar de la fuente principal de PR. Esto mantiene los cambios de paquetes normales, incluido `packages/core/**`, elegibles para resúmenes sin ejecutar el código CLI modificado por PR.
 
 ## Modo de privacidad de archivos locales
 
@@ -438,7 +438,7 @@ La lista de permitidos solo la consulta la puerta de escaneo secreto. No afecta 
 
 El instalador predeterminado copia el flujo de trabajo completo de ~360 líneas YAML en su repositorio (la opción **copiar**). Esta es la opción correcta para repositorios aislados o repositorios que necesitan auditar cada línea de lo que se ejecuta. La desventaja es que las correcciones de errores y las mejoras nunca llegan a usted: debe volver a ejecutar `npx @agent-native/core@latest recap setup` manualmente después de cada versión.
 
-En su lugar, la opción **reutilizable** escribe una persona que llama delgada de ~20 líneas. Delega a `Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml` vía `uses:`. Cada persona que llama selecciona automáticamente la lógica más reciente cuando se ejecuta el flujo de trabajo, sin necesidad de actualización local.
+En su lugar, la opción **reutilizable** escribe una persona que llama delgada de ~20 líneas. Delega a `studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml` vía `uses:`. Cada persona que llama selecciona automáticamente la lógica más reciente cuando se ejecuta el flujo de trabajo, sin necesidad de actualización local.
 
 |                                               | Copiar (predeterminado)             | Reutilizable                       |
 | --------------------------------------------- | ----------------------------------- | ---------------------------------- |
@@ -454,7 +454,7 @@ Esto es lo que escribe `npx @agent-native/core@latest recap setup --reusable` (o
 ```yaml
 name: PR Visual Recap
 
-# Llamada ligera: toda la lógica del flujo de trabajo se encuentra en Jami Studio/agent-native.
+# Llamada ligera: toda la lógica del flujo de trabajo se encuentra en studio-jami/jami-studio.
 # Las correcciones y mejoras llegan a este repositorio automáticamente en cada ejecución.
 # Para fijar una versión específica para la reproducibilidad, reemplace '@main' con un
 # etiqueta o SHA, p.e. '@v1.2.3' o '@abc1234'.
@@ -471,7 +471,7 @@ jobs:
       checks: write
       issues: write
       pull-requests: write
-    uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@main
+    uses: studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml@main
     secrets:
       PLAN_RECAP_TOKEN: ${{ secrets.PLAN_RECAP_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -508,7 +508,7 @@ Después de escribir, ejecute `npx @agent-native/core@latest recap doctor` como 
 De forma predeterminada, la persona que llama hace referencia a `@main`, que siempre utiliza la última versión publicada del flujo de trabajo reutilizable. Para repositorios de producción que necesitan CI reproducible, ancle a una etiqueta o SHA:
 
 ```yaml
-uses: Jami Studio/agent-native/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
+uses: studio-jami/jami-studio/.github/workflows/pr-visual-recap-reusable.yml@v1.2.3
 ```
 
 La entrada `cli-version` controla qué versión de `@agent-native/core` CLI se ejecuta dentro del flujo de trabajo; déjela en `"latest"` para realizar un seguimiento de la versión más reciente o fíjela a una cadena de versión (por ejemplo, `"1.5.0"`) para una reproducibilidad total.

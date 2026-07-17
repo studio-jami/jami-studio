@@ -144,7 +144,7 @@ export const links = () => [
 ];
 
 export const meta = () => [
-  { title: "Jami Studio — Framework for Agent-Native Apps" },
+  { title: "Jami Studio — Just Another Machine Interface" },
   {
     name: "description",
     content:
@@ -153,7 +153,7 @@ export const meta = () => [
   ...defaultSocialImageMeta(),
   {
     property: "og:title",
-    content: "Jami Studio — Framework for Agent-Native Apps",
+    content: "Jami Studio — Just Another Machine Interface",
   },
   {
     property: "og:description",
