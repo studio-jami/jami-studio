@@ -1,0 +1,432 @@
+# Source Sync Report - 2026-07-17
+
+## Summary
+
+- Base ref: `HEAD` (1ce31c4d943967fee6e9a13cb53a6ad7921d432e)
+- Source ref: `source/main` (e6a3ac7d6a52b6a1b98ee741f4e0cf63805c55c1)
+- Merge base: `78c9db6113880186e081bf117082e061e015349b`
+- Base-only commits: 173
+- Source-only commits: 192
+- Changed files from base to source: 3777
+- Protected-path changes: 794
+- Registry-lane changes: 29
+- Dry-merge conflicts: 192
+
+## Recommendation
+
+Do not merge source directly into Jami `main`. For `sync/intake/**`, accept
+upstream by default and strip or adapt only obvious takeover contradictions.
+Keep Jami takeover decisions intact unless explicitly reversed.
+
+## Changed Files By Area
+
+- packages/core: 1008
+- _ops: 671
+- templates/tasks: 321
+- templates/clips: 274
+- templates/content: 241
+- packages/creative-context: 186
+- templates/design: 175
+- templates/analytics: 117
+- templates/slides: 82
+- templates/mail: 70
+- templates/calendar: 65
+- templates/forms: 58
+- packages/docs: 57
+- packages/marketing: 57
+- templates/plan: 54
+- templates/assets: 53
+- scripts: 31
+- packages/dispatch: 29
+- .agents: 24
+- .github: 23
+- templates/chat: 19
+- packages/desktop-app: 17
+- templates/dispatch: 17
+- packages/recap-cli: 15
+- packages/skills: 14
+- templates/brain: 14
+- templates/macros: 10
+- packages/vscode-extension: 7
+- plans: 6
+- skills: 6
+- templates/.retired: 5
+- packages/toolkit: 4
+- packages/code-agents-ui: 3
+- packages/mobile-app: 3
+- packages/pinpoint: 3
+- packages/scheduling: 3
+- .claude-plugin: 2
+- packages/embedding: 2
+- packages/frame: 2
+- packages/shared-app-config: 2
+-  .video-bakeoff: 1
+- .claude: 1
+- .gitignore: 1
+- agent-native.json: 1
+- AGENTS.md: 1
+- deploy: 1
+- DEVELOPMENT.md: 1
+- docs: 1
+- package.json: 1
+- packages/migrate: 1
+- pnpm-lock.yaml: 1
+- pnpm-workspace.yaml: 1
+- PORT-GUIDE-design-followups.md: 1
+- README.md: 1
+- registry: 1
+- registry.json: 1
+- templates/videos: 1
+- wrangler-analytics.toml: 1
+- wrangler-calendar.toml: 1
+- wrangler-calorie-tracker.toml: 1
+- wrangler-chat.toml: 1
+- wrangler-clips.toml: 1
+- wrangler-content.toml: 1
+- wrangler-dispatch.toml: 1
+- wrangler-forms.toml: 1
+- wrangler-mail.toml: 1
+- wrangler-slides.toml: 1
+
+## Protected-Path Changes
+
+- R100 .github/workflows/auto-merge-version-packages.yml
+- R096 .github/workflows/auto-publish.yml
+- R098 .github/workflows/cancel-active-netlify-previews.yml
+- R098 .github/workflows/cancel-stale-netlify-main-deploys.yml
+- R096 .github/workflows/cancel-stale-netlify-previews.yml
+- R100 .github/workflows/changeset-check.yml
+- R083 .github/workflows/ci.yml
+- R055 .github/workflows/clips-desktop-build-check.yml
+- R089 .github/workflows/clips-desktop-release.yml
+- R082 .github/workflows/desktop-release.yml
+- R100 .github/workflows/evals.yml
+- R100 .github/workflows/hide-preview-bot-comments.yml
+- R100 .github/workflows/keep-neon-warm.yml
+- R100 .github/workflows/neon-preview-branches.yml
+- R065 .github/workflows/pr-visual-recap-fork.yml
+- R068 .github/workflows/pr-visual-recap-reusable.yml
+- R070 .github/workflows/pr-visual-recap.yml
+- R097 .github/workflows/promote-netlify-deploy.yml
+- D .github/workflows/source-sync-intake.yml
+- D .github/workflows/source-sync-review.yml
+- R100 .github/workflows/sync-builder-starter.yml
+- R100 .github/workflows/sync-public-skills.yml
+- M AGENTS.md
+- M README.md
+- D _ops/planning/decisions/2026-07-08-upstream-blocked-dependency-alerts.md
+- D _ops/planning/research/README.md
+- D _ops/planning/research/capabilities/2026-07-08-jami-studio-capability-deep-dive.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-06-25-avatar-agent-feasibility.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-06-26-elevenlabs-capabilities-and-my-agent-probe.md
+- D _ops/planning/research/feasibility-reports/avatar/2026-07-08-realtime-voice-video-avatar-feasibility.md
+- D _ops/planning/research/feasibility-reports/avatar/brainstorms/initial-avatar-agent-brainstorm.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-05-21-intercal-foundation-report.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-04-intercal-revisit-audit-and-dev-environment.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-06-baseline-knowledge-seeding.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-14-intercal-experience-and-design-system-spec.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-15-intercal-source-canon-and-policy.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-15-oss-knowledge-banks-grounding-landscape.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/2026-06-18-intercal-actions-pipeline-credits-migration-assessment.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/Rebuild.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/brainstorm.md
+- D _ops/planning/research/feasibility-reports/intercal.dev/hosting-costs.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/README.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/agy-debug-notes.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/cli-inventory.md
+- D _ops/planning/research/feasibility-reports/orchestra/agent-orchestration-research/orchestration-patterns.md
+- D _ops/planning/research/masters/audits/00-orchestration/activity-log.md
+- D _ops/planning/research/masters/audits/00-orchestration/plan.md
+- D _ops/planning/research/masters/audits/00-orchestration/progress.md
+- D _ops/planning/research/masters/audits/00-orchestration/synthesis.md
+- D _ops/planning/research/masters/audits/01-projects-audit/report.md
+- D _ops/planning/research/masters/audits/01-projects-audit/review-notes.md
+- D _ops/planning/research/masters/audits/02-system-and-tooling/report.md
+- D _ops/planning/research/masters/audits/03-dev-systems/report.md
+- D _ops/planning/research/masters/audits/04-secrets/report.md
+- D _ops/planning/research/masters/audits/04-secrets/review-notes.md
+- D _ops/planning/research/masters/audits/05-templates/report.md
+- D _ops/planning/research/masters/audits/05-templates/review-notes.md
+- D _ops/planning/research/masters/audits/06-rebuild-feasibility/report.md
+- D _ops/planning/research/masters/audits/07-brands-funding/report.md
+- D _ops/planning/research/masters/audits/07-brands-funding/review-notes.md
+- D _ops/planning/research/masters/audits/08-canonical-system/report.md
+- D _ops/planning/research/masters/audits/09-brand-development/report.md
+- D _ops/planning/research/masters/audits/10-product-concepts/report.md
+- D _ops/planning/research/masters/audits/10-product-concepts/review-notes.md
+- D _ops/planning/research/masters/audits/11-skills-audit/report.md
+- D _ops/planning/research/masters/audits/11-skills-audit/review-notes.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/betterauth-per-org.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/provider-authz-audit-crux.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/provider-landscape-and-tradeoffs.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/shadcn-as-agent-registry.md
+- D _ops/planning/research/masters/audits/12-agent-native/deep-dives/transcription-and-voice.md
+- D _ops/planning/research/masters/audits/12-agent-native/engine-harness-memory.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/README.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/a2a-protocol.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/actions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-mentions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-teams.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/agent-web-surfaces.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/authentication.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/automations.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cli-adapters.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/client.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cloneable-saas.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/code-agents-ui.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/context-awareness.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/creating-templates.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/cross-app-sso.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/database.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/deployment.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/dispatch.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/drop-in-agent.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/embedding-sdk.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/extensions.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/external-agents.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/faq.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/file-uploads.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/frames.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/getting-started.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/key-concepts.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/mcp-clients.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/mcp-protocol.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/messaging.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/migration-workbench.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/multi-app-workspace.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/multi-tenancy.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/notifications.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/observability.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/onboarding.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/progress.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/pure-agent-apps.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/real-time-collaboration.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/recurring-jobs.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/security.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/server.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/sharing.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/skills-guide.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/template-analytics.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/template-assets.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/template-brain.md
+- D _ops/planning/research/masters/audits/12-agent-native/fact-finding/_pack/_core_unpack/package/docs/content/template-calendar.md
+- ...and 674 more
+
+## Registry-Lane Changes
+
+- M packages/core/src/cli/create.ts
+- M packages/docs/app/components/TemplateCard.tsx
+- M packages/docs/app/i18n/ar-SA.ts
+- M packages/docs/app/i18n/de-DE.ts
+- M packages/docs/app/i18n/en-US.ts
+- M packages/docs/app/i18n/es-ES.ts
+- M packages/docs/app/i18n/fr-FR.ts
+- M packages/docs/app/i18n/hi-IN.ts
+- M packages/docs/app/i18n/ja-JP.ts
+- M packages/docs/app/i18n/ko-KR.ts
+- M packages/docs/app/i18n/pt-BR.ts
+- M packages/docs/app/i18n/zh-CN.ts
+- M packages/docs/app/i18n/zh-TW.ts
+- M packages/docs/app/routes/templates.$slug.tsx
+- M packages/docs/app/routes/templates.analytics.tsx
+- M packages/docs/app/routes/templates.calendar.tsx
+- M packages/docs/app/routes/templates.clips.tsx
+- M packages/docs/app/routes/templates.content.tsx
+- M packages/docs/app/routes/templates.design.tsx
+- M packages/docs/app/routes/templates.dispatch.tsx
+- M packages/docs/app/routes/templates.forms.tsx
+- M packages/docs/app/routes/templates.mail.tsx
+- M packages/docs/app/routes/templates.plan.tsx
+- M packages/docs/app/routes/templates.slides.tsx
+- M packages/docs/app/vite-sitemap-plugin.ts
+- M packages/shared-app-config/templates.ts
+- M registry.json
+- M registry/agent-native-app/AGENTS.md
+- M scripts/guard-template-list.mjs
+
+## Dry-Merge Conflicts
+
+- .agents/plugins/agent-native-design/.mcp.json
+- .agents/plugins/agent-native-design/skills/design-exploration/SKILL.md
+- .agents/plugins/agent-native-visual-plans/.mcp.json
+- .agents/plugins/agent-native-visual-plans/skills/visual-plan/SKILL.md
+- .agents/skills/external-agents/SKILL.md
+- README.md
+- _ops/planning/research/open-source-adoption/disabled-workflows-2026-07-07/pr-visual-recap-fork.yml
+- _ops/planning/research/open-source-adoption/disabled-workflows-2026-07-07/pr-visual-recap-reusable.yml
+- _ops/planning/research/open-source-adoption/disabled-workflows-2026-07-07/pr-visual-recap.yml
+- packages/core/CHANGELOG.md
+- packages/core/docs/content/authentication.mdx
+- packages/core/docs/content/dispatch.mdx
+- packages/core/docs/content/external-agents.mdx
+- packages/core/docs/content/local-file-mode.mdx
+- packages/core/docs/content/locales/ar-SA/authentication.mdx
+- packages/core/docs/content/locales/ar-SA/dispatch.mdx
+- packages/core/docs/content/locales/ar-SA/external-agents.mdx
+- packages/core/docs/content/locales/ar-SA/local-file-mode.mdx
+- packages/core/docs/content/locales/ar-SA/mcp-protocol.mdx
+- packages/core/docs/content/locales/ar-SA/plan-plugin.mdx
+- packages/core/docs/content/locales/ar-SA/pr-visual-recap.mdx
+- packages/core/docs/content/locales/ar-SA/skills-guide.mdx
+- packages/core/docs/content/locales/ar-SA/template-assets.mdx
+- packages/core/docs/content/locales/ar-SA/template-dispatch.mdx
+- packages/core/docs/content/locales/ar-SA/template-plan.mdx
+- packages/core/docs/content/locales/de-DE/authentication.mdx
+- packages/core/docs/content/locales/de-DE/dispatch.mdx
+- packages/core/docs/content/locales/de-DE/external-agents.mdx
+- packages/core/docs/content/locales/de-DE/local-file-mode.mdx
+- packages/core/docs/content/locales/de-DE/mcp-protocol.mdx
+- packages/core/docs/content/locales/de-DE/plan-plugin.mdx
+- packages/core/docs/content/locales/de-DE/pr-visual-recap.mdx
+- packages/core/docs/content/locales/de-DE/skills-guide.mdx
+- packages/core/docs/content/locales/de-DE/template-assets.mdx
+- packages/core/docs/content/locales/de-DE/template-dispatch.mdx
+- packages/core/docs/content/locales/de-DE/template-plan.mdx
+- packages/core/docs/content/locales/es-ES/authentication.mdx
+- packages/core/docs/content/locales/es-ES/dispatch.mdx
+- packages/core/docs/content/locales/es-ES/external-agents.mdx
+- packages/core/docs/content/locales/es-ES/local-file-mode.mdx
+- packages/core/docs/content/locales/es-ES/mcp-protocol.mdx
+- packages/core/docs/content/locales/es-ES/plan-plugin.mdx
+- packages/core/docs/content/locales/es-ES/pr-visual-recap.mdx
+- packages/core/docs/content/locales/es-ES/skills-guide.mdx
+- packages/core/docs/content/locales/es-ES/template-assets.mdx
+- packages/core/docs/content/locales/es-ES/template-dispatch.mdx
+- packages/core/docs/content/locales/es-ES/template-plan.mdx
+- packages/core/docs/content/locales/fr-FR/authentication.mdx
+- packages/core/docs/content/locales/fr-FR/dispatch.mdx
+- packages/core/docs/content/locales/fr-FR/external-agents.mdx
+- packages/core/docs/content/locales/fr-FR/local-file-mode.mdx
+- packages/core/docs/content/locales/fr-FR/mcp-protocol.mdx
+- packages/core/docs/content/locales/fr-FR/plan-plugin.mdx
+- packages/core/docs/content/locales/fr-FR/pr-visual-recap.mdx
+- packages/core/docs/content/locales/fr-FR/skills-guide.mdx
+- packages/core/docs/content/locales/fr-FR/template-assets.mdx
+- packages/core/docs/content/locales/fr-FR/template-dispatch.mdx
+- packages/core/docs/content/locales/fr-FR/template-plan.mdx
+- packages/core/docs/content/locales/hi-IN/authentication.mdx
+- packages/core/docs/content/locales/hi-IN/dispatch.mdx
+- packages/core/docs/content/locales/hi-IN/external-agents.mdx
+- packages/core/docs/content/locales/hi-IN/local-file-mode.mdx
+- packages/core/docs/content/locales/hi-IN/mcp-protocol.mdx
+- packages/core/docs/content/locales/hi-IN/plan-plugin.mdx
+- packages/core/docs/content/locales/hi-IN/pr-visual-recap.mdx
+- packages/core/docs/content/locales/hi-IN/skills-guide.mdx
+- packages/core/docs/content/locales/hi-IN/template-assets.mdx
+- packages/core/docs/content/locales/hi-IN/template-dispatch.mdx
+- packages/core/docs/content/locales/hi-IN/template-plan.mdx
+- packages/core/docs/content/locales/ja-JP/authentication.mdx
+- packages/core/docs/content/locales/ja-JP/dispatch.mdx
+- packages/core/docs/content/locales/ja-JP/external-agents.mdx
+- packages/core/docs/content/locales/ja-JP/local-file-mode.mdx
+- packages/core/docs/content/locales/ja-JP/mcp-protocol.mdx
+- packages/core/docs/content/locales/ja-JP/plan-plugin.mdx
+- packages/core/docs/content/locales/ja-JP/pr-visual-recap.mdx
+- packages/core/docs/content/locales/ja-JP/skills-guide.mdx
+- packages/core/docs/content/locales/ja-JP/template-assets.mdx
+- packages/core/docs/content/locales/ja-JP/template-dispatch.mdx
+- packages/core/docs/content/locales/ja-JP/template-plan.mdx
+- packages/core/docs/content/locales/ko-KR/authentication.mdx
+- packages/core/docs/content/locales/ko-KR/dispatch.mdx
+- packages/core/docs/content/locales/ko-KR/external-agents.mdx
+- packages/core/docs/content/locales/ko-KR/local-file-mode.mdx
+- packages/core/docs/content/locales/ko-KR/mcp-protocol.mdx
+- packages/core/docs/content/locales/ko-KR/plan-plugin.mdx
+- packages/core/docs/content/locales/ko-KR/pr-visual-recap.mdx
+- packages/core/docs/content/locales/ko-KR/skills-guide.mdx
+- packages/core/docs/content/locales/ko-KR/template-assets.mdx
+- packages/core/docs/content/locales/ko-KR/template-dispatch.mdx
+- packages/core/docs/content/locales/ko-KR/template-plan.mdx
+- packages/core/docs/content/locales/pt-BR/authentication.mdx
+- packages/core/docs/content/locales/pt-BR/dispatch.mdx
+- packages/core/docs/content/locales/pt-BR/external-agents.mdx
+- packages/core/docs/content/locales/pt-BR/local-file-mode.mdx
+- packages/core/docs/content/locales/pt-BR/mcp-protocol.mdx
+- packages/core/docs/content/locales/pt-BR/plan-plugin.mdx
+- packages/core/docs/content/locales/pt-BR/pr-visual-recap.mdx
+- packages/core/docs/content/locales/pt-BR/skills-guide.mdx
+- packages/core/docs/content/locales/pt-BR/template-assets.mdx
+- packages/core/docs/content/locales/pt-BR/template-dispatch.mdx
+- packages/core/docs/content/locales/pt-BR/template-plan.mdx
+- packages/core/docs/content/locales/zh-CN/authentication.mdx
+- packages/core/docs/content/locales/zh-CN/dispatch.mdx
+- packages/core/docs/content/locales/zh-CN/external-agents.mdx
+- packages/core/docs/content/locales/zh-CN/local-file-mode.mdx
+- packages/core/docs/content/locales/zh-CN/mcp-protocol.mdx
+- packages/core/docs/content/locales/zh-CN/plan-plugin.mdx
+- packages/core/docs/content/locales/zh-CN/pr-visual-recap.mdx
+- packages/core/docs/content/locales/zh-CN/skills-guide.mdx
+- packages/core/docs/content/locales/zh-CN/template-assets.mdx
+- packages/core/docs/content/locales/zh-CN/template-dispatch.mdx
+- packages/core/docs/content/locales/zh-CN/template-plan.mdx
+- packages/core/docs/content/locales/zh-TW/authentication.mdx
+- packages/core/docs/content/locales/zh-TW/dispatch.mdx
+- packages/core/docs/content/locales/zh-TW/external-agents.mdx
+- packages/core/docs/content/locales/zh-TW/local-file-mode.mdx
+- packages/core/docs/content/locales/zh-TW/mcp-protocol.mdx
+- packages/core/docs/content/locales/zh-TW/plan-plugin.mdx
+- packages/core/docs/content/locales/zh-TW/pr-visual-recap.mdx
+- ...and 72 more
+
+## Upstream Commits
+
+- e6a3ac7d6 chore: version packages [skip netlify] (#2196)
+- 9f2f7a767 Fix Clips SSR bundle crash and sidebar chat tabs (#2195)
+- d128ba440 chore: version packages [skip netlify] (#2194)
+- 2625de578 Add creative context and framework workflow updates (#2190)
+- 35ced86fb chore: version packages [skip netlify] (#2193)
+- f512fd219 Fix Content Cloudflare Pages build (#2192)
+- 660c620da chore: version packages [skip netlify] (#2191)
+- 0af0783a9 feat(content): unify workspaces around database-backed files (#2189)
+- b8fdeb2eb fix(content): publish callouts to Builder (#2183)
+- 671c2273d Design: Add reusable templates to the new design flow (#2178)
+- 3af83f8d8 Clips: redirect denied direct links, fix playback speed reset (#2176)
+- 3ec41384e Fix video password issues in Clips (#2175)
+- 6d62b7a0b fix(content): expose all heading levels (#2181)
+- 1da05b4b6 chore: version packages [skip netlify] (#2182)
+- 7f5068c35 fix: make dreams page responsive across all screen sizes (#2177)
+- 120f4203b Make Mail bulk unread cleanup reliable (#2169)
+- 9fa6347d0 Electron app store logs in a file (#2149)
+- 4ff14f48f Merge pull request #2142 from BuilderIO/ai_main_aaf3a6a7aa3447f59ea8
+- 8e5d3e498 chore: version packages [skip netlify] (#2173)
+- 76a9cca27 Harden shared chat and template workflows (#2168)
+- 1a3e3c308 chore: version packages [skip netlify] (#2172)
+- 3675a813e Merge pull request #2171 from BuilderIO/ai_main_79ced43a024a46a9939a
+- ab33ae7a6 chore: add changeset for files tab scroll improvements
+- b246d4bba Simplify plain-text editor by removing expand/collapse UI
+- 294e47fff Fix Content description wrapping (#2154)
+- 248ff9211 Fix textarea height to fill available space until expanded
+- d5d3c2f97 Remove expand/collapse functionality from FilesTab
+- 306d59d8c fix: sort imports in ResourceEditor
+- 665f463cc Add expandable "Show more" toggle to file preview textarea
+- 18896eb2f Make file content expandable in resource editor
+- 036f1a170 Merge pull request #2161 from BuilderIO/ai_main_2a5210160bc248c68c35
+- d933319df Add expandable files panel for managing multiple exports
+- 5e9a6fa03 chore: version packages [skip netlify] (#2167)
+- 649849272 Task-list-first personal task manager (template) (#2018)
+- 41afedca2 Fix selected Builder review timeouts (#2157)
+- c01cc6612 chore: version packages [skip netlify] (#2166)
+- cdfa35754 Fix dreams infinite render loops (#2158)
+- fc9ada45e chore: version packages [skip netlify] (#2165)
+- 866d8f01c Smooth streaming for thinking blocks (#2163)
+- e2a27cf96 Increase text page height to show more content
+- 879406d2f chore: version packages [skip netlify] (#2162)
+- e50343366 fix: improve CLI downloads, MCP auth, and chat navigation (#2159)
+- 0d425393f Fix agent discarding successful dashboard edits
+- fc746094f chore: version packages [skip netlify] (#2160)
+- 1a8c7bd45 Merge pull request #2125 from BuilderIO/ai_main_156f78d680f04d9baf18
+- 00824724e chore: version packages [skip netlify] (#2156)
+- 24c4315a6 Merge pull request #2131 from 3mdistal/codex/content-katex-equations
+- fd0ddb803 Fix Mail A2A sends, attachments, and approvals (#2127)
+- b0ed15c01 chore: version packages [skip netlify] (#2153)
+- 00c708d8b Add one-shot visual recap repair workflow for rejected recaps
+- 337c41086 chore: version packages [skip netlify] (#2151)
+- 3453dd30d Design: Improves commenting for signed-in design viewers who do not have edit access (#2126)
+- 314e1460f feat(content): improve equation authoring
+- a71f85141 chore: version packages [skip netlify] (#2150)
+- bc29c829b fix: repair rejected visual recaps once (#2140)
+- b023dad3f Finish BuilderSync publication and preview-safe authorization (#2130)
+- 19c3dddbf Calendar: render out-of-office behind events (#2139)
+- b55491ecc chore: version packages [skip netlify] (#2147)
+- 70caa6f15 Preserve Slack artifact identity across corrections (#2134)
+- a024a3716 Content: add self-documenting descriptions (#2138)
