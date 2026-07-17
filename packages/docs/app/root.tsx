@@ -371,10 +371,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: localeInitScript }}
         />
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id="
-        />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=" />
         <script dangerouslySetInnerHTML={{ __html: GA_SCRIPT }} />
         <script
           type="application/ld+json"
