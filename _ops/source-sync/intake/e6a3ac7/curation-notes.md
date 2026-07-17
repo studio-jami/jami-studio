@@ -101,8 +101,15 @@ integration check on sync merges, with one structural caveat:
   rootDirectory is missing and the build dies before it starts. Because this
   red is permanent, it poisons the combined commit status and will mask real
   failures on sync branches.
-- Fix (owner action, needs fresh Vercel auth — local CLI token expired,
-  403): either restrict the marketing project's deployments to `main`
-  (dashboard: Settings → Git → Ignored Build Step / deploymentEnabled), or
-  add an ignore command that exits 0 when `packages/marketing` is absent.
-  After that, sync-branch status = docs project only, and red means red.
+- Fix APPLIED (2026-07-17): stub `packages/marketing/vercel.json` added on
+  the sync lane containing only `git.deploymentEnabled: { "sync/*": false,
+  "sync/**": false }`. This makes the root directory exist (the failure was
+  clone-time rootDirectory validation, which fires BEFORE any Ignored Build
+  Step could run) and tells Vercel to never create deployments for sync
+  branches. Port-safe: if it ever merges into main's real marketing package,
+  disabling `sync/*` is a no-op for main. Verified error verbatim from
+  deployment dpl_F6qQybKEtcmUz2hqbvmmJBynXhJK logs: `The specified Root
+  Directory "packages/marketing" does not exist.` Note: fresh CLI OAuth
+  tokens 403 on raw Bearer API calls (proof-of-possession) — all Vercel ops
+  must go through the CLI now; `_ops/scripts/vercel-inspect.mjs` is dead.
+  After this, sync-branch status = docs project only, and red means red.
