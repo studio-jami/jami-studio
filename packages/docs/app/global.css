@@ -1,40 +1,9 @@
 @import "tailwindcss";
 @import "@agent-native/core/styles/agent-native.css";
 
-/* shadcn CSS variables required by agent-native sidebar components
-   (warm-tinted to match the marketing palette) */
+/* shadcn CSS variables required by agent-native sidebar components.
+   Dark-only — the Jami Studio marketing scheme is the one and only scheme. */
 :root {
-  --background: 50 25% 97%;
-  --foreground: 25 15% 10%;
-  --card: 50 25% 97%;
-  --card-foreground: 25 15% 10%;
-  --popover: 50 25% 97%;
-  --popover-foreground: 25 15% 10%;
-  --primary: 25 15% 10%;
-  --primary-foreground: 50 25% 97%;
-  --secondary: 48 20% 93%;
-  --secondary-foreground: 25 15% 10%;
-  --muted: 48 20% 93%;
-  --muted-foreground: 30 8% 42%;
-  --accent: 48 20% 93%;
-  --accent-foreground: 25 15% 10%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 50 25% 97%;
-  --border: 45 15% 88%;
-  --input: 45 15% 88%;
-  --ring: 25 15% 10%;
-  --radius: 0rem;
-  --sidebar-background: 48 22% 95%;
-  --sidebar-foreground: 25 15% 10%;
-  --sidebar-primary: 25 15% 10%;
-  --sidebar-primary-foreground: 50 25% 97%;
-  --sidebar-accent: 48 20% 93%;
-  --sidebar-accent-foreground: 25 15% 10%;
-  --sidebar-border: 45 15% 86%;
-  --sidebar-ring: 25 15% 10%;
-}
-
-.dark {
   --background: 25 12% 9%;
   --foreground: 45 15% 92%;
   --card: 25 12% 12%;
@@ -54,6 +23,7 @@
   --border: 25 10% 18%;
   --input: 25 10% 18%;
   --ring: 45 15% 84%;
+  --radius: 0rem;
   --sidebar-background: 25 12% 11%;
   --sidebar-foreground: 45 15% 92%;
   --sidebar-primary: 45 15% 92%;
@@ -82,28 +52,9 @@
   --radius-3xl: 0rem;
 }
 
-/* Jami Studio marketing palette — keep in sync with
+/* Jami Studio marketing palette — dark-only, keep in sync with
    packages/marketing/app/globals.css (warm ink base, rose primary). */
 :root {
-  --fg: oklch(0.18 0.018 47);
-  --fg-secondary: oklch(0.45 0.02 55);
-  --bg: oklch(0.985 0.006 72);
-  --bg-secondary: oklch(0.955 0.012 72);
-  --docs-border: oklch(0.9 0.014 65);
-  --docs-accent: oklch(0.55 0.19 14);
-  --docs-accent-light: oklch(0.55 0.19 14 / 0.1);
-  --header-bg: oklch(0.985 0.006 72 / 0.8);
-  --code-bg: oklch(0.945 0.012 72);
-  --code-border: oklch(0.9 0.014 65);
-  --table-header-bg: oklch(0.955 0.012 72);
-  --sidebar-hover: oklch(0.945 0.012 72);
-  --selection: oklch(0.55 0.19 14 / 0.15);
-  --approaches-good: #15803d;
-  --approaches-warn: #b45309;
-  --approaches-bad: #b91c1c;
-}
-
-:root[data-theme="dark"] {
   --fg: oklch(0.94 0.012 65);
   --fg-secondary: oklch(0.62 0.02 55);
   --bg: oklch(0.13 0.018 47);
@@ -120,27 +71,6 @@
   --approaches-good: #86efac;
   --approaches-warn: #fcd34d;
   --approaches-bad: #fca5a5;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --fg: oklch(0.94 0.012 65);
-    --fg-secondary: oklch(0.62 0.02 55);
-    --bg: oklch(0.13 0.018 47);
-    --bg-secondary: oklch(0.17 0.018 47);
-    --docs-border: oklch(0.25 0.018 47);
-    --docs-accent: oklch(0.73 0.17 14);
-    --docs-accent-light: oklch(0.73 0.17 14 / 0.12);
-    --header-bg: oklch(0.13 0.018 47 / 0.8);
-    --code-bg: oklch(0.16 0.018 47);
-    --code-border: oklch(0.25 0.018 47);
-    --table-header-bg: oklch(0.17 0.018 47);
-    --sidebar-hover: oklch(0.19 0.018 47);
-    --selection: oklch(0.73 0.17 14 / 0.25);
-    --approaches-good: #86efac;
-    --approaches-warn: #fcd34d;
-    --approaches-bad: #fca5a5;
-  }
 }
 
 * {
@@ -841,16 +771,11 @@ h4 {
   border-bottom-left-radius: 0;
 }
 
-/* Token colors come from shiki's per-theme CSS vars; the block background
-   always uses our neutral --code-bg palette var (not shiki's theme bg, which
-   is blue-tinted in dark and white in light). */
-html.light .shiki,
-html.light .shiki span {
-  color: var(--shiki-light);
-}
-
-html.dark .shiki,
-html.dark .shiki span {
+/* Token colors come from shiki's per-theme CSS vars; dark-only site, so the
+   dark token set is the token set. The block background always uses our
+   neutral --code-bg palette var (not shiki's blue-tinted theme bg). */
+.shiki,
+.shiki span {
   color: var(--shiki-dark);
 }
 

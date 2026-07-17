@@ -1,12 +1,10 @@
 import { useLocale, useT } from "@agent-native/core/client";
-import { IconMoon, IconSun } from "@tabler/icons-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, Link } from "react-router";
 
 import { buildSearchIndexAsync, type SearchEntry } from "./docs-content";
 import { docsPathForSlug } from "./docs-locale";
-import { useDocsTheme } from "./ThemeToggle";
 
 // Lazily built on first open — not at module scope — so the index and the full
 // docs corpus are not included in the initial page bundle.
@@ -123,24 +121,7 @@ export function SearchModal({
   const navigate = useNavigate();
   const { locale } = useLocale();
   const t = useT();
-  const { theme, toggleTheme } = useDocsTheme();
   const results = search(query, index);
-  const themeSearchTerms = [
-    t("theme.toggle"),
-    t("theme.light"),
-    t("theme.dark"),
-    "theme",
-    "light",
-    "dark",
-    "mode",
-  ]
-    .join(" ")
-    .toLowerCase();
-  const queryWords = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  const showThemeAction =
-    queryWords.length === 0 ||
-    queryWords.every((word) => themeSearchTerms.includes(word));
-  const resultIndexOffset = showThemeAction ? 1 : 0;
 
   useEffect(() => {
     if (!open) return;
@@ -178,7 +159,7 @@ export function SearchModal({
 
   useEffect(() => {
     activeItemRef.current?.scrollIntoView({ block: "nearest" });
-  }, [activeIdx, results, showThemeAction]);
+  }, [activeIdx, results]);
 
   const go = useCallback(
     (entry: SearchEntry) => {
@@ -198,18 +179,13 @@ export function SearchModal({
         onClose();
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        const maxIndex = Math.max(results.length + resultIndexOffset - 1, 0);
+        const maxIndex = Math.max(results.length - 1, 0);
         setActiveIdx((i) => Math.min(i + 1, maxIndex));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setActiveIdx((i) => Math.max(i - 1, 0));
       } else if (e.key === "Enter") {
-        if (showThemeAction && activeIdx === 0) {
-          toggleTheme();
-          onClose();
-          return;
-        }
-        const result = results[activeIdx - resultIndexOffset];
+        const result = results[activeIdx];
         if (result) go(result);
       } else if (e.key === "Tab") {
         // Focus trap: cycle focus within the modal
@@ -238,16 +214,7 @@ export function SearchModal({
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [
-    open,
-    results,
-    activeIdx,
-    go,
-    onClose,
-    resultIndexOffset,
-    showThemeAction,
-    toggleTheme,
-  ]);
+  }, [open, results, activeIdx, go, onClose]);
 
   if (!open) return null;
 
@@ -301,48 +268,11 @@ export function SearchModal({
 
         {/* results */}
         <div className="max-h-[400px] overflow-y-auto">
-          {showThemeAction && (
-            <div className="py-2">
-              <button
-                ref={activeIdx === 0 ? activeItemRef : undefined}
-                type="button"
-                onClick={() => {
-                  toggleTheme();
-                  onClose();
-                }}
-                onMouseEnter={() => setActiveIdx(0)}
-                className={`flex w-full items-center gap-3 px-4 py-3 text-start text-sm transition ${
-                  activeIdx === 0
-                    ? "bg-[var(--docs-accent)]/10"
-                    : "hover:bg-[var(--bg-secondary)]"
-                }`}
-              >
-                {theme === "dark" ? (
-                  <IconSun
-                    size={16}
-                    stroke={1.5}
-                    className="shrink-0 text-[var(--docs-accent)]"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <IconMoon
-                    size={16}
-                    stroke={1.5}
-                    className="shrink-0 text-[var(--docs-accent)]"
-                    aria-hidden="true"
-                  />
-                )}
-                <span className="font-medium text-[var(--fg)]">
-                  {t("theme.toggle")}
-                </span>
-              </button>
-            </div>
-          )}
           {query.trim() === "" ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--fg-secondary)]">
               {t("search.empty")}
             </div>
-          ) : results.length === 0 && !showThemeAction ? (
+          ) : results.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--fg-secondary)]">
               <p className="mb-3">{t("search.noResults", { query })}</p>
               <Link
@@ -359,14 +289,14 @@ export function SearchModal({
                 <button
                   key={`${entry.path}-${entry.sectionId}`}
                   ref={
-                    i + resultIndexOffset === activeIdx
+                    i === activeIdx
                       ? activeItemRef
                       : undefined
                   }
                   onClick={() => go(entry)}
-                  onMouseEnter={() => setActiveIdx(i + resultIndexOffset)}
+                  onMouseEnter={() => setActiveIdx(i)}
                   className={`flex w-full flex-col gap-1 px-4 py-3 text-start transition ${
-                    i + resultIndexOffset === activeIdx
+                    i === activeIdx
                       ? "bg-[var(--docs-accent)]/10"
                       : "hover:bg-[var(--bg-secondary)]"
                   }`}
@@ -378,7 +308,7 @@ export function SearchModal({
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke={
-                        i + resultIndexOffset === activeIdx
+                        i === activeIdx
                           ? "var(--docs-accent)"
                           : "var(--fg-secondary)"
                       }
@@ -402,11 +332,11 @@ export function SearchModal({
                       </>
                     )}
                     <span
-                      className={`text-sm font-medium ${i + resultIndexOffset === activeIdx ? "text-[var(--docs-accent)]" : "text-[var(--fg)]"}`}
+                      className={`text-sm font-medium ${i === activeIdx ? "text-[var(--docs-accent)]" : "text-[var(--fg)]"}`}
                     >
                       {entry.section}
                     </span>
-                    {i + resultIndexOffset === activeIdx && (
+                    {i === activeIdx && (
                       <svg
                         width="14"
                         height="14"

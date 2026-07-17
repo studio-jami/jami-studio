@@ -6,7 +6,6 @@ import { NavLink, useLocation } from "react-router";
 import { DEFAULT_DOCS_LOCALE, sitePathForLocale } from "./docs-locale";
 import DocsLanguagePicker from "./DocsLanguagePicker";
 import DocsLanguageSuggestion from "./DocsLanguageSuggestion";
-import ThemeToggle from "./ThemeToggle";
 
 const SearchModal = lazy(() =>
   import("./SearchModal").then((m) => ({ default: m.SearchModal })),
@@ -228,7 +227,6 @@ export default function Header() {
               <DocsLanguagePicker />
               <DocsLanguageSuggestion />
             </div>
-            <ThemeToggle />
             <button
               onClick={() =>
                 window.dispatchEvent(new Event("agent-panel:toggle"))

@@ -481,7 +481,7 @@ export default function AppsPage() {
             return (
               <article
                 key={shape.title}
-                className="rounded-lg border border-[var(--docs-border)] bg-[var(--bg)] p-5"
+                className="rounded-lg border border-[var(--docs-border)] bg-[var(--bg-secondary)] p-5"
               >
                 <Icon
                   className="mb-4 size-6 text-[var(--docs-accent)]"
@@ -514,7 +514,7 @@ export default function AppsPage() {
         </div>
       </section>
 
-      <section className="border-y border-[var(--docs-border)] bg-[var(--bg-secondary)] px-6 py-20 md:py-24">
+      <section className="border-y border-[var(--docs-border)] px-6 py-20 md:py-24">
         <div className="mx-auto max-w-[1120px]">
           <SectionHeading
             eyebrow="Own the source"
@@ -525,7 +525,7 @@ export default function AppsPage() {
             {sourceFlow.map((step, index) => (
               <article
                 key={step.title}
-                className="relative rounded-lg border border-[var(--docs-border)] bg-[var(--bg)] p-5"
+                className="relative rounded-lg border border-[var(--docs-border)] bg-[var(--bg-secondary)] p-5"
               >
                 <div className="mb-4 flex size-9 items-center justify-center rounded-md bg-[var(--fg)] text-sm font-semibold text-[var(--bg)]">
                   {index + 1}
@@ -536,7 +536,7 @@ export default function AppsPage() {
                 <p className="m-0 mt-2 text-sm leading-relaxed text-[var(--fg-secondary)]">
                   {step.body}
                 </p>
-                <p className="m-0 mt-4 rounded-md border border-[var(--docs-border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-xs leading-relaxed text-[var(--fg-secondary)]">
+                <p className="m-0 mt-4 rounded-md border border-[var(--docs-border)] bg-[var(--bg)] px-3 py-2 font-mono text-xs leading-relaxed text-[var(--fg-secondary)]">
                   {step.detail}
                 </p>
               </article>
@@ -601,7 +601,7 @@ export default function AppsPage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-[var(--docs-border)] bg-[var(--bg)] p-5">
+          <div className="rounded-lg border border-[var(--docs-border)] bg-[var(--bg-secondary)] p-5">
             <div className="grid gap-3">
               {[
                 {
@@ -639,9 +639,9 @@ export default function AppsPage() {
                 return (
                   <div
                     key={item.title}
-                    className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-md border border-[var(--docs-border)] bg-[var(--bg-secondary)] p-3"
+                    className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-md border border-[var(--docs-border)] bg-[var(--bg)] p-3"
                   >
-                    <div className="flex size-10 items-center justify-center rounded-md bg-[var(--bg)] text-[var(--docs-accent)]">
+                    <div className="flex size-10 items-center justify-center rounded-md bg-[var(--bg-secondary)] text-[var(--docs-accent)]">
                       <Icon className="size-5" aria-hidden />
                     </div>
                     <div className="min-w-0">
