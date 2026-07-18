@@ -111,10 +111,29 @@ automation is reintroduced. Jami `_ops` and source-sync records remain intact.
 ## Validation Record
 
 - `git diff --check`: passed after conflict resolution.
-- A focused Core MCP catalog test was prepared but could not start because the
-  local workspace lacks the `vitest` executable after dependency state changed.
-- `pnpm install --frozen-lockfile` was attempted twice (125 seconds and 306
-  seconds, respectively) and timed out without output or completion. This is a
-  local install-environment constraint, not a test failure. Focused Core,
-  Design, and Slides tests remain required before this PR is merged into
-  `sync/staging`.
+- `pnpm --filter @agent-native/core exec vitest run
+  src/client/resources/mcp-integration-catalog.spec.ts --maxWorkers=25%`:
+  passed, 13 tests.
+- `pnpm --filter design exec vitest run shared/full-app.spec.ts
+  app/components/design/MotionDock.test.tsx
+  app/components/design/ReviewPanel.test.tsx
+  app/pages/Index.skip-to-editor.test.tsx --maxWorkers=25%`: passed, 29 tests.
+- `pnpm --filter slides exec vitest run
+  server/handlers/index-design-system-with-builder.test.ts
+  --maxWorkers=25%`: passed, 6 tests.
+
+## Install Lesson
+
+Vitest was never missing from this intake: Core declares it directly and
+Design/Slides consume the workspace catalog. The first focused test began
+while the workspace links were still being rebuilt, so the executable was not
+yet available at that instant.
+
+The two timed-out `pnpm install --frozen-lockfile` attempts invoked the root
+`postinstall`, which intentionally builds 11 workspace packages and rebuilds
+`better-sqlite3`. That is a full build lifecycle, not a lightweight dependency
+step. After it had materialized the needed links, the scoped tests passed.
+
+For future source-sync review, `pnpm install --frozen-lockfile --ignore-scripts`
+is the correct deterministic test bootstrap; it completed in 6.1 seconds here.
+Run the full postinstall build only as a separately timed validation job.

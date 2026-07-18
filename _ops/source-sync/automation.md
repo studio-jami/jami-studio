@@ -67,6 +67,31 @@ from `sync/staging`, commits an intake packet, and opens a PR into
 The packet is not the curated patch yet. It is the handoff point for the
 pre-merge agent.
 
+### 6. Validation Pipeline
+
+Next automation milestone.
+
+Keep validation manual-dispatch or PR-triggered while the intake taxonomy is
+settling; it must never merge an intake automatically. The first stable job
+should:
+
+1. run `pnpm install --frozen-lockfile --ignore-scripts` to materialize a
+   reproducible test workspace without accidentally treating `postinstall` as
+   a short dependency step;
+2. run `git diff --check` against the intake branch;
+3. run the reviewed, path-scoped test commands recorded by curation; and
+4. publish the results as a required PR check and a durable intake artifact.
+
+The root `postinstall` builds workspace packages and rebuilds native SQLite.
+That belongs in an explicit full-workspace build job with a longer timeout,
+not in the fast source-sync preflight. Add that job only after its runtime is
+measured on the GitHub runner and its result is useful to staging decisions.
+
+Each intake's `curation-notes.md` is the feedback loop: append the actual
+conflict choices, focused tests, setup constraints, and any new protected-path
+rule. Promote a repeated lesson into this runbook, an intake-packet instruction,
+or a workflow only after it has held across more than one intake.
+
 ## Recommendation
 
 Use manual mode while we tune rules. Then test intake PR creation. After that,

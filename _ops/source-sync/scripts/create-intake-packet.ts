@@ -138,7 +138,7 @@ function writePacket({
 
 ## Agent Job
 
-Prepare a curated upstream patch for Jami Studio.
+Prepare a curated upstream intake merge for Jami Studio.
 
 Read these first:
 
@@ -146,16 +146,27 @@ Read these first:
 - \`_ops/source-sync/policy.md\`
 - \`${reportPath}\`
 
-Do not merge upstream wholesale.
+Accept upstream source by default on this isolated intake branch. The branch
+separation is the safety layer; size alone is not a reason to defer.
 
-Port useful upstream changes by lane, keep commits small, and preserve Jami
-takeover decisions. If a lane is too broad or risky, document the deferral in
-this folder instead of forcing it through.
+Strip or adapt only obvious Jami takeover contradictions: inherited Builder
+automation, Jami identity/ownership reversions, and changes that remove Jami
+operational records. If a decision is genuinely ambiguous, document it in this
+folder for review instead of silently dropping upstream code.
+
+## Validation Baseline
+
+Start with \`pnpm install --frozen-lockfile --ignore-scripts\` before focused
+tests. A normal root install runs the deliberate full workspace postinstall
+build and native SQLite rebuild, so it is not a short test bootstrap. Record
+the exact focused test commands and results in \`curation-notes.md\`.
 
 ## Expected Output
 
-- Curated commits on this intake branch.
-- Notes for accepted, rejected, and deferred upstream changes.
+- Upstream merged into this intake branch with takeover contradictions stripped
+  or adapted.
+- Notes for accepted, adapted, and review-needed upstream changes, including
+  validation evidence.
 - A PR from this branch into \`${baseBranch}\`.
 `;
   writeFileSync(packetPath, body, "utf8");
