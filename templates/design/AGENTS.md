@@ -16,6 +16,13 @@ patterns live in `.agents/skills/`.
 - Never hardcode API keys, tokens, webhook URLs, signing secrets, private Jami Studio/internal data, customer data, or credential-looking literals. Use secrets/OAuth/runtime configuration and obvious placeholders in examples.
 - Use the app actions for designs, files, versions, design systems, variants,
   export, and sharing. Do not write design rows directly with SQL.
+- A message beginning with `[Reprompt selection]` is preview-only. Call
+  `propose-node-rewrite` with its exact `repromptId`, target, and base hash;
+  never call `edit-design`, `update-design`, `update-file`, `generate-design`,
+  `apply-visual-edit`, or another content writer. Only the frontend-only
+  `resolve-node-rewrite` action may persist an explicitly accepted proposal.
+- A message beginning with `[Selection question]` is read-only. Answer about
+  the captured element and subtree without calling content-writing actions.
 - When a user wants an established public system as a starting point, call
   `create-design-system` with `templateId: material-3`, `carbon-white`, or
   `primer-light`. These are source-linked, versioned token snapshots with
@@ -80,7 +87,7 @@ patterns live in `.agents/skills/`.
   validation and `file_content:read` for frame/node import; add library or
   Enterprise variable scopes only when needed. Figma styles and variables are
   design-system inputs, not draggable media assets; route reusable system
-  extraction through Jami Studio-backed indexing.
+  extraction through Builder-backed indexing.
 - To import a Figma frame/screen as a real, editable Design screen (not a
   rendered image), use `import-figma-frame` with a `figmaUrl` (or
   `fileKey`/`nodeId`) — it maps supported position, auto-layout, text,
@@ -91,16 +98,16 @@ patterns live in `.agents/skills/`.
   `fidelityReport` (`approximated`, `imageFallbacks`) back to the user when
   non-trivial. Use `get-figma-styles` for a file's published style names (not
   the Enterprise Variables API; full token extraction still routes through
-  Jami Studio-backed indexing). Never claim universal lossless import/export:
+  Builder-backed indexing). Never claim universal lossless import/export:
   consult `FIGMA_INTEROPERABILITY.md` for the feature-level fidelity contract,
   fallback rules, scale limits, and real-file golden corpus. See the
   `design-systems` skill's "Import from Figma" section.
 - Uploading a raw `.fig` file in the Design editor's Import panel decodes the
-  container/Kiwi document locally into editable screens — no Jami Studio
+  container/Kiwi document locally into editable screens — no Builder
   connection needed — and is scoped to screens only; it never creates or
   updates a design system. This is separate from uploading `.fig` on the
   Design System Setup page, which still indexes tokens/brand-kit data through
-  Jami Studio and does not parse `.fig` locally. See the `design-systems` skill
+  Builder and does not parse `.fig` locally. See the `design-systems` skill
   for both paths.
 - A current Figma Cmd+C clipboard includes exact selected node ids in
   `figmeta.selectedNodeData`; `import-figma-clipboard` uses those before any
@@ -171,13 +178,18 @@ patterns live in `.agents/skills/`.
   `.agents/skills/creative-context/SKILL.md`: explicit request and current
   design first, then a pinned/current pack, then narrow library search. Respect
   `creative-context.contextMode: "off"` without silently restoring a pack.
+- To submit a design to a governed Creative Context, use the Context tab or
+  `manage-context-membership`; it captures one immutable live design snapshot.
+  Reuse only a returned opaque native clone reference through the Design clone action.
+  Use `operation="submit-latest"` with a Library membership id when its native
+  update status reports `update-available`.
 - For reusable design-system setup from Figma, connected code/GitHub, local
   code/design files, or optional `design.md`, use Jami Studio-backed DSI indexing
   through `index-design-system-with-builder` or the Design System Setup `.fig`
   upload.
   Pass readable `design.md` content as `designMd`, use the returned local design
   system id in Design flows, and call `get-design-system` before generation to
-  hydrate Jami Studio docs/tokens when available. Do not create a duplicate local
+  hydrate Builder docs/tokens when available. Do not create a duplicate local
   design system from raw Figma/code sources.
 - When a user wants one-off tokens from design.md, CSS, theme/tokens JSON,
   Tailwind config, local files, or the current design, call
@@ -248,8 +260,9 @@ patterns live in `.agents/skills/`.
   `npx @agent-native/core@latest design connect` and are persisted with
   `connect-localhost`; list them with `list-localhost-connections` before
   creating or resolving local-code artboards. Fusion designs are full-app
-  designs backed by a running Jami Studio Fusion container, created via
-  `create-fusion-app` when `FULL_APP_BUILDING_ENABLED` is on; preserve the
+  designs backed by a running Jami Studio runtime compatibility container, created via
+  `create-fusion-app` when the `full-app-building` feature flag is enabled;
+  preserve the
   design's `fusionApp` linkage data whenever present and never invent it.
 - Localhost route manifests are scaffolding for URL-backed Flow Canvas
   artboards. Use `add-localhost-screens` to place routes or path/query states as
@@ -268,6 +281,15 @@ patterns live in `.agents/skills/`.
   generation planning state created by `generate-screens` (canvas region
   assignments and per-frame instructions consumed by `generate-design` and
   `view-screen`; not rendered as canvas overlays).
+- `design-reprompt-pending:<designId>:<fileId>` is the client-captured source
+  selection, instruction, base hash, and authoritative current request id for
+  a scoped regenerate request.
+- `design-reprompt-proposal:<designId>:<fileId>:<repromptId>` is one
+  request-specific preview-only subtree proposal. Candidate payloads have a
+  256 KiB aggregate serialized limit. Resolution and cancellation use atomic
+  compare-and-set cleanup so an older request cannot erase a newer one.
+  `view-screen` lists only proposals paired to the current pending request as
+  `pendingCandidateReviews`.
 - `show-design-questions` opens focused pre-generation questions in the main
   design canvas (`show-questions` application state).
 - `guided-questions` may contain a one-click chat choice for the current
@@ -410,10 +432,12 @@ patterns live in `.agents/skills/`.
 
 ## Full App Building
 
-Flag-gated (`FULL_APP_BUILDING_ENABLED` in `shared/full-app.ts`, default off)
-and requires Jami Studio connected. See `full-app-build` skill for the full flow.
+Flag-gated by `FULL_APP_BUILDING` in `shared/full-app.ts` (key
+`full-app-building`, default off) and requires the active Jami Studio runtime
+connection. See
+`full-app-build` skill for the full flow.
 
-- `create-fusion-app`: creates the app branch via the Jami Studio cloud agent; one
+- `create-fusion-app`: creates the app branch via the active Jami Studio runtime agent; one
   branch per design; returns existing linkage if already created.
 - `sync-fusion-app`: boots/attaches the container; poll while building; on
   ready, updates `previewUrl` and upserts URL-backed screens.
@@ -441,7 +465,7 @@ and requires Jami Studio connected. See `full-app-build` skill for the full flow
   full Design bundle. It installs the exported Design instructions and registers
   the hosted Design MCP connector together.
 - The open Skills CLI path
-  `npx skills@latest add Jami Studio/agent-native --skill visual-edit` installs
+  `npx skills@latest add BuilderIO/agent-native --skill visual-edit` installs
   exported instructions only.
 - For local-code visual editing, `/visual-edit` should run the target app dev
   server, run

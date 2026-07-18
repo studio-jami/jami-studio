@@ -1,16 +1,16 @@
+import { AgentPanel } from "@agent-native/core/client/agent-chat";
+import { track } from "@agent-native/core/client/analytics";
 import {
   agentNativePath,
   appBasePath,
   appPath,
-  track,
-  useSession,
-  AgentPanel,
-  getBrowserTabId,
-  useT,
-} from "@agent-native/core/client";
+} from "@agent-native/core/client/api-path";
+import { useSession, getBrowserTabId } from "@agent-native/core/client/hooks";
+import { useT } from "@agent-native/core/client/i18n";
 import {
   IconAlertTriangle,
   IconArrowLeft,
+  IconDeviceDesktop,
   IconDownload,
   IconDots,
   IconExternalLink,
@@ -39,6 +39,7 @@ import { CaptureInstallButton } from "@/components/capture-install-options";
 import { AccessPasswordPrompt } from "@/components/player/access-password-prompt";
 import { CommentsPanel } from "@/components/player/comments-panel";
 import { RecordingOptionsMenu } from "@/components/player/delete-recording-menu";
+import { InsightsPanel } from "@/components/player/insights-panel";
 import { ReactionsTray } from "@/components/player/reactions-tray";
 import { ShareRecordingPopover } from "@/components/player/share-dialog";
 import { SignInPromptDialog } from "@/components/player/sign-in-prompt-dialog";
@@ -65,6 +66,7 @@ import { parsePlaybackSpeed } from "@/lib/playback-speed";
 import { isStorageSetupFailureReason } from "@/lib/storage-failures";
 
 import { getDb, schema } from "../../server/db";
+import { resolvePlayerThumbnailUrl } from "../../server/lib/player-thumbnail-url";
 import {
   buildAgentApiUrls,
   CLIPS_AGENT_ACCESS_PARAM,
@@ -224,8 +226,10 @@ export async function loader({ params, url }: LoaderFunctionArgs) {
     id: rec.id,
     title: rec.title,
     description: rec.description,
-    thumbnailUrl: rec.thumbnailUrl,
-    animatedThumbnailUrl: rec.animatedThumbnailUrl,
+    thumbnailUrl: rec.password
+      ? null
+      : resolvePlayerThumbnailUrl(rec, { appPath }),
+    animatedThumbnailUrl: null,
     visibility: rec.visibility,
     status: rec.status,
     archivedAt: rec.archivedAt,
@@ -284,7 +288,7 @@ const CLIPS_TEMPLATE_URL = "https://www.jami.studio/templates/clips";
 const CLIPS_AGENT_DOCS_URL =
   "https://www.jami.studio/docs/template-clips#agent-readable-clips";
 const UPLOAD_STUCK_TIMEOUT_MS = 5 * 60 * 1000;
-const PROCESSING_STUCK_TIMEOUT_MS = 2 * 60 * 1000;
+const PROCESSING_STUCK_TIMEOUT_MS = 12 * 60 * 1000;
 
 type ViewerPlatform = "mac" | "windows" | "linux";
 
@@ -473,6 +477,7 @@ export default function ShareRoute() {
   });
 
   const recording = dataQ.data?.data?.recording;
+  const verificationPending = recording?.verificationPending === true;
   const comments = dataQ.data?.data?.comments ?? [];
   const reactions = dataQ.data?.data?.reactions ?? [];
   const chapters = dataQ.data?.data?.chapters ?? [];
@@ -483,7 +488,17 @@ export default function ShareRoute() {
     dataQ.data?.data?.transcript?.failureReason ?? null;
   const ctas = dataQ.data?.data?.ctas ?? [];
   const firstCta = ctas[0] ?? null;
-  const viewerCanEdit = Boolean(dataQ.data?.data?.viewer?.canEdit);
+  const viewerRole = dataQ.data?.data?.viewer?.role as
+    | "owner"
+    | "admin"
+    | "editor"
+    | "viewer"
+    | undefined;
+  const viewerCanEdit =
+    Boolean(dataQ.data?.data?.viewer?.canEdit) ||
+    viewerRole === "owner" ||
+    viewerRole === "admin" ||
+    viewerRole === "editor";
   const viewerIsOwner = Boolean(dataQ.data?.data?.viewer?.isOwner);
   const showTitleSkeleton = recording
     ? shouldShowGeneratedTitleSkeleton(recording, transcriptStatus)
@@ -545,6 +560,10 @@ export default function ShareRoute() {
       setProcessingTimeout(false);
       return;
     }
+    if (verificationPending) {
+      setProcessingTimeout(false);
+      return;
+    }
 
     const timeoutMs =
       recording.status === "processing"
@@ -552,7 +571,12 @@ export default function ShareRoute() {
         : UPLOAD_STUCK_TIMEOUT_MS;
     const handle = setTimeout(() => setProcessingTimeout(true), timeoutMs);
     return () => clearTimeout(handle);
-  }, [recording?.id, recording?.status, recording?.videoUrl]);
+  }, [
+    recording?.id,
+    recording?.status,
+    recording?.videoUrl,
+    verificationPending,
+  ]);
 
   usePlayerShortcuts({ playerRef });
 
@@ -697,7 +721,8 @@ export default function ShareRoute() {
     const storageSetupFailure = isStorageSetupFailureReason(rawFailureReason);
     const loomStorageSetupFailure =
       storageSetupFailure && isLoomRecordingSource(recording);
-    const stuckFailure = !explicitFailure && processingTimeout;
+    const stuckFailure =
+      !explicitFailure && !verificationPending && processingTimeout;
     const isFailure = explicitFailure || storageSetupFailure || stuckFailure;
     const canManageStorage = viewerCanEdit;
     const signInHref = buildSignInHref(`/r/${recording.id}`);
@@ -944,7 +969,7 @@ export default function ShareRoute() {
               durationMs={recording.durationMs}
               editsJson={recording.editsJson}
               thumbnailUrl={recording.thumbnailUrl}
-              role={viewerCanEdit ? "owner" : "viewer"}
+              role={viewerRole ?? (viewerCanEdit ? "owner" : "viewer")}
               defaultSpeed={parsePlaybackSpeed(recording.defaultSpeed) ?? 1.2}
               comments={comments}
               chapters={chapters}
@@ -1122,7 +1147,14 @@ export default function ShareRoute() {
             value="insights"
             className="mt-3 min-h-0 flex-1 data-[state=inactive]:hidden"
           >
-            <PublicInsightsState />
+            {viewerCanEdit ? (
+              <InsightsPanel
+                recordingId={recording.id}
+                durationMs={recording.durationMs}
+              />
+            ) : (
+              <PublicInsightsState />
+            )}
           </TabsContent>
         </Tabs>
       </aside>
@@ -1220,6 +1252,12 @@ function PublicAgentEmptyState({
           className="w-full gap-2"
           align="center"
           onClick={() => onCtaClick("download")}
+          downloadedChildren={
+            <>
+              <IconDeviceDesktop className="h-4 w-4" />
+              {t("captureInstall.openDesktopApp")}
+            </>
+          }
         >
           <IconDownload className="h-4 w-4" />
           {downloadLabel}

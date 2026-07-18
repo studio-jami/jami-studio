@@ -2,8 +2,8 @@
  * full-app — feature flag, types, and `designs.data` helpers for fusion-backed
  * "full app" designs.
  *
- * A full-app design is backed by a real running app in a Jami Studio Fusion
- * container (one branch per design in the configured Jami Studio project). Its
+ * A full-app design is backed by a real running app in the active runtime
+ * compatibility container (one branch per design in the configured project). Its
  * screens are URL-backed iframes of the container's dev server — the same
  * model as visual-edit/localhost screens, but remote — and edits queue in
  * `design_fusion_edits` until they are applied by the in-container app agent.
@@ -13,25 +13,28 @@
  * a design as app-backed.
  */
 
+import { defineFeatureFlag } from "@agent-native/core/feature-flags";
+
 /**
- * Master switch for full app building in the Design app.
- *
- * Deliberately a plain code boolean for now: flip to `true` to expose the
- * "Full app" creation option and enable the fusion app actions. Jami Studio
- * credentials plus a branch project id (DISPATCH_BUILDER_PROJECT_ID /
- * BUILDER_BRANCH_PROJECT_ID / BUILDER_PROJECT_ID) are still required at
- * runtime — without them the actions return the standard connect CTA.
+ * Runtime rollout for full app building in the Design app. The active
+ * compatibility runtime currently uses Builder credentials plus a branch project id (DISPATCH_BUILDER_PROJECT_ID /
+ * BUILDER_BRANCH_PROJECT_ID / BUILDER_PROJECT_ID) remain separate setup
+ * requirements; without them the actions return the standard connect CTA.
  */
-export const FULL_APP_BUILDING_ENABLED = false;
+export const FULL_APP_BUILDING = defineFeatureFlag({
+  key: "full-app-building",
+  displayName: "Full app building",
+  description: "Create and edit full applications through the active runtime compatibility layer.",
+});
 
 export type DesignFusionAppStatus = "building" | "ready" | "error";
 
 export interface DesignFusionApp {
-  /** Jami Studio project id the app branch lives in. */
+  /** Builder project id the app branch lives in. */
   projectId: string;
   /** Branch backing this design (one branch per design). */
   branchName: string;
-  /** Jami Studio visual-editor URL for the branch (progress/debugging). */
+  /** Builder visual-editor URL for the branch (progress/debugging). */
   editorUrl?: string;
   /** Container dev-server URL once the container is ready; iframe-able. */
   previewUrl?: string;

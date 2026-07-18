@@ -1,3 +1,4 @@
+import { Skeleton } from "@agent-native/toolkit/ui/skeleton";
 import { useComposer, useComposerRuntime } from "@assistant-ui/react";
 import {
   IconArrowUp,
@@ -107,6 +108,28 @@ export function canSubmitComposerContent(options: {
     !options.disabled &&
     (options.hasEditorContent || options.attachmentCount > 0)
   );
+}
+
+const VOICE_TERMINAL_PUNCTUATION = /[.!?…。！？:;](?:["'”’»)\]}]*)$/;
+
+export function formatVoiceTranscriptForComposer(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+  return `${trimmed}${VOICE_TERMINAL_PUNCTUATION.test(trimmed) ? "" : "."} `;
+}
+
+export function canRemoveVoicePreview(options: {
+  documentSize: number;
+  anchor: number;
+  previewText: string;
+  currentText: string;
+}): boolean {
+  if (!options.previewText) return false;
+  if (options.anchor < 1) return false;
+  if (options.anchor + options.previewText.length > options.documentSize) {
+    return false;
+  }
+  return options.currentText === options.previewText;
 }
 
 export function resolveComposerPrimaryAction(options: {
@@ -615,6 +638,8 @@ export interface TiptapComposerProps {
     models: string[];
     configured: boolean;
   }>;
+  /** Whether the model list is still being resolved. */
+  modelListLoading?: boolean;
   /** Callback when user picks a model */
   onModelChange?: (model: string, engine: string) => void;
   /** Callback when user picks a reasoning effort */
@@ -823,6 +848,13 @@ export const MODEL_SELECTOR_POPOVER_STYLE = {
   maxHeight: "min(500px, var(--radix-popover-content-available-height, 500px))",
 } satisfies React.CSSProperties;
 
+export function shouldShowModelSelectorSkeleton(
+  isLoading: boolean,
+  engineCount: number,
+): boolean {
+  return isLoading && engineCount === 0;
+}
+
 function friendlyModelName(model: string): string {
   if (FRIENDLY_MODEL_NAMES[model]) return FRIENDLY_MODEL_NAMES[model];
   // Claude: claude-{tier}-{major}[-minor][-dateYYYYMMDD] → Tier Major[.Minor]
@@ -950,6 +982,7 @@ function ModelSelector({
   model,
   effort = DEFAULT_REASONING_EFFORT,
   engines,
+  modelListLoading = false,
   onChange,
   onEffortChange,
   providerConnectStatusEnabled = true,
@@ -965,6 +998,7 @@ function ModelSelector({
     models: string[];
     configured: boolean;
   }>;
+  modelListLoading?: boolean;
   onChange: (model: string, engine: string) => void;
   onEffortChange?: (effort: ReasoningEffort) => void;
   providerConnectStatusEnabled?: boolean;
@@ -1034,6 +1068,10 @@ function ModelSelector({
   const imageModelLabel =
     imageModel?.options.find((option) => option.value === imageModel.value)
       ?.label ?? imageModel?.value;
+  const showModelListSkeleton = shouldShowModelSelectorSkeleton(
+    modelListLoading,
+    engines.length,
+  );
 
   // When Builder.io isn't connected, surface a one-click connect path —
   // it unlocks every model family (Claude, OpenAI, Gemini) without the
@@ -1200,6 +1238,7 @@ function ModelSelector({
             <div className="my-1 border-t border-border" />
           </>
         )}
+        {showModelListSkeleton && <ModelSelectorSkeleton />}
         {autoModelGroup && (
           <button
             type="button"
@@ -1304,7 +1343,7 @@ function ModelSelector({
             </div>
           );
         })}
-        {effortOptions.length > 0 && (
+        {!showModelListSkeleton && effortOptions.length > 0 && (
           <>
             <div className="my-1 border-t border-border" />
             <div className="flex items-center hover:bg-accent/30">
@@ -1352,6 +1391,24 @@ function ModelSelector({
   );
 }
 
+function ModelSelectorSkeleton() {
+  return (
+    <div
+      className="space-y-1 px-2 py-2"
+      role="status"
+      aria-label="Loading models"
+    >
+      <span className="sr-only">Loading models…</span>
+      {["w-24", "w-32", "w-20", "w-28"].map((width, index) => (
+        <div key={index} className="flex items-center gap-1.5 px-1 py-1.5">
+          <Skeleton className="size-3 rounded-sm" />
+          <Skeleton className={`h-3 ${width}`} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 type PopoverState = {
   type: "@" | "/";
   position: { top: number; left: number };
@@ -1389,6 +1446,7 @@ export function TiptapComposer({
   selectedModel,
   selectedEffort,
   availableModels,
+  modelListLoading,
   onModelChange,
   onEffortChange,
   providerConnectStatusEnabled,
@@ -2046,15 +2104,16 @@ export function TiptapComposer({
     (text: string) => {
       const ed = editor;
       if (!isComposerEditorUsable(ed)) return;
+      const formattedText = formatVoiceTranscriptForComposer(text);
 
       const anchor = voiceAnchorRef.current;
       if (anchor != null) {
         const prevLen = prevVoiceInsertRef.current.length;
-        if (text) {
+        if (formattedText) {
           ed.chain()
             .focus()
             .deleteRange({ from: anchor, to: anchor + prevLen })
-            .insertContentAt(anchor, text + " ")
+            .insertContentAt(anchor, formattedText)
             .run();
         } else if (prevLen > 0) {
           ed.chain()
@@ -2063,14 +2122,14 @@ export function TiptapComposer({
         }
         voiceAnchorRef.current = null;
         prevVoiceInsertRef.current = "";
-      } else if (text) {
+      } else if (formattedText) {
         const { from } = ed.state.selection;
         const prevChar =
           from > 1 ? ed.state.doc.textBetween(from - 1, from) : "";
         const needsLead = prevChar && !/\s/.test(prevChar);
         ed.chain()
           .focus()
-          .insertContent((needsLead ? " " : "") + text + " ")
+          .insertContent((needsLead ? " " : "") + formattedText)
           .run();
       }
     },
@@ -2136,10 +2195,24 @@ export function TiptapComposer({
       const anchor = voiceAnchorRef.current;
       const prevLen = prevVoiceInsertRef.current.length;
       if (isComposerEditorUsable(editor) && prevLen > 0) {
-        editor
-          .chain()
-          .deleteRange({ from: anchor, to: anchor + prevLen })
-          .run();
+        const documentSize = editor.state.doc.content.size;
+        const currentText =
+          anchor >= 1 && anchor + prevLen <= documentSize
+            ? editor.state.doc.textBetween(anchor, anchor + prevLen, "", "\n")
+            : "";
+        if (
+          canRemoveVoicePreview({
+            documentSize,
+            anchor,
+            previewText: prevVoiceInsertRef.current,
+            currentText,
+          })
+        ) {
+          editor
+            .chain()
+            .deleteRange({ from: anchor, to: anchor + prevLen })
+            .run();
+        }
       }
       voiceAnchorRef.current = null;
       prevVoiceInsertRef.current = "";
@@ -2791,6 +2864,7 @@ export function TiptapComposer({
             model={selectedModel}
             effort={selectedEffort}
             engines={availableModels}
+            modelListLoading={modelListLoading}
             onChange={onModelChange}
             onEffortChange={onEffortChange}
             providerConnectStatusEnabled={providerConnectStatusEnabled}

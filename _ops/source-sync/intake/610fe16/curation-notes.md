@@ -59,3 +59,62 @@ performing broad text replacement.
   merge is resolved.
 - Run focused validation for the changed Core, Toolkit, and affected template
   surfaces before the staging PR is considered ready to merge.
+
+## Merge Resolution
+
+The quarantined merge has no remaining conflicts. Upstream behavior was kept in
+each resolution, with the Jami overlay re-applied only where the conflict was
+about product identity or an existing Jami-owned link.
+
+### Accepted
+
+- The full 74-commit upstream capability set, including Core loading and
+  migration hardening, remote MCP catalog expansion, Toolkit app surfaces and
+  editor migrations, mobile capture/remote-push/reliability work, delegated
+  run recovery, and the associated workspace-template improvements.
+- Root guard scripts and feature-flag instructions: they add framework safety
+  without asserting an upstream hosted-product identity.
+- Shared UI/editor catalog additions. The declared incoming versions were
+  checked against the registry on 2026-07-18; all match current releases,
+  apart from `tailwind-merge` where the existing `^3.5.0` range already admits
+  the current 3.6.0 release.
+- `packages/pinpoint` Toolkit-capability documentation and the latest upstream
+  Skills package version.
+
+### Adapted
+
+- `packages/core/src/client/resources/mcp-integration-catalog.ts`: preserved
+  upstream connection state, availability, verification, logos, and updated
+  endpoints; retained the existing Jami Studio connection-guide URLs for
+  Linear, Supabase, and Neon.
+- `packages/pinpoint/README.md` and `packages/skills/package.json`: retained
+  upstream capability and version information while keeping Jami Studio-facing
+  product copy.
+- `templates/design/AGENTS.md`, `create-fusion-app.ts`, `MotionDock.tsx`,
+  `ReviewPanel.tsx`, `Index.tsx`, and `shared/full-app.ts`: preserved upstream
+  feature-flag behavior and implementation changes. Jami Studio is the
+  experience-facing owner; Builder-named code, credentials, and endpoints stay
+  only as the temporary runtime compatibility layer until Jami replaces them.
+- `templates/slides/actions/index-design-system-with-builder.ts`: retained the
+  upstream indexing behavior while presenting the user workflow as Jami Studio
+  owned.
+
+### Stripped
+
+- `.github/actions/restore-dist-cache/action.yml`
+- `.github/workflows/neon-preview-branches.yml`
+
+Both conflicted with intentionally absent inherited automation and remain out
+of the merge. No upstream workflow, publish, deploy, billing, or dispatch
+automation is reintroduced. Jami `_ops` and source-sync records remain intact.
+
+## Validation Record
+
+- `git diff --check`: passed after conflict resolution.
+- A focused Core MCP catalog test was prepared but could not start because the
+  local workspace lacks the `vitest` executable after dependency state changed.
+- `pnpm install --frozen-lockfile` was attempted twice (125 seconds and 306
+  seconds, respectively) and timed out without output or completion. This is a
+  local install-environment constraint, not a test failure. Focused Core,
+  Design, and Slides tests remain required before this PR is merged into
+  `sync/staging`.
