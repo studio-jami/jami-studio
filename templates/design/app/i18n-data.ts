@@ -1,4 +1,4 @@
-import type { LocaleCode } from "@agent-native/core/client";
+import { type LocaleCode } from "@agent-native/core/client/i18n";
 import { creativeContextMessagesByLocale } from "@agent-native/creative-context/messages";
 
 import { breakpointBarOverrides } from "./i18n-breakpoints";
@@ -927,6 +927,38 @@ const enUS = {
         "You have {{count}} pending visual style edits in the live preview. Leaving now will discard those unapplied style changes.",
       stay: "Stay here",
       leave: "Leave without applying",
+    },
+    nodeRewrite: {
+      composerTitle: "Ask or change selection",
+      send: "Send",
+      autoHint: "Describe a change or ask a question",
+      willPreview: "Will preview changes for your approval",
+      willAsk: "Will ask the agent without changing the design",
+      modeAuto: "Auto",
+      modePreview: "Preview change",
+      modeAsk: "Ask agent",
+      modeRegenerate: "Regenerate",
+      agentModeOptions: "Choose agent behavior",
+      pendingReview: "Review changes · {{count}}",
+      pendingReviewMenu: "Changes ready to review",
+      reviewCandidate: "Review change",
+      regenerate: "Regenerate…",
+      sending: "Regenerating…",
+      sent: "Regeneration request sent",
+      sendFailed: "Could not send the regeneration request",
+      previewTitle: "Regenerated selection",
+      variants: "Regeneration variants",
+      variantNumber: "Variant {{count}}: {{summary}}",
+      candidatePosition: "{{current}} of {{total}}",
+      previousCandidate: "Previous candidate",
+      nextCandidate: "Next candidate",
+      refinePlaceholder: "Refine this result…",
+      refine: "Refine result",
+      refinementSent: "Refinement sent",
+      refinementFailed: "Could not send the refinement",
+      accept: "Accept",
+      reject: "Reject",
+      resolveFailed: "Could not resolve this proposal",
     },
     capabilities: {
       "deterministic-style-edit": "Safe style edit",

@@ -49,6 +49,19 @@ when the requested coding/work unit is finished on the current branch, even if
 routine commit/PR/deploy/CI remains. Use `🟡` when non-routine work or a manual
 step is still pending. Use `🔴` only when blocked on user input.
 
+## Response Handoff
+
+Every response to the user, including a concise progress update, must state:
+
+- **Summary of work** — what changed, was verified, or was learned.
+- **Where we are** — the relevant branch, review, validation, or decision
+  state.
+- **What can/should be next** — the recommended next action and any gate
+  before it.
+
+Keep this handoff specific and brief. It complements, and does not replace,
+the required final status block.
+
 ## Architecture Contract
 
 - Data lives in SQL via Drizzle by default. Explicit Local File Mode artifacts
@@ -211,6 +224,8 @@ templates/*/         Template apps
 Read the relevant skill before making changes in that area:
 
 - `adding-a-feature` for the four-area checklist.
+- `feature-flags` for default-off production rollouts, shared evaluation,
+  operator targeting, and removing stale flags after rollout.
 - `context-xray` for inspecting and managing the live agent context window.
 - `actions` for action definitions and invocation.
 - `data-programs` for stored, cached data-source scripts bound to app panels.

@@ -2,7 +2,11 @@
 
 Visual feedback and annotation tool for web applications. Users select UI elements, add feedback, and send structured context to any AI agent.
 
-Works standalone, with [Jami Studio](https://builder.io), or with any agent runtime that speaks the agent-native protocol (Jami Studio, Claude Code, Codex, Gemini CLI, Cursor, etc.).
+Pinpoint is a Toolkit capability module installed on demand. It lives in its
+own npm package so apps only take the visual feedback surfaces and agent
+integration they need.
+
+Works standalone, with [Jami Studio](https://jami.studio), or with any agent runtime that speaks the agent-native protocol (Jami Studio, Claude Code, Codex, Gemini CLI, Cursor, etc.).
 
 ## AI Agent Setup Guide
 
@@ -386,15 +390,15 @@ const { tools, handleTool } = createPinpointMCPTools(); // MCP tool handlers
 | `RestClient`  | Browser with server   | Server-side via REST API      |
 | `FileStore`   | Server-side           | `data/pins/{uuid}.json`       |
 
-## Jami Studio Integration
+## Builder.io Integration
 
-Inside [Jami Studio's Fusion](https://builder.io), annotations are sent via `sendToAgentChat()` from `@agent-native/core`:
+Inside [Builder.io's Fusion](https://builder.io), annotations are sent via `sendToAgentChat()` from `@agent-native/core`:
 
 ```tsx
-<Pinpoint author="Jami Studio User" autoSubmit outputFormat="standard" />
+<Pinpoint author="Builder User" autoSubmit outputFormat="standard" />
 ```
 
-No additional configuration needed when running inside a Jami Studio project.
+No additional configuration needed when running inside a Builder.io project.
 
 Hosts with their own chat implementation can pass `sendToAgent` to reuse Pinpoint's pin,
 draw, queue, and prompt UI while delivering `{ message, context, submit }` themselves.

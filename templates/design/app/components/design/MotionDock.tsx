@@ -1,22 +1,11 @@
 /**
- * MotionDock — bottom motion timeline dock for the Design Studio (§6.3).
+ * MotionDock — bottom motion timeline dock for the Design Studio.
  *
- * Matches the motion artboard at
- * https://plan.jami.studio/plans/plan-88dc4a09fb0c46bc:
- * - Full-width dock beneath the canvas when opened from the Layers footer.
- * - Left sidebar: animated layer rows with property sub-rows.
- * - Center: time ruler + diamond keyframes on a track grid.
- * - Playhead: draggable; scrubbing sends a preview-only `motion-preview`
- *   postMessage to the canvas iframe — NEVER writes to DB.
- * - Top toolbar: play/pause, duration input, auto-keyframe toggle, autosave.
- *
- * Track and duration edits notify the parent; the parent persists through
- * `apply-motion-edit`. Scrubbing/playback stays preview-only.
- *
- * All times are normalised to [0, 1] internally; the ruler maps them to px.
+ * Motion editing is persisted through `apply-motion-edit`; scrubbing and
+ * playback stay preview-only so an exploratory pass never writes to the
+ * design until the user makes a real edit.
  */
-
-import { useT } from "@agent-native/core/client";
+import { useT } from "@agent-native/core/client/i18n";
 import {
   MOTION_CURVE_PRESETS,
   MOTION_SPRING_DEFAULT_BOUNCE,

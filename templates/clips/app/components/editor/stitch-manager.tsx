@@ -1,9 +1,9 @@
+import { agentNativePath } from "@agent-native/core/client/api-path";
 import {
-  agentNativePath,
   useActionMutation,
   useActionQuery,
-  useT,
-} from "@agent-native/core/client";
+} from "@agent-native/core/client/hooks";
+import { useT } from "@agent-native/core/client/i18n";
 import {
   IconPuzzle,
   IconGripVertical,
@@ -70,7 +70,9 @@ export function StitchManager({
   const [title, setTitle] = useState(t("stitchManager.defaultTitle"));
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
-  const listQuery = useActionQuery("list-recordings", {});
+  const listQuery = useActionQuery("list-recordings", {
+    includeMedia: true,
+  });
   const stitch = useActionMutation("stitch-recordings");
 
   useEffect(() => {
