@@ -134,6 +134,8 @@ function runGuard(name: GuardName): Promise<GuardResult> {
     cwd: process.cwd(),
     env: process.env,
     stdio: ["ignore", "pipe", "pipe"],
+    // Windows cannot spawn a .cmd shim directly without a shell.
+    shell: process.platform === "win32",
   });
 
   running.add(child);
