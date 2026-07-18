@@ -33,7 +33,7 @@ _ops/admin/
 _ops/admin/**
 _ops/credentials/
 _ops/credentials/**
-
+_ops/planning/_legacy
 # Application state data files (ephemeral, may contain secrets)
 **/application-state/*.json
 
