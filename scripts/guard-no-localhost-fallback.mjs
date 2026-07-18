@@ -170,7 +170,14 @@ async function* walk(dir) {
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (SKIP_DIRS.has(entry.name)) continue;
+      if (
+        SKIP_DIRS.has(entry.name) ||
+        // A failed corpus materialization can leave this ignored, generated
+        // sibling behind. It is never maintained source.
+        entry.name.startsWith("corpus.tmp-")
+      ) {
+        continue;
+      }
       yield* walk(full);
     } else if (entry.isFile()) {
       yield full;
