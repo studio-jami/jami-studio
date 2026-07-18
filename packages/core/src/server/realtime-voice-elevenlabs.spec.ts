@@ -5,8 +5,7 @@ vi.mock("h3", () => ({
   getHeader: (event: any, name: string) =>
     event.headers?.[name] ?? event.headers?.[name.toLowerCase()],
   getMethod: (event: any) => event.method ?? "GET",
-  readRawBody: async (event: any) =>
-    event.rawBody == null ? event.rawBody : new Uint8Array(event.rawBody),
+  readBody: async (event: any) => event.body,
   setResponseHeader: (event: any, name: string, value: string) => {
     (event.responseHeaders ??= {})[name] = value;
   },
@@ -20,17 +19,6 @@ vi.mock("./auth.js", () => ({
   getSession: (...args: unknown[]) => getSession(...args),
 }));
 
-const resolveSecret = vi.hoisted(() => vi.fn());
-vi.mock("./credential-provider.js", () => ({
-  resolveSecret: (...args: unknown[]) => resolveSecret(...args),
-  resolveBuilderCredentials: async () => ({}),
-  getBuilderGatewayBaseUrl: () => "https://gateway.invalid",
-}));
-
-vi.mock("../agent/engine/builder-gateway-headers.js", () => ({
-  getBuilderGatewayRequestHeaders: () => ({}),
-}));
-
 const runWithRequestContext = vi.hoisted(() =>
   vi.fn(async (_ctx: unknown, fn: () => unknown) => await fn()),
 );
@@ -39,472 +27,128 @@ vi.mock("./request-context.js", () => ({
     runWithRequestContext(...args),
 }));
 
-vi.mock("./framework-request-handler.js", () => ({
-  getH3App: (nitroApp: any) => nitroApp.h3,
-}));
-
 vi.mock("./request-origin.js", () => ({
   isSameOriginRequest: (event: any) => event.sameOrigin !== false,
 }));
 
-const actionsToEngineTools = vi.hoisted(() => vi.fn());
-vi.mock("../agent/production-agent.js", () => ({
-  actionsToEngineTools: (...args: unknown[]) => actionsToEngineTools(...args),
-}));
-
-import type { ActionEntry } from "../agent/production-agent.js";
 import {
-  buildElevenLabsClientToolsPayload,
   buildElevenLabsSystemBlock,
+  buildElevenLabsVoicePayload,
   composeElevenLabsPrompt,
-  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-  ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST,
+  ELEVENLABS_REALTIME_VOICE_INTENT_PATH,
   ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
-  ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
-  ELEVENLABS_SYSTEM_BLOCK_BEGIN,
-  ELEVENLABS_SYSTEM_BLOCK_END,
-  elevenLabsClientToolFromRealtimeTool,
   mountElevenLabsRealtimeVoiceRoutes,
   stripElevenLabsSystemBlock,
 } from "./realtime-voice-elevenlabs.js";
-import { REALTIME_VOICE_CAPABILITY_HEADER } from "./realtime-voice.js";
 
 type Handler = (event: any) => Promise<any>;
 
 function fakeEvent(overrides: Record<string, unknown> = {}) {
   return {
     method: "POST",
-    headers: { "content-type": "application/json" } as Record<string, string>,
-    responseHeaders: {} as Record<string, string>,
+    headers: { "content-type": "application/json" },
+    responseHeaders: {},
     statusCode: 200,
     sameOrigin: true,
     ...overrides,
   };
 }
 
-function fakeNitro() {
+function mount(
+  executeIntent = vi.fn(async () => ({ status: "completed", output: "Done" })),
+) {
   const routes = new Map<string, Handler>();
-  return {
-    nitroApp: {
-      h3: {
-        use: (path: string, handler: Handler) => {
-          routes.set(path, handler);
-        },
-      },
-    },
-    routes,
-  };
-}
-
-const ENGINE_TOOLS = [
-  {
-    name: "navigate",
-    description: "Navigate the app",
-    inputSchema: {
-      type: "object",
-      properties: { path: { type: "string", description: "Route path" } },
-      required: ["path"],
-    },
-  },
-  {
-    name: "view-screen",
-    description: "Describe the visible screen",
-    inputSchema: { type: "object", properties: {} },
-  },
-  {
-    name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-    description: "Send the spoken request to the current app agent",
-    inputSchema: {
-      type: "object",
-      properties: {
-        request: { type: "string", description: "Spoken request" },
-      },
-      required: ["request"],
-    },
-  },
-  {
-    name: "call-agent",
-    description: "Ask a sibling app's agent",
-    inputSchema: {
-      type: "object",
-      properties: {
-        agent: { type: "string", description: "Target app" },
-        message: { type: "string", description: "Question" },
-      },
-      required: ["agent", "message"],
-    },
-  },
-  {
-    name: "delete-everything",
-    description: "Not on the allow-list",
-    inputSchema: { type: "object", properties: {} },
-  },
-];
-
-function mountWithDefaults(options: Record<string, unknown> = {}) {
-  const { nitroApp, routes } = fakeNitro();
-  const executeTool = vi.fn();
   mountElevenLabsRealtimeVoiceRoutes(
-    nitroApp,
-    {} as Record<string, ActionEntry>,
     {
-      executeTool,
-      ...options,
-    } as any,
+      h3App: {
+        use: (path: string, handler: Handler) => routes.set(path, handler),
+      },
+    },
+    { executeTool: vi.fn(), executeIntent } as any,
   );
-  return { routes, executeTool };
+  return { routes, executeIntent };
 }
 
 beforeEach(() => {
   vi.restoreAllMocks();
-  actionsToEngineTools.mockReturnValue(ENGINE_TOOLS);
   getSession.mockResolvedValue({ email: "owner@example.com", orgId: "org-1" });
-  resolveSecret.mockImplementation(async (key: string) => {
-    if (key === "ELEVENLABS_API_KEY") return "el-test-key";
-    if (key === "ELEVENLABS_AGENT_ID") return "agent_abc123";
-    return undefined;
-  });
 });
 
-describe("elevenLabsClientToolFromRealtimeTool", () => {
-  it("converts an object schema into an ElevenLabs client tool", () => {
-    const clientTool = elevenLabsClientToolFromRealtimeTool({
-      type: "function",
-      name: "navigate",
-      description: "Navigate",
-      parameters: {
-        type: "object",
-        properties: {
-          path: { type: "string", description: "Route", enum: ["/a", "/b"] },
-          count: { type: "integer" },
-          tags: { type: "array", items: { type: "string" } },
-        },
-        required: ["path", "missing-not-declared"],
-      },
-    });
-    expect(clientTool).toMatchObject({
-      type: "client",
-      name: "navigate",
-      expects_response: true,
-      parameters: {
-        type: "object",
-        required: ["path"],
-        properties: {
-          path: { type: "string", enum: ["/a", "/b"] },
-          count: { type: "integer" },
-          tags: { type: "array", items: { type: "string" } },
-        },
-      },
-    });
-  });
-
-  it("drops tools whose schemas use unsupported constructs", () => {
-    expect(
-      elevenLabsClientToolFromRealtimeTool({
-        type: "function",
-        name: "union-tool",
-        description: "",
-        parameters: {
-          type: "object",
-          properties: { value: { oneOf: [{ type: "string" }] } },
-        },
-      }),
-    ).toBeNull();
-  });
-});
-
-describe("buildElevenLabsClientToolsPayload", () => {
-  it("updates only the code-owned client and system tool contract", () => {
-    const payload = buildElevenLabsClientToolsPayload({
-      clientTools: [{ type: "client", name: "navigate" }],
-    }) as any;
-    // prompt.tools is the COMPLETE list: client bridge tools + system tools.
-    expect(
-      payload.conversation_config.agent.prompt.tools.map(
-        (t: any) => `${t.type}:${t.name}`,
-      ),
-    ).toEqual([
-      "client:navigate",
-      "system:end_call",
-      "system:skip_turn",
-      "system:language_detection",
-    ]);
-    expect(
-      payload.conversation_config.agent.prompt.built_in_tools,
-    ).toBeUndefined();
-    expect(payload.name).toBeUndefined();
-    expect(payload.conversation_config.agent.language).toBeUndefined();
-    expect(payload.conversation_config.agent.prompt.llm).toBeUndefined();
-    expect(payload.conversation_config.agent.prompt.prompt).toBeUndefined();
-    expect(payload.conversation_config.tts).toBeUndefined();
-    expect(payload.conversation_config.turn).toBeUndefined();
-    expect(payload.platform_settings).toBeUndefined();
-  });
-});
-
-describe("managed system block", () => {
-  it("preserves the user's personality text and appends the contract", () => {
-    const block = buildElevenLabsSystemBlock();
-    const composed = composeElevenLabsPrompt("You are Megan, upbeat.", block);
-    expect(composed.startsWith("You are Megan, upbeat.")).toBe(true);
-    expect(composed).toContain(ELEVENLABS_SYSTEM_BLOCK_BEGIN);
-    expect(composed).toContain("Never initiate actions on your own.");
-    expect(composed.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
-    // Re-composing an already-healthy prompt is a no-op (idempotent heal).
-    expect(composeElevenLabsPrompt(composed, block)).toBe(composed);
-  });
-
-  it("replaces stale blocks without touching user text", () => {
-    const staleBlock = `${ELEVENLABS_SYSTEM_BLOCK_BEGIN}\nold rules\n${ELEVENLABS_SYSTEM_BLOCK_END}`;
-    const remote = `Persona text.\n\n${staleBlock}\n\nMore persona.`;
-    const stripped = stripElevenLabsSystemBlock(remote);
-    expect(stripped).not.toContain("old rules");
-    expect(stripped).toContain("Persona text.");
-    expect(stripped).toContain("More persona.");
-    const composed = composeElevenLabsPrompt(
-      remote,
-      buildElevenLabsSystemBlock(),
-    );
-    expect(composed).not.toContain("old rules");
-    expect(composed).toContain("Persona text.");
-    expect(composed.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
-  });
-
-  it("bounds the app-context addendum", () => {
-    const block = buildElevenLabsSystemBlock("x".repeat(50_000));
-    expect(block.length).toBeLessThan(10_000);
-    expect(block).toContain("App context:");
-  });
-});
-
-describe("mountElevenLabsRealtimeVoiceRoutes", () => {
-  it("registers both routes and enforces the default allow-list", () => {
-    const { routes } = mountWithDefaults();
-    expect([...routes.keys()]).toEqual([
-      ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
-      ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
-    ]);
-    expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).not.toContain("tool-search");
-    expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain(
-      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-    );
-    // Read-first bridge: call-agent is the headless answer/delegate channel.
-    expect(ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST).toContain("call-agent");
-  });
-
-  it("mints a session: updates client tools, heals the system block, and preserves dashboard personality", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(async (input: any, init?: any) => {
-        const url = String(input);
-        if (url.includes("/v1/convai/agents/agent_abc123")) {
-          if ((init?.method ?? "GET") === "GET") {
-            // Dashboard-owned prompt with NO managed block yet.
-            return new Response(
-              JSON.stringify({
-                conversation_config: {
-                  agent: { prompt: { prompt: "You are Megan, upbeat." } },
-                },
-              }),
-              { status: 200 },
-            );
-          }
-          return new Response("{}", { status: 200 });
-        }
-        if (url.includes("/v1/convai/conversation/token")) {
-          return new Response(JSON.stringify({ token: "el-token" }), {
-            status: 200,
-          });
-        }
-        throw new Error(`Unexpected fetch: ${url}`);
-      });
-
-    const { routes } = mountWithDefaults();
-    const handler = routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!;
-    const event = fakeEvent();
-    const body = await handler(event);
-
-    expect(body).toMatchObject({
-      token: "el-token",
-      agentId: "agent_abc123",
-    });
-    expect(body.toolNames).toEqual([
-      "navigate",
-      "view-screen",
-      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-      "call-agent",
-    ]);
-    expect(event.responseHeaders[REALTIME_VOICE_CAPABILITY_HEADER]).toMatch(
-      /^[a-f0-9]{32}$/,
-    );
-
-    const patchCall = fetchMock.mock.calls.find(
-      ([input, init]) =>
-        String(input).includes("/v1/convai/agents/agent_abc123") &&
-        init?.method === "PATCH",
-    );
-    expect(patchCall?.[1]?.method).toBe("PATCH");
-    const pushed = JSON.parse(String(patchCall?.[1]?.body));
-    expect(
-      pushed.conversation_config.agent.prompt.tools.map((t: any) => t.name),
-    ).toEqual([
-      "navigate",
-      "view-screen",
-      ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-      "call-agent",
+describe("ElevenLabs workspace voice broker", () => {
+  it("pushes only ElevenLabs system tools, never workspace tools", () => {
+    const payload = buildElevenLabsVoicePayload({ prompt: "persona" }) as any;
+    const tools = payload.conversation_config.agent.prompt.tools;
+    expect(tools.map((tool: { name: string }) => tool.name)).toEqual([
       "end_call",
       "skip_turn",
       "language_detection",
     ]);
-    // call-agent delegates a full agent run: extended client-tool timeout.
-    const callAgentTool = pushed.conversation_config.agent.prompt.tools.find(
-      (t: any) => t.name === "call-agent",
+    expect(tools.some((tool: { type: string }) => tool.type === "client")).toBe(
+      false,
     );
-    expect(callAgentTool.response_timeout_secs).toBe(120);
-    const activeAgentTurnTool =
-      pushed.conversation_config.agent.prompt.tools.find(
-        (t: any) => t.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-      );
-    expect(activeAgentTurnTool.response_timeout_secs).toBe(120);
-    // The block was missing remotely, so the PATCH heals the prompt while
-    // preserving the user's dashboard personality text ahead of the block.
-    const pushedPrompt = pushed.conversation_config.agent.prompt.prompt;
-    expect(pushedPrompt.startsWith("You are Megan, upbeat.")).toBe(true);
-    expect(pushedPrompt).toContain(ELEVENLABS_SYSTEM_BLOCK_BEGIN);
-    expect(pushedPrompt.endsWith(ELEVENLABS_SYSTEM_BLOCK_END)).toBe(true);
-    // Everything else stays dashboard-owned.
-    expect(pushed.name).toBeUndefined();
-    expect(pushed.conversation_config.agent.language).toBeUndefined();
-    expect(pushed.conversation_config.agent.prompt.llm).toBeUndefined();
-    expect(pushed.conversation_config.tts).toBeUndefined();
-    expect(pushed.conversation_config.turn).toBeUndefined();
-    expect(pushed.platform_settings).toBeUndefined();
-
-    // Second mint with the block now healthy remotely: no prompt in payload
-    // and (after hash settles) no PATCH — dashboard edits stay untouched.
-    fetchMock.mockImplementation(async (input: any, init?: any) => {
-      const url = String(input);
-      if (url.includes("/v1/convai/agents/agent_abc123")) {
-        if ((init?.method ?? "GET") === "GET") {
-          return new Response(
-            JSON.stringify({
-              conversation_config: {
-                agent: { prompt: { prompt: pushedPrompt } },
-              },
-            }),
-            { status: 200 },
-          );
-        }
-        return new Response("{}", { status: 200 });
-      }
-      if (url.includes("/v1/convai/conversation/token")) {
-        return new Response(JSON.stringify({ token: "el-token" }), {
-          status: 200,
-        });
-      }
-      throw new Error(`Unexpected fetch: ${url}`);
-    });
-    fetchMock.mockClear();
-    await handler(fakeEvent());
-    const secondPatch = fetchMock.mock.calls.find(
-      ([, init]) => init?.method === "PATCH",
-    );
-    // Healthy block → tools-only payload; a settle PATCH may occur once but
-    // must never carry a prompt.
-    if (secondPatch) {
-      const settle = JSON.parse(String(secondPatch[1]?.body));
-      expect(settle.conversation_config.agent.prompt.prompt).toBeUndefined();
-    }
-    // Third mint: config hash stable → no PATCH at all.
-    fetchMock.mockClear();
-    await handler(fakeEvent());
-    expect(
-      fetchMock.mock.calls.filter(([, init]) => init?.method === "PATCH"),
-    ).toHaveLength(0);
   });
 
-  it("binds the active chat thread at session mint instead of trusting a later tool call", async () => {
-    vi.spyOn(globalThis, "fetch").mockImplementation(async (input: any) => {
-      const url = String(input);
-      if (url.includes("/v1/convai/agents/agent_abc123")) {
-        return new Response("{}", { status: 200 });
-      }
-      if (url.includes("/v1/convai/conversation/token")) {
-        return new Response(JSON.stringify({ token: "el-token" }), {
-          status: 200,
-        });
-      }
-      throw new Error(`Unexpected fetch: ${url}`);
-    });
-    const { routes, executeTool } = mountWithDefaults();
-    executeTool.mockResolvedValue({ status: "completed", output: "done" });
-    const session = fakeEvent({
-      headers: {
-        "content-type": "application/json",
-        "x-agent-native-voice-thread": "thread-123",
-      },
-    });
-    await routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!(session);
-    const tool = fakeEvent({
-      headers: {
-        "content-type": "application/json",
-        [REALTIME_VOICE_CAPABILITY_HEADER]:
-          session.responseHeaders[REALTIME_VOICE_CAPABILITY_HEADER],
-      },
-      rawBody: new TextEncoder().encode(
-        JSON.stringify({
-          name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-          args: { request: "Create the event" },
-          callId: "call-123",
-          threadId: "thread-not-accepted",
-        }),
-      ),
-    });
-    const result = await routes.get(ELEVENLABS_REALTIME_VOICE_TOOL_PATH)!(tool);
+  it("preserves dashboard personality while enforcing workspace ownership", () => {
+    const composed = composeElevenLabsPrompt(
+      "You are Megan, upbeat.",
+      buildElevenLabsSystemBlock("Current app: mail"),
+    );
+    expect(composed).toContain("You are Megan, upbeat.");
+    expect(composed).toContain("You have no workspace tools.");
+    expect(composed).toContain("delegate over A2A");
+    expect(stripElevenLabsSystemBlock(composed).trim()).toBe(
+      "You are Megan, upbeat.",
+    );
+  });
 
-    expect(result).toMatchObject({ status: "completed", output: "done" });
-    expect(executeTool).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-        threadId: "thread-123",
+  it("mounts a session mint and authenticated intent route, not a tool route", () => {
+    const { routes } = mount();
+    expect([...routes.keys()]).toEqual([
+      ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
+      ELEVENLABS_REALTIME_VOICE_INTENT_PATH,
+    ]);
+    expect([...routes.keys()].some((path) => path.endsWith("/tool"))).toBe(
+      false,
+    );
+  });
+
+  it("passes a completed utterance through the authenticated broker", async () => {
+    const { routes, executeIntent } = mount();
+    const result = await routes.get(ELEVENLABS_REALTIME_VOICE_INTENT_PATH)!(
+      fakeEvent({
+        body: { utterance: "Open my calendar", sessionId: "conv-1" },
+        headers: { "x-agent-native-browser-tab": "tab-1" },
       }),
     );
+    expect(executeIntent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        utterance: "Open my calendar",
+        userEmail: "owner@example.com",
+        orgId: "org-1",
+        sessionId: "conv-1",
+        browserTabId: "tab-1",
+      }),
+    );
+    expect(result).toEqual({ status: "completed", output: "Done" });
   });
 
-  it("409s with setup guidance when no ElevenLabs key is configured", async () => {
-    resolveSecret.mockResolvedValue(undefined);
-    const { routes } = mountWithDefaults();
-    const handler = routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!;
-    const event = fakeEvent();
-    const body = await handler(event);
-    expect(event.statusCode).toBe(409);
-    expect(body.code).toBe("realtime_voice_setup_required");
-  });
-
-  it("rejects unauthenticated and cross-origin requests", async () => {
-    const { routes } = mountWithDefaults();
-    const handler = routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!;
-
-    const crossOrigin = fakeEvent({ sameOrigin: false });
-    await handler(crossOrigin);
+  it("rejects cross-origin or empty intent requests", async () => {
+    const { routes, executeIntent } = mount();
+    const handler = routes.get(ELEVENLABS_REALTIME_VOICE_INTENT_PATH)!;
+    const crossOrigin = fakeEvent({
+      sameOrigin: false,
+      body: { utterance: "x" },
+    });
+    await expect(handler(crossOrigin)).resolves.toEqual({
+      error: "Cross-origin request rejected",
+    });
     expect(crossOrigin.statusCode).toBe(403);
 
-    getSession.mockResolvedValue(null);
-    const anonymous = fakeEvent();
-    await handler(anonymous);
-    expect(anonymous.statusCode).toBe(401);
-  });
-
-  it("propagates ElevenLabs config-push failures as 502 without key leakage", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response("bad el-test-key things", { status: 422 }),
-    );
-    const { routes } = mountWithDefaults();
-    const handler = routes.get(ELEVENLABS_REALTIME_VOICE_SESSION_PATH)!;
-    const event = fakeEvent();
-    const body = await handler(event);
-    expect(event.statusCode).toBe(502);
-    expect(body.error).toContain("[REDACTED]");
-    expect(body.error).not.toContain("el-test-key");
+    const empty = fakeEvent({ body: {} });
+    await expect(handler(empty)).resolves.toEqual({
+      error: "A completed spoken utterance is required.",
+    });
+    expect(empty.statusCode).toBe(400);
+    expect(executeIntent).not.toHaveBeenCalled();
   });
 });

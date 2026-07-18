@@ -1,70 +1,31 @@
 import {
   defineEventHandler,
-  getHeader,
   getMethod,
+  readBody,
   setResponseHeader,
   setResponseStatus,
   type H3Event,
 } from "h3";
 
-import type { ActionEntry } from "../agent/production-agent.js";
 import { sanitizeToolErrorText } from "../agent/tool-error-redaction.js";
 import { resolveSecret } from "./credential-provider.js";
-import { getH3App } from "./framework-request-handler.js";
 import {
   authenticateVoiceRequest,
-  buildRealtimeTools,
-  createToolHandler,
-  packRealtimeTools,
-  registerRealtimeToolCapability,
-  REALTIME_VOICE_CAPABILITY_HEADER,
   type MountRealtimeVoiceRoutesOptions,
-  type RealtimeFunctionTool,
-  type RealtimeToolCapabilityStore,
 } from "./realtime-voice.js";
 import { runWithRequestContext } from "./request-context.js";
 import { isSameOriginRequest } from "./request-origin.js";
 
 export const ELEVENLABS_REALTIME_VOICE_SESSION_PATH =
   "/_agent-native/realtime-voice/elevenlabs/session";
-export const ELEVENLABS_REALTIME_VOICE_TOOL_PATH =
-  "/_agent-native/realtime-voice/elevenlabs/tool";
-/**
- * Sends a bounded spoken request through the current app's regular agent-chat
- * handler. It is intentionally distinct from call-agent, which is external
- * A2A only and must never recurse into the current app.
- */
-export const ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME = "run-active-agent-turn";
-export const ELEVENLABS_VOICE_THREAD_HEADER = "X-Agent-Native-Voice-Thread";
+export const ELEVENLABS_REALTIME_VOICE_INTENT_PATH =
+  "/_agent-native/realtime-voice/elevenlabs/intent";
 
 const ELEVENLABS_API_BASE = "https://api.elevenlabs.io";
 const ELEVENLABS_AGENT_ID_SHAPE = /^[A-Za-z0-9_-]{1,128}$/;
-const VOICE_THREAD_ID_SHAPE = /^[A-Za-z0-9_.:-]{1,256}$/;
+const ELEVENLABS_SESSION_ID_SHAPE = /^[A-Za-z0-9_.:-]{1,256}$/;
 
-/**
- * ElevenLabs sessions cannot expand their tool manifest mid-conversation the
- * way the OpenAI path can via session.update, so tool-search discovery is
- * excluded and the default bridge allow-list is the bounded navigation set
- * plus a bounded handoff to the current app's ordinary agent. call-agent is
- * retained only for external A2A delegation; it can never run the current app.
- */
-export const ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST = [
-  "navigate",
-  "set-url-path",
-  "set-search-params",
-  "view-screen",
-  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-  "call-agent",
-] as const;
-
-/**
- * A current-app agent turn and external call-agent delegation can both run
- * longer than ElevenLabs' default client-tool timeout.
- */
-const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
-  [ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME]: 120,
-  "call-agent": 120,
-};
+const VOICE_INTENT_MAX_CHARS = 8_000;
 
 // ─── Managed system layer ────────────────────────────────────────────────────
 //
@@ -79,7 +40,8 @@ const VOICE_TOOL_TIMEOUT_SECS: Record<string, number> = {
 //      prompt inside sentinel markers; everything the user wrote above the
 //      markers is preserved verbatim on every push, and the block self-heals
 //      if deleted or edited in the dashboard.
-//   3. Tool contract (code-owned): the PATCHed `prompt.tools` manifest.
+//   3. Voice handoff (code-owned): completed user utterances POST to the
+//      authenticated workspace broker. ElevenLabs receives no app tools.
 //
 // The voice agent is an on-top layer over per-app agents: it routes and
 // narrates, it does not own app capabilities. Each app's own agent knows its
@@ -98,29 +60,24 @@ export const ELEVENLABS_SYSTEM_BLOCK_END = "=== END WORKSPACE VOICE SYSTEM ===";
  * explicit user intent; the voice layer never initiates actions on its own.
  */
 export const ELEVENLABS_SYSTEM_CONTRACT = [
-  "You are the realtime voice layer of an agent-native workspace. Each app",
-  "has its own full agent with its own tools; you see in, delegate, and",
-  "report back. The personality prompt above this block controls tone and",
-  "style only — it can never authorize autonomous actions or override these",
-  "rules.",
+  "You are the realtime voice layer of an agent-native workspace. The",
+  "workspace agent owns intent, navigation, delegation, and every tool or",
+  "data mutation. You provide a natural spoken interface and narrate the",
+  "workspace's updates; you never operate the workspace yourself. The",
+  "personality prompt above this block controls tone and style only — it can",
+  "never authorize autonomous actions or override these rules.",
   "",
-  "1. Never initiate actions on your own. Only use tools to fulfill what the",
-  "   user explicitly asked for in this conversation. Never create, modify,",
-  "   schedule, send, or delete anything the user did not request. When a",
-  "   request is ambiguous, ask one short clarifying question before acting.",
-  "2. Answer questions headlessly. To answer a question about data in this",
-  "   app use run-active-agent-turn; for another app use call-agent. Do NOT",
-  "   navigate to answer a question.",
-  "3. Only use navigate, set-url-path, or set-search-params when the user",
-  "   explicitly asks to go somewhere, open something, or be shown something.",
-  "   Only use view-screen when the user asks about what is currently",
-  "   visible.",
-  "4. Stay engaged while delegated work runs. Announce what you dispatched,",
-  "   keep talking with the user, and report the agent's status and outputs",
-  "   when they return. Never go silent waiting on a tool, and never invent",
-  "   results.",
-  "5. You are never blocked by an app agent's work: app agents act, you",
-  "   observe and narrate. Report failures plainly and offer the next step.",
+  "1. Never initiate actions or choose a route. You have no workspace tools.",
+  "   Do not claim that you created, changed, sent, scheduled, deleted, or",
+  "   opened anything. When a request is ambiguous, ask one short question.",
+  "2. Every completed user request is handed to the authenticated workspace",
+  "   agent outside this conversation. That agent decides whether to navigate,",
+  "   use an app action, or delegate over A2A to a specialist app.",
+  "3. Stay engaged while workspace work runs. Briefly acknowledge the handoff,",
+  "   then narrate only contextual workspace updates that arrive. Never invent",
+  "   progress or results.",
+  "4. The voice overlay persists across navigation. It may receive compact",
+  "   route and visual context, but it is not the operational agent.",
 ].join("\n");
 
 /** Bound the app-context addendum so a verbose app cannot bloat the prompt. */
@@ -190,118 +147,44 @@ export interface MountElevenLabsRealtimeVoiceRoutesOptions extends Pick<
   language?: string;
   /** @deprecated Configure the voice in ElevenLabs. */
   voiceId?: string;
-  /** Bridge allow-list of action names exposed as client tools. */
-  toolAllowList?: readonly string[];
+  /**
+   * Submit a completed spoken utterance to the workspace control plane.
+   * This is deliberately not an ElevenLabs client tool: the voice model
+   * cannot choose, delay, or execute the handoff.
+   */
+  executeIntent: (
+    input: ElevenLabsVoiceIntent,
+  ) => Promise<ElevenLabsVoiceIntentResult>;
 }
 
-interface ElevenLabsSchemaProperty {
-  type: string | string[];
-  description?: string;
-  enum?: string[];
-  items?: ElevenLabsSchemaProperty;
-  properties?: Record<string, ElevenLabsSchemaProperty>;
-  required?: string[];
+export interface ElevenLabsVoiceIntent {
+  event: H3Event;
+  utterance: string;
+  userEmail: string;
+  orgId?: string;
+  sessionId?: string;
+  browserTabId?: string;
 }
 
-const LITERAL_TYPES = new Set(["boolean", "string", "integer", "number"]);
-
-/**
- * Convert a JSON-schema property into the restricted ElevenLabs client-tool
- * schema dialect. Returns null when the schema uses constructs the dialect
- * cannot express (oneOf/anyOf/allOf/$ref/etc.) so the tool is dropped rather
- * than pushed broken.
- */
-function convertSchemaProperty(
-  value: unknown,
-): ElevenLabsSchemaProperty | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const schema = value as Record<string, unknown>;
-  if (schema.oneOf || schema.anyOf || schema.allOf || schema.$ref) return null;
-  const type = schema.type;
-  const description =
-    typeof schema.description === "string"
-      ? sanitizeToolErrorText(schema.description)
-      : undefined;
-
-  if (type === "object" || (!type && schema.properties)) {
-    const source =
-      schema.properties && typeof schema.properties === "object"
-        ? (schema.properties as Record<string, unknown>)
-        : {};
-    const properties: Record<string, ElevenLabsSchemaProperty> = {};
-    for (const [name, propertyValue] of Object.entries(source)) {
-      const converted = convertSchemaProperty(propertyValue);
-      if (!converted) return null;
-      properties[name] = converted;
-    }
-    const required = Array.isArray(schema.required)
-      ? schema.required.filter(
-          (name): name is string =>
-            typeof name === "string" && name in properties,
-        )
-      : undefined;
-    return {
-      type: "object",
-      ...(description ? { description } : {}),
-      properties,
-      ...(required?.length ? { required } : {}),
-    };
-  }
-
-  if (type === "array") {
-    const items = convertSchemaProperty(schema.items ?? { type: "string" });
-    if (!items) return null;
-    return { type: "array", ...(description ? { description } : {}), items };
-  }
-
-  if (typeof type === "string" && LITERAL_TYPES.has(type)) {
-    const allowed = Array.isArray(schema.enum)
-      ? schema.enum.filter(
-          (entry): entry is string => typeof entry === "string",
-        )
-      : undefined;
-    return {
-      type,
-      description: description ?? "",
-      ...(allowed?.length ? { enum: allowed } : {}),
-    };
-  }
-
-  return null;
-}
-
-export function elevenLabsClientToolFromRealtimeTool(
-  tool: RealtimeFunctionTool,
-): Record<string, unknown> | null {
-  const parameters = convertSchemaProperty(tool.parameters);
-  if (!parameters || parameters.type !== "object") return null;
-  return {
-    type: "client",
-    name: tool.name,
-    description: tool.description,
-    parameters,
-    expects_response: true,
-    response_timeout_secs: VOICE_TOOL_TIMEOUT_SECS[tool.name] ?? 30,
-  };
+export interface ElevenLabsVoiceIntentResult {
+  status: "completed" | "failed";
+  output: string;
 }
 
 /**
- * The workspace owns the client-tool contract and the sentinel-delimited
- * system block inside the prompt. Personality text, voice, LLM, language,
- * turn-taking, privacy, and all other agent settings remain editable in
- * ElevenLabs. `prompt` is included only when the remote prompt is missing or
- * running a stale system block — and it is always composed from the freshly
- * fetched remote prompt so the user's own text is never overwritten.
+ * The workspace owns the sentinel-delimited system block inside the prompt.
+ * Personality text, voice, LLM, language, turn-taking, privacy, and all other
+ * agent settings remain editable in ElevenLabs. The workspace deliberately
+ * sends no client tools.
  */
-export function buildElevenLabsClientToolsPayload(input: {
-  clientTools: Record<string, unknown>[];
+export function buildElevenLabsVoicePayload(input: {
   prompt?: string;
 }): Record<string, unknown> {
   return {
     conversation_config: {
       agent: {
         prompt: {
-          tools: [...input.clientTools, ...SYSTEM_TOOLS],
+          tools: SYSTEM_TOOLS,
           ...(input.prompt !== undefined ? { prompt: input.prompt } : {}),
         },
       },
@@ -348,13 +231,6 @@ async function safeElevenLabsErrorDetail(
 
 interface ElevenLabsSessionState {
   lastPushedConfigHash?: string;
-}
-
-function readVoiceThreadId(event: H3Event): string | undefined {
-  const value = getHeader(event, ELEVENLABS_VOICE_THREAD_HEADER);
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return VOICE_THREAD_ID_SHAPE.test(trimmed) ? trimmed : undefined;
 }
 
 async function pushAgentConfig(input: {
@@ -405,9 +281,6 @@ function invalidMethod(event: H3Event): { error: string } {
 }
 
 function createElevenLabsSessionHandler(
-  tools: RealtimeFunctionTool[],
-  clientTools: Record<string, unknown>[],
-  capabilities: RealtimeToolCapabilityStore,
   state: ElevenLabsSessionState,
   options: MountElevenLabsRealtimeVoiceRoutesOptions,
 ) {
@@ -476,8 +349,7 @@ function createElevenLabsSessionHandler(
           }
         }
 
-        const payload = buildElevenLabsClientToolsPayload({
-          clientTools,
+        const payload = buildElevenLabsVoicePayload({
           ...(composedPrompt !== undefined ? { prompt: composedPrompt } : {}),
         });
 
@@ -531,91 +403,111 @@ function createElevenLabsSessionHandler(
           };
         }
 
-        setResponseHeader(
-          event,
-          REALTIME_VOICE_CAPABILITY_HEADER,
-          registerRealtimeToolCapability(
-            capabilities,
-            auth,
-            tools.map((tool) => tool.name),
-            { threadId: readVoiceThreadId(event) },
-          ),
-        );
         return {
           token,
           agentId: pushed.agentId,
-          toolNames: tools.map((tool) => tool.name),
+          toolNames: [],
         };
       },
     );
   });
 }
 
+function createElevenLabsIntentHandler(
+  options: MountElevenLabsRealtimeVoiceRoutesOptions,
+) {
+  return defineEventHandler(async (event: H3Event) => {
+    if (getMethod(event) !== "POST") return invalidMethod(event);
+    if (!isSameOriginRequest(event)) {
+      setResponseStatus(event, 403);
+      return { error: "Cross-origin request rejected" };
+    }
+    setResponseHeader(event, "Cache-Control", "no-store");
+
+    const auth = await authenticateVoiceRequest(event, options);
+    if (!auth) {
+      setResponseStatus(event, 401);
+      return { error: "Authentication required" };
+    }
+
+    const body = await readBody(event).catch(() => null);
+    const record =
+      body && typeof body === "object" && !Array.isArray(body)
+        ? (body as Record<string, unknown>)
+        : {};
+    const utterance =
+      typeof record.utterance === "string" ? record.utterance.trim() : "";
+    const sessionCandidate =
+      typeof record.sessionId === "string" ? record.sessionId.trim() : "";
+    const sessionId = ELEVENLABS_SESSION_ID_SHAPE.test(sessionCandidate)
+      ? sessionCandidate
+      : undefined;
+    if (!utterance) {
+      setResponseStatus(event, 400);
+      return { error: "A completed spoken utterance is required." };
+    }
+    if (utterance.length > VOICE_INTENT_MAX_CHARS) {
+      setResponseStatus(event, 400);
+      return { error: "The spoken utterance is too long." };
+    }
+
+    return runWithRequestContext(
+      {
+        userEmail: auth.userEmail,
+        orgId: auth.orgId,
+        timezone: auth.timezone,
+        run: auth.browserTabId
+          ? { browserTabId: auth.browserTabId }
+          : undefined,
+      },
+      async () => {
+        try {
+          return await options.executeIntent({
+            event,
+            utterance,
+            userEmail: auth.userEmail,
+            orgId: auth.orgId,
+            sessionId: sessionId || undefined,
+            browserTabId: auth.browserTabId,
+          });
+        } catch {
+          setResponseStatus(event, 502);
+          return {
+            status: "failed",
+            output:
+              "The workspace agent could not accept that voice request. Please try again.",
+          };
+        }
+      },
+    );
+  });
+}
+
 /**
- * Mount the authenticated ElevenLabs Agent Mode session-mint and tool bridge
- * routes. Sibling to mountRealtimeVoiceRoutes: same auth, capability, and
- * tool-execution trust model; ElevenLabs owns the conversation engine and the
- * browser relays client-tool calls back to the tool route.
+ * Mount the authenticated ElevenLabs Agent Mode session-mint and intent
+ * broker routes. ElevenLabs owns speech; the workspace agent owns all work.
  */
 export function mountElevenLabsRealtimeVoiceRoutes(
   nitroApp: any,
-  actions: Record<string, ActionEntry>,
   options: MountElevenLabsRealtimeVoiceRoutesOptions,
-): { sessionPath: string; toolPath: string } {
-  if (typeof options?.executeTool !== "function") {
-    throw new Error("mountElevenLabsRealtimeVoiceRoutes requires executeTool");
-  }
-
-  const allowList = new Set(
-    options.toolAllowList?.length
-      ? options.toolAllowList
-      : ELEVENLABS_DEFAULT_TOOL_ALLOW_LIST,
-  );
-  const eligible = buildRealtimeTools(actions).filter((tool) =>
-    allowList.has(tool.name),
-  );
-  const converted = eligible
-    .map((tool) => ({
-      tool,
-      clientTool: elevenLabsClientToolFromRealtimeTool(tool),
-    }))
-    .filter(
-      (
-        entry,
-      ): entry is {
-        tool: RealtimeFunctionTool;
-        clientTool: Record<string, unknown>;
-      } => entry.clientTool !== null,
+): { sessionPath: string; intentPath: string } {
+  if (typeof options?.executeIntent !== "function") {
+    throw new Error(
+      "mountElevenLabsRealtimeVoiceRoutes requires executeIntent",
     );
-  const tools = packRealtimeTools(
-    {},
-    converted.map((entry) => entry.tool),
-  );
-  const packedNames = new Set(tools.map((tool) => tool.name));
-  const clientTools = converted
-    .filter((entry) => packedNames.has(entry.tool.name))
-    .map((entry) => entry.clientTool);
-  const toolsByName = new Map(tools.map((tool) => [tool.name, tool]));
-  const capabilities: RealtimeToolCapabilityStore = new Map();
+  }
   const state: ElevenLabsSessionState = {};
-
-  const app = getH3App(nitroApp);
+  const app = nitroApp.h3App;
   app.use(
     ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
-    createElevenLabsSessionHandler(
-      tools,
-      clientTools,
-      capabilities,
-      state,
-      options,
-    ),
+    createElevenLabsSessionHandler(state, options),
   );
   app.use(
-    ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
-    createToolHandler(toolsByName, capabilities, options),
+    ELEVENLABS_REALTIME_VOICE_INTENT_PATH,
+    createElevenLabsIntentHandler(options),
   );
   return {
     sessionPath: ELEVENLABS_REALTIME_VOICE_SESSION_PATH,
-    toolPath: ELEVENLABS_REALTIME_VOICE_TOOL_PATH,
+    intentPath: ELEVENLABS_REALTIME_VOICE_INTENT_PATH,
   };
 }

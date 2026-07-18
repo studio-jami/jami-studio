@@ -167,10 +167,7 @@ import {
   FIRST_SESSION_PERSONALIZATION,
   getModelFamilyOverlay,
 } from "./prompts/index.js";
-import {
-  ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME,
-  mountElevenLabsRealtimeVoiceRoutes,
-} from "./realtime-voice-elevenlabs.js";
+import { mountElevenLabsRealtimeVoiceRoutes } from "./realtime-voice-elevenlabs.js";
 import { mountRealtimeVoiceRoutes } from "./realtime-voice.js";
 import {
   runWithRequestContext,
@@ -245,19 +242,33 @@ async function executeVoiceAgentTurn(input: {
   output: string;
 }> {
   const rawRequest = input.request.request;
-  const message = typeof rawRequest === "string" ? rawRequest.trim() : "";
-  if (!message) {
+  const utterance = typeof rawRequest === "string" ? rawRequest.trim() : "";
+  if (!utterance) {
     return {
       status: "failed",
       output: "A spoken request is required before the app agent can act.",
     };
   }
-  if (message.length > VOICE_AGENT_TURN_MAX_REQUEST_CHARS) {
+  if (utterance.length > VOICE_AGENT_TURN_MAX_REQUEST_CHARS) {
     return {
       status: "failed",
       output: "That spoken request is too long to send to the app agent.",
     };
   }
+
+  // ElevenLabs has no app tools. Treat its output as untrusted user speech,
+  // then give the workspace agent an explicit operational envelope. The agent
+  // owns navigation and may use its normal `call-agent` A2A surface to hand
+  // domain work to a sibling app; voice only narrates the returned result.
+  const message = [
+    "<voice-workspace-intent>",
+    "This is a completed spoken request from the persistent voice overlay.",
+    "You are the workspace agent: decide navigation and work, use normal actions and A2A delegation when another app owns the task, and return a concise factual update for the voice layer.",
+    "<user-utterance>",
+    utterance,
+    "</user-utterance>",
+    "</voice-workspace-intent>",
+  ].join("\n");
 
   const headers = new Headers({
     Accept: "text/event-stream",
@@ -2282,41 +2293,6 @@ export function createAgentChatPlugin(
         ...(!canToggle ? prodCodingTools : {}),
       });
 
-      // ElevenLabs cannot expand its tool manifest after a conversation starts.
-      // Expose one bounded handoff instead of every app action: the handoff
-      // re-enters this app's normal agent-chat route, where the usual prompt,
-      // tool discovery, validation, approvals, audit trail, and UI refresh
-      // behavior already live.
-      const elevenLabsVoiceActions: Record<string, ActionEntry> = {
-        ...prodActions,
-        [ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME]: {
-          tool: {
-            description:
-              "Send a spoken request to the current app's normal agent. Use this for work in the current app, such as creating or changing an event. Do not use it for another app; use call-agent for external apps.",
-            parameters: {
-              type: "object",
-              properties: {
-                request: {
-                  type: "string",
-                  description:
-                    "The user's complete spoken request for the current app agent.",
-                },
-              },
-              required: ["request"],
-            },
-          },
-          // The realtime bridge intercepts this entry before the generic action
-          // executor and forwards it to agent-chat. Keep a loud guard here so a
-          // future non-voice caller cannot silently bypass that path.
-          run: async () => {
-            throw new Error(
-              "run-active-agent-turn is available only through realtime voice.",
-            );
-          },
-          http: false,
-        },
-      };
-
       const realtimeVoiceRouteOptions = {
         resolveOrgId: options?.resolveOrgId,
         getInstructions: async () => {
@@ -2352,29 +2328,20 @@ export function createAgentChatPlugin(
           threadId?: string;
           browserTabId?: string;
         }) =>
-          request.name === ELEVENLABS_ACTIVE_AGENT_TURN_TOOL_NAME
-            ? executeVoiceAgentTurn({
-                event: request.event,
-                routePath,
-                request: request.args,
-                threadId: request.threadId,
-                sessionId: request.sessionId,
-                browserTabId: request.browserTabId,
-              })
-            : executeAgentToolCall({
-                actions: prodActions,
-                name: request.name,
-                input: request.args,
-                callId: request.callId,
-                ownerEmail: request.userEmail,
-                orgId: request.orgId,
-                threadId:
-                  request.threadId ??
-                  (request.sessionId
-                    ? `realtime:${request.sessionId}`
-                    : `realtime:${request.callId}`),
-                turnId: request.callId,
-              }),
+          executeAgentToolCall({
+            actions: prodActions,
+            name: request.name,
+            input: request.args,
+            callId: request.callId,
+            ownerEmail: request.userEmail,
+            orgId: request.orgId,
+            threadId:
+              request.threadId ??
+              (request.sessionId
+                ? `realtime:${request.sessionId}`
+                : `realtime:${request.callId}`),
+            turnId: request.callId,
+          }),
       };
       mountRealtimeVoiceRoutes(
         nitroApp,
@@ -2384,11 +2351,22 @@ export function createAgentChatPlugin(
       // Sibling engine adapter: ElevenLabs Agent Mode. Self-gates on the
       // ELEVENLABS_API_KEY secret the same way the OpenAI route gates on its
       // credentials, so mounting unconditionally is safe.
-      mountElevenLabsRealtimeVoiceRoutes(
-        nitroApp,
-        elevenLabsVoiceActions,
-        realtimeVoiceRouteOptions,
-      );
+      mountElevenLabsRealtimeVoiceRoutes(nitroApp, {
+        ...realtimeVoiceRouteOptions,
+        executeIntent: async (request) =>
+          executeVoiceAgentTurn({
+            event: request.event,
+            routePath,
+            request: { request: request.utterance },
+            // Voice work has an app-agent thread for execution history, but
+            // it is never the visible text-chat thread or transcript.
+            threadId: request.sessionId
+              ? `voice:${request.sessionId}`
+              : undefined,
+            sessionId: request.sessionId,
+            browserTabId: request.browserTabId,
+          }),
+      });
 
       // Wire the prod run-code bridge supplier so it sees the fully-assembled
       // prodActions registry (including MCP entries added at runtime).

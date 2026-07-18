@@ -537,7 +537,7 @@ export {
   type RealtimeVoiceToolResult,
   type RealtimeVoiceEngineName,
   type ElevenLabsRealtimeVoiceSession,
-  type ElevenLabsRealtimeVoiceToolResult,
+  type ElevenLabsWorkspaceIntentResult,
   type ComposerSubmitIntent,
   type AgentPromptAttachment,
   type ReadAgentPromptAttachmentOptions,

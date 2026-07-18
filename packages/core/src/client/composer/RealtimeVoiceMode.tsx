@@ -282,6 +282,8 @@ export interface RealtimeVoiceModeDockProps {
   state: RealtimeVoiceModeState;
   copy: RealtimeVoiceModeCopy;
   chatVisible: boolean;
+  /** Hide the legacy app-agent-chat toggle for independent voice overlays. */
+  showChatToggle?: boolean;
   audioLevels?: RealtimeVoiceAudioLevelStore;
   onToggleChat: () => void;
   onEndVoiceMode: () => void;
@@ -642,6 +644,7 @@ export function RealtimeVoiceModeDock({
   state,
   copy,
   chatVisible,
+  showChatToggle = true,
   audioLevels = SILENT_AUDIO_LEVELS,
   onToggleChat,
   onEndVoiceMode,
@@ -679,7 +682,9 @@ export function RealtimeVoiceModeDock({
   const ending = state === "ending";
   const errorDetailVisible = state === "error" && Boolean(errorMessage);
   const controlsVisible = controlsOpen || settingsOpen;
-  const chatPanelTranslation = useChatPanelTranslation(chatVisible);
+  const chatPanelTranslation = useChatPanelTranslation(
+    showChatToggle && chatVisible,
+  );
 
   const handleSelectOpenChange = useCallback((open: boolean) => {
     if (selectInteractionFrameRef.current !== null) {
@@ -837,44 +842,67 @@ export function RealtimeVoiceModeDock({
           </Tooltip>
         </div>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              size="icon"
-              disabled={ending}
-              onClick={() => {
-                setControlsOpen(true);
-                onToggleChat();
-              }}
-              aria-label={toggleLabel}
-              aria-pressed={chatVisible}
-              data-realtime-voice-chat-toggle="orb"
-              aria-describedby={statusId}
-              aria-controls={controlsId}
-              aria-expanded={controlsVisible}
-              className={cn(
-                "relative isolate size-16 overflow-visible rounded-full ring-1 backdrop-blur-xl transition-transform duration-150 ease-out focus-visible:ring-offset-2 active:scale-[0.97] motion-reduce:transition-none",
-                ORB_STATE_CLASSES[state],
-              )}
-            >
-              <span className="relative z-10 flex items-center justify-center">
-                {state === "connecting" ? (
-                  <VoiceConnectingIndicator />
-                ) : state !== "error" ? (
-                  <VoiceWaveform
-                    level={activityLevel}
-                    reducedMotion={reducedMotion}
-                    activity={activity}
-                  />
-                ) : (
-                  <IconAlertTriangle />
+        {showChatToggle ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="icon"
+                disabled={ending}
+                onClick={() => {
+                  setControlsOpen(true);
+                  onToggleChat();
+                }}
+                aria-label={toggleLabel}
+                aria-pressed={chatVisible}
+                data-realtime-voice-chat-toggle="orb"
+                aria-describedby={statusId}
+                aria-controls={controlsId}
+                aria-expanded={controlsVisible}
+                className={cn(
+                  "relative isolate size-16 overflow-visible rounded-full ring-1 backdrop-blur-xl transition-transform duration-150 ease-out focus-visible:ring-offset-2 active:scale-[0.97] motion-reduce:transition-none",
+                  ORB_STATE_CLASSES[state],
                 )}
-              </span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{toggleLabel}</TooltipContent>
-        </Tooltip>
+              >
+                <span className="relative z-10 flex items-center justify-center">
+                  {state === "connecting" ? (
+                    <VoiceConnectingIndicator />
+                  ) : state !== "error" ? (
+                    <VoiceWaveform
+                      level={activityLevel}
+                      reducedMotion={reducedMotion}
+                      activity={activity}
+                    />
+                  ) : (
+                    <IconAlertTriangle />
+                  )}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{toggleLabel}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <div
+            className={cn(
+              "relative isolate flex size-16 items-center justify-center rounded-full ring-1 backdrop-blur-xl",
+              ORB_STATE_CLASSES[state],
+            )}
+            aria-describedby={statusId}
+            data-realtime-voice-overlay="independent"
+          >
+            {state === "connecting" ? (
+              <VoiceConnectingIndicator />
+            ) : state !== "error" ? (
+              <VoiceWaveform
+                level={activityLevel}
+                reducedMotion={reducedMotion}
+                activity={activity}
+              />
+            ) : (
+              <IconAlertTriangle className="size-6" aria-hidden="true" />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,8 +5,8 @@
  * Conversation.startSession (WebRTC + conversationToken) so AgentPanel,
  * TiptapComposer, VoiceButton, and RealtimeVoiceModeDock work unchanged.
  * ElevenLabs owns VAD, turn-taking, ASR, and TTS; this hook owns the mint,
- * the client-tool relay back to our authenticated tool route (capability
- * header trust model), transcripts, app-state sync, and dock state.
+ * the authenticated intent broker, compact application-state sync, and dock
+ * state. ElevenLabs receives no workspace action or navigation tools.
  *
  * ElevenLabs owns voice, language, LLM tier, personality, and conversation
  * settings. The workspace updates only the client-tool contract at mint, so
@@ -21,11 +21,6 @@ import { Conversation } from "@elevenlabs/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { requestAgentChatThreadOpen } from "../agent-chat.js";
-import {
-  SIDEBAR_STATE_CHANGE_EVENT,
-  type AgentSidebarStateChangeDetail,
-} from "../agent-sidebar-state.js";
 import { agentNativePath } from "../api-path.js";
 import { setClientAppState } from "../application-state.js";
 import { getBrowserTabId } from "../browser-tab-id.js";
@@ -33,7 +28,6 @@ import {
   createRealtimeVoiceAudioLevelStore,
   smoothRealtimeVoiceLevel,
 } from "./realtime-voice-audio-level.js";
-import { realtimeVoiceTranscriptRegistry } from "./realtime-voice-transcript.js";
 import type {
   RealtimeVoiceModeCopy,
   RealtimeVoiceModeInlineSettings,
@@ -45,11 +39,9 @@ import {
   DEFAULT_REALTIME_VOICE_PREFERENCES,
   isRealtimeVoiceSetupRequiredError,
   readRealtimeVoiceMicrophoneId,
-  REALTIME_VOICE_CAPABILITY_HEADER,
   REALTIME_VOICE_REQUEST_SOURCE,
   REALTIME_VOICE_STATE_KEY,
   RealtimeVoiceModeContext,
-  shouldRestoreRealtimeVoiceTranscriptThread,
   useRealtimeVoiceModeCopy,
   writeRealtimeVoiceMicrophoneId,
   type RealtimeVoiceMicrophone,
@@ -59,8 +51,8 @@ import {
 
 const ELEVENLABS_REALTIME_VOICE_SESSION_PATH =
   "/_agent-native/realtime-voice/elevenlabs/session";
-const ELEVENLABS_REALTIME_VOICE_TOOL_PATH =
-  "/_agent-native/realtime-voice/elevenlabs/tool";
+const ELEVENLABS_REALTIME_VOICE_INTENT_PATH =
+  "/_agent-native/realtime-voice/elevenlabs/intent";
 
 /** Value reported in the shared realtime-voice app-state for this engine. */
 export const ELEVENLABS_REALTIME_VOICE_MODEL = "elevenlabs-agent";
@@ -77,15 +69,11 @@ type ElevenLabsConversation = Awaited<
 export interface ElevenLabsRealtimeVoiceSession {
   token: string;
   agentId: string;
-  toolNames: string[];
-  capability?: string;
 }
 
-export interface ElevenLabsRealtimeVoiceToolResult {
-  callId: string;
+export interface ElevenLabsWorkspaceIntentResult {
   status: "completed" | "failed" | "approval_required";
   output: string;
-  approvalKey?: string;
 }
 
 function errorMessage(error: unknown): string {
@@ -105,7 +93,6 @@ async function readErrorResponse(response: Response): Promise<string> {
 
 export function parseElevenLabsRealtimeVoiceSession(
   body: unknown,
-  capability: string | null,
 ): ElevenLabsRealtimeVoiceSession {
   const record =
     body && typeof body === "object" && !Array.isArray(body)
@@ -116,23 +103,15 @@ export function parseElevenLabsRealtimeVoiceSession(
   if (!token) {
     throw new Error("The ElevenLabs session returned no conversation token.");
   }
-  const toolNames = Array.isArray(record.toolNames)
-    ? record.toolNames.filter(
-        (name): name is string => typeof name === "string" && name.length > 0,
-      )
-    : [];
   return {
     token,
     agentId,
-    toolNames,
-    ...(capability ? { capability } : {}),
   };
 }
 
 export async function createElevenLabsRealtimeVoiceSession(
   options: {
     browserTabId?: string;
-    threadId?: string;
     signal?: AbortSignal;
   } = {},
 ): Promise<ElevenLabsRealtimeVoiceSession> {
@@ -145,9 +124,6 @@ export async function createElevenLabsRealtimeVoiceSession(
         ...(options.browserTabId
           ? { "X-Agent-Native-Browser-Tab": options.browserTabId }
           : {}),
-        ...(options.threadId
-          ? { "X-Agent-Native-Voice-Thread": options.threadId }
-          : {}),
       },
       signal: options.signal,
     },
@@ -158,23 +134,17 @@ export async function createElevenLabsRealtimeVoiceSession(
     (error as { status?: number }).status = response.status;
     throw error;
   }
-  return parseElevenLabsRealtimeVoiceSession(
-    await response.json(),
-    response.headers.get(REALTIME_VOICE_CAPABILITY_HEADER),
-  );
+  return parseElevenLabsRealtimeVoiceSession(await response.json());
 }
 
-export async function executeElevenLabsRealtimeVoiceTool(input: {
-  name: string;
-  args: Record<string, unknown>;
-  callId: string;
+export async function submitElevenLabsWorkspaceIntent(input: {
+  utterance: string;
   sessionId?: string;
   browserTabId?: string;
-  capability?: string;
   signal?: AbortSignal;
-}): Promise<ElevenLabsRealtimeVoiceToolResult> {
+}): Promise<ElevenLabsWorkspaceIntentResult> {
   const response = await fetch(
-    agentNativePath(ELEVENLABS_REALTIME_VOICE_TOOL_PATH),
+    agentNativePath(ELEVENLABS_REALTIME_VOICE_INTENT_PATH),
     {
       method: "POST",
       credentials: "same-origin",
@@ -183,16 +153,10 @@ export async function executeElevenLabsRealtimeVoiceTool(input: {
         ...(input.browserTabId
           ? { "X-Agent-Native-Browser-Tab": input.browserTabId }
           : {}),
-        ...(input.capability
-          ? { [REALTIME_VOICE_CAPABILITY_HEADER]: input.capability }
-          : {}),
       },
       body: JSON.stringify({
-        name: input.name,
-        args: input.args,
-        callId: input.callId,
+        utterance: input.utterance,
         sessionId: input.sessionId,
-        browserTabId: input.browserTabId,
       }),
       signal: input.signal,
     },
@@ -200,98 +164,7 @@ export async function executeElevenLabsRealtimeVoiceTool(input: {
   if (!response.ok) {
     throw new Error(await readErrorResponse(response));
   }
-  return (await response.json()) as ElevenLabsRealtimeVoiceToolResult;
-}
-
-/**
- * The ElevenLabs SDK stringifies whatever a client tool returns and blocks
- * the model until it arrives (expects_response). Failed relays THROW so the
- * SDK reports is_error to the model instead of a fake success string.
- */
-export function formatElevenLabsToolResultForModel(
-  result: ElevenLabsRealtimeVoiceToolResult,
-): string {
-  if (result.status === "failed") {
-    throw new Error(result.output || "The tool call failed.");
-  }
-  if (result.status === "approval_required") {
-    return JSON.stringify({
-      status: "approval_required",
-      output: result.output,
-      ...(result.approvalKey ? { approvalKey: result.approvalKey } : {}),
-    });
-  }
-  return result.output;
-}
-
-export function normalizeElevenLabsToolParameters(
-  parameters: unknown,
-): Record<string, unknown> {
-  if (
-    parameters &&
-    typeof parameters === "object" &&
-    !Array.isArray(parameters)
-  ) {
-    return parameters as Record<string, unknown>;
-  }
-  if (typeof parameters === "string" && parameters.trim()) {
-    try {
-      const parsed = JSON.parse(parameters) as unknown;
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        return parsed as Record<string, unknown>;
-      }
-    } catch {
-      // Fall through to the empty-args shape below.
-    }
-  }
-  return {};
-}
-
-let elevenLabsToolCallSequence = 0;
-
-export function createElevenLabsToolCallId(): string {
-  const unique =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  return `el_tool_${++elevenLabsToolCallSequence}_${unique}`;
-}
-
-/**
- * Build the clientTools map handed to Conversation.startSession. Every
- * pushed tool name relays through the authenticated tool route with the
- * per-session capability token — identical trust model to the OpenAI path.
- */
-export function buildElevenLabsClientTools(
-  toolNames: readonly string[],
-  execute: (input: {
-    name: string;
-    args: Record<string, unknown>;
-    callId: string;
-  }) => Promise<ElevenLabsRealtimeVoiceToolResult>,
-  hooks: {
-    onToolStart?: (name: string) => void;
-    onToolSettled?: (name: string) => void;
-  } = {},
-): Record<string, (parameters: unknown) => Promise<string>> {
-  const clientTools: Record<string, (parameters: unknown) => Promise<string>> =
-    {};
-  for (const name of toolNames) {
-    clientTools[name] = async (parameters: unknown) => {
-      hooks.onToolStart?.(name);
-      try {
-        const result = await execute({
-          name,
-          args: normalizeElevenLabsToolParameters(parameters),
-          callId: createElevenLabsToolCallId(),
-        });
-        return formatElevenLabsToolResultForModel(result);
-      } finally {
-        hooks.onToolSettled?.(name);
-      }
-    };
-  }
-  return clientTools;
+  return (await response.json()) as ElevenLabsWorkspaceIntentResult;
 }
 
 function useElevenLabsAudioMeter(
@@ -357,7 +230,9 @@ export function useElevenLabsRealtimeVoiceModeController(
 ): RealtimeVoiceModeApi {
   const [state, setState] = useState<"idle" | RealtimeVoiceModeState>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [chatVisible, setChatVisible] = useState(false);
+  // ElevenLabs voice is an independent overlay, never a control for the app
+  // agent-chat panel. Keep the shared API field false for the generic dock.
+  const [chatVisible] = useState(false);
   const [microphones, setMicrophones] = useState<RealtimeVoiceMicrophone[]>([]);
   const [microphoneDeviceId, setMicrophoneDeviceId] = useState(
     readRealtimeVoiceMicrophoneId,
@@ -374,8 +249,7 @@ export function useElevenLabsRealtimeVoiceModeController(
   const startedAtRef = useRef<string | undefined>(undefined);
   const lastUserTextRef = useRef("");
   const lastAssistantTextRef = useRef("");
-  const transcriptThreadIdRef = useRef<string | undefined>(undefined);
-  const transcriptSequenceRef = useRef(0);
+  const lastSubmittedUtteranceRef = useRef("");
   const meter = useElevenLabsAudioMeter(audioLevels);
 
   useEffect(() => {
@@ -462,54 +336,14 @@ export function useElevenLabsRealtimeVoiceModeController(
     [cleanupTransport, transition],
   );
 
-  const publishTranscript = useCallback(
-    (role: "user" | "assistant", text: string) => {
-      const threadId = transcriptThreadIdRef.current;
-      const trimmed = text.trim();
-      if (!threadId || !trimmed) return;
-      const sessionIdentity =
-        sessionIdRef.current ?? startedAtRef.current ?? "pending";
-      realtimeVoiceTranscriptRegistry.publish({
-        id: `realtime-voice:${sessionIdentity}:${role}:sequence-${++transcriptSequenceRef.current}`,
-        threadId,
-        role,
-        text: trimmed,
-        createdAt: new Date().toISOString(),
-      });
-    },
-    [],
-  );
-
-  const endInternal = useCallback(
-    (options: { reopenChat: boolean }) => {
-      const transcriptThreadId = transcriptThreadIdRef.current;
-      const activeThreadId = realtimeVoiceTranscriptRegistry.activeThreadId();
-      transition("ending");
-      cleanupTransport();
-      setError(null);
-      sessionIdRef.current = undefined;
-      startedAtRef.current = undefined;
-      transcriptThreadIdRef.current = undefined;
-      if (options.reopenChat) {
-        setChatVisible(true);
-        if (
-          shouldRestoreRealtimeVoiceTranscriptThread(
-            transcriptThreadId,
-            activeThreadId,
-          )
-        ) {
-          requestAgentChatThreadOpen({
-            threadId: transcriptThreadId,
-            onlyIfActiveThreadId: transcriptThreadId,
-          });
-        } else {
-          window.dispatchEvent(new Event("agent-panel:open"));
-        }
-      }
-      transition("idle");
-    },
-    [cleanupTransport, transition],
-  );
+  const endInternal = useCallback(() => {
+    transition("ending");
+    cleanupTransport();
+    setError(null);
+    sessionIdRef.current = undefined;
+    startedAtRef.current = undefined;
+    transition("idle");
+  }, [cleanupTransport, transition]);
 
   const start = useCallback(async () => {
     if (stateRef.current !== "idle") return;
@@ -527,13 +361,9 @@ export function useElevenLabsRealtimeVoiceModeController(
     startedAtRef.current = new Date().toISOString();
     lastUserTextRef.current = "";
     lastAssistantTextRef.current = "";
+    lastSubmittedUtteranceRef.current = "";
     sessionIdRef.current = undefined;
-    transcriptThreadIdRef.current =
-      realtimeVoiceTranscriptRegistry.activeThreadId();
-    transcriptSequenceRef.current = 0;
     transition("connecting");
-    setChatVisible(false);
-    window.dispatchEvent(new Event("agent-panel:close"));
 
     const generation = ++sessionGenerationRef.current;
     const isCurrent = () => sessionGenerationRef.current === generation;
@@ -553,37 +383,14 @@ export function useElevenLabsRealtimeVoiceModeController(
     try {
       const session = await createElevenLabsRealtimeVoiceSession({
         browserTabId,
-        threadId: transcriptThreadIdRef.current,
         signal: abortController.signal,
       });
       if (!isCurrent()) return;
-
-      const clientTools = buildElevenLabsClientTools(
-        session.toolNames,
-        (input) =>
-          executeElevenLabsRealtimeVoiceTool({
-            ...input,
-            sessionId: sessionIdRef.current,
-            browserTabId,
-            capability: session.capability,
-          }),
-        {
-          onToolStart: () => {
-            if (isCurrent()) transition("working");
-          },
-          onToolSettled: () => {
-            if (isCurrent() && stateRef.current === "working") {
-              transition("listening");
-            }
-          },
-        },
-      );
 
       const storedMicrophoneId = readRealtimeVoiceMicrophoneId();
       const conversation = (await Conversation.startSession({
         conversationToken: session.token,
         connectionType: "webrtc",
-        clientTools,
         ...(storedMicrophoneId !== "default"
           ? { inputDeviceId: storedMicrophoneId }
           : {}),
@@ -606,10 +413,37 @@ export function useElevenLabsRealtimeVoiceModeController(
           const transcriptRole = role === "user" ? "user" : "assistant";
           if (transcriptRole === "user") {
             lastUserTextRef.current = message;
+            const utterance = message.trim();
+            if (utterance && utterance !== lastSubmittedUtteranceRef.current) {
+              lastSubmittedUtteranceRef.current = utterance;
+              transition("working");
+              void submitElevenLabsWorkspaceIntent({
+                utterance,
+                sessionId: sessionIdRef.current,
+                browserTabId,
+              })
+                .then((result) => {
+                  if (!isCurrent()) return;
+                  const update = result.output.trim();
+                  if (update) {
+                    lastAssistantTextRef.current = update;
+                    conversationRef.current?.sendContextualUpdate(
+                      `Workspace agent update: ${update}`,
+                    );
+                  }
+                  if (stateRef.current === "working") transition("listening");
+                })
+                .catch(() => {
+                  if (!isCurrent()) return;
+                  conversationRef.current?.sendContextualUpdate(
+                    "Workspace agent update: I could not submit that request. Please try again.",
+                  );
+                  if (stateRef.current === "working") transition("listening");
+                });
+            }
           } else {
             lastAssistantTextRef.current = message;
           }
-          publishTranscript(transcriptRole, message);
           syncAppState(
             stateRef.current === "idle" ? "working" : stateRef.current,
           );
@@ -643,7 +477,7 @@ export function useElevenLabsRealtimeVoiceModeController(
           if (details.reason === "agent") {
             // Agent-initiated hangup (end_call tool or silence timeout):
             // wind the session down exactly like a user-initiated end.
-            endInternal({ reopenChat: true });
+            endInternal();
           }
         },
       })) as ElevenLabsConversation;
@@ -663,10 +497,7 @@ export function useElevenLabsRealtimeVoiceModeController(
         setError(null);
         startedAtRef.current = undefined;
         sessionIdRef.current = undefined;
-        transcriptThreadIdRef.current = undefined;
         transition("idle");
-        setChatVisible(true);
-        window.dispatchEvent(new Event("agent-panel:open"));
         window.dispatchEvent(new Event("agent-engine:configured-changed"));
         return;
       }
@@ -679,7 +510,6 @@ export function useElevenLabsRealtimeVoiceModeController(
     endInternal,
     fail,
     meter,
-    publishTranscript,
     refreshMicrophones,
     syncAppState,
     transition,
@@ -687,7 +517,7 @@ export function useElevenLabsRealtimeVoiceModeController(
 
   const end = useCallback(() => {
     if (stateRef.current === "idle" || stateRef.current === "ending") return;
-    endInternal({ reopenChat: true });
+    endInternal();
   }, [endInternal]);
 
   const setMicrophone = useCallback(
@@ -717,23 +547,7 @@ export function useElevenLabsRealtimeVoiceModeController(
     [copy, microphoneDeviceId, microphoneSwitching, refreshMicrophones],
   );
 
-  const toggleChat = useCallback(() => {
-    setChatVisible((current) => !current);
-    window.dispatchEvent(new Event("agent-panel:toggle"));
-  }, []);
-
-  useEffect(() => {
-    const onSidebarState = (event: Event) => {
-      const detail = (event as CustomEvent<AgentSidebarStateChangeDetail>)
-        .detail;
-      if (detail && typeof detail.open === "boolean") {
-        setChatVisible(detail.open);
-      }
-    };
-    window.addEventListener(SIDEBAR_STATE_CHANGE_EVENT, onSidebarState);
-    return () =>
-      window.removeEventListener(SIDEBAR_STATE_CHANGE_EVENT, onSidebarState);
-  }, []);
+  const toggleChat = useCallback(() => undefined, []);
 
   useEffect(() => {
     const cleanup = () => cleanupTransport();
@@ -832,6 +646,7 @@ export function ElevenLabsRealtimeVoiceModeProvider({
               state={voice.state === "idle" ? "ending" : voice.state}
               copy={copy}
               chatVisible={voice.chatVisible}
+              showChatToggle={false}
               audioLevels={voice.audioLevels}
               onToggleChat={voice.toggleChat}
               onEndVoiceMode={voice.end}

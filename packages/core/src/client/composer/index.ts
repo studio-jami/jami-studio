@@ -53,10 +53,10 @@ export {
 export {
   createElevenLabsRealtimeVoiceSession,
   ElevenLabsRealtimeVoiceModeProvider,
-  executeElevenLabsRealtimeVoiceTool,
+  submitElevenLabsWorkspaceIntent,
   useElevenLabsRealtimeVoiceModeController,
   type ElevenLabsRealtimeVoiceSession,
-  type ElevenLabsRealtimeVoiceToolResult,
+  type ElevenLabsWorkspaceIntentResult,
 } from "./useElevenLabsRealtimeVoiceMode.js";
 export {
   RealtimeVoiceEngineBoundary,

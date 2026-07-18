@@ -103,6 +103,28 @@ action before requesting microphone permission.
 - Missing-key failures should open Settings focused on the user-scoped
   `OPENAI_API_KEY` field. Never send, log, or echo the key to the browser.
 
+### ElevenLabs workspace-agent handoff
+
+ElevenLabs Agent Mode is an independent, persistent voice overlay — not the
+app-agent chat panel and not an action executor. Its server session route
+pushes only ElevenLabs system tools (`end_call`, `skip_turn`, and language
+detection), never navigation, `call-agent`, or app action schemas.
+
+- A completed user utterance posts to
+  `/_agent-native/realtime-voice/elevenlabs/intent` through the authenticated,
+  same-origin browser bridge. The voice model cannot choose whether, when, or
+  how to make that handoff.
+- The workspace agent receives the intent in a private `voice:<sessionId>`
+  execution thread. It owns navigation, actions, approvals, and cross-app A2A
+  delegation. Voice transcripts are not appended to the visible app-agent
+  chat thread.
+- The browser feeds the agent's bounded result back to ElevenLabs with
+  `conversation.sendContextualUpdate(...)`. ElevenLabs speaks/narrates that
+  update, but never claims it performed the work.
+- Keep the voice dock independent of agent-sidebar open/close state. It must
+  remain visible across navigation and must not provide a chat-toggle control
+  for ElevenLabs sessions.
+
 ## Source And Cleanup
 
 Settings must keep these as separate choices:
