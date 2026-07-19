@@ -72,6 +72,10 @@ const DEFAULT_DOCTOR_CONFIG: DoctorConfig = {
   failOnBuild: false,
 };
 
+function relativePosix(root: string, file: string): string {
+  return path.relative(root, file).replaceAll("\\", "/");
+}
+
 export interface DoctorFinding {
   guard: string;
   file: string;
@@ -160,14 +164,14 @@ function runGuard(
         findings: imports
           .filter((finding) => finding.status === "active")
           .map((finding) => ({
-            file: path.relative(root, finding.file),
+            file: relativePosix(root, finding.file),
             line: finding.line,
             message: `${finding.from} moves to ${finding.to.join(", ")}. Run: ${AGENT_NATIVE_UPGRADE_CODEMOD_COMMAND}`,
           })),
         warnings: imports
           .filter((finding) => finding.status === "planned")
           .map((finding) => ({
-            file: path.relative(root, finding.file),
+            file: relativePosix(root, finding.file),
             line: finding.line,
             message: `${finding.from} is planned to move to ${finding.to.join(", ")} in a future release. No rewrite is available yet.`,
           })),

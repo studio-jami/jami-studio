@@ -495,7 +495,7 @@ export function buildUpgradeDoctorReport(
 }
 
 function relativeTo(root: string, file: string): string {
-  const rel = path.relative(root, file);
+  const rel = path.relative(root, file).replaceAll("\\", "/");
   return rel || ".";
 }
 

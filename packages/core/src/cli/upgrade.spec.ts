@@ -225,7 +225,9 @@ describe("detectUpgradeProject + doctor", () => {
 
     const project = detectUpgradeProject(root);
     expect(
-      project?.packageFiles.map((file) => path.relative(root, file)),
+      project?.packageFiles.map((file) =>
+        path.relative(root, file).replaceAll("\\", "/"),
+      ),
     ).toEqual([
       "package.json",
       "templates/analytics/package.json",

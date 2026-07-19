@@ -10,6 +10,8 @@
  * flagged — those are explicit, human-invoked commands, not build hooks.
  */
 
+import path from "node:path";
+
 import {
   lineColForOffset,
   readFileSafe,
@@ -53,7 +55,7 @@ export function scanDrizzlePush(options: GuardScanOptions): GuardResult {
   const findings: GuardFinding[] = [];
 
   for (const file of walk(root)) {
-    const base = file.split("/").pop() ?? file;
+    const base = path.basename(file);
     if (base === "netlify.toml") {
       scanNetlifyToml(root, file, findings);
     } else if (base === "package.json") {
