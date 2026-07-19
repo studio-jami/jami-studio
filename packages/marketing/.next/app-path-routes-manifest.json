@@ -1,0 +1,9 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/brand/page": "/brand",
+  "/page": "/",
+  "/privacy/page": "/privacy",
+  "/signup/page": "/signup",
+  "/terms/page": "/terms"
+}

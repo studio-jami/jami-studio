@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../hummingbird"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "jami-studio"
+	}
+}
