@@ -86,6 +86,7 @@ const child = spawn(command, pnpmArgs, {
   cwd: process.cwd(),
   env: process.env,
   stdio: "inherit",
+  shell: process.platform === "win32",
 });
 
 child.on("error", (error) => {

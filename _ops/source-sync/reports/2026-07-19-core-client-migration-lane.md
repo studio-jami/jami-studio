@@ -71,10 +71,42 @@ portability and test-contract follow-up, not a feature rejection.
 The remaining seven test files passed. The previously recorded focused Core MCP,
 Design, and Slides tests also remain passing for the broader staging intake.
 
+### Follow-up Validation
+
+The cross-platform correction was applied without changing the accepted client
+or migration behavior:
+
+- use `path.basename()` for the Doctor's `no-drizzle-push` guard instead of
+  assuming POSIX separators;
+- emit stable POSIX-relative paths from Doctor, upgrade diagnostics, and
+  codemod diffs while retaining native paths for filesystem operations;
+- normalize the codemod's filesystem boundary before looking up the nearest
+  package manifest; and
+- make Vite and workspace-glob assertions express platform-neutral path
+  contracts.
+
+Validation after the correction:
+
+- the focused Core suite above plus `no-drizzle-push.spec.ts`: **12 files,
+  163 tests passed**;
+- `pnpm --filter @agent-native/core typecheck`: passed;
+- `pnpm typecheck`: passed across all 35 workspace projects after making the
+  shared workspace runner invoke `pnpm.cmd` through the Windows shell, matching
+  the already-proven source-sync guard-runner behavior;
+- `pnpm oxlint`: passed with existing warnings only; and
+- `git diff --check`: passed.
+
+`pnpm lint` still stops at the repository-wide `oxfmt --check .` baseline,
+which currently reports 11,312 files and is unrelated to this focused change.
+No mass formatting was performed. The Windows runner emits Node's `DEP0190`
+shell-argument warning while invoking `.cmd`; it is recorded for a future
+runner-hardening lane, not hidden.
+
 ## Promotion Guardrails
 
-1. Fix and validate the Windows portability findings on staging; do not paper
-   over them by removing migration coverage or loosening assertions.
+1. Keep the Windows portability fixes and regression coverage with this lane;
+   do not paper over platform differences by removing migration coverage or
+   loosening assertions.
 2. Keep the 61 Mail compatibility changes with the focused-client entrypoints;
    separate review is welcome, but a partial client split must not leave the
    consumer on an obsolete bootstrap path.
@@ -88,7 +120,7 @@ Design, and Slides tests also remain passing for the broader staging intake.
 
 ## Next Review Unit
 
-The next staging-only task is a small cross-platform correction to the Doctor,
-codemod, workspace-discovery, and Vite alias test contract. Once that is green,
-prepare a main PR containing this one complete reliability outcome—not a
-directory-wide staging merge.
+Review and merge this Windows-safe staging follow-up. It removes a real
+cross-platform blocker from the accepted Core lane. After that, prepare a main
+PR containing this one complete reliability outcome—not a directory-wide
+staging merge.

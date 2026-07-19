@@ -1248,8 +1248,11 @@ describe("local-core dev aliases and router dedupe", () => {
       expect(
         aliases.some(
           (alias) =>
+            alias.find instanceof RegExp &&
             alias.find.test("@agent-native/core/client/i18n") &&
-            alias.replacement.endsWith("src/client/i18n.tsx"),
+            alias.replacement
+              .replaceAll("\\", "/")
+              .endsWith("src/client/i18n.tsx"),
         ),
       ).toBe(true);
     } finally {

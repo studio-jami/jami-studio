@@ -105,7 +105,7 @@ function packageNameFromSpecifier(specifier: string): string | null {
 }
 
 function nearestPackageFile(file: string, root: string): string | null {
-  let directory = path.dirname(file);
+  let directory = path.dirname(path.normalize(file));
   const boundary = path.resolve(root);
   while (directory.startsWith(boundary)) {
     const packageFile = path.join(directory, "package.json");
@@ -513,7 +513,11 @@ export function runMigrationCodemods(
     );
     const after = sourceFile.getFullText();
     if (before === after) continue;
-    changes.push({ file: sourceFile.getFilePath(), before, after });
+    changes.push({
+      file: path.normalize(sourceFile.getFilePath()),
+      before,
+      after,
+    });
     if (options.apply) sourceFile.saveSync();
   }
 
@@ -551,8 +555,8 @@ function focusedDiff(change: MigrationCodemodFileChange, root: string): string {
   const beforeChanged = beforeLines.slice(prefix, beforeLines.length - suffix);
   const afterChanged = afterLines.slice(prefix, afterLines.length - suffix);
   return [
-    `--- ${path.relative(root, change.file)}`,
-    `+++ ${path.relative(root, change.file)}`,
+    `--- ${path.relative(root, change.file).replaceAll("\\", "/")}`,
+    `+++ ${path.relative(root, change.file).replaceAll("\\", "/")}`,
     `@@ -${prefix + 1} +${prefix + 1} @@`,
     ...beforeChanged.map((line) => `-${line}`),
     ...afterChanged.map((line) => `+${line}`),
