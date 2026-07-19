@@ -33,33 +33,17 @@ const COLUMNS: FooterColumn[] = [
     links: [
       { label: "Docs", href: "/docs" },
       {
-        label: "GitHub",
-        href: "https://github.com/studio-jami",
-        external: true,
-      },
-      {
         label: "Intercal",
         href: "https://intercal.jami.studio/",
         external: true,
       },
     ],
   },
-  {
-    heading: "Connect",
-    links: [
-      {
-        label: "X / Twitter",
-        href: "https://x.com/studio_jami",
-        external: true,
-      },
-      {
-        label: "LinkedIn",
-        href: "https://www.linkedin.com/company/jami-studio/",
-        external: true,
-      },
-    ],
-  },
 ];
+
+// GitHub/X/LinkedIn intentionally aren't repeated as text links in a nav
+// column — the icon-only social row in the brand column below is the one
+// source for those.</newString
 
 const SOCIAL = [
   {
@@ -84,9 +68,9 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
+      <div className="w-full px-6 md:px-10">
         {/* Main grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-10 py-16">
           {/* Brand col */}
           <div className="col-span-2 md:col-span-1">
             <Link
@@ -115,7 +99,7 @@ export function Footer() {
                     alt={label}
                     width={15}
                     height={15}
-                    className="invert"
+                    className="invert light:invert-0"
                     unoptimized
                   />
                 </a>

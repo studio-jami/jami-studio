@@ -3,6 +3,7 @@
 @import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
 
 /* ─── Jami Studio — Design Tokens ─────────────────────────────── */
 @theme inline {
@@ -101,6 +102,49 @@
     --panel-teal:   oklch(0.89 0.060 188);
     --panel-violet: oklch(0.89 0.060 298);
     --panel-amber:  oklch(0.91 0.070 72);
+  }
+
+  /* Light theme — opt-in via a `.light` class on <html>. Dark (above) stays
+     the unclassed default. --ink / --cream / --panel-* are intentionally
+     left unset here: --ink is always the dark "text on a bright accent
+     surface" color and --panel-* are already light relief tones, so neither
+     needs to flip when the page itself goes light. Brand hues (rose/teal/
+     violet/amber) are deepened here because they're used as direct text/
+     underline colors against the page background, and the dark-mode values
+     are too light to read on a light surface. */
+  :root.light {
+    --background:           oklch(0.97 0.010 70);
+    --foreground:           oklch(0.18 0.020 47);
+
+    --card:                 oklch(0.995 0.006 70);
+    --card-foreground:      oklch(0.18 0.020 47);
+
+    --popover:              oklch(0.995 0.006 70);
+    --popover-foreground:   oklch(0.18 0.020 47);
+
+    --primary:              oklch(0.56 0.19 14);
+    --primary-foreground:   oklch(0.98 0.010 70);
+
+    --secondary:            oklch(0.93 0.014 60);
+    --secondary-foreground: oklch(0.22 0.020 47);
+
+    --muted:                oklch(0.94 0.012 60);
+    --muted-foreground:     oklch(0.46 0.020 50);
+
+    --accent:               oklch(0.90 0.045 188);
+    --accent-foreground:    oklch(0.20 0.020 185);
+
+    --destructive:          oklch(0.55 0.20 27);
+
+    --border:               oklch(0.85 0.014 55);
+    --input:                oklch(0.85 0.014 55);
+    --ring:                 oklch(0.56 0.19 14);
+
+    /* Brand palette — deepened for on-background text/underline contrast */
+    --rose:   oklch(0.56 0.19 14);
+    --teal:   oklch(0.46 0.12 188);
+    --violet: oklch(0.50 0.14 298);
+    --amber:  oklch(0.55 0.15 72);
   }
 
   * {

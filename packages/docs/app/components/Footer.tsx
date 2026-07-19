@@ -1,4 +1,5 @@
 import { useLocale, useT } from "@agent-native/core/client";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { Link } from "react-router";
 
 import { sitePathForLocale } from "./docs-locale";
@@ -11,7 +12,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-[var(--docs-border)] px-6 py-8">
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-4 text-sm text-[var(--fg-secondary)] sm:flex-row">
+      <div className="flex w-full flex-col items-center justify-between gap-4 text-sm text-[var(--fg-secondary)] sm:flex-row">
         <p className="m-0">&copy; {year} Jami Studio</p>
         <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-end">
           <Link
@@ -49,20 +50,22 @@ export default function Footer() {
             {t("footer.terms")}
           </a>
           <a
-            href="https://github.com/studio-jami/jami-studio"
-            target="_blank"
-            rel="noreferrer"
-            className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
-          >
-            GitHub <span className="text-[10px] opacity-50">↗</span>
-          </a>
-          <a
             href="https://www.npmjs.com/package/@agent-native/core"
             target="_blank"
             rel="noreferrer"
             className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
           >
             npm <span className="text-[10px] opacity-50">↗</span>
+          </a>
+          <a
+            href="https://github.com/studio-jami/jami-studio"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+            title="GitHub"
+            className="text-[var(--fg-secondary)] transition hover:text-[var(--fg)]"
+          >
+            <IconBrandGithub size={16} stroke={1.5} />
           </a>
         </div>
       </div>

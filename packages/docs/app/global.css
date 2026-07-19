@@ -2,10 +2,11 @@
 @import "@agent-native/core/styles/agent-native.css";
 
 /* shadcn CSS variables required by agent-native sidebar components.
-   Dark-only — the Jami Studio marketing scheme is the one and only scheme.
-   These HSL triples are exact conversions of the marketing oklch palette
-   (packages/marketing/app/globals.css); core paints its page surfaces with
-   hsl(var(--background)), so these ARE the page background. */
+   Dark is the default (unclassed) scheme. These HSL triples are hand-tuned
+   to match the marketing oklch palette (packages/marketing/app/globals.css);
+   core paints its page surfaces with hsl(var(--background)), so these ARE
+   the page background. The .light overrides below are the light-mode
+   counterpart, toggled via a `.light` class on <html>. */
 :root {
   --background: 14.8 62.7% 3.2%;
   --foreground: 28.6 33.4% 91.8%;
@@ -37,6 +38,36 @@
   --sidebar-ring: 351.9 100% 72.8%;
 }
 
+:root.light {
+  --background: 40 30% 97%;
+  --foreground: 20 15% 14%;
+  --card: 40 25% 99%;
+  --card-foreground: 20 15% 14%;
+  --popover: 40 25% 99%;
+  --popover-foreground: 20 15% 14%;
+  --primary: 351.9 70% 55%;
+  --primary-foreground: 40 30% 98%;
+  --secondary: 30 20% 92%;
+  --secondary-foreground: 20 15% 20%;
+  --muted: 30 20% 93%;
+  --muted-foreground: 25 10% 40%;
+  --accent: 30 20% 92%;
+  --accent-foreground: 20 15% 20%;
+  --destructive: 1 75% 45%;
+  --destructive-foreground: 28.6 33.4% 91.8%;
+  --border: 30 15% 85%;
+  --input: 30 15% 85%;
+  --ring: 351.9 70% 55%;
+  --sidebar-background: 40 30% 97%;
+  --sidebar-foreground: 20 15% 14%;
+  --sidebar-primary: 351.9 70% 55%;
+  --sidebar-primary-foreground: 40 30% 98%;
+  --sidebar-accent: 30 20% 92%;
+  --sidebar-accent-foreground: 20 15% 20%;
+  --sidebar-border: 30 15% 85%;
+  --sidebar-ring: 351.9 70% 55%;
+}
+
 @theme {
   --font-sans:
     "Instrument Sans", -apple-system, "system-ui", "Segoe UI", Roboto,
@@ -55,8 +86,9 @@
   --radius-3xl: 0rem;
 }
 
-/* Jami Studio marketing palette — dark-only, keep in sync with
-   packages/marketing/app/globals.css (warm ink base, rose primary). */
+/* Jami Studio marketing palette — dark is the default (unclassed) scheme,
+   kept in sync with packages/marketing/app/globals.css (warm ink base, rose
+   primary). The .light overrides below are the light-mode counterpart. */
 :root {
   --fg: oklch(0.94 0.012 65);
   --fg-secondary: oklch(0.62 0.02 55);
@@ -74,6 +106,22 @@
   --approaches-good: #86efac;
   --approaches-warn: #fcd34d;
   --approaches-bad: #fca5a5;
+}
+
+:root.light {
+  --fg: oklch(0.18 0.020 47);
+  --fg-secondary: oklch(0.46 0.02 50);
+  --bg: oklch(0.97 0.010 70);
+  --bg-secondary: oklch(0.94 0.012 65);
+  --docs-border: oklch(0.85 0.014 55);
+  --docs-accent: oklch(0.56 0.19 14);
+  --docs-accent-light: oklch(0.56 0.19 14 / 0.12);
+  --header-bg: oklch(0.97 0.010 70 / 0.8);
+  --code-bg: oklch(0.95 0.010 65);
+  --code-border: oklch(0.85 0.014 55);
+  --table-header-bg: oklch(0.94 0.012 65);
+  --sidebar-hover: oklch(0.92 0.014 60);
+  --selection: oklch(0.56 0.19 14 / 0.25);
 }
 
 * {

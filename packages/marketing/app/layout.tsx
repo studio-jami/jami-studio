@@ -83,6 +83,11 @@ export const viewport: Viewport = {
 };
 
 // ─── Root Layout ──────────────────────────────────────────────────
+// Blocking theme-init script — reads the persisted preference before first
+// paint so there's no flash of the wrong theme. Dark is the default; the
+// `light` class is only added when explicitly stored.
+const THEME_INIT_SCRIPT = `(function(){try{if(localStorage.getItem('jami-theme')==='light'){document.documentElement.classList.add('light');}}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -90,8 +95,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} bg-background`}
+      suppressHydrationWarning
     >
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {children}
+      </body>
     </html>
   );
 }

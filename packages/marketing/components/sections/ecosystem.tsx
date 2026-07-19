@@ -5,6 +5,26 @@ import Link from "next/link";
 // Dark base. Two giant blocks stacked: CTA strip + Intercal.
 // Full-bleed image sits behind the CTA block as a dark texture.
 
+const SVG = "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons";
+
+const SOCIAL_CTAS = [
+  {
+    label: "GitHub",
+    href: "https://github.com/studio-jami",
+    icon: `${SVG}/github/default.svg`,
+  },
+  {
+    label: "X",
+    href: "https://x.com/studio_jami",
+    icon: `${SVG}/x/default.svg`,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/jami-studio/",
+    icon: `${SVG}/linkedin/default.svg`,
+  },
+];
+
 export function Ecosystem() {
   return (
     <section
@@ -44,30 +64,26 @@ export function Ecosystem() {
             surfaces.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link
-              href="https://github.com/studio-jami"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-foreground text-background px-8 py-3.5 text-sm font-semibold tracking-wide hover:bg-primary hover:text-ink transition-colors"
-            >
-              View on GitHub
-            </Link>
-            <Link
-              href="https://x.com/studio_jami"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-border text-foreground px-8 py-3.5 text-sm font-medium hover:border-foreground/50 transition-colors"
-            >
-              Follow on X
-            </Link>
-            <Link
-              href="https://www.linkedin.com/company/jami-studio/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-border text-foreground px-8 py-3.5 text-sm font-medium hover:border-foreground/50 transition-colors"
-            >
-              LinkedIn
-            </Link>
+            {SOCIAL_CTAS.map(({ label, href, icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="flex h-12 w-12 items-center justify-center border border-border hover:border-foreground/50 transition-colors"
+              >
+                <Image
+                  src={icon}
+                  alt=""
+                  width={18}
+                  height={18}
+                  className="invert light:invert-0 opacity-80"
+                  unoptimized
+                />
+              </a>
+            ))}
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ configureTracking({
   }),
 });
 
-const THEME_INIT_SCRIPT = `(function(){try{var root=document.documentElement;root.classList.remove('light');root.classList.add('dark');root.setAttribute('data-theme','dark');root.style.colorScheme='dark';}catch(e){}})();`;
+const THEME_INIT_SCRIPT = `(function(){try{var root=document.documentElement;var t=localStorage.getItem('jami-theme')==='light'?'light':'dark';root.classList.toggle('light',t==='light');root.setAttribute('data-theme',t);root.style.colorScheme=t;}catch(e){}})();`;
 
 const GA_SCRIPT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','');`;
 

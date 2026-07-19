@@ -6,15 +6,18 @@ import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
+import { ThemeToggle } from "./theme-toggle";
+
 // ─── Config ───────────────────────────────────────────────────────
 const SVG_BASE =
   "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons";
 
+// True-centered on all three surfaces (marketing, /apps, /docs — see
+// packages/docs/app/components/Header.tsx for the docs-side copy of this
+// list). Jami always points at the marketing home, not an in-page anchor,
+// so it behaves the same regardless of which surface you're on.
 const NAV_LINKS = [
-  { label: "Parity", href: "#parity" },
-  { label: "Jami", href: "#jami" },
-  { label: "Registry", href: "#registry" },
-  { label: "Stack", href: "#stack" },
+  { label: "Jami", href: "/" },
   { label: "Apps", href: "/apps" },
   { label: "Docs", href: "/docs" },
 ];
@@ -57,25 +60,31 @@ export function Nav() {
       )}
     >
       <nav
-        className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6 md:px-10"
+        className="grid h-14 w-full grid-cols-[1fr_auto_1fr] items-center px-6 md:px-10"
         aria-label="Primary navigation"
       >
         {/* Wordmark */}
         <Link
           href="/"
-          className="font-mono text-[0.62rem] font-medium uppercase tracking-[0.3em] text-foreground hover:text-primary transition-colors"
+          className="justify-self-start font-mono text-[0.62rem] font-medium uppercase tracking-[0.3em] text-foreground hover:text-primary transition-colors"
           aria-label="Jami Studio home"
         >
           Jami Studio
         </Link>
 
-        {/* Centre links */}
-        <ul className="hidden md:flex items-center gap-7" role="list">
+        {/* True-centered links — middle grid column, so left/right groups
+            of any width never pull it off-center. */}
+        <ul
+          className="hidden md:flex items-center gap-7 justify-self-center"
+          role="list"
+        >
           {NAV_LINKS.map(({ label, href }) => (
-            <li key={href}>
+            <li key={label}>
               {/* /apps and /docs live on the docs deployment behind the
                   next.config fallback rewrite — client-side <Link> 404s on
-                  them, so cross-app paths must hard-navigate. */}
+                  them, so cross-app paths must hard-navigate. Jami uses the
+                  same hard <a> for consistency with the identical nav on
+                  the docs/apps surfaces. */}
               <a
                 href={href}
                 className="text-[0.8rem] font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -86,8 +95,8 @@ export function Nav() {
           ))}
         </ul>
 
-        {/* Right: social icons + CTA */}
-        <div className="flex items-center gap-5">
+        {/* Right: social icons + theme toggle */}
+        <div className="flex items-center justify-self-end gap-4">
           <div className="hidden sm:flex items-center gap-4">
             {SOCIAL.map(({ label, href, icon }) => (
               <a
@@ -103,21 +112,14 @@ export function Nav() {
                   alt={label}
                   width={15}
                   height={15}
-                  className="invert"
+                  className="invert light:invert-0"
                   unoptimized
                 />
               </a>
             ))}
           </div>
 
-          <Link
-            href="https://intercal.jami.studio/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border border-rose text-rose px-4 py-1.5 text-[0.72rem] font-semibold tracking-wide hover:bg-rose hover:text-ink transition-colors"
-          >
-            Intercal
-          </Link>
+          <ThemeToggle />
         </div>
       </nav>
     </header>

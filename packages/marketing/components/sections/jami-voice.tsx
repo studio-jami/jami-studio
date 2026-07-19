@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -50,45 +49,51 @@ export function JamiVoice() {
   const mode = MODES.find((m) => m.id === active) ?? MODES[0];
 
   return (
-    <section id="jami" className="bg-background border-t border-border overflow-hidden" aria-labelledby="jami-heading">
-
-      {/* Edge-to-edge repeating ElevenLabs banner */}
+    <section
+      id="jami"
+      className="bg-background border-t border-border overflow-hidden"
+      aria-labelledby="jami-heading"
+    >
+      {/* Edge-to-edge repeating ElevenLabs banner — plain wordmark strip,
+          not the grants-specific asset (this doesn't advertise the grant,
+          just the ElevenLabs partnership). */}
       <div
-        className="w-full h-10 sm:h-12 md:h-14 opacity-20 invert grayscale contrast-125 border-b border-border/50"
-        style={{
-          backgroundImage: "url('https://eleven-public-cdn.elevenlabs.io/payloadcms/pwsc4vchsqt-ElevenLabsGrants.webp')",
-          backgroundSize: "auto 100%",
-          backgroundRepeat: "repeat-x",
-          backgroundPosition: "left center"
-        }}
+        className="flex w-full h-10 sm:h-12 md:h-14 items-center overflow-hidden border-b border-border/50"
         aria-hidden="true"
-      />
+      >
+        <div className="flex shrink-0 items-center gap-10 whitespace-nowrap opacity-20">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <span
+              key={i}
+              className="font-serif text-2xl sm:text-3xl md:text-4xl tracking-tight text-foreground"
+            >
+              ElevenLabs
+            </span>
+          ))}
+        </div>
+      </div>
 
       <div className="mx-auto max-w-7xl px-6 md:px-10 py-20 md:py-28">
-
-        {/* Header */}
-        <div className="mb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-end">
-            <h2
-              id="jami-heading"
-              className="font-serif text-[clamp(2.2rem,4.5vw,3.5rem)] leading-[0.94] tracking-tight balance text-foreground"
-            >
-              Talk to <span className="text-rose">Jami.</span>
-              <br />
-              Agents handle
-              <br />
-              the rest.
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-md lg:self-end">
-              Powered by our{" "}
-              <strong className="text-foreground font-medium">
-                ElevenLabs Grant
-              </strong>
-              , Jami is the real-time voice interface to your workspace. Voice,
-              chat, user interface, and automation all route into the same
-              underlying action system.
-            </p>
-          </div>
+        {/* Header — description stacked directly under the headline so the
+            two read as one unit, matching the registry/parity sections. */}
+        <div className="mb-20 max-w-2xl">
+          <h2
+            id="jami-heading"
+            className="font-serif text-[clamp(2.2rem,4.5vw,3.5rem)] leading-[0.94] tracking-tight balance text-foreground mb-6"
+          >
+            Talk to <span className="text-rose">Jami.</span>
+            <br />
+            Agents handle
+            <br />
+            the rest.
+          </h2>
+          <p className="text-base text-muted-foreground leading-relaxed max-w-md">
+            Powered by{" "}
+            <strong className="text-foreground font-medium">ElevenLabs</strong>,
+            Jami is the real-time voice interface to your workspace. Voice,
+            chat, user interface, and automation all route into the same
+            underlying action system.
+          </p>
         </div>
 
         {/* Tabs — flat, no radius */}
@@ -154,13 +159,6 @@ export function JamiVoice() {
 
               {/* Media placeholder for future demo video */}
               <div className="w-full bg-muted/20 border border-border rounded-md mt-6 overflow-hidden relative aspect-video flex items-center justify-center group cursor-pointer">
-                <Image
-                  src="https://eleven-public-cdn.elevenlabs.io/payloadcms/cy7rxce8uki-IIElevenLabsGrants%201.webp"
-                  alt="ElevenLabs"
-                  fill
-                  className="object-cover opacity-50 group-hover:opacity-70 transition-opacity invert grayscale contrast-125"
-                  unoptimized
-                />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-background/80 border border-border flex items-center justify-center backdrop-blur-sm shadow-sm group-hover:scale-110 transition-transform">
                     <svg

@@ -1,11 +1,12 @@
 import { FeedbackButton, useLocale, useT } from "@agent-native/core/client";
-import { IconMessage } from "@tabler/icons-react";
+import { IconBrandGithub, IconMessage } from "@tabler/icons-react";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { NavLink, useLocation } from "react-router";
 
 import { DEFAULT_DOCS_LOCALE, sitePathForLocale } from "./docs-locale";
 import DocsLanguagePicker from "./DocsLanguagePicker";
 import DocsLanguageSuggestion from "./DocsLanguageSuggestion";
+import { ThemeToggle } from "./ThemeToggle";
 
 const SearchModal = lazy(() =>
   import("./SearchModal").then((m) => ({ default: m.SearchModal })),
@@ -159,7 +160,7 @@ export default function Header() {
       <header
         className={`sticky top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${showHeaderBg ? "border-b border-[var(--docs-border)] bg-[var(--header-bg)] backdrop-blur-lg" : "border-b border-transparent bg-transparent"}`}
       >
-        <nav className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-3 px-4 sm:gap-6 sm:px-6">
+        <nav className="flex h-16 w-full items-center gap-3 px-4 sm:gap-6 sm:px-6">
           <a
             href="/"
             aria-label="Jami Studio"
@@ -178,8 +179,16 @@ export default function Header() {
             </span>
           </a>
 
-          {/* Desktop nav links */}
+          {/* Desktop nav links — Jami/Apps/Docs are visible on every
+              surface (marketing, /apps, /docs); Jami always points at the
+              marketing home. Mirrors packages/marketing/components/nav.tsx. */}
           <div className="hidden lg:flex items-center gap-5 text-sm">
+            <a href="/" className="header-link">
+              Jami
+            </a>
+            <a href="/apps" className="header-link">
+              {t("header.templates")}
+            </a>
             <NavLink
               data-an-prefetch="render"
               to={localizedPath("/docs")}
@@ -193,12 +202,11 @@ export default function Header() {
               href="https://github.com/studio-jami/jami-studio"
               target="_blank"
               rel="noreferrer"
+              aria-label="GitHub"
+              title="GitHub"
               className="header-link"
             >
-              GitHub
-              <span className="text-[0.6em] align-super ms-0.5 opacity-70">
-                ↗
-              </span>
+              <IconBrandGithub size={16} stroke={1.5} />
             </a>
           </div>
 
@@ -227,6 +235,7 @@ export default function Header() {
               <DocsLanguagePicker />
               <DocsLanguageSuggestion />
             </div>
+            <ThemeToggle />
             <button
               onClick={() =>
                 window.dispatchEvent(new Event("agent-panel:toggle"))
@@ -253,6 +262,12 @@ export default function Header() {
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-[var(--docs-border)] bg-[var(--header-bg)] backdrop-blur-lg px-6 py-4 flex flex-col gap-4">
+            <a href="/" className="header-link" onClick={closeMobileMenu}>
+              Jami
+            </a>
+            <a href="/apps" className="header-link" onClick={closeMobileMenu}>
+              {t("header.templates")}
+            </a>
             <NavLink
               data-an-prefetch="render"
               to={localizedPath("/docs")}
@@ -267,12 +282,11 @@ export default function Header() {
               href="https://github.com/studio-jami/jami-studio"
               target="_blank"
               rel="noreferrer"
+              aria-label="GitHub"
+              title="GitHub"
               className="header-link"
             >
-              GitHub
-              <span className="text-[0.6em] align-super ms-0.5 opacity-70">
-                ↗
-              </span>
+              <IconBrandGithub size={16} stroke={1.5} />
             </a>
             <FeedbackButton
               label={feedbackLabel}
