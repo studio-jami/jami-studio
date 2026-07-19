@@ -67,6 +67,12 @@ from `sync/staging`, commits an intake packet, and opens a PR into
 The packet is not the curated patch yet. It is the handoff point for the
 pre-merge agent.
 
+The pre-merge agent follows the accept-first policy in `runbook.md`: classify
+each material upstream decision as accepted, adapted with the smallest Jami
+overlay, or held for an explicit owner-operated adoption. The workflow must
+publish that classification in `curation-notes.md`; it must not treat upstream
+naming or product copy alone as a reason to discard working capability.
+
 ### 6. Validation Pipeline
 
 Next automation milestone.

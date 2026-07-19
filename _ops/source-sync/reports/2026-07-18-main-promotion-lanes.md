@@ -12,6 +12,12 @@ This catalog describes the deliberate paths from `sync/staging` to Jami Studio
 Staging is the integration laboratory. Nothing in this catalog authorizes a
 wholesale staging-to-main merge.
 
+Upstream work is accepted into staging by default. A promotion adapts it only
+where doing otherwise would compromise Jami's end-shape product direction,
+identity, safety, ownership, or integration boundaries. Naming and
+product-copy differences normally call for an overlay, not removal of the
+underlying capability.
+
 ## Promotion Order
 
 1. **Core client loading and migration safety** — the smallest high-value
