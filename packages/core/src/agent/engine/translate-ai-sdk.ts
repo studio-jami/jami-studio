@@ -27,18 +27,46 @@ import type {
  * schema is wrapped in the SDK's runtime validator; fall back to the raw JSON
  * Schema object otherwise (mostly for unit tests that don't import `ai`).
  */
+/**
+ * Recursively walk a JSON Schema object and remove any `enum` array whose
+ * values are not all strings. Gemini function declarations require enum values
+ * to be TYPE_STRING; a single numeric enum poisons the entire tool payload and
+ * causes an EngineError. Dropping the `enum` (while keeping the `type`) is
+ * safe: Zod-level `.refine()` validation still enforces the narrower constraint
+ * at runtime.
+ */
+function sanitizeNumericEnums(schema: unknown): unknown {
+  if (schema === null || typeof schema !== "object") return schema;
+  if (Array.isArray(schema)) return schema.map(sanitizeNumericEnums);
+
+  const obj = schema as Record<string, unknown>;
+  const sanitized: Record<string, unknown> = {};
+  for (const key of Object.keys(obj)) {
+    if (
+      key === "enum" &&
+      Array.isArray(obj[key]) &&
+      (obj[key] as unknown[]).some((v) => typeof v !== "string")
+    ) {
+      // Drop the enum entirely; keep `type` and other sibling fields.
+      continue;
+    }
+    sanitized[key] = sanitizeNumericEnums(obj[key]);
+  }
+  return sanitized;
+}
+
 export function engineToolsToAISDK(
   tools: EngineTool[],
   jsonSchema?: (schema: Record<string, unknown>) => unknown,
 ): Record<string, any> {
   const result: Record<string, any> = {};
   for (const tool of tools) {
-    const rawSchema: Record<string, unknown> = {
+    const rawSchema = sanitizeNumericEnums({
       ...tool.inputSchema,
       type: "object",
       properties: tool.inputSchema.properties ?? {},
       required: tool.inputSchema.required ?? [],
-    };
+    }) as Record<string, unknown>;
     result[tool.name] = {
       description: tool.description,
       inputSchema: jsonSchema ? jsonSchema(rawSchema) : rawSchema,
