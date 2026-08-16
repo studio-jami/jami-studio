@@ -7,6 +7,7 @@ import {
   useT,
 } from "@agent-native/core/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react";
 import { useState, useEffect, useRef } from "react";
 import {
   Links,
@@ -395,6 +396,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Analytics />
       </body>
     </html>
   );
