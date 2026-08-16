@@ -4,6 +4,7 @@ import {
   Instrument_Serif,
   JetBrains_Mono,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
@@ -100,6 +101,7 @@ export default function RootLayout({
       <body className="font-sans antialiased" suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {children}
+        <Analytics />
       </body>
     </html>
   );
