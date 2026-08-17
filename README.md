@@ -25,14 +25,6 @@ export default defineAction({
 
 Fork a working app and let the agent evolve it. **You can customize everything.**
 
-<table>
-<tr>
-<td width="33%" align="center" valign="top">
-
-**Clips**
-
-<a href="https://jami.studio/templates/clips"><img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F189ebd9b2f2b4f0ead3b33138d4e4c10?format=webp&width=800" alt="Clips app" width="100%" /></a>
-
 **Jami Studio Loom + Jam**
 
 Record your screen with auto-transcripts and captured browser debug logs, share a link, and let an agent read the transcript, see timestamped frames, and fix the bug.
