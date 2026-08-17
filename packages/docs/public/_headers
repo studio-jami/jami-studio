@@ -21,6 +21,14 @@
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
 
+/docs/*
+  Cache-Control: public, s-maxage=604800, stale-while-revalidate=86400
+  Link: </llms.txt>; rel="llms-txt"
+
+/*/docs/*
+  Cache-Control: public, s-maxage=604800, stale-while-revalidate=86400
+  Link: </llms.txt>; rel="llms-txt"
+
 /*
   Link: </llms.txt>; rel="llms-txt"
 

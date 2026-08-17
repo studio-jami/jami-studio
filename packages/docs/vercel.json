@@ -1,0 +1,22 @@
+{
+  "headers": [
+    {
+      "source": "/docs(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=604800, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)/docs(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ]
+}
