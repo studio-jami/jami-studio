@@ -506,6 +506,7 @@ export async function resolveThreadAccess(
   ctx: Omit<AccessContext, "userEmail"> = {},
 ): Promise<ChatThread | null> {
   if (!userEmail || !threadId) return null;
+  await ensureTable();
   const access = await resolveAccess("chat_thread", threadId, {
     userEmail,
     orgId: ctx.orgId,
