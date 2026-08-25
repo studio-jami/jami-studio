@@ -1715,7 +1715,7 @@ ${marketing!.description ? `      <p class="app-desc" data-marketing-field="desc
           ? `      <ul class="feature-list">\n${marketing!.features.map((f, index) => `        <li data-marketing-feature-index="${index}">${esc(f)}</li>`).join("\n")}\n      </ul>\n`
           : ""
       }      <div class="marketing-actions">
-${runLocalCommand ? `        <button type="button" class="run-local-button" id="run-local-button" aria-expanded="false" aria-controls="run-local-panel" onclick="__anToggleRunLocalCommand()"${i18nAttr("runLocally")}>${esc(t("runLocally"))}</button>\n` : ""}        <a class="oss-link" href="https://github.com/BuilderIO/agent-native" target="_blank" rel="noreferrer">
+${runLocalCommand ? `        <button type="button" class="run-local-button" id="run-local-button" aria-expanded="false" aria-controls="run-local-panel" onclick="__anToggleRunLocalCommand()"${i18nAttr("runLocally")}>${esc(t("runLocally"))}</button>\n` : ""}        <a class="oss-link" href="https://github.com/studio-jami/jami-studio" target="_blank" rel="noreferrer">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
         <span${i18nAttr("openSource")}>${esc(t("openSource"))}</span>
       </a>

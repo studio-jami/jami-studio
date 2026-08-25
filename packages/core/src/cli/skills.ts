@@ -2037,6 +2037,10 @@ function clientPromptOptions(
   }));
 }
 
+// Intentional upstream reference: the public skills catalog lives in the
+// BuilderIO/skills repo (studio-jami does not host an equivalent catalog yet).
+// Kept through the de-Builder.io cleanup; repoint only when our org hosts the
+// catalog. See the cleanup record in _ops/readiness.
 const DEFAULT_PUBLIC_SKILLS_SOURCE = "BuilderIO/skills";
 const PUBLIC_SKILL_TARGET_PREFIX = "public-skills:";
 

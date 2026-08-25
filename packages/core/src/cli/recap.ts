@@ -158,7 +158,12 @@ export function writePrVisualRecapWorkflow(
 /**
  * The thin caller workflow that consumers paste into their repo when using the
  * reusable variant.  It references the canonical reusable workflow in the
- * BuilderIO/agent-native repo rather than carrying a full copy.
+ * upstream BuilderIO/agent-native repo rather than carrying a full copy.
+ *
+ * Intentional: our repo does not host `.github/workflows/pr-visual-recap-reusable.yml`,
+ * so this must keep pointing at upstream until the npm/org rename lands the
+ * workflow (or a copy) in studio-jami/jami-studio. See the de-Builder.io
+ * cleanup record in _ops/readiness. Do not repoint this string alone.
  *
  * Callers must trigger on the same `pull_request` event types so that
  * `github.event.pull_request.*` expressions in the reusable workflow resolve

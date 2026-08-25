@@ -618,7 +618,7 @@ async function main() {
             `for a one-time token publish, or bootstrap it manually ` +
             `(\`cd ${path.relative(rootDir, pkg.dir)} && npm publish --access public --no-provenance\`). ` +
             `Then add a Trusted Publisher for it on npmjs.com matching the ` +
-            `other @agent-native packages (repo BuilderIO/agent-native, workflow ` +
+            `other @agent-native packages (repo studio-jami/jami-studio, workflow ` +
             `auto-publish.yml, environment npm-publish). After that, OIDC ` +
             `publishes every future version automatically.`,
         );

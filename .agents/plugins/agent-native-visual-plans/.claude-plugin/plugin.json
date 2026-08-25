@@ -4,7 +4,7 @@
   "description": "Create rich interactive visual plans, recaps, and repo-native visual docs with diagrams, file maps, annotated code and diffs, API/schema summaries, feedback, and HTML export.",
   "author": { "name": "Agent-Native", "url": "https://jami.studio" },
   "homepage": "https://plan.jami.studio",
-  "repository": "https://github.com/BuilderIO/agent-native",
+  "repository": "https://github.com/studio-jami/jami-studio",
   "license": "MIT",
   "keywords": [
     "agent-native",

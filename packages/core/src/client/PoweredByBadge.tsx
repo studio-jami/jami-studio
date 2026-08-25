@@ -253,7 +253,7 @@ export function OpenSourceBadge({
         }
       `}</style>
       <a
-        href="https://github.com/BuilderIO/agent-native"
+        href="https://github.com/studio-jami/jami-studio"
         target="_blank"
         rel="noopener noreferrer"
         className={cn(

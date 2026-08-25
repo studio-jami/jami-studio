@@ -165,7 +165,7 @@ Sentry.init({
 
 const FEEDBACK_URL =
   "https://forms.jami.studio/f/agent-native-feedback/_16ewV?source=cli";
-const BUGS_URL = "https://github.com/BuilderIO/agent-native/issues";
+const BUGS_URL = "https://github.com/studio-jami/jami-studio/issues";
 
 const command = process.argv[2];
 // Filter out bare "--" separators that pnpm inserts between its args and script args

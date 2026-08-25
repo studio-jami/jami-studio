@@ -192,6 +192,10 @@ const CLIENTS: SkillClient[] = [
   "opencode",
   "github-copilot",
 ];
+// Intentional upstream reference: the public skills catalog lives in the
+// BuilderIO/skills repo (studio-jami does not host an equivalent catalog yet).
+// Kept through the de-Builder.io cleanup; repoint only when our org hosts the
+// catalog. See the cleanup record in _ops/readiness.
 const DEFAULT_SKILLS_SOURCE = "BuilderIO/skills";
 const MANAGED_INSTRUCTIONS_START = "<!-- BEGIN @agent-native/skills -->";
 const MANAGED_INSTRUCTIONS_END = "<!-- END @agent-native/skills -->";

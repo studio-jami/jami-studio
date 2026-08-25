@@ -1,8 +1,10 @@
 // ---------- Auto-updates ----------
 //
 // In production, electron-updater pulls release metadata from the
-// `publish:` target in electron-builder.yml (currently the BuilderIO/agent-native
-// GitHub repo). We auto-download in the background, surface progress and
+// `publish:` target in electron-builder.yml (currently the upstream
+// BuilderIO/agent-native GitHub repo — this stays until the npm/org rename
+// lands a publish target of our own; see the de-Builder.io cleanup record in
+// _ops/readiness). We auto-download in the background, surface progress and
 // readiness to the renderer over IPC, and let the user trigger
 // quitAndInstall from a sidebar pill / restart prompt. The app also
 // installs queued updates automatically on quit.

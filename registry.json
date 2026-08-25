@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "agent-native",
-  "homepage": "https://github.com/BuilderIO/agent-native",
+  "homepage": "https://github.com/studio-jami/jami-studio",
   "items": [
     {
       "name": "conventions",

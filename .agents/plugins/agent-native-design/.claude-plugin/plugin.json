@@ -4,7 +4,7 @@
   "description": "Explore, compare, iterate, and export interactive UI design prototypes from the Design app.",
   "author": { "name": "Agent-Native", "url": "https://jami.studio" },
   "homepage": "https://design.jami.studio",
-  "repository": "https://github.com/BuilderIO/agent-native",
+  "repository": "https://github.com/studio-jami/jami-studio",
   "license": "MIT",
   "keywords": ["agent-native", "design", "mcp", "skills", "app-backed-skill"],
   "skills": "./skills/",

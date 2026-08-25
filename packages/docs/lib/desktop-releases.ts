@@ -1,5 +1,9 @@
 import { createError } from "h3";
 
+// Upstream BuilderIO/agent-native hosts the published release artifacts our
+// download pages and the desktop updater read. Kept until studio-jami
+// publishes releases from this repo (npm/org rename); see the de-Builder.io
+// cleanup record in _ops/readiness. Do not repoint without releases here.
 const RELEASES_URL_BASE =
   "https://api.github.com/repos/BuilderIO/agent-native/releases";
 const PER_PAGE = 100;

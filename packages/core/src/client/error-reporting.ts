@@ -4,7 +4,7 @@ import {
   type FeedbackClientContextOptions,
 } from "./feedback-context.js";
 
-const GITHUB_ISSUE_URL = "https://github.com/BuilderIO/agent-native/issues/new";
+const GITHUB_ISSUE_URL = "https://github.com/studio-jami/jami-studio/issues/new";
 
 export interface ErrorReportDebugItem {
   label: string;

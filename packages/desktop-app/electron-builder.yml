@@ -80,6 +80,11 @@ linux:
   category: Development
   artifactName: ${productName}-${arch}.${ext}
 
+# Intentional: auto-update pulls release metadata from the upstream
+# BuilderIO/agent-native repo, which hosts the published release artifacts.
+# This stays until studio-jami/jami-studio takes over release publishing
+# (npm/org rename); the docs/clips release-download URLs share the dependency.
+# See the de-Builder.io cleanup record in _ops/readiness.
 publish:
   provider: github
   owner: BuilderIO

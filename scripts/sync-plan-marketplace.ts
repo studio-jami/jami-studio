@@ -243,7 +243,7 @@ async function expectedFiles(): Promise<GeneratedFile[]> {
             url: "https://jami.studio",
           },
           homepage: manifest.hosted.url,
-          repository: "https://github.com/BuilderIO/agent-native",
+          repository: "https://github.com/studio-jami/jami-studio",
           license: "MIT",
           keywords: keywords(app),
           skills: "./skills/",

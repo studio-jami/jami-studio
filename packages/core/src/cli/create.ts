@@ -19,7 +19,7 @@ import { workspacifyApp, parseWorkspaceScope } from "./workspacify.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const REPO = "BuilderIO/agent-native";
+const REPO = "studio-jami/jami-studio";
 const TEMPLATES_DIR = "templates";
 const POSTGRES_DEPENDENCY_VERSION = "^3.4.9";
 const STANDALONE_EXACT_DEPENDENCY_OVERRIDES: Record<string, string> = {

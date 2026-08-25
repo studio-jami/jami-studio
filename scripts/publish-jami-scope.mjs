@@ -1,7 +1,7 @@
 // Publish the six publishable packages under the @jami-studio npm scope
 // WITHOUT touching repo source: the @agent-native/* names stay canonical in
-// git (keeps ~70 workspace: refs and the upstream source-sync cheap); the
-// scope rename happens only in the manifest that ships inside each tarball.
+// git (keeps ~70 workspace: refs intact); the scope rename happens only in
+// the manifest that ships inside each tarball.
 //
 // Per package (dep order: toolkit, core, skills, dispatch, scheduling, pinpoint):
 //   1. pnpm --filter <name> run build

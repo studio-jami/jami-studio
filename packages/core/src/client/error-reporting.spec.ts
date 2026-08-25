@@ -59,7 +59,7 @@ describe("error reporting helpers", () => {
     );
 
     expect(url.origin + url.pathname).toBe(
-      "https://github.com/BuilderIO/agent-native/issues/new",
+      "https://github.com/studio-jami/jami-studio/issues/new",
     );
     expect(url.searchParams.get("title")).toBe("Docs: Something went wrong");
     expect(url.searchParams.get("body")).toContain("App: Docs");
