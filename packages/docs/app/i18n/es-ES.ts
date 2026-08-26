@@ -16,7 +16,6 @@ const esES = {
     skills: "Habilidades",
     searchAria: "Buscar en la documentación",
     searchPlaceholder: "Buscar docs...",
-    askAssistant: "Preguntar al asistente de IA",
     toggleNavigation: "Abrir o cerrar navegación",
   },
   footer: {
@@ -60,13 +59,6 @@ const esES = {
     navigate: "navegar",
     open: "abrir",
     close: "cerrar",
-  },
-  agent: {
-    emptyState: "Pregúntame cualquier cosa sobre Jami Studio",
-    suggestionGettingStarted: "¿Cómo empiezo con Jami Studio?",
-    suggestionActions: "¿Cómo funcionan las actions?",
-    suggestionPolling: "Explícame el modelo de sincronización por polling",
-    suggestionDeploy: "¿Cómo despliego a producción?",
   },
   errors: {
     notFoundTitle: "Página no encontrada",

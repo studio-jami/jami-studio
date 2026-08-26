@@ -16,7 +16,6 @@ const frFR = {
     skills: "Compétences",
     searchAria: "Rechercher dans la documentation",
     searchPlaceholder: "Rechercher...",
-    askAssistant: "Demander à l'assistant IA",
     toggleNavigation: "Afficher ou masquer la navigation",
   },
   footer: {
@@ -60,13 +59,6 @@ const frFR = {
     navigate: "naviguer",
     open: "ouvrir",
     close: "fermer",
-  },
-  agent: {
-    emptyState: "Posez-moi une question sur Jami Studio",
-    suggestionGettingStarted: "Comment démarrer avec Jami Studio ?",
-    suggestionActions: "Comment fonctionnent les actions ?",
-    suggestionPolling: "Explique le modèle de synchronisation par polling",
-    suggestionDeploy: "Comment déployer en production ?",
   },
   errors: {
     notFoundTitle: "Page introuvable",

@@ -14,7 +14,6 @@ const enUS = {
     skills: "Skills",
     searchAria: "Search docs",
     searchPlaceholder: "Search docs...",
-    askAssistant: "Ask the AI assistant",
     toggleNavigation: "Toggle navigation menu",
   },
   footer: {
@@ -70,13 +69,6 @@ const enUS = {
     navigate: "navigate",
     open: "open",
     close: "close",
-  },
-  agent: {
-    emptyState: "Ask me anything about Jami Studio",
-    suggestionGettingStarted: "How do I get started with Jami Studio?",
-    suggestionActions: "How do actions work?",
-    suggestionPolling: "Explain the polling sync model",
-    suggestionDeploy: "How do I deploy to production?",
   },
   errors: {
     notFoundTitle: "Page not found",

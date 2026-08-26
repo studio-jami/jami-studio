@@ -252,6 +252,12 @@ export interface FeedbackButtonProps {
   onOpenChange?: (open: boolean) => void;
   /** Optional custom trigger element. */
   trigger?: ReactNode;
+  /**
+   * Hosts with no auth surface (e.g. the public docs site) opt out of the
+   * session fetch: no submitterEmail attribution, zero /_agent-native traffic.
+   * Default keeps the session-based attribution for template apps.
+   */
+  anonymous?: boolean;
 }
 
 const surfaceStyle: CSSProperties = {
@@ -281,9 +287,14 @@ export function FeedbackButton({
   open: controlledOpen,
   onOpenChange,
   trigger: customTrigger,
+  anonymous = false,
 }: FeedbackButtonProps) {
   const target = parseTarget(url);
-  const { session } = useSession();
+  // Hook shape stays stable (rules of hooks); enabling the fetch is what is
+  // conditional. Anonymous hosts (public docs site) never poll
+  // /_agent-native/auth/session — template hosts keep the previous
+  // mount-time attribution, so submit behavior is unchanged for them.
+  const { session } = useSession({ enabled: !anonymous });
   const localeContext = useOptionalLocale();
   const locale = localeContext?.locale ?? DEFAULT_LOCALE;
   const copy = FEEDBACK_COPY[locale] ?? FEEDBACK_COPY[DEFAULT_LOCALE];
@@ -352,11 +363,12 @@ export function FeedbackButton({
       try {
         const resolvedSchema = schema ?? (await loadSchema(target));
         if (!schema) setSchema(resolvedSchema);
-        const submitterEmail = isSyntheticAgentNativeAnonymousEmail(
-          session?.email,
-        )
-          ? null
-          : session?.email;
+        // No identity on anonymous hosts (no auth surface) — submit without
+        // email instead of polling for one.
+        const submitterEmail =
+          !anonymous && !isSyntheticAgentNativeAnonymousEmail(session?.email)
+            ? (session?.email ?? null)
+            : null;
         const feedbackContext = getFeedbackClientContext({
           chatSessionId,
           storageKey: chatStorageKey,

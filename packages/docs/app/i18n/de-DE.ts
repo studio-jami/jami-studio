@@ -16,7 +16,6 @@ const deDE = {
     skills: "Fähigkeiten",
     searchAria: "Dokumentation durchsuchen",
     searchPlaceholder: "Docs suchen...",
-    askAssistant: "KI-Assistenten fragen",
     toggleNavigation: "Navigationsmenü umschalten",
   },
   footer: {
@@ -60,13 +59,6 @@ const deDE = {
     navigate: "navigieren",
     open: "öffnen",
     close: "schließen",
-  },
-  agent: {
-    emptyState: "Frag mich alles über Jami Studio",
-    suggestionGettingStarted: "Wie starte ich mit Jami Studio?",
-    suggestionActions: "Wie funktionieren actions?",
-    suggestionPolling: "Erkläre das Polling-Sync-Modell",
-    suggestionDeploy: "Wie deploye ich in Produktion?",
   },
   errors: {
     notFoundTitle: "Seite nicht gefunden",

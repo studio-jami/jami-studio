@@ -27,6 +27,15 @@ export default async function docsHeadHandler(event: H3Event) {
       String(Buffer.byteLength(asset.content)),
     );
     setDefaultSsrCacheHeaders(event);
+    if (asset.contentType !== "text/markdown; charset=utf-8") {
+      // Static build-time assets (llms.txt, sitemap.xml, robots.txt) are
+      // long-fresh at the edge; markdown twins follow the docs page policy.
+      setHeader(
+        event,
+        "cache-control",
+        "public, s-maxage=604800, stale-while-revalidate=86400",
+      );
+    }
     setHeader(event, "link", `<${SITE_URL}/llms.txt>; rel="llms-txt"`);
     if (asset.contentType.startsWith("text/markdown")) {
       setHeader(

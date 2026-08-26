@@ -16,7 +16,6 @@ const zhCN = {
     skills: "技能",
     searchAria: "搜索文档",
     searchPlaceholder: "搜索文档...",
-    askAssistant: "询问 AI 助手",
     toggleNavigation: "切换导航菜单",
   },
   footer: {
@@ -60,13 +59,6 @@ const zhCN = {
     navigate: "导航",
     open: "打开",
     close: "关闭",
-  },
-  agent: {
-    emptyState: "向我询问任何有关 Jami Studio 的问题",
-    suggestionGettingStarted: "如何开始使用 Jami Studio？",
-    suggestionActions: "actions 如何工作？",
-    suggestionPolling: "解释轮询同步模型",
-    suggestionDeploy: "如何部署到生产环境？",
   },
   errors: {
     notFoundTitle: "页面未找到",

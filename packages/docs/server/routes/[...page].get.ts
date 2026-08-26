@@ -24,10 +24,21 @@ const ssrHandler = createH3SSRHandler(
 );
 
 export default async function docsPageHandler(event: H3Event) {
+  // Backstop: the dedicated /_agent-native static + [...rest] guard routes
+  // serve the whole namespace; if any request here still carries it (e.g. an
+  // app-base-path prefix variant), answer it the same cheap way instead of
+  // rendering a full 404 document.
+  if (getRequestURL(event).pathname.includes("/_agent-native")) {
+    const { agentNamespaceGuard } = await import(
+      "../lib/agent-namespace-guard"
+    );
+    return agentNamespaceGuard(event);
+  }
+
   const agentWebAsset = readAgentWebAssetForRequest(event);
   if (agentWebAsset) {
     setHeader(event, "content-type", agentWebAsset.contentType);
-    setDefaultSsrCacheHeaders(event);
+    setStaticAssetCacheHeaders(event);
     setHeader(event, "link", `<${SITE_URL}/llms.txt>; rel="llms-txt"`);
     return agentWebAsset.content;
   }
@@ -67,6 +78,27 @@ function setDefaultSsrCacheHeaders(event: H3Event) {
   for (const [name, value] of Object.entries(DEFAULT_SSR_CACHE_HEADERS)) {
     setHeader(event, name, value);
   }
+}
+
+function setStaticAssetCacheHeaders(event: H3Event) {
+  // llms.txt / llms-full.txt / sitemap.xml / robots.txt are build-time static
+  // files: long-fresh at the edge so AI-crawler and search-bot hits never
+  // reach the origin for re-render. (This was the uncached 252KB /llms.txt
+  // that fed the docs CPU burn.)
+  //
+  // Production note: on Vercel nitro's static layer serves these files before
+  // this handler runs, so the binding header set lives in vercel.json
+  // ("/(llms.txt|llms-full.txt|robots.txt|sitemap.xml)$"). This function is
+  // the backstop for dev / other providers where the request reaches the
+  // wildcard handler.
+  for (const [name, value] of Object.entries(DEFAULT_SSR_CACHE_HEADERS)) {
+    setHeader(event, name, value);
+  }
+  setHeader(
+    event,
+    "cache-control",
+    "public, s-maxage=604800, stale-while-revalidate=86400",
+  );
 }
 
 function responseWithVaryAccept(response: Response): Response {

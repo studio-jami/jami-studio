@@ -14,7 +14,6 @@ const messages = {
     skills: "技能",
     searchAria: "搜尋檔案",
     searchPlaceholder: "搜尋檔案...",
-    askAssistant: "詢問 AI 助手",
     toggleNavigation: "切換導覽選單",
   },
   footer: {
@@ -58,13 +57,6 @@ const messages = {
     navigate: "導覽",
     open: "開啟",
     close: "關閉",
-  },
-  agent: {
-    emptyState: "向我詢問任何有關 Jami Studio 的問題",
-    suggestionGettingStarted: "如何開始使用 Jami Studio？",
-    suggestionActions: "actions 如何工作？",
-    suggestionPolling: "解釋輪詢同步模型",
-    suggestionDeploy: "如何部署到正式環境環境？",
   },
   errors: {
     notFoundTitle: "頁面未找到",

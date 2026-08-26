@@ -16,7 +16,6 @@ const arSA = {
     skills: "المهارات",
     searchAria: "ابحث في الوثائق",
     searchPlaceholder: "ابحث في الوثائق...",
-    askAssistant: "اسأل مساعد الذكاء الاصطناعي",
     toggleNavigation: "تبديل قائمة التنقل",
   },
   footer: {
@@ -60,13 +59,6 @@ const arSA = {
     navigate: "تنقل",
     open: "افتح",
     close: "أغلق",
-  },
-  agent: {
-    emptyState: "اسألني أي شيء عن Jami Studio",
-    suggestionGettingStarted: "كيف أبدأ مع Jami Studio؟",
-    suggestionActions: "كيف تعمل actions؟",
-    suggestionPolling: "اشرح نموذج مزامنة polling",
-    suggestionDeploy: "كيف أنشر إلى الإنتاج؟",
   },
   errors: {
     notFoundTitle: "الصفحة غير موجودة",

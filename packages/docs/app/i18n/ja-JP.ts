@@ -16,7 +16,6 @@ const jaJP = {
     skills: "スキル",
     searchAria: "ドキュメントを検索",
     searchPlaceholder: "ドキュメントを検索...",
-    askAssistant: "AI アシスタントに質問",
     toggleNavigation: "ナビゲーションメニューを切り替え",
   },
   footer: {
@@ -60,13 +59,6 @@ const jaJP = {
     navigate: "移動",
     open: "開く",
     close: "閉じる",
-  },
-  agent: {
-    emptyState: "Jami Studio について何でも聞いてください",
-    suggestionGettingStarted: "Jami Studio はどう始めますか？",
-    suggestionActions: "actions はどのように動きますか？",
-    suggestionPolling: "ポーリング同期モデルを説明して",
-    suggestionDeploy: "本番環境へデプロイするには？",
   },
   errors: {
     notFoundTitle: "ページが見つかりません",

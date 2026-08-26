@@ -1,14 +1,11 @@
 import {
   AgentNativeI18nProvider,
-  AgentSidebar,
-  configureTracking,
   ErrorReportActions,
   getLocaleInitScript,
   useT,
 } from "@agent-native/core/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Links,
   Meta,
@@ -45,13 +42,11 @@ import appCss from "./global.css?url";
 const SITE_URL = "https://www.jami.studio";
 const LOCALE_INIT_SCRIPT_SELECTOR = "script[data-agent-native-locale-init]";
 
-configureTracking({
-  sessionReplay: false,
-  getDefaultProps: (_name, properties) => ({
-    ...properties,
-    app: "agent-native-docs",
-  }),
-});
+// No framework tracking shim: with no analytics provider configured it wires
+// nothing useful while still polling /_agent-native/auth/session and
+// /_agent-native/agent-engine/status (load + every window focus) — the 404
+// storm. Docs analytics runs directly: @vercel/analytics <Analytics/> below
+// plus GA (GA_SCRIPT), and trackEvent() reaches those through window.gtag.
 
 const THEME_INIT_SCRIPT = `(function(){try{var root=document.documentElement;var t=localStorage.getItem('jami-theme')==='light'?'light':'dark';root.classList.toggle('light',t==='light');root.setAttribute('data-theme',t);root.style.colorScheme=t;}catch(e){}})();`;
 
@@ -296,9 +291,9 @@ function setManagedScrollTop(top: number) {
   }
 }
 
-// AgentSidebar wraps content in an overflow-auto div, so the window usually
-// does not scroll. Keep both normal route changes and hash links pointed at
-// that real scroll container.
+// The docs chrome is an overflow-auto child of an h-screen shell, so the
+// window usually does not scroll. Keep both normal route changes and hash
+// links pointed at that real scroll container.
 function ScrollManager() {
   const { pathname, hash } = useLocation();
   const ref = useRef<HTMLSpanElement>(null);
@@ -403,28 +398,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Root() {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
-      }),
-  );
-  const [mounted, setMounted] = useState(false);
-  const pendingHydrationScrollTopRef = useRef<number | null>(null);
-
   useEffect(() => {
-    pendingHydrationScrollTopRef.current = window.location.hash
-      ? null
-      : getManagedScrollTop();
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const top = pendingHydrationScrollTopRef.current;
-    pendingHydrationScrollTopRef.current = null;
+    const top = window.location.hash ? null : getManagedScrollTop();
     if (!top || top <= 0) return;
-
     let raf = 0;
     let secondRaf = 0;
     const timer = window.setTimeout(() => setManagedScrollTop(top), 100);
@@ -432,54 +408,27 @@ export default function Root() {
       setManagedScrollTop(top);
       secondRaf = window.requestAnimationFrame(() => setManagedScrollTop(top));
     });
-
     return () => {
       window.cancelAnimationFrame(raf);
       window.cancelAnimationFrame(secondRaf);
       window.clearTimeout(timer);
     };
-  }, [mounted]);
+  }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <DocsI18nProvider>
-        <RootShell mounted={mounted} />
-      </DocsI18nProvider>
-    </QueryClientProvider>
+    <DocsI18nProvider>
+      <RootShell>
+        <Outlet />
+      </RootShell>
+    </DocsI18nProvider>
   );
 }
 
-function RootShell({ mounted }: { mounted: boolean }) {
-  const t = useT();
-  const content = (
-    <DocsChrome>
-      <Outlet />
-    </DocsChrome>
-  );
-
-  return mounted ? (
-    <AgentSidebar
-      storageKey="docs"
-      position="right"
-      defaultOpen={false}
-      defaultSidebarWidth={400}
-      emptyStateText={t("agent.emptyState")}
-      suggestions={[
-        t("agent.suggestionGettingStarted"),
-        t("agent.suggestionActions"),
-        t("agent.suggestionPolling"),
-        t("agent.suggestionDeploy"),
-      ]}
-    >
-      {content}
-    </AgentSidebar>
-  ) : (
-    // Mirror AgentSidebar's outer layout (h-screen + overflow-hidden shell
-    // with an overflow-auto child) so swapping in the real sidebar after
-    // hydration doesn't shift the scrollbar and re-anchor centered content.
+function RootShell({ children }: { children: React.ReactNode }) {
+  return (
     <div className="flex min-w-0 flex-1 h-screen overflow-hidden">
       <div className="flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
-        {content}
+        <DocsChrome>{children}</DocsChrome>
       </div>
     </div>
   );

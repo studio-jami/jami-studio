@@ -16,7 +16,6 @@ const ptBR = {
     skills: "Habilidades",
     searchAria: "Pesquisar na documentação",
     searchPlaceholder: "Pesquisar docs...",
-    askAssistant: "Perguntar ao assistente de IA",
     toggleNavigation: "Alternar menu de navegação",
   },
   footer: {
@@ -60,13 +59,6 @@ const ptBR = {
     navigate: "navegar",
     open: "abrir",
     close: "fechar",
-  },
-  agent: {
-    emptyState: "Pergunte qualquer coisa sobre Jami Studio",
-    suggestionGettingStarted: "Como começo com Jami Studio?",
-    suggestionActions: "Como as actions funcionam?",
-    suggestionPolling: "Explique o modelo de sincronização por polling",
-    suggestionDeploy: "Como faço deploy em produção?",
   },
   errors: {
     notFoundTitle: "Página não encontrada",

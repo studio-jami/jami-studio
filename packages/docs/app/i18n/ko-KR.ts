@@ -16,7 +16,6 @@ const koKR = {
     skills: "스킬",
     searchAria: "문서 검색",
     searchPlaceholder: "문서 검색...",
-    askAssistant: "AI 어시스턴트에게 묻기",
     toggleNavigation: "내비게이션 메뉴 전환",
   },
   footer: {
@@ -60,13 +59,6 @@ const koKR = {
     navigate: "이동",
     open: "열기",
     close: "닫기",
-  },
-  agent: {
-    emptyState: "Jami Studio에 대해 무엇이든 물어보세요",
-    suggestionGettingStarted: "Jami Studio는 어떻게 시작하나요?",
-    suggestionActions: "actions는 어떻게 동작하나요?",
-    suggestionPolling: "폴링 동기화 모델을 설명해줘",
-    suggestionDeploy: "프로덕션에 배포하려면?",
   },
   errors: {
     notFoundTitle: "페이지를 찾을 수 없음",

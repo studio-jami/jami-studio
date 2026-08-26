@@ -19,13 +19,21 @@ interface UseSessionResult {
  * environments — there is no dev bypass and no `local@localhost` sentinel.
  *
  * Templates should use this instead of building their own auth context.
+ *
+ * Pass `enabled: false` on hosts with no auth surface (e.g. the public docs
+ * site): the hook stays hook-shaped but never issues the request, so rendering
+ * a consumer like FeedbackButton never polls a namespace that doesn't exist.
  */
-export function useSession(): UseSessionResult {
+export function useSession(options: { enabled?: boolean } = {}): UseSessionResult {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const trackedRef = useRef(false);
 
   useEffect(() => {
+    if (options.enabled === false) {
+      setIsLoading(false);
+      return;
+    }
     let cancelled = false;
 
     async function fetchSession() {
@@ -77,7 +85,7 @@ export function useSession(): UseSessionResult {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [options.enabled]);
 
   return { session, isLoading };
 }

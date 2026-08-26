@@ -16,7 +16,6 @@ const hiIN = {
     skills: "स्किल्स",
     searchAria: "दस्तावेज़ खोजें",
     searchPlaceholder: "दस्तावेज़ खोजें...",
-    askAssistant: "AI सहायक से पूछें",
     toggleNavigation: "नेविगेशन मेनू बदलें",
   },
   footer: {
@@ -60,13 +59,6 @@ const hiIN = {
     navigate: "नेविगेट",
     open: "खोलें",
     close: "बंद करें",
-  },
-  agent: {
-    emptyState: "Jami Studio के बारे में कुछ भी पूछें",
-    suggestionGettingStarted: "Jami Studio कैसे शुरू करूं?",
-    suggestionActions: "actions कैसे काम करती हैं?",
-    suggestionPolling: "polling sync मॉडल समझाएं",
-    suggestionDeploy: "production में deploy कैसे करूं?",
   },
   errors: {
     notFoundTitle: "पेज नहीं मिला",

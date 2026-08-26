@@ -1,5 +1,5 @@
 import { FeedbackButton, useLocale, useT } from "@agent-native/core/client";
-import { IconBrandGithub, IconMessage } from "@tabler/icons-react";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { NavLink, useLocation } from "react-router";
 
@@ -125,10 +125,10 @@ export default function Header() {
 
   useEffect(() => {
     if (!isHome) return;
-    // AgentSidebar wraps content in an overflow-auto div, so the window
-    // typically doesn't scroll. Listening on document with capture: true
-    // catches scroll events from any descendant scroll container, regardless
-    // of when AgentSidebar mounts or which element is actually scrolling.
+    // The docs chrome is an overflow-auto child of an h-screen shell, so the
+    // window typically doesn't scroll. Listening on document with
+    // capture: true catches scroll events from any descendant scroll
+    // container.
     const onScroll = (e: Event) => {
       const target = e.target;
       let top = 0;
@@ -225,6 +225,7 @@ export default function Header() {
               }
               align="end"
               side="bottom"
+              anonymous
             />
             <SearchTrigger
               onClick={openModal}
@@ -236,16 +237,7 @@ export default function Header() {
               <DocsLanguageSuggestion />
             </div>
             <ThemeToggle />
-            <button
-              onClick={() =>
-                window.dispatchEvent(new Event("agent-panel:toggle"))
-              }
-              aria-label={t("header.askAssistant")}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[var(--docs-border)] text-[var(--fg-secondary)] hover:border-[var(--fg-secondary)] hover:text-[var(--fg)]"
-              title={t("header.askAssistant")}
-            >
-              <IconMessage size={16} stroke={1.5} />
-            </button>
+
 
             {/* Mobile hamburger */}
             <button
@@ -302,6 +294,7 @@ export default function Header() {
               }
               align="start"
               side="bottom"
+              anonymous
             />
           </div>
         )}

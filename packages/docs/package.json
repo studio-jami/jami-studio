@@ -14,9 +14,8 @@
     "dev": "agent-native dev --port 3000",
     "codemod:docs-blocks": "tsx scripts/codemod-doc-blocks.ts --dry-run",
     "codemod:docs-blocks:write": "tsx scripts/codemod-doc-blocks.ts --write",
-    "generate-source-index": "tsx scripts/generate-source-index.ts",
     "validate-doc-blocks": "vitest run app/components/docBlocks.validate.test.tsx",
-    "prebuild": "tsx scripts/generate-source-index.ts && vitest run app/components/docBlocks.validate.test.tsx",
+    "prebuild": "vitest run app/components/docBlocks.validate.test.tsx",
     "build": "agent-native build",
     "start": "agent-native start",
     "typecheck": "agent-native typecheck",
@@ -30,7 +29,6 @@
     "@react-router/fs-routes": "^8.1.0",
     "@tabler/icons-react": "^3.40.0",
     "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/react-query": "^5.99.2",
     "@vercel/analytics": "1.6.1",
     "gray-matter": "^4.0.3",
     "h3": "catalog:",
@@ -68,7 +66,6 @@
         "markdownTwins": true,
         "llmsTxt": true,
         "jsonLd": true,
-        "publicAgentCard": true,
         "publicMcp": false,
         "crawlerPolicy": "discoverable-no-training"
       }
