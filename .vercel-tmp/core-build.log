@@ -1,6 +1,0 @@
-
-> @agent-native/core@0.99.17 build C:\Users\james\orgs\oss\jami-studio\packages\core
-> tsc && tsc -p tsconfig.cli.json && node scripts/finalize-build.mjs && node scripts/check-dist-imports.mjs
-
-[agent-native] Materialized source corpus at corpus (2248 core files, 5509 template files).
-[check-dist-imports] SSR entry points import cleanly (dist/client/i18n.js)

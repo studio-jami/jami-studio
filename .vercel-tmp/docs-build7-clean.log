@@ -1,7 +1,0 @@
-
-> @agent-native/docs@ prebuild C:\Users\james\orgs\oss\jami-studio\packages\docs
-> vitest run app/components/docBlocks.validate.test.tsx
-
-
- RUN  v4.1.9 C:/Users/james/orgs/oss/jami-studio/packages/docs
-
