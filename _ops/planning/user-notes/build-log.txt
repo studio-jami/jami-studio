@@ -1,0 +1,34 @@
+04:27:59.791 
+    │         - ../../node_modules/.pnpm/nitro@3.0.260429-beta_@azure+identity@4.13.1_@libsql+client@0.15.15_better-sqlite3@12.1_0e94066470351486092e6ed2e1b3c722/node_modules/nitro/dist/presets/node/runtime/node-server.mjs
+04:27:59.791 
+────╯
+04:27:59.791 
+04:27:59.791 
+...
+04:27:59.791 
+    at aggregateBindingErrorsIntoJsError (file:///vercel/path0/node_modules/.pnpm/rolldown@1.1.3/node_modules/rolldown/dist/shared/error-B68YLzl3.mjs:48:18)
+04:27:59.791 
+    at unwrapBindingResult (file:///vercel/path0/node_modules/.pnpm/rolldown@1.1.3/node_modules/rolldown/dist/shared/error-B68YLzl3.mjs:18:128)
+04:27:59.793 
+    at #build (file:///vercel/path0/node_modules/.pnpm/rolldown@1.1.3/node_modules/rolldown/dist/shared/rolldown-build-DR0wzp0V.mjs:3256:34)
+04:27:59.793 
+    at async buildProduction (file:///vercel/path0/node_modules/.pnpm/nitro@3.0.260429-beta_@azure+identity@4.13.1_@libsql+client@0.15.15_better-sqlite3@12.1_0e94066470351486092e6ed2e1b3c722/node_modules/nitro/dist/_build/rolldown.mjs:141:12)
+04:27:59.793 
+    at async runNitroBuildPipeline (file:///vercel/path0/packages/core/dist/deploy/build.js:3304:5)
+04:27:59.793 
+    at async buildWithNitro (file:///vercel/path0/packages/core/dist/deploy/build.js:3500:5)
+04:27:59.793 
+    at async main (file:///vercel/path0/packages/core/dist/deploy/build.js:3899:13)
+04:27:59.793 
+    at async file:///vercel/path0/packages/core/dist/deploy/build.js:3905:5 {
+04:27:59.793 
+  errors: [Getter/Setter]
+04:27:59.793 
+}
+04:27:59.793 
+04:27:59.793 
+Node.js v24.19.0
+04:27:59.980 
+ ELIFECYCLE  Command failed with exit code 1.
+04:28:00.021 
+Error: Command "pnpm run build" exited with 1

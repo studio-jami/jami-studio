@@ -435,7 +435,7 @@ agent-native 的核心功能之一是代理可以修改应用程序的源代码 
 
 在 [production code execution](#production-code-execution) 关闭的标准生产部署中，代理可以访问应用程序工具（actions、数据库、MCP），但不能访问文件系统。这意味着代理可以读取和写入数据、运行 actions 以及与外部服务交互 - 但它无法编辑 React 组件或在已部署的实例上添加新路由。
 
-### Jami Studio：制作中的可视化编辑 {#builderio}
+### Jami Studio：制作中的可视化编辑 {#visual-editing-in-production}
 
 [Jami Studio](https://www.jami.studio) 通过提供托管云环境来解决此问题，在该环境中，代理保留在生产中修改应用程序的 UI 的能力。将您的存储库连接到 Jami Studio 并直接提示 UI 更改 - 无需重新部署。
 

@@ -10,6 +10,9 @@ docs/superpowers
 /*.png
 tmp/
 
+# Local scratch workspace for one-off scripts and build logs
+.vercel-tmp/
+
 # Playwright MCP logs
 .playwright-mcp/
 .playwright-cli/
