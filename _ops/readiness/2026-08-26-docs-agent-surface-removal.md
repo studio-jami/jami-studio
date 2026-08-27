@@ -33,14 +33,23 @@ re-rendered it.
   Docs header passes `anonymous`. Template hosts keep prior behavior.
 - Deleted the agent server plugins (`agent-chat`, `auth`, `core-routes`,
   `db`) and the `actions/` surface from docs.
-- Added a defensive `/_agent-native` guard (`server/lib/agent-namespace-guard.ts`
-  + explicit `_agent-native.get.ts` / `_agent-native.post.ts` /
-  `_agent-native/[...rest].get.ts` / `.post.ts`): any stray/legacy hit returns
-  a tiny JSON 404 (`s-maxage=86400`), and `Accept: text/event-stream` gets 410
-  with `connection: close` so old EventSource clients stop reconnecting.
+- Added a defensive `/_agent-native` guard in **two layers** because the two
+  deploy paths route differently:
+  - **Vercel (React Router preset)** — `app/entry.server.tsx` short-circuits
+    `/_agent-native` at the top of `handleRequest`, before any render. This is
+    the layer that actually matters on Vercel: `server/routes/*` (Nitro
+    file-based routes) are ignored, and a `Response` thrown/returned from a
+    route loader still renders through the HTML error boundary.
+  - **Nitro (Netlify/node)** — `server/lib/agent-namespace-guard.ts` +
+    `_agent-native.get/post.ts` + `_agent-native/[...rest].get/post.ts` answer
+    the namespace with a tiny JSON 404 (`s-maxage=86400`); `Accept:
+    text/event-stream` gets 410 + `connection: close`.
+  Verified in production (`docs-origin.jami.studio`):
+  `/_agent-native/auth/session` now returns a tiny `application/json` 404
+  (`{"error":"Not found. This site has no agent endpoints."}`) instead of a
+  488KB SSR HTML document.
 - Cached SEO static assets (`/llms.txt`, `/llms-full.txt`,
-  `/robots.txt`, `/sitemap.xml`) at `s-maxage=604800` in `vercel.json`
-  (nitro's static layer serves them before the wildcard handler on Vercel).
+  `/robots.txt`, `/sitemap.xml`) at `s-maxage=604800` in `vercel.json`.
 - Removed the stale `{#builderio}` anchor from `deployment.mdx` + 10 locales
   (renamed `{#visual-editing-in-production}`). No Builder.io external links
   remain in docs content — only the product's own "form builder" prose and
@@ -61,9 +70,11 @@ re-rendered it.
 
 ## Notes for later
 
+- **Vercel runs the React Router preset**, not the Nitro node-server entry.
+  The project (`jami-studio-docs`, root dir `packages/docs`) is framework
+  detected as "React Router". Interception for Vercel has to live in
+  `app/entry.server.tsx` / `app/routes/*`, NOT `server/routes/*` (Nitro-only).
 - The earlier local `node .output/server/index.mjs` render 500
-  (`react.mjs ↔ generator.mjs ↔ react-router.mjs` interop at init) reproduces
-  only under the stripped `node`-preset local chunking; the pre-change
-  baseline renders 200 under the same toolchain, so watch the first post-fix
-  Vercel build for the equivalent. If it surfaces, it is isolated to the local
-  shared-chunk layout, not the guard routes (which short-circuit before SSR).
+  (`react.mjs ↔ generator.mjs ↔ react-router.mjs` interop at init) is a
+  local-only artifact of cold-loading the Nitro node-server ESM entry; Vercel
+  uses the React Router server entry and renders 200.
